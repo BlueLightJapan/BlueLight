@@ -94,6 +94,7 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_SCALE = 39; //float
 	const DATA_LEAD = 39;
 	const DATA_BUTTON_TEXT = 40; //string
+	const DATA_INTERACTIVE_TAG = 40; //string (button text)
 	/* 41 (long) */
 	const DATA_MAX_AIR = 44; //short
 	const DATA_MARK_VARIANT = 45; //int
