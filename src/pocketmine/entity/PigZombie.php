@@ -37,8 +37,6 @@ class PigZombie extends Monster{
 
 	public $drag = 0.2;
 	public $gravity = 0.3;
-
-	public $dropExp = [5, 5];
 	
 	public function getName() : string{
 		return "PigZombie";

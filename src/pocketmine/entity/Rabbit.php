@@ -49,7 +49,6 @@ class Rabbit extends Animal{
 	public $width = 0.5;
 	public $length = 0.5;
 
-	public $dropExp = [1, 3];
 
 	public function initEntity(){
 		$this->setMaxHealth(3);
