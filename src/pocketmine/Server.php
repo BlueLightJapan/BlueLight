@@ -32,6 +32,33 @@ use pocketmine\command\ConsoleCommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\command\SimpleCommandMap;
 use pocketmine\entity\Arrow;
+use pocketmine\entity\Bat;
+use pocketmine\entity\Blaze;
+use pocketmine\entity\Boat;
+use pocketmine\entity\CaveSpider;
+use pocketmine\entity\Chicken;
+use pocketmine\entity\Cow;
+use pocketmine\entity\Creeper;
+use pocketmine\entity\Enderman;
+use pocketmine\entity\ElderGuardian;
+use pocketmine\entity\Ghast;
+use pocketmine\entity\Guardian;
+use pocketmine\entity\Husk;
+use pocketmine\entity\Horse;
+use pocketmine\entity\IronGolem;
+use pocketmine\entity\LavaSlime;
+use pocketmine\entity\Ocelot;
+use pocketmine\entity\Pig;
+use pocketmine\entity\PigZombie;
+use pocketmine\entity\Rabbit;
+use pocketmine\entity\Sheep;
+use pocketmine\entity\Silverfish;
+use pocketmine\entity\Skeleton;
+use pocketmine\entity\Slime;
+use pocketmine\entity\SnowGolem;
+use pocketmine\entity\Wither;
+use pocketmine\entity\Wolf;
+
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -2509,8 +2536,35 @@ class Server{
 		Entity::registerEntity(Villager::class);
 		Entity::registerEntity(Zombie::class);
 		Entity::registerEntity(Squid::class);
-
+		Entity::registerEntity(Horse::class);
 		Entity::registerEntity(Human::class, true);
+
+		Entity::registerEntity(Bat::class);
+		Entity::registerEntity(Blaze::class);
+		Entity::registerEntity(Boat::class);
+		Entity::registerEntity(CaveSpider::class);
+		Entity::registerEntity(Chicken::class);
+		Entity::registerEntity(Cow::class);
+		Entity::registerEntity(Creeper::class);
+		Entity::registerEntity(Enderman::class);
+		Entity::registerEntity(ElderGuardian::class);
+		Entity::registerEntity(Ghast::class);
+		Entity::registerEntity(Guardian::class);
+		Entity::registerEntity(Husk::class);
+		Entity::registerEntity(IronGolem::class);
+		Entity::registerEntity(LavaSlime::class);
+		Entity::registerEntity(Ocelot::class);
+		Entity::registerEntity(Pig::class);
+		Entity::registerEntity(PigZombie::class);
+		Entity::registerEntity(Rabbit::class);
+		Entity::registerEntity(Sheep::class);
+		Entity::registerEntity(Silverfish::class);
+		Entity::registerEntity(Skeleton::class);
+		Entity::registerEntity(Slime::class);
+		Entity::registerEntity(SnowGolem::class);
+		Entity::registerEntity(Wither::class);
+		Entity::registerEntity(Wolf::class);
+
 	}
 
 	private function registerTiles(){
