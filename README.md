@@ -1,4 +1,4 @@
-﻿#BlueLight ver:0.16.x
+﻿#BlueLight for 0.16.x
 ## Select Language: [English](#ENG) [日本語](#JPN)
 <a name="ENG"></a>
 BlueLight is server software for Minecraft: PocketEdition.<br>
