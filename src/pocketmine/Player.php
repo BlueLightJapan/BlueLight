@@ -29,6 +29,7 @@ use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
+use pocketmine\entity\Horse;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
@@ -122,6 +123,8 @@ use pocketmine\network\protocol\RespawnPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
 use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\network\protocol\SetHealthPacket;
+use pocketmine\network\protocol\SetEntityLinkPacket;
+
 use pocketmine\network\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
@@ -2325,6 +2328,26 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$target = $this->level->getEntity($packet->target);
 
 				$cancelled = false;
+				if($target instanceof Horse){
+//					if($packet->action === 1){
+					if($packet->action === InteractPacket::ACTION_RIGHT_CLICK){
+						$pk = new SetEntityLinkPacket();
+						$pk->from = $target->getId();
+						$pk->to = $this->getId();
+						$pk->type = true;
+						$this->server()->broadcastPacket($this->level->getPlayers(), $pk);
+
+						$pk = new SetEntityLinkPacket();
+						$pk->from = $target->getId();
+						$pk->to = 0;
+						$pk->type = true;
+						$this->dataPacket($pk);
+
+						return;
+
+					}
+				}
+
 
 				if($packet->action === InteractPacket::ACTION_RIGHT_CLICK){
 					// TODO handle
