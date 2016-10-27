@@ -46,6 +46,7 @@ use pocketmine\network\protocol\ContainerSetDataPacket;
 use pocketmine\network\protocol\ContainerSetSlotPacket;
 use pocketmine\network\protocol\CraftingDataPacket;
 use pocketmine\network\protocol\CraftingEventPacket;
+use pocketmine\network\protocol\CameraPacket;
 use pocketmine\network\protocol\DataPacket;
 use pocketmine\network\protocol\DisconnectPacket;
 use pocketmine\network\protocol\DropItemPacket;
@@ -61,6 +62,7 @@ use pocketmine\network\protocol\ItemFrameDropItemPacket;
 use pocketmine\network\protocol\LevelEventPacket;
 use pocketmine\network\protocol\LevelSoundEventPacket;
 use pocketmine\network\protocol\LoginPacket;
+use pocketmine\network\protocol\MapInfoRequestPacket;
 use pocketmine\network\protocol\MobArmorEquipmentPacket;
 use pocketmine\network\protocol\MobEquipmentPacket;
 use pocketmine\network\protocol\MoveEntityPacket;
@@ -366,5 +368,10 @@ class Network{
 		$this->registerPacket(ProtocolInfo::TEXT_PACKET, TextPacket::class);
 		$this->registerPacket(ProtocolInfo::UPDATE_BLOCK_PACKET, UpdateBlockPacket::class);
 		$this->registerPacket(ProtocolInfo::USE_ITEM_PACKET, UseItemPacket::class);
+
+		$this->registerPacket(ProtocolInfo::MAP_INFO_REQUEST_PACKET, MapInfoRequestPacket::class);
+//		$this->registerPacket(ProtocolInfo::CAMERA_PACKET, CameraPacket::class);
+
+
 	}
 }
