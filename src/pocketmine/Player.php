@@ -2545,7 +2545,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 				$this->server->dispatchCommand($this, $commandText);
 
-
 				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, $commandText));  
 				if($ev->isCancelled()){  
 					break;  
