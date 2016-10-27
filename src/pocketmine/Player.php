@@ -116,6 +116,7 @@ use pocketmine\network\protocol\InteractPacket;
 use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\network\protocol\PlayerActionPacket;
 use pocketmine\network\protocol\PlayStatusPacket;
+use pocketmine\network\protocol\PlayInputPacket;
 use pocketmine\network\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\protocol\RespawnPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
@@ -2882,6 +2883,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->setGamemode($packet->gamemode, true);
 				}
 				break;
+
+			case ProtocolInfo::PLAYER_INPUT_PACKET:
+
+
+			break;
 			default:
 				break;
 		}
