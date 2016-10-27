@@ -2544,6 +2544,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 				}
 				$this->server->dispatchCommand($this, $commandText);
+
+
+				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, $commandText));  
+				if($ev->isCancelled()){  
+					break;  
+				}  
+				Timings::$playerCommandTimer->startTiming();  
+				$this->server->dispatchCommand($ev->getPlayer(), $ev->getMessage()); 
+
 				Timings::$playerCommandTimer->stopTiming();
 				break;
 			case ProtocolInfo::TEXT_PACKET:
