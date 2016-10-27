@@ -24,7 +24,7 @@ namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Ghast extends FlyingAnimal{
+class Ghast extends Monster{
 	const NETWORK_ID = 41;
 
 	public $width = 6;

@@ -21,6 +21,9 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\Player;
+use pocketmine\math\Vector3;
+use pocketmine\network\protocol\AddEntityPacket;
 
 class Pig extends Animal implements Rideable{
 	const NETWORK_ID = 12;
