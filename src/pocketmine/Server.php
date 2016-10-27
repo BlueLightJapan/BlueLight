@@ -302,7 +302,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "BlueLight";
+		return "PocketMine-MP-BlueLight";
 	}
 
 	/**
