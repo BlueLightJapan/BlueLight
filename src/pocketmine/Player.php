@@ -1759,7 +1759,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->connected === false){
 			return;
 		}
-
 		if($packet::NETWORK_ID === ProtocolInfo::BATCH_PACKET){
 			/** @var BatchPacket $packet */
 			$this->server->getNetwork()->processBatch($packet, $this);
@@ -2319,6 +2318,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 
 			case ProtocolInfo::INTERACT_PACKET:
+
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
 					break;
 				}
@@ -2344,7 +2344,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$this->dataPacket($pk);
 
 						return;
-
 					}
 				}
 
@@ -2540,15 +2539,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$commandText .= " " . $arg;
 					}
 				}
-				$this->server->dispatchCommand($this, $commandText);
+//				$this->server->dispatchCommand($this, $commandText);
 
-				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, $commandText));  
+				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
+
 				if($ev->isCancelled()){  
 					break;  
 				}  
 				Timings::$playerCommandTimer->startTiming();  
-				$this->server->dispatchCommand($ev->getPlayer(), $ev->getMessage()); 
-
+				$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
 				Timings::$playerCommandTimer->stopTiming();
 				break;
 			case ProtocolInfo::TEXT_PACKET:

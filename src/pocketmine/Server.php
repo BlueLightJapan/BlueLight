@@ -311,7 +311,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP:DerivedVersion";
+		return "PocketMine-MP::DerivedVersion";
 	}
 
 	/**
