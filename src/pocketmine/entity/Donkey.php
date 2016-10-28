@@ -23,7 +23,7 @@ use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Donkey extends Animal{
-	const NETWORK_ID = 25;
+	const NETWORK_ID = 24;
 
 		public function getName(){
 		return "Donkey";
