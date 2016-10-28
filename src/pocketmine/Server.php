@@ -52,12 +52,21 @@ use pocketmine\entity\Pig;
 use pocketmine\entity\PigZombie;
 use pocketmine\entity\Rabbit;
 use pocketmine\entity\Sheep;
+use pocketmine\entity\Spider;
 use pocketmine\entity\Silverfish;
 use pocketmine\entity\Skeleton;
 use pocketmine\entity\Slime;
 use pocketmine\entity\SnowGolem;
 use pocketmine\entity\Wither;
 use pocketmine\entity\Wolf;
+use pocketmine\entity\Witch;
+use pocketmine\entity\Mule;
+use pocketmine\entity\Donkey;
+use pocketmine\entity\SkeletonHorse;
+use pocketmine\entity\ZombieHorse;
+use pocketmine\entity\Stray;
+use pocketmine\entity\WitherSkeleton;
+use pocketmine\entity\Mooshroom;
 
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
@@ -2562,12 +2571,27 @@ class Server{
 		Entity::registerEntity(PigZombie::class);
 		Entity::registerEntity(Rabbit::class);
 		Entity::registerEntity(Sheep::class);
+		Entity::registerEntity(Spider::class);
 		Entity::registerEntity(Silverfish::class);
 		Entity::registerEntity(Skeleton::class);
 		Entity::registerEntity(Slime::class);
 		Entity::registerEntity(SnowGolem::class);
 		Entity::registerEntity(Wither::class);
 		Entity::registerEntity(Wolf::class);
+
+		Entity::registerEntity(Witch::class);
+		Entity::registerEntity(Mule::class);
+		Entity::registerEntity(Donkey::class);
+		Entity::registerEntity(SkeletonHorse::class);
+		Entity::registerEntity(ZombieHorse::class);
+		Entity::registerEntity(Stray::class);
+		Entity::registerEntity(WitherSkeleton::class);
+
+		Entity::registerEntity(Mooshroom::class);
+
+
+
+
 
 	}
 
