@@ -302,7 +302,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP-BlueLight";
+		return "PocketMine-MP:DerivedVersion";
 	}
 
 	/**
@@ -1458,6 +1458,7 @@ class Server{
 			$version = new VersionString($this->getPocketMineVersion());
 
 			$this->logger->info("Loading pocketmine.yml...");
+
 			if(!file_exists($this->dataPath . "pocketmine.yml")){
 				$content = file_get_contents($this->filePath . "src/pocketmine/resources/pocketmine.yml");
 				if($version->isDev()){
@@ -1577,7 +1578,7 @@ class Server{
 			$this->network->setName($this->getMotd());
 
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.info", [
+			$this->logger->info(pack("c",0x1B)."[1;46m".pack("c",0x1B)."[1;44m" .$this->getLanguage()->translateString("pocketmine.server.info", [
 				$this->getName(),
 				($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
 				$this->getCodename(),
