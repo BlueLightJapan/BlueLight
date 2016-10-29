@@ -124,7 +124,7 @@ use pocketmine\network\protocol\SetDifficultyPacket;
 use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\network\protocol\SetHealthPacket;
 use pocketmine\network\protocol\SetEntityLinkPacket;
-
+use pocketmine\network\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
@@ -1349,7 +1349,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 
 			$diff = ($diffX ** 2 + $diffY ** 2 + $diffZ ** 2) / ($tickDiff ** 2);
-
+/*
 			if($this->isSurvival()){
 				if(!$revert and !$this->isSleeping()){
 					if($diff > 0.0625){
@@ -1358,7 +1358,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 				}
 			}
-
+*/
 			if($diff > 0){
 				$this->x = $newPos->x;
 				$this->y = $newPos->y;
@@ -1510,7 +1510,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if(!$this->allowFlight and $this->inAirTicks > 10 and !$this->isSleeping() and !$this->isImmobile()){
 						$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
 						$diff = ($this->speed->y - $expectedVelocity) ** 2;
-
+/*
 						if(!$this->hasEffect(Effect::JUMP) and $diff > 0.6 and $expectedVelocity < $this->speed->y and !$this->server->getAllowFlight()){
 							if($this->inAirTicks < 100){
 								$this->setMotion(new Vector3(0, $expectedVelocity, 0));
@@ -1519,6 +1519,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								return false;
 							}
 						}
+*/
 					}
 
 					++$this->inAirTicks;
@@ -2316,7 +2317,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			case ProtocolInfo::MOB_ARMOR_EQUIPMENT_PACKET:
 				break;
-
+			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
+/*
+				$pk = new ResourcePackDataInfoPacket();
+				$pk->packageId = "5abdb963-4f3f-4d97-8482-88e2049ab149";
+				$pk->uk1 = 1048576;
+				$pk->uk2 = 1;
+				$pk->uk3 = 359901;
+				$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006L6\u0007TT/[Uxcx*\u0005h\u0002a\u0012";
+				$this->dataPacket($pk);
+*/
+				break;
+			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
+				break;
 			case ProtocolInfo::INTERACT_PACKET:
 
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
