@@ -307,6 +307,11 @@ class Server{
 	/** @var Level */
 	private $levelDefault = null;
 
+	public $weatherEnabled = false;
+	public $foodEnabled = false;
+	public $expEnabled = false;
+	public $hungerHealth = 10;
+	public $hungerTimer = 80;
 	/**
 	 * @return string
 	 */
@@ -1430,7 +1435,14 @@ class Server{
 			Server::$sleeper->wait($ms);
 		}, $microseconds);
 	}
-
+	public function getExpectedExperience($level){
+		if(isset($this->expCache[$level])) return $this->expCache[$level];
+		$levelSquared = $level ** 2;
+		if($level < 16) $this->expCache[$level] = $levelSquared + 6 * $level;
+		elseif($level < 31) $this->expCache[$level] = 2.5 * $levelSquared - 40.5 * $level + 360;
+		else $this->expCache[$level] = 4.5 * $levelSquared - 162.5 * $level + 2220;
+		return $this->expCache[$level];
+	}
 	/**
 	 * @param \ClassLoader    $autoloader
 	 * @param \ThreadedLogger $logger
