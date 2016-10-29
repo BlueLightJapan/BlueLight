@@ -98,6 +98,10 @@ use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
 
+use pocketmine\network\protocol\ResourcePackDataInfoPacket;
+use pocketmine\network\protocol\ResourcePackChunkDataPacket;
+use pocketmine\network\protocol\ResourcePackChunkRequestPacket;
+
 class Network{
 
 	public static $BATCH_THRESHOLD = 512;
@@ -370,8 +374,11 @@ class Network{
 		$this->registerPacket(ProtocolInfo::USE_ITEM_PACKET, UseItemPacket::class);
 
 		$this->registerPacket(ProtocolInfo::MAP_INFO_REQUEST_PACKET, MapInfoRequestPacket::class);
+		$this->registerPacket(ProtocolInfo::RESOURCE_PACK_DATA_INFO_PACKET, ResourcePackDataInfoPacket::class);
+
 //		$this->registerPacket(ProtocolInfo::CAMERA_PACKET, CameraPacket::class);
+//		$this->registerPacket(ProtocolInfo::RESOURCE_PACK_CHUNK_DATA_PACKET, ResoursePackChunkDataPacket::class);
 
-
+		$this->registerPacket(ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET, ResourcePackChunkRequestPacket::class);
 	}
 }

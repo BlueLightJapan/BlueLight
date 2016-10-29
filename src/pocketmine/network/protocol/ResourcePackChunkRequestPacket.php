@@ -23,35 +23,16 @@ namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
 
-
-class ResourcePacksInfoPacket extends DataPacket{
-	const NETWORK_ID = Info::RESOURCE_PACKS_INFO_PACKET;
-
-	public $mustAccept = true; //force client to use selected resource packs
-	/** @var ResourcePackInfoEntry */
-	public $behaviourPackEntries = [];
-	/** @var ResourcePackInfoEntry */
-	public $resourcePackEntries = [];
+class ResourcePackChunkRequestPacket extends DataPacket{
+	const NETWORK_ID = Info::RESOURCE_PACK_CHUNK_REQUEST_PACKET;
+	public $uk1;
+	public $uk2;
 
 	public function decode(){
-
+		$this->uk1 = $this->getString();
+		$this->uk2 = $this->getUnsignedVarInt();
 	}
 
 	public function encode(){
-		$this->reset();
-
-		$this->putBool($this->mustAccept);
-		$this->putShort(count($this->behaviourPackEntries));
-		foreach($this->behaviourPackEntries as $entry){
-			$this->putString($entry->getPackId());
-			$this->putString($entry->getVersion());
-			$this->putLong($entry->getUint64()); 
-		}
-		$this->putShort(count($this->resourcePackEntries));
-		foreach($this->resourcePackEntries as $entry){
-			$this->putString($entry->getPackId());
-			$this->putString($entry->getVersion());
-			$this->putLong($entry->getUint64()); 
-		}
 	}
 }
