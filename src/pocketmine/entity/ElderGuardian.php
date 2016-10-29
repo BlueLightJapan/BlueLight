@@ -33,7 +33,7 @@ class ElderGuardian extends Animal{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
-		$pk->type = ElderGuardian::NETWORK_ID;
+		$pk->type = self::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -42,7 +42,20 @@ class ElderGuardian extends Animal{
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
+		$pk->metadata = [
+		Entity::DATA_FLAGS => [28, 1],//0
+//		Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],//4
+//		Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],//7
+		Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],//38
+//		Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],//39
+//		Entitt::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],//44
+		49 => [7,-1], 50 => [7,-1], 51 => [7,-1],
+
+		45 => [2,0], 46 => [0,0], 47 => [2,0],
+		53 => [3,1.99], 54 => [3,1.99],
+		56 => [8,[0,0,0]],
+		57 => [0,0], 58 => [3,0], 59 => [3,0]
+		];
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
