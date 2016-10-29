@@ -1494,7 +1494,7 @@ class Level implements ChunkManager, Metadatable{
 	 *
 	 * @return bool
 	 */
-	public function useBreakOn(Vector3 $vector, Item &$item = null, Player $player = null, bool $createParticles = false) : bool{
+	public function useBreakOn(Vector3 $vector, Item &$item = null, Player $player = null, bool $createParticles = true) : bool{
 		$target = $this->getBlock($vector);
 		//TODO: Adventure mode checks
 
