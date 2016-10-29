@@ -255,21 +255,20 @@ class Effect{
 					$entity->exhaust(0.5 * $this->amplifier, PlayerExhaustEvent::CAUSE_POTION);
 				}
 
-/*				if($entity instanceof Player){//foodŽÀ‘•‚µ‚½‚ç
+				if($entity instanceof Player){
 					if($entity->getServer()->foodEnabled){
 						$entity->setFood($entity->getFood() - 1);
 					}
-				}*/
+				}
 				break;
 
-			/*case Effect::SATURATION:
+			case Effect::SATURATION:
 				if($entity instanceof Player){
 					if($entity->getServer()->foodEnabled) {
 						$entity->setFood($entity->getFood() + 1);
 					}
 				}
-				break;*/
-
+				break;
 
 		}
 	}
