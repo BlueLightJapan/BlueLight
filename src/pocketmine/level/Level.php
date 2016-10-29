@@ -2589,6 +2589,10 @@ class Level implements ChunkManager, Metadatable{
 		return abs($X - $spawnX) <= 1 and abs($Z - $spawnZ) <= 1;
 	}
 
+	public function getSpawn(){
+		return $this->getSpawnLocation();
+	}
+
 	/**
 	 * @param Vector3 $spawn default null
 	 *
