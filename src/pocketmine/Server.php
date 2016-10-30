@@ -1478,6 +1478,24 @@ class Server{
 
 			$version = new VersionString($this->getPocketMineVersion());
 
+/*			$this->logger->info("                                                                               ");
+			$this->logger->info("_|_|_|    _|                      _|        _|            _|          _|      ");
+			$this->logger->info("_|    _|  _|  _|    _|    _|_|    _|              _|_|_|  _|_|_|    _|_|_|_|  ");
+			$this->logger->info("_|_|_|    _|  _|    _|  _|_|_|_|  _|        _|  _|    _|  _|    _|    _|      ");
+			$this->logger->info("_|    _|  _|  _|    _|  _|        _|        _|  _|    _|  _|    _|    _|      ");
+			$this->logger->info("_|_|_|    _|    _|_|_|    _|_|_|  _|_|_|_|  _|    _|_|_|  _|    _|      _|_|  ");
+			$this->logger->info("                                                      _|                      ");
+			$this->logger->info("                                                  _|_|                        ");
+*/
+			echo "                                                                               \n";
+			echo "_|_|_|    _|                      _|        _|            _|          _|      \n";
+			echo "_|    _|  _|  _|    _|    _|_|    _|              _|_|_|  _|_|_|    _|_|_|_|  \n";
+			echo "_|_|_|    _|  _|    _|  _|_|_|_|  _|        _|  _|    _|  _|    _|    _|      \n";
+			echo "_|    _|  _|  _|    _|  _|        _|        _|  _|    _|  _|    _|    _|      \n";
+			echo "_|_|_|    _|    _|_|_|    _|_|_|  _|_|_|_|  _|    _|_|_|  _|    _|      _|_|  \n";
+			echo "                                                      _|                      \n";
+			echo "                                                  _|_|                        \n";
+
 			$this->logger->info("Loading pocketmine.yml...");
 
 			if(!file_exists($this->dataPath . "pocketmine.yml")){
