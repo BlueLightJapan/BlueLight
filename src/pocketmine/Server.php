@@ -2435,11 +2435,6 @@ echo pack("c",0x1B)."[1;42m"."                                                _/
 			return;
 		}
 
-		$d = Utils::getRealMemoryUsage();
-
-		$u = Utils::getMemoryUsage(true);
-		$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
-
 		$this->network->resetStatistics();
 	}
 
@@ -2624,11 +2619,6 @@ echo pack("c",0x1B)."[1;42m"."                                                _/
 		Entity::registerEntity(WitherSkeleton::class);
 
 		Entity::registerEntity(Mooshroom::class);
-
-
-
-
-
 	}
 
 	private function registerTiles(){
