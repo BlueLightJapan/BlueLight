@@ -67,7 +67,7 @@ use pocketmine\entity\ZombieHorse;
 use pocketmine\entity\Stray;
 use pocketmine\entity\WitherSkeleton;
 use pocketmine\entity\Mooshroom;
-
+use pocketmine\entity\FishingHook;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -1487,6 +1487,7 @@ class Server{
 			$this->logger->info("                                                      _|                      ");
 			$this->logger->info("                                                  _|_|                        ");
 */
+/*
 			echo "                                                                               \n";
 			echo "_|_|_|    _|                      _|        _|            _|          _|      \n";
 			echo "_|    _|  _|  _|    _|    _|_|    _|              _|_|_|  _|_|_|    _|_|_|_|  \n";
@@ -1495,7 +1496,20 @@ class Server{
 			echo "_|_|_|    _|    _|_|_|    _|_|_|  _|_|_|_|  _|    _|_|_|  _|    _|      _|_|  \n";
 			echo "                                                      _|                      \n";
 			echo "                                                  _|_|                        \n";
+*/
 
+
+/*
+
+echo pack("c",0x1B)."[1;32m".pack("c",0x1B)."[1;47m    _/_/_/    _/                      _/        _/            _/          _/\n";
+echo pack("c",0x1B)."[1;32m"."   _/    _/  _/  _/    _/    _/_/    _/              _/_/_/  _/_/_/    _/_/_/_/\n";
+echo pack("c",0x1B)."[1;32m"."  _/_/_/    _/  _/    _/  _/_/_/_/  _/        _/  _/    _/  _/    _/    _/\n";
+echo pack("c",0x1B)."[1;39m"." _/    _/  _/  _/    _/  _/        _/        _/  _/    _/  _/    _/    _/\n";
+echo pack("c",0x1B)."[1;40m"."_/_/_/    _/    _/_/_/    _/_/_/  _/_/_/_/  _/    _/_/_/  _/    _/      _/_/\n";
+echo pack("c",0x1B)."[1;41m"."                                                     _/\n";
+echo pack("c",0x1B)."[1;42m"."                                                _/_/                              \n";
+
+*/
 			$this->logger->info("Loading pocketmine.yml...");
 
 			if(!file_exists($this->dataPath . "pocketmine.yml")){
@@ -2426,15 +2440,6 @@ class Server{
 		$u = Utils::getMemoryUsage(true);
 		$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
 
-		echo "\x1b]0;" . $this->getName() . " " .
-			$this->getPocketMineVersion() .
-			" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
-			" | Memory " . $usage .
-			" | U " . round($this->network->getUpload() / 1024, 2) .
-			" D " . round($this->network->getDownload() / 1024, 2) .
-			" kB/s | TPS " . $this->getTicksPerSecond() .
-			" | Load " . $this->getTickUsage() . "%\x07";
-
 		$this->network->resetStatistics();
 	}
 
@@ -2575,6 +2580,7 @@ class Server{
 		Entity::registerEntity(DroppedItem::class);
 		Entity::registerEntity(FallingSand::class);
 		Entity::registerEntity(PrimedTNT::class);
+		Entity::registerEntity(FishingHook::class);
 		Entity::registerEntity(Snowball::class);
 		Entity::registerEntity(Villager::class);
 		Entity::registerEntity(Zombie::class);
