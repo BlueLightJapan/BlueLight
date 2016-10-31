@@ -197,6 +197,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::SPRUCE_WOOD_STAIRS] = SpruceWoodStairs::class;
 			self::$list[self::BIRCH_WOOD_STAIRS] = BirchWoodStairs::class;
 			self::$list[self::JUNGLE_WOOD_STAIRS] = JungleWoodStairs::class;
+			self::$list[self::BEACON_BLOCK] = BeaconBlock::class;
 			self::$list[self::STONE_WALL] = StoneWall::class;
 			self::$list[self::FLOWER_POT_BLOCK] = FlowerPot::class;
 			self::$list[self::CARROT_BLOCK] = Carrot::class;
@@ -226,12 +227,15 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::HAY_BALE] = HayBale::class;
 			self::$list[self::CARPET] = Carpet::class;
 			self::$list[self::HARDENED_CLAY] = HardenedClay::class;
+
 			self::$list[self::COAL_BLOCK] = Coal::class;
 			self::$list[self::PACKED_ICE] = PackedIce::class;
 			self::$list[self::DOUBLE_PLANT] = DoublePlant::class;
 
 			self::$list[self::FENCE_GATE_SPRUCE] = FenceGateSpruce::class;
 			self::$list[self::FENCE_GATE_BIRCH] = FenceGateBirch::class;
+			self::$list[self::PRISMARINE_BLOCK] = PrismarineBlock::class;
+			self::$list[self::SEA_LANTERN_BLOCK] = SeaLanternBlock::class;
 			self::$list[self::FENCE_GATE_JUNGLE] = FenceGateJungle::class;
 			self::$list[self::FENCE_GATE_DARK_OAK] = FenceGateDarkOak::class;
 			self::$list[self::FENCE_GATE_ACACIA] = FenceGateAcacia::class;
