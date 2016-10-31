@@ -1478,38 +1478,6 @@ class Server{
 
 			$version = new VersionString($this->getPocketMineVersion());
 
-/*			$this->logger->info("                                                                               ");
-			$this->logger->info("_|_|_|    _|                      _|        _|            _|          _|      ");
-			$this->logger->info("_|    _|  _|  _|    _|    _|_|    _|              _|_|_|  _|_|_|    _|_|_|_|  ");
-			$this->logger->info("_|_|_|    _|  _|    _|  _|_|_|_|  _|        _|  _|    _|  _|    _|    _|      ");
-			$this->logger->info("_|    _|  _|  _|    _|  _|        _|        _|  _|    _|  _|    _|    _|      ");
-			$this->logger->info("_|_|_|    _|    _|_|_|    _|_|_|  _|_|_|_|  _|    _|_|_|  _|    _|      _|_|  ");
-			$this->logger->info("                                                      _|                      ");
-			$this->logger->info("                                                  _|_|                        ");
-*/
-/*
-			echo "                                                                               \n";
-			echo "_|_|_|    _|                      _|        _|            _|          _|      \n";
-			echo "_|    _|  _|  _|    _|    _|_|    _|              _|_|_|  _|_|_|    _|_|_|_|  \n";
-			echo "_|_|_|    _|  _|    _|  _|_|_|_|  _|        _|  _|    _|  _|    _|    _|      \n";
-			echo "_|    _|  _|  _|    _|  _|        _|        _|  _|    _|  _|    _|    _|      \n";
-			echo "_|_|_|    _|    _|_|_|    _|_|_|  _|_|_|_|  _|    _|_|_|  _|    _|      _|_|  \n";
-			echo "                                                      _|                      \n";
-			echo "                                                  _|_|                        \n";
-*/
-
-
-/*
-
-echo pack("c",0x1B)."[1;32m".pack("c",0x1B)."[1;47m    _/_/_/    _/                      _/        _/            _/          _/\n";
-echo pack("c",0x1B)."[1;32m"."   _/    _/  _/  _/    _/    _/_/    _/              _/_/_/  _/_/_/    _/_/_/_/\n";
-echo pack("c",0x1B)."[1;32m"."  _/_/_/    _/  _/    _/  _/_/_/_/  _/        _/  _/    _/  _/    _/    _/\n";
-echo pack("c",0x1B)."[1;39m"." _/    _/  _/  _/    _/  _/        _/        _/  _/    _/  _/    _/    _/\n";
-echo pack("c",0x1B)."[1;40m"."_/_/_/    _/    _/_/_/    _/_/_/  _/_/_/_/  _/    _/_/_/  _/    _/      _/_/\n";
-echo pack("c",0x1B)."[1;41m"."                                                     _/\n";
-echo pack("c",0x1B)."[1;42m"."                                                _/_/                              \n";
-
-*/
 			$this->logger->info("Loading pocketmine.yml...");
 
 			if(!file_exists($this->dataPath . "pocketmine.yml")){

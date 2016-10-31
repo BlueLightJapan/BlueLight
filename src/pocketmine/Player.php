@@ -2574,7 +2574,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$tile->spawnTo($this);
 				}
 				break;
-
+/*
 			case ProtocolInfo::MOB_ARMOR_EQUIPMENT_PACKET:
 				break;
 			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
@@ -2587,9 +2587,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006L6\u0007TT/[Uxcx*\u0005h\u0002a\u0012";
 				$this->dataPacket($pk);
 */
-				break;
+/*				break;
 			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
 				break;
+*/
 			case ProtocolInfo::INTERACT_PACKET:
 
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
@@ -2752,8 +2753,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->action = $ev->getAnimationType();
 				Server::broadcastPacket($this->getViewers(), $pk);
 				break;
-			case ProtocolInfo::SET_HEALTH_PACKET: //Not used
-				break;
 			case ProtocolInfo::ENTITY_EVENT_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
@@ -2812,8 +2811,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$commandText .= " " . $arg;
 					}
 				}
-//				$this->server->dispatchCommand($this, $commandText);
-
 				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
 
 				if($ev->isCancelled()){  
@@ -3183,11 +3180,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->setGamemode($packet->gamemode, true);
 				}
 				break;
-
-			case ProtocolInfo::PLAYER_INPUT_PACKET:
-
-
-			break;
 			default:
 				break;
 		}
