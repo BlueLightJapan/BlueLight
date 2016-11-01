@@ -1,7 +1,7 @@
 ﻿#BlueLight for 0.16.x
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
-###Build Status [![Build Status](http://jenkins.haniokasai.com/buildStatus/icon?job=BlueLight-PMMP)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/ "Jenkins ")<img src= https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/>
+###Build Status [![Build Status](http://jenkins.haniokasai.com/buildStatus/icon?job=BlueLight-PMMP)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/ "Jenkins ")<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/"><img src= https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/></a>
 
 <a name="ENG"></a>
 BlueLight is server software for Minecraft: PocketEdition.<br>
