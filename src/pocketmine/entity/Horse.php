@@ -33,7 +33,7 @@ use pocketmine\network\protocol\EntityEventPacket;
 
 class Horse extends Living{
 
-	const NETWORK_ID = 90;//23
+	const NETWORK_ID = 23;
 
 	const DATA_HORSE_TYPE = 19;
 
