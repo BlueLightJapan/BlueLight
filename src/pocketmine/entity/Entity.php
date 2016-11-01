@@ -414,17 +414,6 @@ abstract class Entity extends Location implements Metadatable{
 		return $this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IMMOBILE, $value);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	public function setUnlink(Entity $entity){
 
 		$pk = new SetEntityLinkPacket();
@@ -441,12 +430,6 @@ abstract class Entity extends Location implements Metadatable{
 		}
 		return true;
 	}
-
-
-
-
-
-
 	public function setLink(Entity $entity){
 
 		$pk = new SetEntityLinkPacket();
@@ -463,21 +446,6 @@ abstract class Entity extends Location implements Metadatable{
 		}
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * @return Effect[]
