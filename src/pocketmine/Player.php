@@ -34,6 +34,8 @@ use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\FishingHook;
 use pocketmine\entity\Projectile;
+use pocketmine\entity\ThrownExpBottle;
+use pocketmine\entity\ThrownPotion;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -83,6 +85,8 @@ use pocketmine\inventory\ShapedRecipe;
 use pocketmine\inventory\ShapelessRecipe;
 use pocketmine\inventory\SimpleTransactionGroup;
 use pocketmine\item\Item;
+use pocketmine\item\Potion;
+
 use pocketmine\level\ChunkLoader;
 use pocketmine\level\format\FullChunk;
 use pocketmine\level\Level;
@@ -272,10 +276,25 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->eid = $this->getFishingHook()->getId();
 			$pk->event = EntityEventPacket::FISH_HOOK_POSITION;
 			$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+
+			$pk = new EntityEventPacket();
+			$pk->eid = $this->getFishingHook()->getId();
+			$pk->event = EntityEventPacket::FISH_HOOK_BUBBLE;
+			$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+
+			$pk = new EntityEventPacket();
+			$pk->eid = $this->getFishingHook()->getId();
+			$pk->event = EntityEventPacket::FISH_HOOK_HOOK;
+			$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+			$pk = new EntityEventPacket();
+			$pk->eid = $this->getFishingHook()->getId();
+			$pk->event = EntityEventPacket::FISH_HOOK_TEASE;
+			$this->server->broadcastPacket($this->level->getPlayers(), $pk);
 			return true;
 		}
 		return false;
 	}
+
 
 	public function unlinkHookFromPlayer(){
 		if($this->fishingHook instanceof FishingHook){
@@ -2317,6 +2336,79 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								$this->fishingHook->spawnToAll();
 							}
 						}
+					}elseif($item->getId() == Item::ENCHANTING_BOTTLE){
+						$nbt = new CompoundTag("", [
+							"Pos" => new ListTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new ListTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new ListTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+						]);
+
+						$f = 1.1;
+						$thrownExpBottle = new ThrownExpBottle($this->chunk, $nbt, $this);
+						$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply($f));
+						if($this->isSurvival()){
+							$item->setCount($item->getCount() - 1);
+							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+						}
+						if($thrownExpBottle instanceof Projectile){
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
+							if($projectileEv->isCancelled()){
+								$thrownExpBottle->kill();
+							}else{
+								$thrownExpBottle->spawnToAll();
+								$this->level->addSound(new LaunchSound($this), $this->getViewers());
+							}
+						}else{
+							$thrownExpBottle->spawnToAll();
+						}
+					}elseif($item->getId() == Item::SPLASH_POTION and $this->server->allowSplashPotion){
+						$nbt = new CompoundTag("", [
+							"Pos" => new ListTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new ListTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new ListTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+							"PotionId" => new ShortTag("PotionId", $item->getDamage()),
+						]);
+
+						$f = 1.1;
+						$thrownPotion = new ThrownPotion($this->chunk, $nbt, $this);
+						$thrownPotion->setMotion($thrownPotion->getMotion()->multiply($f));
+						if($this->isSurvival()){
+							$item->setCount($item->getCount() - 1);
+							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+						}
+						if($thrownPotion instanceof Projectile){
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownPotion));
+							if($projectileEv->isCancelled()){
+								$thrownPotion->kill();
+							}else{
+								$thrownPotion->spawnToAll();
+								$this->level->addSound(new LaunchSound($this), $this->getViewers());
+							}
+						}else{
+							$thrownPotion->spawnToAll();
+						}
 
 					}
 
@@ -2574,23 +2666,21 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$tile->spawnTo($this);
 				}
 				break;
-/*
 			case ProtocolInfo::MOB_ARMOR_EQUIPMENT_PACKET:
 				break;
 			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
-/*
+
 				$pk = new ResourcePackDataInfoPacket();
 				$pk->packageId = "5abdb963-4f3f-4d97-8482-88e2049ab149";
 				$pk->uk1 = 1048576;
 				$pk->uk2 = 1;
 				$pk->uk3 = 359901;
 				$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006L6\u0007TT/[Uxcx*\u0005h\u0002a\u0012";
-				$this->dataPacket($pk);
-*/
-/*				break;
+//				$this->dataPacket($pk);
+
+				break;
 			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
 				break;
-*/
 			case ProtocolInfo::INTERACT_PACKET:
 
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
@@ -2602,27 +2692,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$target = $this->level->getEntity($packet->target);
 
 				$cancelled = false;
-				if($target instanceof Horse){
-//					if($packet->action === 1){
-					if($packet->action === InteractPacket::ACTION_RIGHT_CLICK){
-						$pk = new SetEntityLinkPacket();
-						$pk->from = $target->getId();
-						$pk->to = $this->getId();
-						$pk->type = true;
-						$this->server()->broadcastPacket($this->level->getPlayers(), $pk);
-
-						$pk = new SetEntityLinkPacket();
-						$pk->from = $target->getId();
-						$pk->to = 0;
-						$pk->type = true;
-						$this->dataPacket($pk);
-
-						return;
-					}
-				}
 
 				switch($packet->action){
-					case InteractPacket::ACTION_LEFT_CLICK: //Attack
+					case InteractPacket::ACTION_RIGHT_CLICK:
+						if($target instanceof Horse){
+						$this->setLink($target);
+						}
+					break;
+					case InteractPacket::ACTION_LEFT_CLICK:
 						if($target instanceof Player and $this->server->getConfigBoolean("pvp", true) === false){
 							$cancelled = true;
 						}

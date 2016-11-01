@@ -32,6 +32,9 @@ use pocketmine\command\ConsoleCommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\command\SimpleCommandMap;
 use pocketmine\entity\Arrow;
+use pocketmine\entity\ThrownExpBottle;
+use pocketmine\entity\ThrownPotion;
+
 use pocketmine\entity\Bat;
 use pocketmine\entity\Blaze;
 use pocketmine\entity\Boat;
@@ -79,6 +82,7 @@ use pocketmine\entity\PrimedTNT;
 use pocketmine\entity\Snowball;
 use pocketmine\entity\Squid;
 use pocketmine\entity\Villager;
+use pocketmine\entity\XPOrb;
 use pocketmine\entity\Zombie;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
@@ -313,6 +317,9 @@ class Server{
 	public $expEnabled = false;
 	public $hungerHealth = 10;
 	public $hungerTimer = 80;
+	public $allowSplashPotion = true;
+
+
 	/**
 	 * @return string
 	 */
@@ -2588,6 +2595,10 @@ class Server{
 		Entity::registerEntity(WitherSkeleton::class);
 		Entity::registerEntity(Minecart::class);
 		Entity::registerEntity(Mooshroom::class);
+		Entity::registerEntity(ThrownPotion::class);
+		Entity::registerEntity(ThrownExpBottle::class);
+		Entity::registerEntity(XPOrb::class);
+
 	}
 
 	private function registerTiles(){
