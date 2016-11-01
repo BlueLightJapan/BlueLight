@@ -11,6 +11,6 @@ checkout:
     - tar -xf PHP7.tar.gz
     - wget https://raw.githubusercontent.com/ClearSkyTeam/ClearSky/php7/start.sh
     - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
-    - ./bin/php7/bin/php ci.php  || :
+    - bin/php7/bin/php ci.php
     - mv plugins/DevTools/*
     - cp -R ./target/nukkit-1.0-SNAPSHOT.jar $CIRCLE_ARTIFACTS
