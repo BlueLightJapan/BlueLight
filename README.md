@@ -1,5 +1,8 @@
 ﻿#BlueLight for 0.16.x
 ## Select Language: [English](#ENG) [日本語](#JPN)
+
+###Build Status [![Build Status](http://jenkins.haniokasai.com/buildStatus/icon?job=BlueLight-PMMP)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/ "Jenkins ")
+
 <a name="ENG"></a>
 BlueLight is server software for Minecraft: PocketEdition.<br>
 This software is based on **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**.<br>
