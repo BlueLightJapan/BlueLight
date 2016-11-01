@@ -13,7 +13,7 @@ fclose($pipes[0]);
 fclose($pipes[1]);
 fclose($pipes[2]);
 echo "\n\nReturn value: ". proc_close($server) ."\n";
-if(count(glob("plugins/DevTools/ClearSky*.phar")) === 0){
+if(count(glob("plugins/DevTools/*.phar")) === 0){
 	echo "No server phar created!\n";
 	exit(1);
 }else{
