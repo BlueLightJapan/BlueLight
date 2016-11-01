@@ -33,6 +33,7 @@ use pocketmine\level\generator\normal\biome\RiverBiome;
 use pocketmine\level\generator\normal\biome\SmallMountainsBiome;
 use pocketmine\level\generator\normal\biome\SwampBiome;
 use pocketmine\level\generator\normal\biome\TaigaBiome;
+use pocketmine\level\generator\normal\biome\MushroomIslandBiome;
 use pocketmine\level\generator\populator\Populator;
 use pocketmine\utils\Random;
 
@@ -51,12 +52,11 @@ abstract class Biome{
 
 	const ICE_PLAINS = 12;
 
+	const MUSHROOM_ISLAND = 14;
 
 	const SMALL_MOUNTAINS = 20;
 
-
 	const BIRCH_FOREST = 27;
-
 
 	const MAX_BIOMES = 256;
 
@@ -95,6 +95,7 @@ abstract class Biome{
 
 		self::register(self::ICE_PLAINS, new IcePlainsBiome());
 
+		self::register(self::MUSHROOM_ISLAND, new MushroomIslandBiome());
 
 		self::register(self::SMALL_MOUNTAINS, new SmallMountainsBiome());
 
