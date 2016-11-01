@@ -33,7 +33,7 @@ use pocketmine\network\protocol\EntityEventPacket;
 
 class Horse extends Living{
 
-	const NETWORK_ID = 23;
+	const NETWORK_ID = 90;//23
 
 	const DATA_HORSE_TYPE = 19;
 
@@ -71,8 +71,26 @@ class Horse extends Living{
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-		$pk->metadata = [
-		Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG,-1],
+
+@$flags |= 1 << 2;
+
+@$flags |= 1 << Entity::DATA_FLAG_ALWAYS_SHOW_NAMETAG;
+@$flags |= 1 << Entity::DATA_FLAG_SADDLED;
+
+$pk->metadata = [
+
+//Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
+Entity::DATA_LEAD_HOLDER => [Entity::DATA_TYPE_LONG,-1],
+
+
+
+		Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, 0],
+		Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],
+		Entity::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],
+		Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
+		Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1]
+
+
 		];
 		$player->dataPacket($pk);
 		parent::spawnTo($player);
