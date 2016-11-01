@@ -1,6 +1,7 @@
 <?php
 // import from clearsky/ci-test
 $time = time();
+system("echo \"server-port=988\" > server.properties");
 $server = proc_open(PHP_BINARY . " src/pocketmine/PocketMine.php --no-wizard --disable-readline", [
 	0 => ["pipe", "r"],
 	1 => ["pipe", "w"],
