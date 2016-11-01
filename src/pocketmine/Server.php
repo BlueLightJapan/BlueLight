@@ -67,6 +67,7 @@ use pocketmine\entity\ZombieHorse;
 use pocketmine\entity\Stray;
 use pocketmine\entity\WitherSkeleton;
 use pocketmine\entity\Mooshroom;
+use pocketmine\entity\Minecart;
 use pocketmine\entity\FishingHook;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
@@ -2585,7 +2586,7 @@ class Server{
 		Entity::registerEntity(ZombieHorse::class);
 		Entity::registerEntity(Stray::class);
 		Entity::registerEntity(WitherSkeleton::class);
-
+		Entity::registerEntity(Minecart::class);
 		Entity::registerEntity(Mooshroom::class);
 	}
 
