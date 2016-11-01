@@ -211,7 +211,7 @@ class PluginManager{
 								continue;
 							}
 
-							$compatible = false;
+							/*$compatible = false;
 							//Check multiple dependencies
 							foreach($description->getCompatibleApis() as $version){
 								//Format: majorVersion.minorVersion.patch
@@ -228,7 +228,7 @@ class PluginManager{
 
 								$compatible = true;
 								break;
-							}
+							}*/
 
 							$plugins[$name] = $file;
 
