@@ -57,6 +57,7 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\network\protocol\RemoveEntityPacket;
 use pocketmine\network\protocol\SetEntityDataPacket;
+use pocketmine\network\protocol\SetEntityLinkPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
@@ -338,6 +339,10 @@ abstract class Entity extends Location implements Metadatable{
 
 	}
 
+	public function setSize($size){//Int
+ 		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $size);
+	}
+
 	/**
 	 * @return string
 	 */
@@ -408,6 +413,71 @@ abstract class Entity extends Location implements Metadatable{
 	public function setImmobile($value = true) : bool{
 		return $this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IMMOBILE, $value);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+	public function setUnlink(Entity $entity){
+
+		$pk = new SetEntityLinkPacket();
+		$pk->from = $entity->getId();
+		$pk->to = $this->getId();
+		$pk->type = 3;
+		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+		if($this instanceof Player){
+			$pk = new SetEntityLinkPacket();
+			$pk->from = $entity->getId();
+			$pk->to = 0;
+			$pk->type = 3;
+			$this->dataPacket($pk);
+		}
+		return true;
+	}
+
+
+
+
+
+
+	public function setLink(Entity $entity){
+
+		$pk = new SetEntityLinkPacket();
+		$pk->from = $entity->getId();
+		$pk->to = $this->getId();
+		$pk->type = 2;
+		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+		if($this instanceof Player){
+			$pk = new SetEntityLinkPacket();
+			$pk->from = $entity->getId();
+			$pk->to = 0;
+			$pk->type = 2;
+			$this->dataPacket($pk);
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * @return Effect[]
