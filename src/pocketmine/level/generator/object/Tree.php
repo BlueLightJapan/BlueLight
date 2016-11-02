@@ -44,6 +44,9 @@ abstract class Tree{
 
 	public static function growTree(ChunkManager $level, $x, $y, $z, Random $random, $type = 0){
 		switch($type){
+			case Sapling::ACACIA:
+				$tree = new AcaciaTree();
+				break;
 			case Sapling::SPRUCE:
 				$tree = new SpruceTree();
 				break;
