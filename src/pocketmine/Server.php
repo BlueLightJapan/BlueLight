@@ -319,6 +319,7 @@ class Server{
 	public $hungerTimer = 80;
 	public $allowSplashPotion = true;
 	public $devtools = true;
+	public $crashdumps = true;
 
 	/**
 	 * @return string
@@ -381,6 +382,10 @@ class Server{
 	 */
 	public function getPluginPath(){
 		return $this->pluginPath;
+	}
+
+	public function getCrashPath(){
+		return $this->crashPath;
 	}
 
 	/**
@@ -1478,9 +1483,10 @@ class Server{
 			if(!file_exists($pluginPath)){
 				mkdir($pluginPath, 0777);
 			}
-
+			
 			$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
 			$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
+			$this->crashPath = $this->dataPath . "crashdumps/";
 
 			$this->console = new CommandReader();
 
@@ -1530,7 +1536,15 @@ class Server{
 			$this->memoryManager = new MemoryManager($this);
 
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion()]));
+			
 			$this->devtools = $this->getProperty("function.DevTools", true);
+			$this->crashdump = $this->getProperty("function.CrashDump", true);
+			
+			if($this->crashdump){
+				if(!file_exists($dataPath . "crashdumps/")){
+					mkdir($dataPath . "crashdumps/", 0777);
+				}
+			}
 			if($this->devtools){
 				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
 					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
@@ -2170,7 +2184,8 @@ class Server{
 		ini_set("memory_limit", -1); //Fix error dump not dumped on memory problems
 		$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.create"));
 		try{
-			$dump = new CrashDump($this);
+			if($this->crashdump)
+				$dump = new CrashDump($this);
 		}catch(\Throwable $e){
 			$this->logger->critical($this->getLanguage()->translateString("pocketmine.crash.error", $e->getMessage()));
 			return;
