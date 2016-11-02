@@ -9,9 +9,9 @@ This software is based on **[PocketMine-MP](https://github.com/PocketMine/Pocket
 Most of the original code was written by **PocketMine Team**.<br>
 If we quote the code from other software, it stated in the file.<br>
 <br>
-Help & Support : Src https://twitter.com/kametan0730<br>
-               : PHP7Binary https://twitter.com/haniokasai<br>
-
+Help & Support :</br>
+Src https://twitter.com/kametan0730<br>
+PHP7Binary https://twitter.com/haniokasai<br>
 <br>
 Download Phar : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
                 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
@@ -23,8 +23,9 @@ BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
 大半のコードは **PocketMine Team** によって書かれています<br>
 他のソフトからコードを引用する場合、ファイル内に明記します<br>
 <br>
-サポート : Src https://twitter.com/kametan0730</br>
-         : PHP7のbin https://twitter.com/haniokasai<br>
+サポート :</br>
+Src https://twitter.com/kametan0730</br>
+PHP7のbin https://twitter.com/haniokasai<br>
 <br>
 Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
                 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
