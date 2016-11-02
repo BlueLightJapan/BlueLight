@@ -10,7 +10,7 @@ Most of the original code was written by **PocketMine Team**.<br>
 Part of the code was written by **iTXTech**<br>
 If we quote the code from other software, it stated in the file.<br>
 <br>
-Help & Support :</br>
+Help & Support :<br>
 Src https://twitter.com/kametan0730<br>
 PHP7Binary https://twitter.com/haniokasai<br>
 <br>
@@ -22,7 +22,7 @@ Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
 このソフトウェアは **[PocketMine-MP](http://github.com/PocketMine/PocketMine-MP)** を基につくられています<br>
 大半のコードは **PocketMine Team** によって書かれています<br>
-一部のコードはGenisysから引用しており、 **iTXTech** によって書かれています
+一部のコードはGenisysから引用しており、 **iTXTech** によって書かれています<br>
 他のソフトからコードを引用する場合、ファイル内に明記します<br>
 <br>
 サポート :</br>
