@@ -318,7 +318,7 @@ class Server{
 	public $hungerHealth = 10;
 	public $hungerTimer = 80;
 	public $allowSplashPotion = true;
-
+	public $devtools = false;
 
 	/**
 	 * @return string
@@ -1531,10 +1531,11 @@ class Server{
 
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion()]));
 
-
-		if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
-			@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
-		}
+			if($this->devtools){
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
+				}
+			}
 
 			if(($poolSize = $this->getProperty("settings.async-workers", "auto")) === "auto"){
 				$poolSize = ServerScheduler::$WORKERS;
