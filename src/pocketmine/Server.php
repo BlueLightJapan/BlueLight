@@ -318,7 +318,7 @@ class Server{
 	public $hungerHealth = 10;
 	public $hungerTimer = 80;
 	public $allowSplashPotion = true;
-	public $devtools = false;
+	public $devtools = true;
 
 	/**
 	 * @return string
