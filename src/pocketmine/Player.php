@@ -2071,8 +2071,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				if(!$valid or $this->iusername === "rcon" or $this->iusername === "console"){
 					$this->close("", "disconnectionScreen.invalidName");
-
 					break;
+				}
+
+				if($this->getServer()->getProperty("function.SteveKick", false)){
+					if($this->iusername === "steve"){
+						$this->close("", "disconnectionScreen.invalidName");
+						break;
+					}
 				}
 
 				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
@@ -2675,7 +2681,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->uk1 = 1048576;
 				$pk->uk2 = 1;
 				$pk->uk3 = 359901;
-				$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006L6\u0007TT/[Uxcx*\u0005h\u0002a\u0012";
+				$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006?L6\u0007TT/[Ux?cx*\u0005h\u0002a\u0012";
 //				$this->dataPacket($pk);
 
 				break;
