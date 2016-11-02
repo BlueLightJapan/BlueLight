@@ -183,3 +183,5 @@ worlds:
 
 function:
  DevTools: true
+ CrashDump: true
+ SteveKick: false
