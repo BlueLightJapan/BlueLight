@@ -224,8 +224,12 @@ class Effect{
 		switch($this->id){
 			case Effect::POISON:
 				if($entity->getHealth() > 1){
-					$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
-					$entity->attack($ev->getFinalDamage(), $ev);
+					if($entity instanceof Player){
+						if($entity->isSurvival()){
+							$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
+							$entity->attack($ev->getFinalDamage(), $ev);
+						}
+					}
 				}
 				break;
 
