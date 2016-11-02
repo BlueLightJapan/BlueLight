@@ -64,6 +64,9 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
+use pocketmine\command\defaults\ExtractPluginCommand;
+use pocketmine\command\defaults\MakePluginCommand;
+
 class SimpleCommandMap implements CommandMap{
 
 	/**
@@ -116,6 +119,9 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new TimeCommand("time"));
 		$this->register("pocketmine", new TimingsCommand("timings"));
 		$this->register("pocketmine", new ReloadCommand("reload"));
+
+		$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
+		$this->register("pocketmine", new MakePluginCommand("makeplugin"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("pocketmine", new StatusCommand("status"));
