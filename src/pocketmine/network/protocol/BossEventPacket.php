@@ -18,31 +18,40 @@
  * 
 */
 
+
 namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
 
 
-class ResourcePackDataInfoPacket extends DataPacket{
-	const NETWORK_ID = Info::RESOURCE_PACK_DATA_INFO_PACKET;
+class BossEventPacket extends DataPacket{
+	const NETWORK_ID = Info::BOSS_EVENT_PACKET;
 
-	public $packageId;
-	public $uk1;
-	public $uk2;
-	public $uk3;
-	public $uk4;
+	public $eid;
+	public $int1;
+	public $int2;
+	public $int3;
+	public $float1;
+	public $float2;
+	public $short;
+	public $string1;
+	public $string2;
 
 	public function decode(){
-
 	}
 
 	public function encode(){
 		$this->reset();
-		$this->putString($this->packageId);
-		$this->putUnsignedVarInt($this->uk1);
-		$this->putUnsignedVarInt($this->uk2);
-		$this->putInt($this->uk3);
-		$this->putString($this->uk4);
+		$this->putEntityId($this->eid);
+		$this->putVarInt($this->int1);
+		$this->putEntityId($this->eid);
+		$this->putString($this->string1);
+ 		$this->putLFloat($this->float1);
+		$this->putSignedShort($this->short);
+		$this->putVarInt($this->int2);
+		$this->putVarInt($this->int3);
+ 		$this->putLFloat($this->float2);
+		$this->putString($this->string2);
 
 	}
 
