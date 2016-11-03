@@ -367,7 +367,31 @@ class Level implements ChunkManager, Metadatable{
 		$this->weather->setCanCalculate(true);
 
 	}
+	public function spawnLightning(Vector3 $pos) : Lightning{
+		$nbt = new CompoundTag("", [
+			"Pos" => new ListTag("Pos", [
+				new DoubleTag("", $pos->getX()),
+				new DoubleTag("", $pos->getY()),
+				new DoubleTag("", $pos->getZ())
+			]),
+			"Motion" => new ListTag("Motion", [
+				new DoubleTag("", 0),
+				new DoubleTag("", 0),
+				new DoubleTag("", 0)
+			]),
+			"Rotation" => new ListTag("Rotation", [
+				new FloatTag("", 0),
+				new FloatTag("", 0)
+			]),
+		]);
 
+		$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
+
+		$lightning = new Lightning($chunk, $nbt);
+		$lightning->spawnToAll();
+
+		return $lightning;
+	}
 	public function spawnXPOrb(Vector3 $pos, int $exp = 1){
 		if($exp > 0){
 			$nbt = new CompoundTag("", [
