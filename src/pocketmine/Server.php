@@ -315,6 +315,8 @@ class Server{
 	public $weatherEnabled = false;
  	public $weatherRandomDurationMin = 6000;
  	public $weatherRandomDurationMax = 12000;
+	public $lightningTime = 200;
+	public $lightningFire = false;
 	public $foodEnabled = false;
 	public $expEnabled = false;
 	public $hungerHealth = 10;
