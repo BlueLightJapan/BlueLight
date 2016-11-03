@@ -1537,8 +1537,12 @@ class Server{
 
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion()]));
 			
-			$this->devtools = $this->getProperty("function.DevTools", true);
-			$this->crashdump = $this->getProperty("function.CrashDump", true);
+			$this->devtools = $this->getProperty("BlueLight.DevTools", true);
+			$this->crashdump = $this->getProperty("BlueLight.CrashDump", true);
+			$this->foodEnabled = $this->getProperty("BlueLight.foodEnabled", true);
+			$this->allowSplashPotion = $this->getProperty("BlueLight.allowSplashPotion", true);
+			$this->expEnabled = $this->getProperty("BlueLight.expEnabled", true);
+			$this->weatherEnabled = $this->getProperty("BlueLight.weatherEnabled", true);
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
