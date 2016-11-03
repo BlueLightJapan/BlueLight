@@ -110,7 +110,7 @@ use pocketmine\tile\Tile;
 use pocketmine\utils\LevelException;
 use pocketmine\utils\Random;
 use pocketmine\utils\ReversePriorityQueue;
-
+use pocketmine\entity\Lightning;
 use pocketmine\level\weather\Weather;
 use pocketmine\level\weather\WeatherManager;
 
