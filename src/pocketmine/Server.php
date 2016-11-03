@@ -313,6 +313,8 @@ class Server{
 	private $levelDefault = null;
 
 	public $weatherEnabled = false;
+ 	public $weatherRandomDurationMin = 6000;
+ 	public $weatherRandomDurationMax = 12000;
 	public $foodEnabled = false;
 	public $expEnabled = false;
 	public $hungerHealth = 10;

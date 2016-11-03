@@ -259,6 +259,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/** @var FishingHook */
 	public $fishingHook = null;
 
+	public $weatherData = [0, 0, 0];
+
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -806,6 +808,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->time = $this->level->getTime();
 			$pk->started = $this->level->stopTime == false;
 			$this->dataPacket($pk);
+
+			$targetLevel->getWeather()->sendWeather($this);
+
+
 		}
 	}
 
@@ -961,6 +967,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->teleport($pos);
 
 		$this->spawnToAll();
+
+		$this->level->getWeather()->sendWeather($this);
 
 		if($this->server->expEnabled){
 			$this->updateExperience();
@@ -1977,6 +1985,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->isCreative()){
 			$this->inventory->sendCreativeContents();
 		}
+		$this->level->getWeather()->sendWeather($this);
 
 		$this->forceMovement = $this->teleportPosition = $this->getPosition();
 
