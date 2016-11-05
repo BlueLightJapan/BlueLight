@@ -109,28 +109,14 @@ class CrashDump{
 	private function extraData(){
 		global $arguments;
 
-		if($this->server->getProperty("auto-report.send-settings", true) !== false){
-			$this->data["parameters"] = (array) $arguments;
-			$this->data["server.properties"] = @file_get_contents($this->server->getDataPath() . "server.properties");
-			$this->data["server.properties"] = preg_replace("#^rcon\\.password=(.*)$#m", "rcon.password=******", $this->data["server.properties"]);
-			$this->data["pocketmine.yml"] = @file_get_contents($this->server->getDataPath() . "pocketmine.yml");
-		}else{
-			$this->data["pocketmine.yml"] = "";
-			$this->data["server.properties"] = "";
-			$this->data["parameters"] = [];
-		}
+		$this->data["pocketmine.yml"] = "";
+		$this->data["server.properties"] = "";
+		$this->data["parameters"] = [];
 		$extensions = [];
 		foreach(get_loaded_extensions() as $ext){
 			$extensions[$ext] = phpversion($ext);
 		}
 		$this->data["extensions"] = $extensions;
-
-		if($this->server->getProperty("auto-report.send-phpinfo", true) !== false){
-			ob_start();
-			phpinfo();
-			$this->data["phpinfo"] = ob_get_contents();
-			ob_end_clean();
-		}
 	}
 
 	private function baseCrash(){
@@ -201,14 +187,6 @@ class CrashDump{
 		$this->addLine();
 		$this->addLine("Code:");
 		$this->data["code"] = [];
-
-		if($this->server->getProperty("auto-report.send-code", true) !== false){
-			$file = @file($error["fullFile"], FILE_IGNORE_NEW_LINES);
-			for($l = max(0, $error["line"] - 10); $l < $error["line"] + 10; ++$l){
-				$this->addLine("[" . ($l + 1) . "] " . @$file[$l]);
-				$this->data["code"][$l + 1] = @$file[$l];
-			}
-		}
 
 		$this->addLine();
 		$this->addLine("Backtrace:");

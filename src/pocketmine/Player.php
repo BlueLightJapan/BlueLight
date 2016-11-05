@@ -979,11 +979,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		else $this->setFood(20);
 
 
-
-		if($this->server->getUpdater()->hasUpdate() and $this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
-			$this->server->getUpdater()->showPlayerUpdate($this);
-		}
-
 		if($this->getHealth() <= 0){
 			$pk = new RespawnPacket();
 			$pos = $this->getSpawn();
