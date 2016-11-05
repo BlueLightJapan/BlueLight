@@ -34,8 +34,8 @@ class CameraPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityId($this->eid);
-		$this->putEntityId($this->eid);
+		$this->putVarInt($this->eid);
+		$this->putVarInt($this->eid);
 
 	}
 

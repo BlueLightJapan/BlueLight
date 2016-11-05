@@ -27,8 +27,12 @@ namespace pocketmine\network\protocol;
 class BossEventPacket extends DataPacket{
 	const NETWORK_ID = Info::BOSS_EVENT_PACKET;
 
+	const ADD = 0;
+	const UPDATE = 1;
+	const REMOVE = 2;
+
 	public $eid;
-	public $int1;
+	public $type;
 	public $int2;
 	public $int3;
 	public $float1;
@@ -42,14 +46,16 @@ class BossEventPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityId($this->eid);
-		$this->putVarInt($this->int1);
-		$this->putEntityId($this->eid);
+
+		$this->putVarInt($this->eid);
+		$this->putUnsignedVarInt($this->type);
+
+		///////////UNKNOWN///////////
 		$this->putString($this->string1);
  		$this->putLFloat($this->float1);
-		$this->putSignedShort($this->short);
-		$this->putVarInt($this->int2);
-		$this->putVarInt($this->int3);
+		$this->putLShort($this->short);
+		$this->putUnsignedVarInt($this->int2);
+		$this->putUnsignedVarInt($this->int3);
  		$this->putLFloat($this->float2);
 		$this->putString($this->string2);
 
