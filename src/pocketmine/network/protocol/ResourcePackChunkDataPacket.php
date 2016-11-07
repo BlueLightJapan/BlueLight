@@ -18,21 +18,17 @@
  * 
 */
 
+
 namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
 
-
-class RequestChunkRadiusPacket extends DataPacket{
-	const NETWORK_ID = Info::REQUEST_CHUNK_RADIUS_PACKET;
-
-	public $radius;
+class ResourcePackChunkDataPacket extends DataPacket{
+	const NETWORK_ID = Info::RESOURCE_PACK_CHUNK_DATA_PACKET;
 
 	public function decode(){
-		$this->radius = $this->getVarInt();
 	}
 
 	public function encode(){
 	}
-
 }

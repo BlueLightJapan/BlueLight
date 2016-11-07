@@ -23,16 +23,18 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 
-class RequestChunkRadiusPacket extends DataPacket{
-	const NETWORK_ID = Info::REQUEST_CHUNK_RADIUS_PACKET;
+class RiderJumpPcket extends DataPacket{
+	const NETWORK_ID = Info::RIDER_JUMP_PACKET;
 
-	public $radius;
+	public $int;
 
 	public function decode(){
-		$this->radius = $this->getVarInt();
+		$this->int = $this->getVarInt();
 	}
 
 	public function encode(){
+		$this->reset();
+		$this->putVarInt($this->int);
 	}
 
 }
