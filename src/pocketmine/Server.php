@@ -84,6 +84,7 @@ use pocketmine\entity\Squid;
 use pocketmine\entity\Villager;
 use pocketmine\entity\XPOrb;
 use pocketmine\entity\Zombie;
+use pocketmine\entity\Lightning;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
 use pocketmine\event\level\LevelLoadEvent;
@@ -142,6 +143,7 @@ use pocketmine\plugin\PluginManager;
 use pocketmine\plugin\ScriptPluginLoader;
 use pocketmine\plugin\FolderPluginLoader;
 use pocketmine\scheduler\FileWriteTask;
+use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
 use pocketmine\tile\Chest;
 use pocketmine\tile\EnchantTable;
@@ -150,6 +152,7 @@ use pocketmine\tile\Furnace;
 use pocketmine\tile\Sign;
 use pocketmine\tile\Skull;
 use pocketmine\tile\Tile;
+use pocketmine\updater\AutoUpdater;
 use pocketmine\utils\Binary;
 use pocketmine\utils\Config;
 use pocketmine\utils\LevelException;
@@ -195,6 +198,9 @@ class Server{
 
 	private $profilingTickRate = 20;
 
+	/** @var AutoUpdater */
+	private $updater = null;
+
 	/** @var ServerScheduler */
 	private $scheduler = null;
 
@@ -209,6 +215,8 @@ class Server{
 	private $useAverage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	private $maxTick = 20;
 	private $maxUse = 0;
+
+	private $sendUsageTicker = 0;
 
 	private $dispatchSignals = false;
 
@@ -631,6 +639,12 @@ class Server{
 		return $this->levelMetadata;
 	}
 
+	/**
+	 * @return AutoUpdater
+	 */
+	public function getUpdater(){
+		return $this->updater;
+	}
 
 	/**
 	 * @return PluginManager
@@ -1662,6 +1676,8 @@ class Server{
 
 			$this->pluginManager->loadPlugins($this->pluginPath);
 
+			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "www.pocketmine.net"));
+
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
 			LevelProviderManager::addProvider($this, Anvil::class);
@@ -2016,6 +2032,9 @@ class Server{
 		}
 
 		try{
+			if(!$this->isRunning()){
+				$this->sendUsage(SendUsageTask::TYPE_CLOSE);
+			}
 
 			$this->hasStopped = true;
 
@@ -2084,6 +2103,11 @@ class Server{
 
 		foreach($this->getIPBans()->getEntries() as $entry){
 			$this->network->blockAddress($entry->getName(), -1);
+		}
+
+		if($this->getProperty("settings.send-usage", true)){
+			$this->sendUsageTicker = 6000;
+			$this->sendUsage(SendUsageTask::TYPE_OPEN);
 		}
 
 
@@ -2160,6 +2184,9 @@ class Server{
 		if($this->isRunning === false){
 			return;
 		}
+		if($this->sendUsageTicker > 0){
+			$this->sendUsage(SendUsageTask::TYPE_CLOSE);
+		}
 		$this->hasStopped = false;
 
 		ini_set("error_reporting", 0);
@@ -2174,6 +2201,38 @@ class Server{
 		}
 
 		$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.submit", [$dump->getPath()]));
+
+
+		if($this->getProperty("auto-report.enabled", true) !== false){
+			$report = true;
+			$plugin = $dump->getData()["plugin"];
+			if(is_string($plugin)){
+				$p = $this->pluginManager->getPlugin($plugin);
+				if($p instanceof Plugin and !($p->getPluginLoader() instanceof PharPluginLoader)){
+					$report = false;
+				}
+			}elseif(\Phar::running(true) == ""){
+				$report = false;
+			}
+			if($dump->getData()["error"]["type"] === "E_PARSE" or $dump->getData()["error"]["type"] === "E_COMPILE_ERROR"){
+				$report = false;
+			}
+
+			if($report){
+				$reply = Utils::postURL("http://" . $this->getProperty("auto-report.host", "crash.pocketmine.net") . "/submit/api", [
+					"report" => "yes",
+					"name" => $this->getName() . " " . $this->getPocketMineVersion(),
+					"email" => "crash@pocketmine.net",
+					"reportPaste" => base64_encode($dump->getEncodedData())
+				]);
+
+				if(($data = json_decode($reply)) !== false and isset($data->crashId)){
+					$reportId = $data->crashId;
+					$reportUrl = $data->crashUrl;
+					$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.archive", [$reportUrl, $reportId]));
+				}
+			}
+		}
 
 		//$this->checkMemory();
 		//$dump .= "Memory Usage Tracking: \r\n" . chunk_split(base64_encode(gzdeflate(implode(";", $this->memoryStats), 9))) . "\r\n";
@@ -2203,8 +2262,11 @@ class Server{
 		}
 	}
 
-	public function onPlayerLogin(Player $player){		
-		$this->uniquePlayers[$player->getRawUniqueId()] = $player->getRawUniqueId();
+	public function onPlayerLogin(Player $player){
+		if($this->sendUsageTicker > 0){
+			$this->uniquePlayers[$player->getRawUniqueId()] = $player->getRawUniqueId();
+		}
+
 		$this->sendFullPlayerListData($player);
 		$this->sendRecipeList($player);
 	}
@@ -2340,6 +2402,11 @@ class Server{
 		}
 	}
 
+	public function sendUsage($type = SendUsageTask::TYPE_STATUS){
+		$this->scheduler->scheduleAsyncTask(new SendUsageTask($this, $type, $this->uniquePlayers));
+		$this->uniquePlayers = [];
+	}
+
 
 	/**
 	 * @return BaseLang
@@ -2458,6 +2525,10 @@ class Server{
 			$this->doAutoSave();
 		}
 
+		if($this->sendUsageTicker > 0 and --$this->sendUsageTicker === 0){
+			$this->sendUsageTicker = 6000;
+			$this->sendUsage(SendUsageTask::TYPE_STATUS);
+		}
 
 		if(($this->tickCounter % 100) === 0){
 			foreach($this->levels as $level){
@@ -2557,6 +2628,8 @@ class Server{
 		Entity::registerEntity(ThrownPotion::class);
 		Entity::registerEntity(ThrownExpBottle::class);
 		Entity::registerEntity(XPOrb::class);
+		Entity::registerEntity(Lightning::class);
+
 
 	}
 
