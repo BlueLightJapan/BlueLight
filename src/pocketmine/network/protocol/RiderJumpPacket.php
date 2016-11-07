@@ -23,7 +23,7 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 
-class RiderJumpPcket extends DataPacket{
+class RiderJumpPacket extends DataPacket{
 	const NETWORK_ID = Info::RIDER_JUMP_PACKET;
 
 	public $int;
