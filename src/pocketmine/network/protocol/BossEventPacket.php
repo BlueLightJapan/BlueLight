@@ -33,6 +33,7 @@ class BossEventPacket extends DataPacket{
 
 	public $eid;
 	public $type;
+
 	public $int2;
 	public $int3;
 	public $float1;
@@ -49,6 +50,8 @@ class BossEventPacket extends DataPacket{
 
 		$this->putVarInt($this->eid);
 		$this->putUnsignedVarInt($this->type);
+
+		$this->putUnsignedVarInt(3);
 
 		///////////UNKNOWN///////////
 		$this->putString($this->string1);
