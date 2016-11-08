@@ -143,7 +143,6 @@ use pocketmine\plugin\PluginManager;
 use pocketmine\plugin\ScriptPluginLoader;
 use pocketmine\plugin\FolderPluginLoader;
 use pocketmine\scheduler\FileWriteTask;
-use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
 use pocketmine\tile\Chest;
 use pocketmine\tile\EnchantTable;
@@ -212,7 +211,7 @@ class Server{
 	private $maxTick = 20;
 	private $maxUse = 0;
 
-	private $sendUsageTicker = 0;
+	
 
 	private $dispatchSignals = false;
 
@@ -2020,9 +2019,6 @@ class Server{
 		}
 
 		try{
-			if(!$this->isRunning()){
-				$this->sendUsage(SendUsageTask::TYPE_CLOSE);
-			}
 
 			$this->hasStopped = true;
 
@@ -2091,11 +2087,6 @@ class Server{
 
 		foreach($this->getIPBans()->getEntries() as $entry){
 			$this->network->blockAddress($entry->getName(), -1);
-		}
-
-		if($this->getProperty("settings.send-usage", true)){
-			$this->sendUsageTicker = 6000;
-			$this->sendUsage(SendUsageTask::TYPE_OPEN);
 		}
 
 
@@ -2172,9 +2163,7 @@ class Server{
 		if($this->isRunning === false){
 			return;
 		}
-		if($this->sendUsageTicker > 0){
-			$this->sendUsage(SendUsageTask::TYPE_CLOSE);
-		}
+	
 		$this->hasStopped = false;
 
 		ini_set("error_reporting", 0);
@@ -2251,9 +2240,6 @@ class Server{
 	}
 
 	public function onPlayerLogin(Player $player){
-		if($this->sendUsageTicker > 0){
-			$this->uniquePlayers[$player->getRawUniqueId()] = $player->getRawUniqueId();
-		}
 
 		$this->sendFullPlayerListData($player);
 		$this->sendRecipeList($player);
@@ -2390,10 +2376,6 @@ class Server{
 		}
 	}
 
-	public function sendUsage($type = SendUsageTask::TYPE_STATUS){
-		$this->scheduler->scheduleAsyncTask(new SendUsageTask($this, $type, $this->uniquePlayers));
-		$this->uniquePlayers = [];
-	}
 
 
 	/**
@@ -2513,10 +2495,7 @@ class Server{
 			$this->doAutoSave();
 		}
 
-		if($this->sendUsageTicker > 0 and --$this->sendUsageTicker === 0){
-			$this->sendUsageTicker = 6000;
-			$this->sendUsage(SendUsageTask::TYPE_STATUS);
-		}
+		
 
 		if(($this->tickCounter % 100) === 0){
 			foreach($this->levels as $level){
