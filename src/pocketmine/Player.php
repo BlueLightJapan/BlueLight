@@ -586,9 +586,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->server->removeOp($this->getName());
 		}
 
-		$this->recalculatePermissions();
+//		$this->recalculatePermissions();
 		$this->sendSettings();
-		$this->sendCommandData();
 	}
 
 	/**
@@ -643,6 +642,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
 			$this->server->getPluginManager()->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this);
 		}
+
+		$this->sendCommandData();
+
 	}
 
 	/**
@@ -652,7 +654,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return $this->perm->getEffectivePermissions();
 	}
 
-	public function sendCommandData(){	
+	public function sendCommandData(){
 		$pk = new AvailableCommandsPacket();
 		$data = new \stdClass();
 		$count = 0;
@@ -1899,7 +1901,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->achievements[$achievement->getName()] = $achievement->getValue() > 0 ? true : false;
 		}
 
-		$nbt->lastPlayed = new LongTag("lastPlayed", floor(microtime(true) * 1000));
+		$nbt->lastPlayed = new LongTag("lastPlayed", time());
 		if($this->server->getAutoSave()){
 			$this->server->saveOfflinePlayerData($this->username, $nbt, true);
 		}
@@ -2105,6 +2107,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
+				if($this->teleportPosition !== null){
+					break;
+				}
 
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
@@ -2114,8 +2119,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->forceMovement = new Vector3($this->x, $this->y, $this->z);
 				}
 
-				if($this->teleportPosition !== null or ($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert))){
-					$this->sendPosition($this->teleportPosition === null ? $this->forceMovement : $this->teleportPosition, $packet->yaw, $packet->pitch);
+				if($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert)){
+					$this->sendPosition($this->forceMovement, $packet->yaw, $packet->pitch);
 				}else{
 					$packet->yaw %= 360;
 					$packet->pitch %= 360;
@@ -3484,7 +3489,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 
 			$this->namedtag["playerGameType"] = $this->gamemode;
-			$this->namedtag["lastPlayed"] = new LongTag("lastPlayed", time());
+			$this->namedtag["lastPlayed"] = new LongTag("lastPlayed", floor(microtime(true) * 1000));
 			$this->namedtag["Hunger"] = new ShortTag("Hunger", $this->food);
 			$this->namedtag["Health"] = new ShortTag("Health", $this->getHealth());
 			$this->namedtag["MaxHealth"] = new ShortTag("MaxHealth", $this->getMaxHealth());

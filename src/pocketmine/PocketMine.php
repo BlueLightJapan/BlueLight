@@ -71,13 +71,14 @@ namespace pocketmine {
 	use pocketmine\utils\Terminal;
 	use pocketmine\utils\Utils;
 	use pocketmine\wizard\Installer;
+	use raklib\RakLib;
 
 	const VERSION = "1.8dev";
 	const API_VERSION = "2.0.0";
 	const CODENAME = "BlueLight";
 	const MINECRAFT_VERSION = "v0.16.0 alpha";
 	const MINECRAFT_VERSION_NETWORK = "0.16.0";
-	const BLUELIGHT_VERSION = "1.0.2";
+	const BLUELIGHT_VERSION = "1.0.3";
 
 	/*
 	 * Startup code. Do not look at it, it may harm you.
@@ -105,6 +106,11 @@ namespace pocketmine {
 	}
 
 	if(!class_exists("ClassLoader", false)){
+		if(!is_file(\pocketmine\PATH . "src/spl/ClassLoader.php")){
+			echo "[CRITICAL] Unable to find the PocketMine-SPL library." . PHP_EOL;
+			echo "[CRITICAL] Please use provided builds or clone the repository recursively." . PHP_EOL;
+			exit(1);
+		}
 		require_once(\pocketmine\PATH . "src/spl/ClassLoader.php");
 		require_once(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
 		require_once(\pocketmine\PATH . "src/pocketmine/CompatibleClassLoader.php");
@@ -115,6 +121,14 @@ namespace pocketmine {
 	$autoloader->addPath(\pocketmine\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
 	$autoloader->register(true);
 
+	try{
+		if(!class_exists(RakLib::class)){
+			throw new \Exception;
+		}
+	}catch(\Exception $e){
+		echo "[CRITICAL] Unable to find the RakLib library." . PHP_EOL;
+		exit(1);
+	}
 
 	set_time_limit(0); //Who set it to 30 seconds?!?!
 
