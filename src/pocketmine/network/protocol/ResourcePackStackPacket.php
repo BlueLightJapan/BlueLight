@@ -26,6 +26,13 @@ namespace pocketmine\network\protocol;
 
 class ResourcePackStackPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_STACK_PACKET;
+	public $bool;
+	public $short1;
+	public $string1;
+	public $string2;
+	public $short2;
+	public $string3;
+	public $string4;
 
 	public function decode(){
 
@@ -33,6 +40,12 @@ class ResourcePackStackPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-
+		$this->putBool($this->bool);
+		$this->putShort($this->short1);
+		$this->putString($this->string1);
+		$this->putString($this->string2);
+		$this->putShort($this->short2);
+		$this->putString($this->string3);
+		$this->putString($this->string4);
 	}
 }

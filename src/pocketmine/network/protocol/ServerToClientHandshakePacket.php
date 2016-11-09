@@ -27,12 +27,22 @@ namespace pocketmine\network\protocol;
 class ServerToClientHandshakePacket extends DataPacket{
 	const NETWORK_ID = Info::SERVER_TO_CLIENT_HANDSHAKE_PACKET;
 
+	public $string1;
+	public $string2;
+
 	public function decode(){
 
 	}
 
 	public function encode(){
 		$this->reset();
+		$this->putString($this->string1);
+		$this->putString($this->string2);
+
+
+
+
+
 
 	}
 

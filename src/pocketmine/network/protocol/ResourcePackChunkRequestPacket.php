@@ -18,7 +18,6 @@
  * 
 */
 
-
 namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>

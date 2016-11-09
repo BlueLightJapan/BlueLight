@@ -41,7 +41,7 @@ class ResourcePackDataInfoPacket extends DataPacket{
 		$this->putString($this->packageId);
 		$this->putUnsignedVarInt($this->uk1);
 		$this->putUnsignedVarInt($this->uk2);
-		$this->putEntityId($this->uk3);
+		$this->putLong($this->uk3);
 		$this->putString($this->uk4);
 
 	}
