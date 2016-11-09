@@ -13,6 +13,7 @@ If we quote the code from other software, it stated in the file.<br>
 Help & Support :<br>
 Src https://twitter.com/kametan0730<br>
 PHP7Binary https://twitter.com/haniokasai<br>
+APP https://twitter.com/haniokasai<br>
 <br>
 Download Phar : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
@@ -28,6 +29,7 @@ BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
 サポート :</br>
 Src https://twitter.com/kametan0730</br>
 PHP7のbin https://twitter.com/haniokasai<br>
+アプリ https://twitter.com/haniokasai<br>
 <br>
 Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
