@@ -31,6 +31,7 @@ class MainLogger extends \AttachableThreadedLogger{
 	protected $shutdown;
 	protected $logDebug;
 	private $logResource;
+	private $mode = 0;
 	/** @var MainLogger */
 	public static $logger = null;
 
@@ -57,6 +58,11 @@ class MainLogger extends \AttachableThreadedLogger{
 	 */
 	public static function getLogger(){
 		return static::$logger;
+	}
+
+	public function setMode($mode){
+		$this->mode = $mode;
+		if($mode === 1)$this->alert("SMART LOGGER ENABLE");
 	}
 
 	public function emergency($message){
@@ -189,7 +195,12 @@ class MainLogger extends \AttachableThreadedLogger{
 			$threadName = (new \ReflectionClass($thread))->getShortName() . " thread";
 		}
 
-		$message = TextFormat::toANSI(TextFormat::AQUA . "[" . date("H:i:s", $now) . "] " . TextFormat::RESET . $color . "[" . $threadName . "/" . $prefix . "]:" . " " . $message . TextFormat::RESET);
+		if($this->mode == 1)
+		{
+			$message = TextFormat::toANSI(TextFormat::GREEN . date("H:i:s", $now) . " " . TextFormat::RESET . TextFormat::BLUE .">>" . $prefix . " " . $color . $message . TextFormat::RESET);
+		}else{
+			$message = TextFormat::toANSI(TextFormat::AQUA . "[" . date("H:i:s", $now) . "] " . TextFormat::RESET . $color . "[" . $threadName . "/" . $prefix . "]:" . " " . $message . TextFormat::RESET);
+		}$message = TextFormat::toANSI(TextFormat::AQUA . "[" . date("H:i:s", $now) . "] " . TextFormat::RESET . $color . "[" . $threadName . "/" . $prefix . "]:" . " " . $message . TextFormat::RESET);
 		$cleanMessage = TextFormat::clean($message);
 
 		if(!Terminal::hasFormattingCodes()){

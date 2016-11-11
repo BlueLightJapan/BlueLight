@@ -1475,6 +1475,7 @@ class Server{
 			$this->allowSplashPotion = $this->getProperty("BlueLight.allowSplashPotion", true);
 			$this->expEnabled = $this->getProperty("BlueLight.expEnabled", true);
 			$this->weatherEnabled = $this->getProperty("BlueLight.weatherEnabled", true);
+			$this->logger->setMode($this->getProperty("BlueLight.smartlogger", 0));
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
