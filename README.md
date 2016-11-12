@@ -15,7 +15,8 @@ Src https://twitter.com/kametan0730<br>
 PHP7Binary https://twitter.com/haniokasai<br>
 APP https://twitter.com/haniokasai<br>
 <br>
-Download Phar : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
+Download App : GooglePlay https://play.google.com/store/apps/details?id=com.haniokasai.app.pmmp_srv</br>
+Download Phar : Jenkins  http://jenkins.haniokasai.com/job/BlueLight-PMMP<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
 Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 <br>
@@ -31,6 +32,7 @@ Src https://twitter.com/kametan0730</br>
 PHP7のbin https://twitter.com/haniokasai<br>
 アプリ https://twitter.com/haniokasai<br>
 <br>
+アプリをダウンロード : GooglePlay https://play.google.com/store/apps/details?id=com.haniokasai.app.pmmp_srv</br>
 Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
 便利な詰め合わせ : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
