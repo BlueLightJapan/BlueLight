@@ -47,7 +47,8 @@ class Sponge extends Solid{
 			for ($yy = -$range; $yy <= $range; $yy++){
 				for ($zz = -$range; $zz <= $range; $zz++){
 					$block = $this->getLevel()->getBlock(new Vector3($this->x + $xx, $this->y + $yy, $this->z + $zz));
-					if ($block->getId() === Block::WATER) $this->getLevel()->setBlock($block, Block::get(Block::AIR), true, true);
+					if ($block->getId() === 8) $this->getLevel()->setBlock($block, Block::get(Block::AIR), true, true);
+					if ($block->getId() === 9) $this->getLevel()->setBlock($block, Block::get(Block::AIR), true, true);
 				}
 			}
 		}
@@ -62,13 +63,7 @@ class Sponge extends Solid{
 				$blockSouth = $this->getSide(Vector3::SIDE_SOUTH)->getId();
 				$blockEast = $this->getSide(Vector3::SIDE_EAST)->getId();
 				$blockWest = $this->getSide(Vector3::SIDE_WEST)->getId();
-
-				if($blockAbove === Block::WATER ||
-					$blockBeneath === Block::WATER ||
-					$blockNorth === Block::WATER ||
-					$blockSouth === Block::WATER ||
-					$blockEast === Block::WATER ||
-					$blockWest === Block::WATER){
+				if($blockAbove === 8 or $blockBeneath === 8 or $blockNorth === 8 or $blockSouth === 8 or $blockEast === 8 or $blockWest === 8 or $blockAbove === 9 or $blockBeneath === 9 or $blockNorth === 9 or $blockSouth === 9 or $blockEast === 9 or $blockWest === 9){
 					$this->absorption($this);
 					$this->getLevel()->setBlock($this, Block::get(Block::SPONGE, 1), true, true);
 					
