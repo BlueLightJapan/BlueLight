@@ -39,6 +39,10 @@ abstract class Door extends Transparent{
 		return false;
 	}
 
+	public function canPassThrough(){
+		return true;
+	}
+
 	private function getFullDamage(){
 		$damage = $this->getDamage();
 		$isUp = ($damage & 0x08) > 0;
@@ -263,6 +267,10 @@ abstract class Door extends Transparent{
 		$this->getLevel()->setBlock($this, new Air(), true);
 
 		return true;
+	}
+
+	public function isOpened(){
+		return (($this->getFullDamage() & 0x04) > 0);
 	}
 
 	public function onActivate(Item $item, Player $player = null){
