@@ -148,6 +148,11 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::GOLDEN_APPLE] = GoldenApple::class;
 			self::$list[self::SIGN] = Sign::class;
 			self::$list[self::WOODEN_DOOR] = WoodenDoor::class;
+			self::$list[self::SPRUCE_DOOR] = SpruceDoor::class;
+			self::$list[self::BIRCH_DOOR] = BirchDoor::class;
+			self::$list[self::JUNGLE_DOOR] = JungleDoor::class;
+			self::$list[self::ACACIA_DOOR] = AcaciaDoor::class;
+			self::$list[self::DARK_OAK_DOOR] = DarkOakDoor::class;
 			self::$list[self::BUCKET] = Bucket::class;
 			self::$list[self::MINECART] = Minecart::class;
 			self::$list[self::IRON_DOOR] = IronDoor::class;
