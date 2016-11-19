@@ -877,7 +877,7 @@
     },
     {
         "id": 19,
-        "damage": 0,
+        "damage": 1,
         "count": 1,
         "nbt": ""
     },
