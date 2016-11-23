@@ -64,16 +64,13 @@ class MySQLManager extends DataBase{
 	public function saveInventory($player){
 		$name = strtolower($player->getName());
 
-		$sql = "DELETE FROM `".$this->dbname."`.`InventoryData` WHERE `InventoryData`.`name` = '".$name."'";
-		$this->db->query($sql);
-
 		$inventory = $player->getInventory();
 
 		foreach ($inventory->getContents() as $slot=>&$item){
 			$id = $item->getId();
 			$meta = $item->getDamage();
 			$count = $item->getCount();
-			$sql = "INSERT INTO `".$this->dbname."`.`InventoryData` (`name`,`slot`,`id`,`meta`,`count`)VALUES ('".$name."','".$slot."','".$id."','".$meta."','".$count."')";
+			$sql = "INSERT OR REPLACE INTO `".$this->dbname."`.`InventoryData` (`name`,`slot`,`id`,`meta`,`count`)VALUES ('".$name."','".$slot."','".$id."','".$meta."','".$count."')";
 			$this->db->query($sql);
 		}
 	}
