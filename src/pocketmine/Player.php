@@ -3505,7 +3505,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->namedtag["Experience"] = new LongTag("Experience", $this->exp);
 			$this->namedtag["ExpLevel"] = new LongTag("ExpLevel", $this->expLevel);
 
-			if($this->username != "" and $this->namedtag instanceof CompoundTag){var_dump($this->namedtag);
+			if($this->username != "" and $this->namedtag instanceof CompoundTag){
 				$this->server->saveOfflinePlayerData($this->username, $this->namedtag, $async);
 			}
 		}
