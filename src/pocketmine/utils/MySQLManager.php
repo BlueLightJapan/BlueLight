@@ -26,7 +26,7 @@ class MySQLManager extends DataBase{
 	private $dbname;
 	private $database;
 
-	public function __construct($server,$host,$user,$pass,$dbname,$port = 19132){
+	public function __construct($server,$host,$user,$pass,$dbname,$port = 3306){
 		$this->server = $server;
 		$this->dbname = $dbname;
 		$this->database = new \mysqli($host,$user,$pass,$dbname,$port);
@@ -36,12 +36,10 @@ class MySQLManager extends DataBase{
 		if($this->database->connect_error){
 			return false;
 		}else{
-
 			$sql = "CREATE TABLE IF NOT EXISTS InventoryData (name VARCHAR(20) NOT NULL,slot VARCHAR(3) NOT NULL,id VARCHAR(3) NOT NULL,meta VARCHAR(2) NOT NULL,count VARCHAR(2) NOT NULL,PRIMARY KEY (name,slot))";
 			$this->db->query($sql);
 			$sql = "CREATE TABLE IF NOT EXISTS PlayerData (name VARCHAR(20) NOT NULL,gametype INT(1) NOT NULL,lastplayed INT(10) NOT NULL,hunger Int(2) NOT NULL,health Int(3) NOT NULL,maxhealth Int(3) NOT NULL,exp Int(1000000) NOT NULL,explevel Int(1000) NOT NULL,PRIMARY KEY (name))";
 			$this->db->query($sql);
-
 			return true;
 		}
 	}
@@ -51,7 +49,6 @@ class MySQLManager extends DataBase{
 	}
 
 	public function loadInventory($player){
-
 		$sql = "SELECT `name`,`slot`,`id`,`meta`,`count` FROM InventoryData WHERE name='".strtolower($player->getName())."'";
 		$res = $this->db->query($sql);
 		if(!$res === false){
@@ -63,9 +60,7 @@ class MySQLManager extends DataBase{
 
 	public function saveInventory($player){
 		$name = strtolower($player->getName());
-
 		$inventory = $player->getInventory();
-
 		foreach ($inventory->getContents() as $slot=>&$item){
 			$id = $item->getId();
 			$meta = $item->getDamage();
@@ -81,7 +76,6 @@ class MySQLManager extends DataBase{
 	}
 
 	public function savePlayer($player){
-
 		$GameType = $player->gamemode;
 		$lastPlayed = floor(microtime(true) * 1000);
 		$Hunger = $player->food;
@@ -89,9 +83,6 @@ class MySQLManager extends DataBase{
 		$MaxHealth = $player->getMaxHealth();
 		$Experience = $player->exp;
 		$ExpLevel = $player->expLevel;
-
-
-
 	}
 
 }
