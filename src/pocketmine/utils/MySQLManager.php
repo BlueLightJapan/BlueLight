@@ -15,7 +15,7 @@
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
- * 
+ *
 */
 
 namespace pocketmine\utils;
@@ -89,7 +89,7 @@ class MySQLManager extends DataBase{
 		$lastPlayed = floor(microtime(true) * 1000);
 		$Hunger = $player->food;
 		$Health = $player->getHealth();
-		$MaxHealth = $player->getMaxHealth());
+		$MaxHealth = $player->getMaxHealth();
 		$Experience = $player->exp;
 		$ExpLevel = $player->expLevel;
 
