@@ -26,15 +26,15 @@ namespace pocketmine\network\protocol;
 class RiderJumpPacket extends DataPacket{
 	const NETWORK_ID = Info::RIDER_JUMP_PACKET;
 
-	public $int;
+	public $type;
 
 	public function decode(){
-		$this->int = $this->getVarInt();
+		$this->type = $this->getVarInt();
 	}
 
 	public function encode(){
 		$this->reset();
-		$this->putVarInt($this->int);
+		$this->putVarInt($this->type);
 	}
 
 }
