@@ -2714,7 +2714,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				switch($packet->action){
 					case InteractPacket::ACTION_RIGHT_CLICK:
 						if($target instanceof Horse){
-						$this->setLink($target);
+						//$this->setLink($target);
 						}
 					break;
 					case InteractPacket::ACTION_LEFT_CLICK:
@@ -3505,7 +3505,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->namedtag["Experience"] = new LongTag("Experience", $this->exp);
 			$this->namedtag["ExpLevel"] = new LongTag("ExpLevel", $this->expLevel);
 
-			if($this->username != "" and $this->namedtag instanceof CompoundTag){
+			if($this->username != "" and $this->namedtag instanceof CompoundTag){var_dump($this->namedtag);
 				$this->server->saveOfflinePlayerData($this->username, $this->namedtag, $async);
 			}
 		}
