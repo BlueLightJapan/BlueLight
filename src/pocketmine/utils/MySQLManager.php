@@ -38,7 +38,7 @@ class MySQLManager extends DataBase{
 		}else{
 			$sql = "CREATE TABLE IF NOT EXISTS InventoryData (name VARCHAR(20) NOT NULL,slot VARCHAR(3) NOT NULL,id VARCHAR(3) NOT NULL,meta VARCHAR(2) NOT NULL,count VARCHAR(2) NOT NULL,PRIMARY KEY (name,slot))";
 			$this->db->query($sql);
-			$sql = "CREATE TABLE IF NOT EXISTS PlayerData (name VARCHAR(20) NOT NULL,gametype INT(1) NOT NULL,lastplayed INT(10) NOT NULL,hunger Int(2) NOT NULL,health Int(3) NOT NULL,maxhealth Int(3) NOT NULL,exp Int(1000000) NOT NULL,explevel Int(1000) NOT NULL,PRIMARY KEY (name))";
+			$sql = "CREATE TABLE IF NOT EXISTS `PlayerData` (`name` varchar(20) NOT NULL,`gametype` int(1) NOT NULL,`lastplayed` int(10) NOT NULL,`hunger` int(2) NOT NULL,`health` int(3) NOT NULL,`maxhealth` int(3) NOT NULL,`exp` int(100) NOT NULL,`explevel` int(10) NOT NULL) ,PRIMARY KEY (`name`)";
 			$this->db->query($sql);
 			return true;
 		}
