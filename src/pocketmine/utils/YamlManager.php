@@ -24,7 +24,7 @@ class YamlManager extends DataBase{
 
 
 	public function Connect(){
-		$this->config = new Config($this->getDataFolder(). "config.yml", Config::YAML,array('!!!!notice!!!!' => '"thisiscreatedby BlueLightTeam(haniokasai)'));
+		$this->config = new Config($this->getDataFolder(). "players.yml", Config::YAML,array('!!!!notice!!!!' => '"thisiscreatedby BlueLightTeam(haniokasai)'));
 	}
 
 	public function loadInventory($player){
