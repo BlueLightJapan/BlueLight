@@ -26,7 +26,11 @@ namespace pocketmine\network\protocol;
 class PlayerFallPacket extends DataPacket{
 	const NETWORK_ID = Info::PLAYER_FALL_PACKET;
 
+	public $float;
+
 	public function decode(){
+
+	$this->float = $this->getFloat();
 
 	}
 
