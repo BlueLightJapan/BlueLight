@@ -29,12 +29,12 @@ class ResourcePackClientResponsePacket extends DataPacket{
 
 	public $type;
 	public $count;
-	public $packid;
+	//public $packid;
 
 	public function decode(){
 		$this->type = $this->getByte();
 		$this->count = $this->getLShort();
-		$this->packid = $this->getString();
+		//$this->packid = $this->getString();
 	}
 
 	public function encode(){
