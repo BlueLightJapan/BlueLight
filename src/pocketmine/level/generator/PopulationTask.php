@@ -161,7 +161,7 @@ class PopulationTask extends AsyncTask{
 			/** @var Chunk $chunkC */
 			$chunkC = $this->chunkClass;
 
-			$chunk = GenericChunk::fastDesialize($this->chunk, $level->getProvider());
+			$chunk = GenericChunk::fastDeserialize($this->chunk, $level->getProvider());
 
 			if($chunk === null){
 				//TODO error
