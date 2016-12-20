@@ -31,7 +31,6 @@ class MainLogger extends \AttachableThreadedLogger{
 	protected $shutdown;
 	protected $logDebug;
 	private $logResource;
-	private $mode = 0;
 	/** @var MainLogger */
 	public static $logger = null;
 
@@ -58,11 +57,6 @@ class MainLogger extends \AttachableThreadedLogger{
 	 */
 	public static function getLogger(){
 		return static::$logger;
-	}
-
-	public function setMode($mode){
-		$this->mode = $mode;
-		if($mode === 1)$this->alert("SMART LOGGER ENABLE");
 	}
 
 	public function emergency($message){
@@ -139,7 +133,7 @@ class MainLogger extends \AttachableThreadedLogger{
 		}else{
 			$type = ($errno === E_ERROR or $errno === E_USER_ERROR) ? LogLevel::ERROR : (($errno === E_USER_WARNING or $errno === E_WARNING) ? LogLevel::WARNING : LogLevel::NOTICE);
 		}
-		$errno = isset($errorConversion[$errno]) ? $errorConversion[$errno] : $errno;
+		$errno = $errorConversion[$errno] ?? $errno;
 		if(($pos = strpos($errstr, "\n")) !== false){
 			$errstr = substr($errstr, 0, $pos);
 		}

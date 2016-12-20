@@ -22,4 +22,5 @@ namespace pocketmine\utils;
 
 abstract class DataBase{
 
+	
 }

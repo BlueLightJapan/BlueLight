@@ -274,7 +274,7 @@ class Server{
 	private $serverID;
 
 	private $autoloader;
-	private $filePath;
+	public $filePath;
 	private $dataPath;
 	private $pluginPath;
 
@@ -1475,7 +1475,7 @@ class Server{
 			$this->allowSplashPotion = $this->getProperty("BlueLight.allowSplashPotion", true);
 			$this->expEnabled = $this->getProperty("BlueLight.expEnabled", true);
 			$this->weatherEnabled = $this->getProperty("BlueLight.weatherEnabled", true);
-			$this->logger->setMode($this->getProperty("BlueLight.smartlogger", 0));
+			//$this->logger->setMode($this->getProperty("BlueLight.smartlogger", 0));
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
@@ -2006,8 +2006,8 @@ class Server{
 
 			gc_collect_cycles();
 		}catch(\Throwable $e){
+			$this->logger->logException($e);
 			$this->logger->emergency("Crashed while crashing, killing process");
-			$this->logger->emergency(get_class($e) . ": " . $e->getMessage());
 			@kill(getmypid());
 		}
 

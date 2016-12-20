@@ -23,10 +23,6 @@ namespace pocketmine\utils;
 
 #include <rules/DataPacket.h>
 
-#ifndef COMPILE
-
-#endif
-
 use pocketmine\item\Item;
 
 class BinaryStream extends \stdClass{
@@ -237,7 +233,6 @@ class BinaryStream extends \stdClass{
 		}
 
 		$this->putVarInt($item->getId());
-//		$auxValue = ($item->getDamage() << 8) | $item->getCount();
 		$auxValue = (($item->getDamage() ?? -1) << 8) | $item->getCount();
 		$this->putVarInt($auxValue);
 		$nbt = $item->getCompoundTag();
@@ -294,13 +289,13 @@ class BinaryStream extends \stdClass{
 
 	public function getBlockCoords(&$x, &$y, &$z){
 		$x = $this->getVarInt();
-		$y = $this->getByte();
+		$y = $this->getUnsignedVarInt();
 		$z = $this->getVarInt();
 	}
 
 	public function putBlockCoords($x, $y, $z){
 		$this->putVarInt($x);
-		$this->putByte($y);
+		$this->putUnsignedVarInt($y);
 		$this->putVarInt($z);
 	}
 	
