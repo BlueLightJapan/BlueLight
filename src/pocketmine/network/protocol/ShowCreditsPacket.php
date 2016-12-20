@@ -25,8 +25,8 @@ use pocketmine\utils\Binary;
 class ShowCreditsPacket extends DataPacket{
 	const NETWORK_ID = Info::SHOW_CREDITS_PACKET;
 
-	const TYPE_REMOVE = 0;
-	const TYPE_ADD = 1;
+	const TYPE_ADD = 0;
+	const TYPE_REMOVE = 1;
 
 	public $eid;
 	public $type;
