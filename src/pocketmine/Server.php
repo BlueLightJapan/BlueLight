@@ -85,6 +85,9 @@ use pocketmine\entity\Villager;
 use pocketmine\entity\XPOrb;
 use pocketmine\entity\Zombie;
 use pocketmine\entity\Lightning;
+use pocketmine\entity\EnderDragon;
+use pocketmine\entity\Endermite;
+use pocketmine\entity\PolarBear;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
 use pocketmine\event\level\LevelLoadEvent;
@@ -2536,6 +2539,10 @@ class Server{
 		Entity::registerEntity(ThrownExpBottle::class);
 		Entity::registerEntity(XPOrb::class);
 		Entity::registerEntity(Lightning::class);
+		Entity::registerEntity(EnderDragon::class);
+		Entity::registerEntity(Endermite::class);
+		Entity::registerEntity(PolarBear::class);
+
 
 
 	}

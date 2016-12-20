@@ -2359,7 +2359,25 @@
     },
     {
         "id": 383,
-        "damage": 43,
+        "damage": 28,
+        "count": 1,
+        "nbt": ""
+    },
+    {
+        "id": 383,
+        "damage": 55,
+        "count": 1,
+        "nbt": ""
+    },
+    {
+        "id": 383,
+        "damage": 53,
+        "count": 1,
+        "nbt": ""
+    },
+    {
+        "id": 383,
+        "damage": 28,
         "count": 1,
         "nbt": ""
     },
