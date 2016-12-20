@@ -28,7 +28,7 @@ class BeetrootSoup extends Food{
 	}
 
 	public function getMaxStackSize(){
-		return 1;
+		return 64;
 	}
 
 	public function getFoodRestore() : int{
