@@ -26,7 +26,7 @@ class Endermite extends Monster{
 	const NETWORK_ID = 55;
 
 	public function getName(){
-		return "Spider";
+		return "Endermite";
 	}
 	
 	public function spawnTo(Player $player){

@@ -27,7 +27,7 @@ class PolarBear extends Animal{
 	const NETWORK_ID = 28;
 
 	public function getName(){
-		return "Wither";
+		return "PolarBear";
 	}
 	
 	public function spawnTo(Player $player){
