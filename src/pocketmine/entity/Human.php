@@ -49,7 +49,7 @@ use pocketmine\utils\UUID;
 class Human extends Creature implements ProjectileSource, InventoryHolder{
 	
 	const DATA_PLAYER_FLAG_SLEEP = 1;
-	const DATA_PLAYER_FLAG_DEAD = 2; //TODO: CHECK
+	const DATA_PLAYER_FLAG_DEAD = 2;
 
 	const DATA_PLAYER_FLAGS = 27;
 
@@ -117,19 +117,11 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->attributeMap->getAttribute(Attribute::HUNGER)->getValue();
 	}
 
-	/**
-	 * WARNING: This method does not check if full and may throw an exception if out of bounds.
-	 * Use {@link Human::addFood()} for this purpose
-	 *
-	 * @param float $new
-	 *
-	 * @throws \InvalidArgumentException
-	 */
 	public function setFood(float $new){
 		$attr = $this->attributeMap->getAttribute(Attribute::HUNGER);
 		$old = $attr->getValue();
 		$attr->setValue($new);
-		// ranges: 18-20 (regen), 7-17 (none), 1-6 (no sprint), 0 (health depletion)
+
 		foreach([17, 6, 0] as $bound){
 			if(($old > $bound) !== ($new > $bound)){
 				$reset = true;
@@ -156,14 +148,6 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->attributeMap->getAttribute(Attribute::SATURATION)->getValue();
 	}
 
-	/**
-	 * WARNING: This method does not check if saturated and may throw an exception if out of bounds.
-	 * Use {@link Human::addSaturation()} for this purpose
-	 *
-	 * @param float $saturation
-	 *
-	 * @throws \InvalidArgumentException
-	 */
 	public function setSaturation(float $saturation){
 		$this->attributeMap->getAttribute(Attribute::SATURATION)->setValue($saturation);
 	}
@@ -177,24 +161,10 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->attributeMap->getAttribute(Attribute::EXHAUSTION)->getValue();
 	}
 
-	/**
-	 * WARNING: This method does not check if exhausted and does not consume saturation/food.
-	 * Use {@link Human::exhaust()} for this purpose.
-	 *
-	 * @param float $exhaustion
-	 */
 	public function setExhaustion(float $exhaustion){
 		$this->attributeMap->getAttribute(Attribute::EXHAUSTION)->setValue($exhaustion);
 	}
 
-	/**
-	 * Increases a human's exhaustion level.
-	 *
-	 * @param float $amount
-	 * @param int   $cause
-	 *
-	 * @return float the amount of exhaustion level increased
-	 */
 	public function exhaust(float $amount, int $cause = PlayerExhaustEvent::CAUSE_CUSTOM) : float{
 		$this->server->getPluginManager()->callEvent($ev = new PlayerExhaustEvent($this, $amount, $cause));
 		if($ev->isCancelled()){
@@ -410,9 +380,9 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 				if($item["Slot"] >= 0 and $item["Slot"] < 9){ //Hotbar
 					$this->inventory->setHotbarSlotIndex($item["Slot"], isset($item["TrueSlot"]) ? $item["TrueSlot"] : -1);
 				}elseif($item["Slot"] >= 100 and $item["Slot"] < 104){ //Armor
-					$this->inventory->setItem($this->inventory->getSize() + $item["Slot"] - 100, NBT::getItemHelper($item));
+					$this->inventory->setItem($this->inventory->getSize() + $item["Slot"] - 100, ItemItem::nbtDeserialize($item));
 				}else{
-					$this->inventory->setItem($item["Slot"] - 9, NBT::getItemHelper($item));
+					$this->inventory->setItem($item["Slot"] - 9, ItemItem::nbtDeserialize($item));
 				}
 			}
 		}
@@ -540,7 +510,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 				if($hotbarSlot !== -1){
 					$item = $this->inventory->getItem($hotbarSlot);
 					if($item->getId() !== 0 and $item->getCount() > 0){
-						$tag = NBT::putItemHelper($item, $slot);
+						$tag = $item->nbtSerialize($slot);
 						$tag->TrueSlot = new ByteTag("TrueSlot", $hotbarSlot);
 						$this->namedtag->Inventory[$slot] = $tag;
 
@@ -562,14 +532,14 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			//$slotCount = (($this instanceof Player and ($this->gamemode & 0x01) === 1) ? Player::CREATIVE_SLOTS : Player::SURVIVAL_SLOTS) + 9;
 			for($slot = 9; $slot < $slotCount; ++$slot){
 				$item = $this->inventory->getItem($slot - 9);
-				$this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
+				$this->namedtag->Inventory[$slot] = $item->nbtSerialize($slot);
 			}
 
 			//Armor
 			for($slot = 100; $slot < 104; ++$slot){
 				$item = $this->inventory->getItem($this->inventory->getSize() + $slot - 100);
 				if($item instanceof ItemItem and $item->getId() !== ItemItem::AIR){
-					$this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
+					$this->namedtag->Inventory[$slot] = $item->nbtSerialize($slot);
 				}
 			}
 		}
