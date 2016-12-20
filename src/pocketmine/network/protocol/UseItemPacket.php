@@ -43,7 +43,7 @@ class UseItemPacket extends DataPacket{
 
 	public function decode(){
 		$this->getBlockCoords($this->x, $this->y, $this->z);
-		$this->id = getUnsignedVarInt();
+		$this->id = $this->getUnsignedVarInt();
 		$this->face = $this->getVarInt();
 		$this->getVector3f($this->fx, $this->fy, $this->fz);
 		$this->getVector3f($this->posX, $this->posY, $this->posZ);
