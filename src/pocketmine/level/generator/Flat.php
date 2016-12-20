@@ -37,6 +37,7 @@ use pocketmine\level\generator\populator\Ore;
 use pocketmine\level\generator\populator\Populator;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
+use pocketmine\level\format\generic\GenericChunk;
 
 class Flat extends Generator{
 	/** @var ChunkManager */

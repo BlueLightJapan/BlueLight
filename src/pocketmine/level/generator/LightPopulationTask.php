@@ -25,6 +25,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\level\format\generic\GenericChunk;
 
 class LightPopulationTask extends AsyncTask{
 

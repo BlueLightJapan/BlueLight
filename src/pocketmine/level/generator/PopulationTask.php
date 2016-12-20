@@ -26,6 +26,7 @@ use pocketmine\level\Level;
 use pocketmine\level\SimpleChunkManager;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\level\format\generic\GenericChunk;
 
 class PopulationTask extends AsyncTask{
 
