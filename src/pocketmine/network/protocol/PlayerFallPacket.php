@@ -23,7 +23,7 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 
-class PlayerFullPacket extends DataPacket{
+class PlayerFallPacket extends DataPacket{
 	const NETWORK_ID = Info::PLAYER_FALL_PACKET;
 
 	public function decode(){
