@@ -122,15 +122,12 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new TimingsCommand("timings"));
 		$this->register("pocketmine", new ReloadCommand("reload"));
 		$this->register("pocketmine", new XpCommand("xp"));
+		$this->register("pocketmine", new WeatherCommand("weather"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
-		}
-
-		if($this->server->weatherEnabled){
-			$this->register("pocketmine", new WeatherCommand("weather"));
 		}
 
 		if($this->server->devtools){
