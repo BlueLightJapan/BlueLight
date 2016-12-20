@@ -125,6 +125,7 @@ use pocketmine\network\protocol\PlayStatusPacket;
 use pocketmine\network\protocol\PlayInputPacket;
 use pocketmine\network\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\protocol\RespawnPacket;
+use pocketmine\network\protocol\ShowCreditsPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
 use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\network\protocol\SetHealthPacket;
@@ -264,6 +265,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $expLevel = 0;
 	protected $exp = 0;
 	protected $expCooldown = 0;
+
+	public function sendCredit(){
+		$pk = new ShowCreditsPacket();
+		$pk->type = ShowCreditsPacket::TYPE_ADD;
+		$this->dataPacket($pk);
+	}
 
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [$this->getDisplayName()]);
