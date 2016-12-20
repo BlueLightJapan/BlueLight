@@ -766,9 +766,5 @@ class GenericChunk implements Chunk{
 		}
 		return $result;
 	}
-	public function setBiomeColor($x, $z, $R, $G, $B){
-		$this->hasChanged = true;
-		$this->biomeColors[($z << 4) + $x] = ($this->biomeColors[($z << 4) + $x] & 0xFF000000) | (($R & 0xFF) << 16) | (($G & 0xFF) << 8) | ($B & 0xFF);
-	}
 
 }
