@@ -20,25 +20,24 @@
 
 namespace pocketmine\network\protocol;
 
-#include <rules/DataPacket.h>
+use pocketmine\utils\Binary;
 
+class ShowCreditsPacket extends DataPacket{
+	const NETWORK_ID = Info::SHOW_CREDITS_PACKET;
 
-class ResourcePackClientResponsePacket extends DataPacket{
+	const TYPE_REMOVE = 0;
+	const TYPE_ADD = 1;
 
-	const NETWORK_ID = Info::RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
-
+	public $eid;
 	public $type;
-	public $count;
-	public $packid;
 
 	public function decode(){
-		$this->type = $this->getByte();
-		$this->count = $this->getLShort();
-		$this->packid = $this->getString();
+
 	}
 
 	public function encode(){
-
+		$this->reset();
+		$this->putEntityId($this->eid);
+		$this->putVarInt($this->type);
 	}
-
 }

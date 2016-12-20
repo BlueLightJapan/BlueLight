@@ -23,17 +23,11 @@ namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
 
-class ResourcePackStackPacket extends DataPacket{
-	const NETWORK_ID = Info::RESOURCE_PACK_STACK_PACKET;
 
-	public $mustAccept;
-	public $count;
-	public $id;
-	public $ver;
+class ReplaceItemInSlotPacket extends DataPacket{
+	const NETWORK_ID = Info::REPLACE_ITEM_IN_SLOT_PACKET;
 
-	public $count2;
-	public $id2;
-	public $ver2;
+	public $item;
 
 	public function decode(){
 
@@ -41,13 +35,7 @@ class ResourcePackStackPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putBool($this->mustAccept);
-		$this->putShort($this->count);
-		$this->putString($this->id);
-		$this->putString($this->ver);
-
-		$this->putShort($this->count2);
-		$this->putString($this->id2);
-		$this->putString($this->ver2);
+		$this->putSlot($this->item);
 	}
+
 }

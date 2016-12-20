@@ -23,18 +23,11 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 
-class ResourcePackClientResponsePacket extends DataPacket{
-
-	const NETWORK_ID = Info::RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
-
-	public $type;
-	public $count;
-	public $packid;
+class PlayerFullPacket extends DataPacket{
+	const NETWORK_ID = Info::PLAYER_FALL_PACKET;
 
 	public function decode(){
-		$this->type = $this->getByte();
-		$this->count = $this->getLShort();
-		$this->packid = $this->getString();
+
 	}
 
 	public function encode(){

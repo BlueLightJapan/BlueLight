@@ -26,22 +26,22 @@ namespace pocketmine\network\protocol;
 class ResourcePackChunkDataPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_CHUNK_DATA_PACKET;
 
-	public $string;
+	public $packid;
 	public $int1;
-	public $long;
+	public $size;
 	public $int2;
-	public $byte;
+	public $payload;
 
 	public function decode(){
 	}
 
 	public function encode(){
 		$this->reset();
-		$this->putString($this->string);
-		$this->putUnsignedVarInt($this->int1);
-		$this->putLong($this->long);
-		$this->putUnsignedVarInt($this->int2);
-		$this->putByte($this->byte);
+		$this->putString($this->packid);
+		$this->putVarInt($this->int1);
+		$this->putVarInt($this->size);
+		$this->putVarInt($this->int2);
+		$this->putString($this->payload);
 
 	}
 }

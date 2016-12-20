@@ -27,10 +27,10 @@ class ResourcePackDataInfoPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_DATA_INFO_PACKET;
 
 	public $packageId;
-	public $uk1;
-	public $uk2;
-	public $uk3;
-	public $uk4;
+	public $int1;
+	public $int2;
+	public $size;
+	public $pack;
 
 	public function decode(){
 
@@ -38,11 +38,14 @@ class ResourcePackDataInfoPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
+
 		$this->putString($this->packageId);
-		$this->putUnsignedVarInt($this->uk1);
-		$this->putUnsignedVarInt($this->uk2);
-		$this->putLong($this->uk3);
-		$this->putString($this->uk4);
+		$this->putVarInt($this->int1);
+		$this->putVarInt($this->int2);
+		$this->putVarInt($this->size);
+		$this->putString($this->pack);
+
+
 
 	}
 
