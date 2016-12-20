@@ -21,7 +21,7 @@
 
 namespace pocketmine\level\generator;
 
-use pocketmine\level\format\FullChunk;
+use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\SimpleChunkManager;
 use pocketmine\scheduler\AsyncTask;
@@ -45,11 +45,11 @@ class PopulationTask extends AsyncTask{
 	public $chunk7;
 	public $chunk8;
 
-	public function __construct(Level $level, FullChunk $chunk){
+	public function __construct(Level $level, Chunk $chunk){
 		$this->state = true;
 		$this->levelId = $level->getId();
-		$this->chunk = $chunk->toFastBinary();
-		$this->chunkClass = get_class($chunk);
+
+		$this->chunk = GenericChunk::fastSerialize($chunk);
 
 		for($i = 0; $i < 9; ++$i){
 			if($i === 4){
@@ -58,7 +58,7 @@ class PopulationTask extends AsyncTask{
 			$xx = -1 + $i % 3;
 			$zz = -1 + (int) ($i / 3);
 			$ck = $level->getChunk($chunk->getX() + $xx, $chunk->getZ() + $zz, false);
-			$this->{"chunk$i"} = $ck !== null ? $ck->toFastBinary() : null;
+			$this->{"chunk$i"} = $ck !== null ? GenericChunk::fastSerialize($ck) : null;
 		}
 	}
 
@@ -72,12 +72,12 @@ class PopulationTask extends AsyncTask{
 			return;
 		}
 
-		/** @var FullChunk[] $chunks */
+		/** @var Chunk[] $chunks */
 		$chunks = [];
-		/** @var FullChunk $chunkC */
+		/** @var Chunk $chunkC */
 		$chunkC = $this->chunkClass;
 
-		$chunk = $chunkC::fromFastBinary($this->chunk);
+		$chunk = GenericChunk::fastDeserialize($this->chunk);
 
 		for($i = 0; $i < 9; ++$i){
 			if($i === 4){
@@ -87,9 +87,9 @@ class PopulationTask extends AsyncTask{
 			$zz = -1 + (int) ($i / 3);
 			$ck = $this->{"chunk$i"};
 			if($ck === null){
-				$chunks[$i] = $chunkC::getEmptyChunk($chunk->getX() + $xx, $chunk->getZ() + $zz);
+				$chunks[$i] = GenericChunk::getEmptyChunk($chunk->getX() + $xx, $chunk->getZ() + $zz);
 			}else{
-				$chunks[$i] = $chunkC::fromFastBinary($ck);
+				$chunks[$i] = GenericChunk::fastDeserialize($ck);
 			}
 		}
 
@@ -122,7 +122,7 @@ class PopulationTask extends AsyncTask{
 		$chunk->populateSkyLight();
 		$chunk->setLightPopulated();
 		$chunk->setPopulated();
-		$this->chunk = $chunk->toFastBinary();
+		$this->chunk = GenericChunk::fastSerialize($chunk);
 
 		$manager->setChunk($chunk->getX(), $chunk->getZ(), null);
 
@@ -145,7 +145,7 @@ class PopulationTask extends AsyncTask{
 				continue;
 			}
 
-			$this->{"chunk$i"} = $chunks[$i] !== null ? $chunks[$i]->toFastBinary() : null;
+			$this->{"chunk$i"} = $chunks[$i] !== null ? GenericChunk::fastSerialize($chunks[$i]) : null;
 		}
 	}
 
@@ -157,10 +157,10 @@ class PopulationTask extends AsyncTask{
 				return;
 			}
 
-			/** @var FullChunk $chunkC */
+			/** @var Chunk $chunkC */
 			$chunkC = $this->chunkClass;
 
-			$chunk = $chunkC::fromFastBinary($this->chunk, $level->getProvider());
+			$chunk = GenericChunk::fastDesialize($this->chunk, $level->getProvider());
 
 			if($chunk === null){
 				//TODO error
@@ -173,7 +173,7 @@ class PopulationTask extends AsyncTask{
 				}
 				$c = $this->{"chunk$i"};
 				if($c !== null){
-					$c = $chunkC::fromFastBinary($c, $level->getProvider());
+					$c = GenericChunk::fastDeserialize($c, $level->getProvider());
 					$level->generateChunkCallback($c->getX(), $c->getZ(), $c);
 				}
 			}

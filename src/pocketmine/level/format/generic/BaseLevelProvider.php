@@ -126,5 +126,12 @@ abstract class BaseLevelProvider implements LevelProvider{
 		file_put_contents($this->getPath() . "level.dat", $buffer);
 	}
 
+	public function requestChunkTask($x, $z){
+		$chunk = $this->getChunk($x, $z, false);
+		if(!($chunk instanceof GenericChunk)){
+			throw new ChunkException("Invalid Chunk sent");
+		}
 
+		$this->getLevel()->chunkRequestCallback($x, $z, $chunk->networkSerialize());
+	}
 }
