@@ -2788,7 +2788,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				if($packet->item->getId() === Item::Air){
+				if($packet->item->getId() === 0){
 					break;
 				}
 
