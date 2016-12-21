@@ -33,12 +33,15 @@ class ContainerSetSlotPacket extends DataPacket{
 	public $hotbarSlot;
 	/** @var Item */
 	public $item;
+	public $byte;
+
 
 	public function decode(){
 		$this->windowid = $this->getByte();
 		$this->slot = $this->getVarInt();
 		$this->hotbarSlot = $this->getVarInt();
 		$this->item = $this->getSlot();
+		$this->byte = $this->getByte();
 	}
 
 	public function encode(){
@@ -47,6 +50,6 @@ class ContainerSetSlotPacket extends DataPacket{
 		$this->putVarInt($this->slot);
 		$this->putVarInt($this->hotbarSlot);
 		$this->putSlot($this->item);
+		$this->putByte($this->byte);
 	}
-
 }

@@ -40,7 +40,10 @@ class PlayerActionPacket extends DataPacket{
 	const ACTION_STOP_SPRINT = 10;
 	const ACTION_START_SNEAK = 11;
 	const ACTION_STOP_SNEAK = 12;
-	const ACTION_DIMENSION_CHANGE = 13; //TODO: correct these
+	const ACTION_DIMENSION_CHANGE = 13;
+
+	const ACTION_START_GLIDE = 15;
+	const ACTION_STOP_GLIDE = 16;
 
 	public $eid;
 	public $action;
