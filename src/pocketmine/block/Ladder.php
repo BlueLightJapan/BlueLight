@@ -125,6 +125,7 @@ class Ladder extends Transparent{
 	public function onUpdate($type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$sides = [
+				0 => 0
 				2 => 3,
 				3 => 2,
 				4 => 5,
