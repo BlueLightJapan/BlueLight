@@ -148,14 +148,14 @@ class SubChunk{
 		}
 	}
 
-	public function setBlockLight(int $x, int $y, int $z, int $level) : bool{
+	public function setBlockLight(int $x, int $y, int $z, int $level) : bool{/*
 		$i = ($x << 7) + ($z << 3) + ($y >> 1);
 		$byte = ord($this->blockLight{$i});
 		if(($y & 1) === 0){
 			$this->blockLight{$i} = chr(($byte & 0xf0) | ($level & 0x0f));
 		}else{
 			$this->blockLight{$i} = chr((($level & 0x0f) << 4) | ($byte & 0x0f));
-		}
+		}*/
 		return true;
 	}
 
