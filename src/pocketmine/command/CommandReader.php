@@ -28,9 +28,12 @@ class CommandReader extends Thread{
 	/** @var \Threaded */
 	protected $buffer;
 	private $shutdown = false;
+	private $streamBlocking = false;
 
 	public function __construct(){
 		$this->buffer = new \Threaded;
+		$opts = getopt("", ["disable-readline"]);
+		$this->readline = (extension_loaded("readline") and !isset($opts["disable-readline"]));
 		$this->start();
 	}
 
@@ -38,15 +41,28 @@ class CommandReader extends Thread{
 		$this->shutdown = true;
 	}
 
+	private function initStdin(){
+		global $stdin;
+		$stdin = fopen("php://stdin", "r");
+		$this->streamBlocking = (stream_set_blocking($stdin, 0) === false);
+	}
+
 	private function readLine(){
 		if(!$this->readline){
 			global $stdin;
 
 			if(!is_resource($stdin)){
-				return "";
+				$this->initStdin();
 			}
 
-			return trim(fgets($stdin));
+			$line = fgets($stdin);
+			
+			if($line === false and $this->streamBlocking === true){ //windows sucks
+				$this->initStdin();
+				$line = fgets($stdin);
+			}
+			
+			return trim($line);
 		}else{
 			$line = trim(readline("> "));
 			if($line != ""){
@@ -71,14 +87,8 @@ class CommandReader extends Thread{
 	}
 
 	public function run(){
-		$opts = getopt("", ["disable-readline"]);
-		if(extension_loaded("readline") and !isset($opts["disable-readline"])){
-			$this->readline = true;
-		}else{
-			global $stdin;
-			$stdin = fopen("php://stdin", "r");
-			stream_set_blocking($stdin, 0);
-			$this->readline = false;
+		if(!$this->readline){
+			$this->initStdin();
 		}
 
 		$lastLine = microtime(true);
@@ -92,6 +102,11 @@ class CommandReader extends Thread{
 			}
 
 			$lastLine = microtime(true);
+		}
+
+		if(!$this->readline){
+			global $stdin;
+			fclose($stdin);
 		}
 	}
 
