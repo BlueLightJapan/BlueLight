@@ -226,7 +226,6 @@ class Server{
 
 	/** @var CommandReader */
 	private $console = null;
-	private $consoleThreaded;
 
 	/** @var SimpleCommandMap */
 	private $commandMap = null;
@@ -2174,7 +2173,7 @@ class Server{
 			$next = $this->nextTick - 0.0001;
 			if($next > microtime(true)){
 				try{
-					time_sleep_until($next);
+					@time_sleep_until($next);
 				}catch(\Throwable $e){
 					//Sometimes $next is less than the current time. High load?
 				}

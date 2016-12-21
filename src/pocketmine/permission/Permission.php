@@ -179,7 +179,7 @@ class Permission{
 		if($name instanceof Permission){
 			$name->getChildren()[$this->getName()] = $value;
 			$name->recalculatePermissibles();
-			return;
+			return null;
 		}else{
 			$perm = Server::getInstance()->getPluginManager()->getPermission($name);
 			if($perm === null){
