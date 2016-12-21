@@ -219,7 +219,6 @@ class Level implements ChunkManager, Metadatable{
 
 	/** @var BlockMetadataStore */
 	private $blockMetadata;
-	private $blockOrder;
 
 	/** @var Position */
 	private $temporalPosition;
@@ -341,8 +340,6 @@ class Level implements ChunkManager, Metadatable{
 		}
 		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.level.preparing", [$this->provider->getName()]));
 		$this->generator = Generator::getGenerator($this->provider->getGenerator());
-
-		$this->blockOrder = $provider::getProviderOrder();
 
 		$this->folderName = $name;
 		$this->updateQueue = new ReversePriorityQueue();
@@ -2127,16 +2124,6 @@ class Level implements ChunkManager, Metadatable{
 	 * @param int $x
 	 * @param int $z
 	 *
-	 * @return int[]
-	 */
-	public function getBiomeColor(int $x, int $z) : array{
-		return $this->getChunk($x >> 4, $z >> 4, true)->getBiomeColor($x & 0x0f, $z & 0x0f);
-	}
-
-	/**
-	 * @param int $x
-	 * @param int $z
-	 *
 	 * @return int
 	 */
 	public function getHeightMap(int $x, int $z) : int{
@@ -2150,17 +2137,6 @@ class Level implements ChunkManager, Metadatable{
 	 */
 	public function setBiomeId(int $x, int $z, int $biomeId){
 		$this->getChunk($x >> 4, $z >> 4, true)->setBiomeId($x & 0x0f, $z & 0x0f, $biomeId);
-	}
-
-	/**
-	 * @param int $x
-	 * @param int $z
-	 * @param int $R
-	 * @param int $G
-	 * @param int $B
-	 */
-	public function setBiomeColor(int $x, int $z, int $R, int $G, int $B){
-		$this->getChunk($x >> 4, $z >> 4, true)->setBiomeColor($x & 0x0f, $z & 0x0f, $R, $G, $B);
 	}
 
 	/**
@@ -2367,8 +2343,6 @@ class Level implements ChunkManager, Metadatable{
 		if(count($this->chunkSendQueue) > 0){
 			$this->timings->syncChunkSendTimer->startTiming();
 
-			$x = null;
-			$z = null;
 			foreach($this->chunkSendQueue as $index => $players){
 				if(isset($this->chunkSendTasks[$index])){
 					continue;
@@ -2832,9 +2806,6 @@ class Level implements ChunkManager, Metadatable{
 
 	public function doChunkGarbageCollection(){
 		$this->timings->doChunkGC->startTiming();
-
-		$X = null;
-		$Z = null;
 
 		foreach($this->chunks as $index => $chunk){
 			if(!isset($this->unloadQueue[$index]) and (!isset($this->usedChunks[$index]) or count($this->usedChunks[$index]) === 0)){
