@@ -19,29 +19,23 @@
  *
 */
 
-namespace pocketmine\packs;
+namespace pocketmine\pack;
 
-class ResourcePackInfoEntry{
-	protected $packId; //UUID
+class ResourcePackIdVersion{
+	protected $packId;
 	protected $version;
-	protected $packSize;
 
-	public function __construct(string $packId, string $version, $packSize){
+	public function __construct($packId, $version){
 		$this->packId = $packId;
 		$this->version = $version;
-		$this->packSize = $packSize;
 	}
 
-	public function getPackId() : string{
+	public function getPackId(){
 		return $this->packId;
 	}
 
-	public function getVersion() : string{
+	public function getVersion(){
 		return $this->version;
-	}
-
-	public function getPackSize(){
-		return $this->packSize;
 	}
 
 }
