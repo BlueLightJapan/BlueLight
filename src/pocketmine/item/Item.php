@@ -346,7 +346,7 @@ class Item implements ItemIds, \JsonSerializable{
 
 	public function __construct(int $id, $meta = 0, int $count = 1, string $name = "Unknown"){
 		$this->id = $id & 0xffff;
-		$this->meta = $meta !== null ? $meta & 0xffff : null;
+		$this->meta = $meta !== -1 ? $meta & 0xffff : -1;
 		$this->count = $count;
 		$this->name = $name;
 		if(!isset($this->block) and $this->id <= 0xff and isset(Block::$list[$this->id])){
@@ -374,7 +374,7 @@ class Item implements ItemIds, \JsonSerializable{
 	}
 
 	public function hasCompoundTag() : bool{
-		return $this->tags !== "" and $this->tags !== null;
+		return $this->tags !== "";
 	}
 
 	public function hasCustomBlockData() : bool{
@@ -680,7 +680,11 @@ class Item implements ItemIds, \JsonSerializable{
 	}
 
 	public function setDamage($meta){
-		$this->meta = $meta !== null ? $meta & 0xFFFF : null;
+		$this->meta = $meta !== -1 ? $meta & 0xFFFF : -1;
+	}
+
+	public function hasAnyDamageValue(){
+		return $this->meta === -1;
 	}
 
 	public function getMaxStackSize(){
@@ -760,7 +764,7 @@ class Item implements ItemIds, \JsonSerializable{
 	public final function deepEquals(Item $item, bool $checkDamage = true, bool $checkCompound = true) : bool{
 		if($this->equals($item, $checkDamage, $checkCompound)){
 			return true;
-		}elseif($item->hasCompoundTag() or $this->hasCompoundTag()){
+		}elseif($item->hasCompoundTag() and $this->hasCompoundTag()){
 			return NBT::matchTree($this->getNamedTag(), $item->getNamedTag());
 		}
 

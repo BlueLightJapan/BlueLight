@@ -33,8 +33,8 @@ class ItemBlock extends Item{
 	}
 
 	public function setDamage($meta){
-		$this->meta = $meta !== null ? $meta & 0xf : null;
-		$this->block->setDamage($this->meta);
+		$this->meta = $meta !== -1 ? $meta & 0xf : -1;
+		$this->block->setDamage($this->meta !== -1 ? $this->meta : );
 	}
 
 	public function __clone(){
