@@ -922,9 +922,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->teleport($pos);
 
 		$this->spawnToAll();
-		if($this->server->weatherEnabled){
-			$this->level->getWeather()->sendWeather($this);
-		}
+
+		$this->level->getWeather()->sendWeather($this);
+
 		if($this->server->expEnabled){
 			$this->updateExperience();
 		}
@@ -1946,6 +1946,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->connected === false){
 			return;
 		}
+echo $packet->getName();
 		if($packet::NETWORK_ID === ProtocolInfo::BATCH_PACKET){
 			/** @var BatchPacket $packet */
 			$this->server->getNetwork()->processBatch($packet, $this);
@@ -2049,6 +2050,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
+var_dump($packet);
 				if($this->teleportPosition !== null){
 					break;
 				}
