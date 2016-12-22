@@ -1946,7 +1946,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->connected === false){
 			return;
 		}
-echo $packet->getName();
 		if($packet::NETWORK_ID === ProtocolInfo::BATCH_PACKET){
 			/** @var BatchPacket $packet */
 			$this->server->getNetwork()->processBatch($packet, $this);
@@ -2050,7 +2049,6 @@ echo $packet->getName();
 
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
-var_dump($packet);
 				if($this->teleportPosition !== null){
 					break;
 				}
