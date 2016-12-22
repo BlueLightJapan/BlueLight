@@ -84,6 +84,7 @@ use pocketmine\entity\Villager;
 use pocketmine\entity\XPOrb;
 use pocketmine\entity\Zombie;
 use pocketmine\entity\Lightning;
+use pocketmine\entity\EnderPearl;
 use pocketmine\entity\EnderDragon;
 use pocketmine\entity\Endermite;
 use pocketmine\entity\PolarBear;
@@ -2499,6 +2500,7 @@ class Server{
 		Entity::registerEntity(Chicken::class);
 		Entity::registerEntity(Cow::class);
 		Entity::registerEntity(Creeper::class);
+        Entity::registerEntity(EnderPearl::class);
 		Entity::registerEntity(Enderman::class);
 		Entity::registerEntity(ElderGuardian::class);
 		Entity::registerEntity(Ghast::class);
