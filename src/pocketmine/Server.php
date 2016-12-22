@@ -34,7 +34,6 @@ use pocketmine\command\SimpleCommandMap;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\ThrownExpBottle;
 use pocketmine\entity\ThrownPotion;
-
 use pocketmine\entity\Bat;
 use pocketmine\entity\Blaze;
 use pocketmine\entity\Boat;
@@ -1603,10 +1602,7 @@ class Server{
 
 			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
 			$this->network->registerInterface(new RakLibInterface($this));
-
 			$this->pluginManager->loadPlugins($this->pluginPath);
-
-			
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
 			LevelProviderManager::addProvider($this, Anvil::class);
@@ -1615,7 +1611,6 @@ class Server{
 				$this->logger->debug($this->getLanguage()->translateString("pocketmine.debug.enable"));
 				LevelProviderManager::addProvider($this, LevelDB::class);
 			}
-
 
 			Generator::addGenerator(Flat::class, "flat");
 			Generator::addGenerator(Normal::class, "normal");
@@ -2497,7 +2492,6 @@ class Server{
 		Entity::registerEntity(Squid::class);
 		Entity::registerEntity(Horse::class);
 		Entity::registerEntity(Human::class, true);
-
 		Entity::registerEntity(Bat::class);
 		Entity::registerEntity(Blaze::class);
 		Entity::registerEntity(Boat::class);
@@ -2524,7 +2518,6 @@ class Server{
 		Entity::registerEntity(SnowGolem::class);
 		Entity::registerEntity(Wither::class);
 		Entity::registerEntity(Wolf::class);
-
 		Entity::registerEntity(Witch::class);
 		Entity::registerEntity(Mule::class);
 		Entity::registerEntity(Donkey::class);
@@ -2541,9 +2534,6 @@ class Server{
 		Entity::registerEntity(EnderDragon::class);
 		Entity::registerEntity(Endermite::class);
 		Entity::registerEntity(PolarBear::class);
-
-
-
 	}
 
 	private function registerTiles(){
@@ -2554,5 +2544,4 @@ class Server{
 		Tile::registerTile(Sign::class);
 		Tile::registerTile(Skull::class);
 	}
-
 }
