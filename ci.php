@@ -1,7 +1,12 @@
 <?php
 // import from clearsky/ci-test
 $time = time();
-system("echo \"server-port=988\" > server.properties");
+$port = rand(1000,60000);
+while(system("lsof -i:".$port) != null){
+	$port = rand(1000,60000);
+}
+echo "port is".$port.PHP_EOL;
+system("echo \"server-port=".$port."\" > server.properties");
 $server = proc_open(PHP_BINARY . " src/pocketmine/PocketMine.php --no-wizard --disable-readline", [
 	0 => ["pipe", "r"],
 	1 => ["pipe", "w"],
