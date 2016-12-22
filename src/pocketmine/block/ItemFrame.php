@@ -124,9 +124,9 @@ class ItemFrame extends Transparent{
 			$this->getLevel()->setBlock($block, $this, true, true);
 			$nbt = new CompoundTag("", [
 				new StringTag("id", Tile::ITEM_FRAME),
-				new IntTag("x", $block->x),
-				new IntTag("y", $block->y),
-				new IntTag("z", $block->z),
+				new IntTag("x", $item->x),
+				new IntTag("y", $item->y),
+				new IntTag("z", $item->z),
 				new ByteTag("ItemRotation", 0),
 				new FloatTag("ItemDropChance", 1.0)
 			]);
