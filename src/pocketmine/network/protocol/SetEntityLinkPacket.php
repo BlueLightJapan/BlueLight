@@ -31,6 +31,10 @@ class SetEntityLinkPacket extends DataPacket{
 	public $to;
 	public $type;
 
+	public function getName(){
+		return "SetEntityLinkPacket";
+	}
+
 	public function decode(){
 
 	}

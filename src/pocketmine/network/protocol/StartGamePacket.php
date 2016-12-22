@@ -50,6 +50,10 @@ class StartGamePacket extends DataPacket{
 	public $levelId;
 	public $worldName;
 
+	public function getName(){
+		return "StartGamePacket";
+	}
+
 	public function decode(){
 
 	}

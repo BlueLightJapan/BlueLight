@@ -35,6 +35,10 @@ class PlayerListPacket extends DataPacket{
 	public $entries = [];
 	public $type;
 
+	public function getName(){
+		return "PlayerListPacket";
+	}
+
 	public function clean(){
 		$this->entries = [];
 		return parent::clean();

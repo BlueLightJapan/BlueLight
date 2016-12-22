@@ -29,6 +29,10 @@ class ClientboundMapItemDataPacket extends DataPacket{
 
 	public $eid;
 
+	public function getName(){
+		return "ClientboundMapItemDataPacket";
+	}
+
 	public function decode(){
 	}
 

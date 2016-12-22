@@ -33,6 +33,10 @@ class AddHangingEntityPacket extends DataPacket{
 	public $z;
 	public $unknown;
 
+	public function getName(){
+		return "AddHangingEntityPacket";
+	}
+
 	public function decode(){
 
 	}

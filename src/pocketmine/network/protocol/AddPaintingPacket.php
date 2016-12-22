@@ -34,6 +34,10 @@ class AddPaintingPacket extends DataPacket{
 	public $direction;
 	public $title;
 
+	public function getName(){
+		return "AddPaintingPacket";
+	}
+
 	public function decode(){
 
 	}

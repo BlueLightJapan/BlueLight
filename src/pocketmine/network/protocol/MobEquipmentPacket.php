@@ -33,6 +33,10 @@ class MobEquipmentPacket extends DataPacket{
 	public $selectedSlot;
 	public $unknownByte;
 
+	public function getName(){
+		return "MobEquipmentPacket";
+	}
+
 	public function decode(){
 		$this->eid = $this->getEntityId(); //EntityRuntimeID
 		$this->item = $this->getSlot();

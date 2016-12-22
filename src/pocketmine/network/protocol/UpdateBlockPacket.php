@@ -43,6 +43,10 @@ class UpdateBlockPacket extends DataPacket{
 	public $blockData;
 	public $flags;
 
+	public function getName(){
+		return "UpdateBlockPacket";
+	}
+
 	public function decode(){
 
 	}

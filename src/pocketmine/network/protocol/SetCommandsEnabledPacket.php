@@ -28,6 +28,10 @@ class SetCommandsEnabledPacket extends DataPacket{
 	const NETWORK_ID = Info::SET_COMMANDS_ENABLED_PACKET;
 	
 	public $enabled;
+
+	public function getName(){
+		return "SetCommandsEnabledPacket";
+	}
 	
 	public function decode(){
 	

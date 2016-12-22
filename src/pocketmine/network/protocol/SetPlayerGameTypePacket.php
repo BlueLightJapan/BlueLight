@@ -29,6 +29,10 @@ class SetPlayerGameTypePacket extends DataPacket{
 
 	public $gamemode;
 
+	public function getName(){
+		return "SetPlayerGameTypePacket";
+	}
+
 	public function decode(){
 		$this->gamemode = $this->getVarInt();
 	}

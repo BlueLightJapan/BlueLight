@@ -29,6 +29,10 @@ class SetHealthPacket extends DataPacket{
 
 	public $health;
 
+	public function getName(){
+		return "SetHealthPacket";
+	}
+
 	public function decode(){
 		$this->health = $this->getVarInt();
 	}

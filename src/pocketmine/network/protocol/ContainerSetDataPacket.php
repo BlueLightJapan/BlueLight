@@ -31,6 +31,10 @@ class ContainerSetDataPacket extends DataPacket{
 	public $property;
 	public $value;
 
+	public function getName(){
+		return "ContainerSetDataPacket";
+	}
+
 	public function decode(){
 
 	}

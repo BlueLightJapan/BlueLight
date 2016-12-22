@@ -38,6 +38,10 @@ class MobEffectPacket extends DataPacket{
 	public $particles = true;
 	public $duration;
 
+	public function getName(){
+		return "MobEffectPacket";
+	}
+
 	public function decode(){
 
 	}

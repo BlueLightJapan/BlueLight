@@ -44,6 +44,10 @@ class CraftingDataPacket extends DataPacket{
 	public $entries = [];
 	public $cleanRecipes = false;
 
+	public function getName(){
+		return "CraftingDataPacket";
+	}
+
 	public function clean(){
 		$this->entries = [];
 		return parent::clean();

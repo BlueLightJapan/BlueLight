@@ -29,6 +29,10 @@ class ReplaceItemInSlotPacket extends DataPacket{
 
 	public $item;
 
+	public function getName(){
+		return "ReplaceItemInSlotPacket";
+	}
+
 	public function decode(){
 
 	}

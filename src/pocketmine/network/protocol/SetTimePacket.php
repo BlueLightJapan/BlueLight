@@ -29,6 +29,10 @@ class SetTimePacket extends DataPacket{
 	public $time;
 	public $started = true;
 
+	public function getName(){
+		return "SetTimePacket";
+	}
+
 	public function decode(){
 
 	}

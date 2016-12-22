@@ -29,6 +29,10 @@ class BatchPacket extends DataPacket{
 
 	public $payload;
 
+	public function getName(){
+		return "BatchPacket";
+	}
+
 	public function decode(){
 		$this->payload = $this->getString();
 	}

@@ -29,6 +29,10 @@ class RemoveEntityPacket extends DataPacket{
 
 	public $eid;
 
+	public function getName(){
+		return "RemoveEntityPacket";
+	}
+
 	public function decode(){
 
 	}

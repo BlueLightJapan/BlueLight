@@ -28,6 +28,10 @@ class RequestChunkRadiusPacket extends DataPacket{
 
 	public $radius;
 
+	public function getName(){
+		return "RequestChunkRadiusPacket";
+	}
+
 	public function decode(){
 		$this->radius = $this->getVarInt();
 	}

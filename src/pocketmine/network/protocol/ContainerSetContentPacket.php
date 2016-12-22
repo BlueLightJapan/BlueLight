@@ -36,6 +36,10 @@ class ContainerSetContentPacket extends DataPacket{
 	public $slots = [];
 	public $hotbar = [];
 
+	public function getName(){
+		return "ContainerSetContentPacket";
+	}
+
 	public function clean(){
 		$this->slots = [];
 		$this->hotbar = [];

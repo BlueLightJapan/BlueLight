@@ -30,6 +30,10 @@ class TakeItemEntityPacket extends DataPacket{
 	public $target;
 	public $eid;
 
+	public function getName(){
+		return "TakeItemEntityPacket";
+	}
+
 	public function decode(){
 
 	}

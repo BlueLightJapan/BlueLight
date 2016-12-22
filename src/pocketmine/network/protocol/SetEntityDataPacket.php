@@ -34,6 +34,10 @@ class SetEntityDataPacket extends DataPacket{
 	public $eid;
 	public $metadata;
 
+	public function getName(){
+		return "SetEntityDataPacket";
+	}
+
 	public function decode(){
 
 	}

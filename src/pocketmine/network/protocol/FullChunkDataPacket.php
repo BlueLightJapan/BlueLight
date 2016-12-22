@@ -31,6 +31,10 @@ class FullChunkDataPacket extends DataPacket{
 	public $chunkZ;
 	public $data;
 
+	public function getName(){
+		return "FullChunkDataPacket";
+	}
+
 	public function decode(){
 
 	}

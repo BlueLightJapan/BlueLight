@@ -52,6 +52,10 @@ class PlayerActionPacket extends DataPacket{
 	public $z;
 	public $face;
 
+	public function getName(){
+		return "PlayerActionPacket";
+	}
+
 	public function decode(){
 		$this->eid = $this->getEntityId();
 		$this->action = $this->getVarInt();

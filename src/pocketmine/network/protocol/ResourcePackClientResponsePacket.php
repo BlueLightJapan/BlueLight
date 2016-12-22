@@ -31,6 +31,10 @@ class ResourcePackClientResponsePacket extends DataPacket{
 	public $count;
 	//public $packid;
 
+	public function getName(){
+		return "ResourcePackClientResponsePacket";
+	}
+
 	public function decode(){
 		$this->type = $this->getByte();
 		$this->count = $this->getLShort();

@@ -40,6 +40,10 @@ class LoginPacket extends DataPacket{
 	public $skinId;
 	public $skin = null;
 
+	public function getName(){
+		return "LoginPacket";
+	}
+
 	public function decode(){
 		$this->protocol = $this->getInt();
 

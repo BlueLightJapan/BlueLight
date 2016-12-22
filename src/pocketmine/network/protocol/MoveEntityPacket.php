@@ -35,6 +35,10 @@ class MoveEntityPacket extends DataPacket{
 	public $headYaw;
 	public $pitch;
 
+	public function getName(){
+		return "MoveEntityPacket";
+	}
+
 	public function decode(){
 		$this->eid = $this->getEntityId();
 		$this->getVector3f($this->x, $this->y, $this->z);

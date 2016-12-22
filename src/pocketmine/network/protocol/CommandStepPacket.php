@@ -47,6 +47,10 @@ class CommandStepPacket extends DataPacket{
 	public $args; //JSON formatted command arguments
 	public $string4;
 
+	public function getName(){
+		return "CommandStepPacket";
+	}
+
 	public function decode(){
 		$this->command = $this->getString();
 		$this->overload = $this->getString();

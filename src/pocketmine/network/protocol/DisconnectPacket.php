@@ -30,6 +30,10 @@ class DisconnectPacket extends DataPacket{
 	public $hideDisconnectionScreen = false;
 	public $message;
 
+	public function getName(){
+		return "DisconnectPacket";
+	}
+
 	public function decode(){
 		$this->hideDisconnectionScreen = $this->getBool();
 		$this->message = $this->getString();

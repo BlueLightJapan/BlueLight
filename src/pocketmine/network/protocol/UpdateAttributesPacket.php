@@ -34,6 +34,10 @@ class UpdateAttributesPacket extends DataPacket{
 	/** @var Attribute[] */
 	public $entries = [];
 
+	public function getName(){
+		return "UpdateAttributesPacket";
+	}
+
 	public function decode(){
 
 	}

@@ -90,6 +90,10 @@ class LevelEventPacket extends DataPacket{
 	public $z = 0;
 	public $data;
 
+	public function getName(){
+		return "LevelEventPacket";
+	}
+
 	public function decode(){
 
 	}

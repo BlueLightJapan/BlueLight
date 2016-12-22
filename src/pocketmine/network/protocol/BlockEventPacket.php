@@ -33,6 +33,10 @@ class BlockEventPacket extends DataPacket{
 	public $case1;
 	public $case2;
 
+	public function getName(){
+		return "BlockEventPacket";
+	}
+
 	public function decode(){
 
 	}

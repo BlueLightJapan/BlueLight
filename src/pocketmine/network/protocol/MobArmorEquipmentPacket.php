@@ -30,6 +30,10 @@ class MobArmorEquipmentPacket extends DataPacket{
 	public $eid;
 	public $slots = [];
 
+	public function getName(){
+		return "MobArmorEquipmentPacket";
+	}
+
 	public function decode(){
 		$this->eid = $this->getEntityId();
 		$this->slots[0] = $this->getSlot();

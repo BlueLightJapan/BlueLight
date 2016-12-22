@@ -49,6 +49,10 @@ class EntityEventPacket extends DataPacket{
 	public $event;
 	public $unknown;
 
+	public function getName(){
+		return "EntityEventPacket";
+	}
+
 	public function decode(){
 		$this->eid = $this->getEntityId();
 		$this->event = $this->getByte();

@@ -41,6 +41,10 @@ class UseItemPacket extends DataPacket{
 	public $posZ;
 	public $slot;
 
+	public function getName(){
+		return "UseItemPacket";
+	}
+
 	public function decode(){
 		$this->getBlockCoords($this->x, $this->y, $this->z);
 		$this->id = $this->getUnsignedVarInt();

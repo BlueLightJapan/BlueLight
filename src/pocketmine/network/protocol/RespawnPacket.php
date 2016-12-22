@@ -31,6 +31,10 @@ class RespawnPacket extends DataPacket{
 	public $y;
 	public $z;
 
+	public function getName(){
+		return "RespawnPacket";
+	}
+
 	public function decode(){
 		$this->x = $this->getLFloat();
 		$this->y = $this->getLFloat();

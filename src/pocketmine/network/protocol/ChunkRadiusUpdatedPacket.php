@@ -29,6 +29,10 @@ class ChunkRadiusUpdatedPacket extends DataPacket{
 
 	public $radius;
 
+	public function getName(){
+		return "ChunkRadiusUpdatedPacket";
+	}
+
 	public function decode(){
 	}
 

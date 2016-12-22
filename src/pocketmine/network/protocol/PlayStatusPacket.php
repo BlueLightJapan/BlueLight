@@ -34,6 +34,10 @@ class PlayStatusPacket extends DataPacket{
 
 	public $status;
 
+	public function getName(){
+		return "PlayStatusPacket";
+	}
+
 	public function decode(){
 
 	}

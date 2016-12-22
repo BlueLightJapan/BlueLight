@@ -35,6 +35,10 @@ class ContainerOpenPacket extends DataPacket{
 	public $z;
 	public $entityId = -1;
 
+	public function getName(){
+		return "ContainerOpenPacket";
+	}
+
 	public function decode(){
 
 	}

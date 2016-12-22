@@ -31,6 +31,10 @@ class RemoveBlockPacket extends DataPacket{
 	public $y;
 	public $z;
 
+	public function getName(){
+		return "RemoveBlockPacket";
+	}
+
 	public function decode(){
 		$this->getBlockCoords($this->x, $this->y, $this->z);
 	}

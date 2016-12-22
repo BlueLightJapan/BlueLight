@@ -33,6 +33,10 @@ class ResourcePacksInfoPacket extends DataPacket{
 	/** @var ResourcePackInfoEntry */
 	public $resourcePackEntries = [];
 
+	public function getName(){
+		return "ResourcePacksInfoPacket";
+	}
+
 	public function decode(){
 
 	}

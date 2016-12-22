@@ -28,6 +28,10 @@ class PlayerFallPacket extends DataPacket{
 
 	public $float;
 
+	public function getName(){
+		return "PlayerFallPacket";
+	}
+
 	public function decode(){
 
 	$this->float = $this->getFloat();

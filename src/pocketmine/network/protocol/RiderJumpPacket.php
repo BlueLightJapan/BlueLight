@@ -28,6 +28,10 @@ class RiderJumpPacket extends DataPacket{
 
 	public $type;
 
+	public function getName(){
+		return "RiderJumpPacket";
+	}
+
 	public function decode(){
 		$this->type = $this->getVarInt();
 	}

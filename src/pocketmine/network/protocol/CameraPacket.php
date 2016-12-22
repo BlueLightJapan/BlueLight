@@ -29,6 +29,10 @@ class CameraPacket extends DataPacket{
 
 	public $eid;
 
+	public function getName(){
+		return "CameraPacket";
+	}
+
 	public function decode(){
 	}
 

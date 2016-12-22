@@ -32,6 +32,10 @@ class ResourcePackChunkDataPacket extends DataPacket{
 	public $int2;
 	public $payload;
 
+	public function getName(){
+		return "ResourcePackChunkDataPacket";
+	}
+
 	public function decode(){
 	}
 

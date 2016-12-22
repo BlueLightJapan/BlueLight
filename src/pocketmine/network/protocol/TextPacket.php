@@ -40,6 +40,10 @@ class TextPacket extends DataPacket{
 	public $message;
 	public $parameters = [];
 
+	public function getName(){
+		return "TextPacket";
+	}
+
 	public function decode(){
 		$this->type = $this->getByte();
 		switch($this->type){

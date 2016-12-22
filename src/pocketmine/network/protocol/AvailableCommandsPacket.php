@@ -29,6 +29,10 @@ class AvailableCommandsPacket extends DataPacket{
 	public $commands; //JSON-encoded command data
 	public $unknown;
 
+	public function getName(){
+		return "AvailableCommandsPacket";
+	}
+
 	public function decode(){
 
 	}

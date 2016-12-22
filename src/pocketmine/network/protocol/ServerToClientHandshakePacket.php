@@ -30,6 +30,10 @@ class ServerToClientHandshakePacket extends DataPacket{
 	public $string1;
 	public $string2;
 
+	public function getName(){
+		return "ServerToClientHandshakePacket";
+	}
+
 	public function decode(){
 
 	}

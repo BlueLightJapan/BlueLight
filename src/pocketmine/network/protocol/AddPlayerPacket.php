@@ -46,6 +46,10 @@ class AddPlayerPacket extends DataPacket{
 	public $item;
 	public $metadata;
 
+	public function getName(){
+		return "AddPlayerPacket";
+	}
+
 	public function decode(){
 
 	}

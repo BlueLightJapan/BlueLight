@@ -128,6 +128,10 @@ class LevelSoundEventPacket extends DataPacket{
 	public $unknownBool;
 	public $unknownBool2;
 
+	public function getName(){
+		return "LevelSoundEventPacket";
+	}
+
 	public function decode(){
 		$this->sound = $this->getByte();
 		$this->getVector3f($this->x, $this->y, $this->z);

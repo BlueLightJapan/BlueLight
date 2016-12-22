@@ -61,6 +61,10 @@ class AdventureSettingsPacket extends DataPacket{
 	public $flags = 0;
 	public $userPermission;
 
+	public function getName(){
+		return "AdventureSettingsPacket";
+	}
+
 	public function decode(){
 		$this->flags = $this->getUnsignedVarInt();
 		$this->userPermission = $this->getUnsignedVarInt();

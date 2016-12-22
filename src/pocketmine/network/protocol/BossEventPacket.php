@@ -42,6 +42,10 @@ class BossEventPacket extends DataPacket{
 	public $string1;
 	public $string2;
 
+	public function getName(){
+		return "BossEventPacket";
+	}
+
 	public function decode(){
 	}
 

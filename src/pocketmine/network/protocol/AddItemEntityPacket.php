@@ -36,6 +36,10 @@ class AddItemEntityPacket extends DataPacket{
 	public $speedY;
 	public $speedZ;
 
+	public function getName(){
+		return "AddItemEntityPacket";
+	}
+
 	public function decode(){
 
 	}

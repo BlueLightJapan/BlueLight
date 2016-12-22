@@ -41,6 +41,10 @@ class MovePlayerPacket extends DataPacket{
 	public $mode = self::MODE_NORMAL;
 	public $onGround;
 
+	public function getName(){
+		return "MovePlayerPacket";
+	}
+
 	public function clean(){
 		$this->teleport = false;
 		return parent::clean();

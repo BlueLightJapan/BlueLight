@@ -45,6 +45,10 @@ class AddEntityPacket extends DataPacket{
 	public $metadata;
 	public $links = [];
 
+	public function getName(){
+		return "AddEntityPacket";
+	}
+
 	public function decode(){
 
 	}

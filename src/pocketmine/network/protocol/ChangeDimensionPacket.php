@@ -37,6 +37,10 @@ class ChangeDimensionPacket extends DataPacket{
 	public $z;
 	public $unknown; //bool
 
+	public function getName(){
+		return "ChangeDimensionPacket";
+	}
+
 	public function decode(){
 
 	}

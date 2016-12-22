@@ -32,6 +32,10 @@ class SpawnExperienceOrbPacket extends DataPacket{
 	public $z;
 	public $amount;
 
+	public function getName(){
+		return "SpawnExperienceOrbPacket";
+	}
+
 	public function decode(){
 
 	}

@@ -29,6 +29,10 @@ class HurtArmorPacket extends DataPacket{
 
 	public $health;
 
+	public function getName(){
+		return "HurtArmorPacket";
+	}
+
 	public function decode(){
 
 	}

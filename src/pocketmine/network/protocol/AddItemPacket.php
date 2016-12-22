@@ -29,6 +29,10 @@ class AddItemPacket extends DataPacket{
 
 	public $item;
 
+	public function getName(){
+		return "AddItemPacket";
+	}
+
 	public function decode(){
 
 	}

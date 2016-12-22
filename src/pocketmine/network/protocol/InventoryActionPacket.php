@@ -29,6 +29,10 @@ class InventoryActionPacket extends DataPacket{
 	public $unknown;
 	public $item;
 
+	public function getName(){
+		return "InventoryActionPacket";
+	}
+
 	public function decode(){
 
 	}
