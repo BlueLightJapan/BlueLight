@@ -56,7 +56,7 @@ class UDPServerSocket{
      * @return int
      */
     public function readPacket(&$buffer, &$source, &$port){
-        return socket_recvfrom($this->socket, $buffer, 65535, 0, $source, $port);
+        return @socket_recvfrom($this->socket, $buffer, 65535, 0, $source, $port);
     }
 
     /**
