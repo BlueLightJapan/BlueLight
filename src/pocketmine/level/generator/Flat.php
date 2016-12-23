@@ -37,7 +37,6 @@ use pocketmine\level\generator\populator\Ore;
 use pocketmine\level\generator\populator\Populator;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
-use pocketmine\level\format\generic\GenericChunk;
 
 class Flat extends Generator{
 	/** @var ChunkManager */
@@ -112,8 +111,6 @@ class Flat extends Generator{
 
 		$this->chunk = clone $this->level->getChunk($chunkX, $chunkZ);
 		$this->chunk->setGenerated();
-		$c = Biome::getBiome($biome)->getColor();
-
 
 		for($Z = 0; $Z < 16; ++$Z){
 			for($X = 0; $X < 16; ++$X){
