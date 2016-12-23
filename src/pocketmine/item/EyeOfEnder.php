@@ -22,14 +22,10 @@
 namespace pocketmine\item;
 use pocketmine\item\Item;
 
-class EnderPearl extends Item{
+class EyeOfEnder extends Item{
 
     public function __construct($meta = 0, $count = 1){
-        parent::__construct(self::ENDER_PEARL, 0, $count, "Ender Pearl");
-    }
-
-    public function getMaxStackSize() : int {
-        return 16;
-    }
+        parent::__construct(self::EYE_OF_ENDER, 0, $count, "EyeOfEnder");
+	}
 
 }

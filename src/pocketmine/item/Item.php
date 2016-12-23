@@ -219,6 +219,8 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::PRISMARINE_SHARD] = PrismarineShard::class;
 			self::$list[self::PRISMARINE_CRYSTALS] = PrismarineCrystals::class;
 			self::$list[self::NETHER_STAR] = NetherStar::class;
+			self::$list[self::ENDER_PEARL] = EnderPearl::class;
+			self::$list[self::EYE_OF_ENDER] = EyeOfEnder::class;
 
 			for($i = 0; $i < 256; ++$i){
 				if(Block::$list[$i] !== null){

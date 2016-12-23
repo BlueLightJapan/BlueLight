@@ -137,7 +137,7 @@ interface ItemIds extends BlockIds{
 	const RAW_CHICKEN = 365;
 	const COOKED_CHICKEN = 366;
 	const ROTTEN_FLESH = 367;
-
+	const ENDER_PEARL = 368;
 	const BLAZE_ROD = 369;
 	const GHAST_TEAR = 370;
 	const GOLD_NUGGET = 371, GOLDEN_NUGGET = 371;
@@ -150,7 +150,7 @@ interface ItemIds extends BlockIds{
 	const MAGMA_CREAM = 378;
 	const BREWING_STAND = 379;
 	const CAULDRON = 380;
-
+	const EYE_OF_ENDER = 381;
 	const GLISTERING_MELON = 382;
 	const SPAWN_EGG = 383;
 	const BOTTLE_O_ENCHANTING = 384, ENCHANTING_BOTTLE = 384;
