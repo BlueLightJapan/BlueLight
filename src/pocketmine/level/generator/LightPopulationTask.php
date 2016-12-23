@@ -22,7 +22,7 @@
 namespace pocketmine\level\generator;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\generic\FullChunk;
+use pocketmine\level\format\generic\GenericChunk;
 use pocketmine\level\Level;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
