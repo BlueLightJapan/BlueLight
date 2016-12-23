@@ -2500,7 +2500,7 @@ class Server{
 		Entity::registerEntity(Chicken::class);
 		Entity::registerEntity(Cow::class);
 		Entity::registerEntity(Creeper::class);
-       		Entity::registerEntity(EnderPearl::class);
+		Entity::registerEntity(EnderPearl::class);
 		Entity::registerEntity(Enderman::class);
 		Entity::registerEntity(ElderGuardian::class);
 		Entity::registerEntity(Ghast::class);
