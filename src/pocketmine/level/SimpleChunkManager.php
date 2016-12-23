@@ -103,7 +103,7 @@ class SimpleChunkManager implements ChunkManager{
 	 * @return Chunk|null
 	 */
 	public function getChunk(int $chunkX, int $chunkZ){
-		return $this->chunks[$index = Level::chunkHash($chunkX, $chunkZ)] ?? null;
+		return $this->chunks[Level::chunkHash($chunkX, $chunkZ)] ?? null;
 	}
 
 	/**

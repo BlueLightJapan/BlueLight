@@ -77,8 +77,8 @@ interface ChunkManager{
 	public function getChunk(int $chunkX, int $chunkZ);
 
 	/**
-	 * @param int       $chunkX
-	 * @param int       $chunkZ
+	 * @param int   $chunkX
+	 * @param int   $chunkZ
 	 * @param Chunk $chunk
 	 */
 	public function setChunk(int $chunkX, int $chunkZ, Chunk $chunk = null);
