@@ -23,8 +23,6 @@ HP : http://bluelight.cf/?lang=en<br>
 <br>
 If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
-<br>G0nis0s's issue and pull request are hell,but Bluelight's one are heaven,because all members are kind!
-<br>
 <br>
 <a name="JPN"></a>
 BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
@@ -48,4 +46,3 @@ HP : http://bluelight.cf<br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
 <br>
-G0nis0sのissueやpull-requsetは地獄ですが、Bluelightではチームのメンバーが優しいので天国です！
