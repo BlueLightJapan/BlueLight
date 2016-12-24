@@ -19,6 +19,9 @@ Download App : GooglePlay https://play.google.com/store/apps/details?id=com.hani
 Download Phar : Jenkins  http://jenkins.haniokasai.com/job/BlueLight-PMMP<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
 Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
+<br>
+If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/issues/40
+<br>
 <br>G0nis0s's issue and pull request are hell,but Bluelight's one are heaven,because all members are kind!
 <br>
 <br>
@@ -39,5 +42,8 @@ Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
 便利な詰め合わせ : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 Lobi : https://web.lobi.co/game/minecraftpe/group/d95ef7462b185454741ad90520e4ba23fe7738c4<br>
+<br>
+チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
+<br>
 <br>
 G0nis0sのissueやpull-requsetは地獄ですが、Bluelightではチームのメンバーが優しいので天国です！
