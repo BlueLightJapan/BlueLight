@@ -19,8 +19,6 @@
  *
 */
 
-declare(strict_types = 1);
-
 namespace pocketmine\level\format\generic;
 
 use pocketmine\level\format\LevelProvider;
@@ -42,7 +40,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 	/** @var CompoundTag */
 	protected $levelData;
 
-	public function __construct(Level $level, string $path){
+	public function __construct(Level $level, $path){
 		$this->level = $level;
 		$this->path = $path;
 		if(!file_exists($this->path)){
@@ -66,7 +64,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		}
 	}
 
-	public function getPath() : string{
+	public function getPath(){
 		return $this->path;
 	}
 
@@ -78,7 +76,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		return $this->level;
 	}
 
-	public function getName() : string{
+	public function getName(){
 		return $this->levelData["LevelName"];
 	}
 
@@ -87,7 +85,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 	}
 
 	public function setTime($value){
-		$this->levelData->Time = new LongTag("Time", $value);
+		$this->levelData->Time = new IntTag("Time", (int) $value);
 	}
 
 	public function getSeed(){
@@ -98,7 +96,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		$this->levelData->RandomSeed = new LongTag("RandomSeed", $value);
 	}
 
-	public function getSpawn() : Vector3{
+	public function getSpawn(){
 		return new Vector3((float) $this->levelData["SpawnX"], (float) $this->levelData["SpawnY"], (float) $this->levelData["SpawnZ"]);
 	}
 
@@ -115,7 +113,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 	/**
 	 * @return CompoundTag
 	 */
-	public function getLevelData() : CompoundTag{
+	public function getLevelData(){
 		return $this->levelData;
 	}
 
@@ -128,7 +126,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		file_put_contents($this->getPath() . "level.dat", $buffer);
 	}
 
-	public function requestChunkTask(int $x, int $z){
+	public function requestChunkTask($x, $z){
 		$chunk = $this->getChunk($x, $z, false);
 		if(!($chunk instanceof GenericChunk)){
 			throw new ChunkException("Invalid Chunk sent");
