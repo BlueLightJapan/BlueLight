@@ -27,17 +27,51 @@ namespace pocketmine\network\protocol;
 class ClientboundMapItemDataPacket extends DataPacket{
 	const NETWORK_ID = Info::CLIENTBOUND_MAP_ITEM_DATA_PACKET;
 
-	public $eid;
+	public $mapid;
+	public $updatetype;
+	public $direction;
+	public $x;
+	public $z;
+	public $col;
+	public $row;
+	public $xoffset;
+	public $zoffset;
+	public $data;
+ 	public $int6;
+	public $int7;
+	public $int8;
+	public $int9;
+	public $int10;
+	public $int11;
 
 	public function getName(){
 		return "ClientboundMapItemDataPacket";
 	}
 
 	public function decode(){
+
 	}
 
 	public function encode(){
 		$this->reset();
+
+		$this->putLong($this->mapid);
+		$this->putUnsignedVarInt($this->updatetype);
+		$this->putUnsignedVarInt($this->direction);
+		$this->putVarInt($this->x);
+		$this->putByte($this->z);
+		$this->putUnsignedVarInt($this->col);
+		$this->putVarInt($this->row);
+		$this->putByte($this->xoffset);
+		$this->putByte($this->zoffset);
+		$this->putString($this->data);
+		$this->putUnsignedVarInt($this->int6);
+		$this->putVarInt($this->int7);
+		$this->putVarInt($this->int8);
+		$this->putVarInt($this->int9);
+		$this->putVarInt($this->int10);
+		$this->putUnsignedVarInt($this->int11);
+
 	}
 
 }
