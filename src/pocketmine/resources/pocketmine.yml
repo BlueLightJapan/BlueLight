@@ -164,5 +164,3 @@ BlueLight:
  expEnabled: false
  weatherEnabled: false
  allowSplashPotion: true
- # 0: normal 1: smart This doesn't work in this version.
- #smartlogger: 0
