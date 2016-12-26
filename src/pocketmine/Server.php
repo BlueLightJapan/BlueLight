@@ -1167,6 +1167,9 @@ class Server{
 	 */
 	public function getProperty($variable, $defaultValue = null){
 		if(!array_key_exists($variable, $this->propertyCache)){
+			if($this->bluelightconfig->exists($variable)){
+				return $this->getBlueLightProperty($variable,$defaultValue);
+			}
 			$v = getopt("", ["$variable::"]);
 			if(isset($v[$variable])){
 				$this->propertyCache[$variable] = $v[$variable];
@@ -1176,6 +1179,12 @@ class Server{
 		}
 
 		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
+	}
+	
+	//BlueLight custom settings.
+	private function getBlueLightProperty($var,$defaultValue = true){
+		$v =  $this->bluelightconfig->get($var);
+		return $v != null ? $v : $defaultValue;
 	}
 
 	/**
@@ -1435,8 +1444,17 @@ class Server{
 				}
 				@file_put_contents($this->dataPath . "pocketmine.yml", $content);
 			}
+			
+			$this->logger->info("Loading bluelight.properties...");
+			
+			if(!file_exists($this->dataPath . "bluelight.properties")){
+				$content = file_get_contents($this->filePath . "src/pocketmine/resources/bluelight.properties");
+				@file_put_contents($this->dataPath . "bluelight.properties", $content);
+			}
+			
 			$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
-
+			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES);
+			
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 				"motd" => "Minecraft: PE Server",
@@ -1471,13 +1489,13 @@ class Server{
 
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion()]));
 			
-			$this->devtools = $this->getProperty("BlueLight.DevTools", true);
-			$this->crashdump = $this->getProperty("BlueLight.CrashDump", true);
-			$this->foodEnabled = $this->getProperty("BlueLight.foodEnabled", true);
-			$this->allowSplashPotion = $this->getProperty("BlueLight.allowSplashPotion", true);
-			$this->expEnabled = $this->getProperty("BlueLight.expEnabled", true);
-			$this->weatherEnabled = $this->getProperty("BlueLight.weatherEnabled", true);
-			//$this->logger->setMode($this->getProperty("BlueLight.smartlogger", 0));
+			$this->devtools = $this->getProperty("DevTools", true);
+			$this->crashdump = $this->getProperty("CrashDump", true);
+			$this->foodEnabled = $this->getProperty("foodEnabled", true);
+			$this->allowSplashPotion = $this->getProperty("allowSplashPotion", true);
+			$this->expEnabled = $this->getProperty("expEnabled", true);
+			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
+
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
