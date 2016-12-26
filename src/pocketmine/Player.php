@@ -154,6 +154,7 @@ use pocketmine\utils\Binary;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\UUID;
 use pocketmine\packs\ResourcePackInfoEntry;
+use pocketmine\entity\AttributeMap;
 
 /**
  * Main class that handles networking, recovery, and packet sending to the server part
