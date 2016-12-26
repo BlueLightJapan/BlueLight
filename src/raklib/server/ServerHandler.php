@@ -32,7 +32,8 @@ class ServerHandler{
     }
 
     public function sendEncapsulated($identifier, EncapsulatedPacket $packet, $flags = RakLib::PRIORITY_NORMAL){
-        $buffer = chr(RakLib::PACKET_ENCAPSULATED) . chr(strlen($identifier)) . $identifier . chr($flags) . $packet->toBinary(true);
+
+	    $buffer = chr(RakLib::PACKET_ENCAPSULATED) . chr(strlen($identifier)) . $identifier . chr($flags) . $packet->toBinary(true);
         $this->server->pushMainToThreadPacket($buffer);
     }
 
@@ -60,8 +61,9 @@ class ServerHandler{
         $buffer = chr(RakLib::PACKET_SHUTDOWN);
         $this->server->pushMainToThreadPacket($buffer);
         $this->server->shutdown();
-        $this->server->synchronized(function(){
-            $this->server->wait(20000);
+	$serv = $this->server;
+        $this->server->synchronized(function() use(&$serv){
+            $serv->wait(20000);
         });
         $this->server->join();
     }
@@ -136,7 +138,6 @@ class ServerHandler{
 
             return true;
         }
-
         return false;
     }
 }
