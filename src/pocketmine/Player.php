@@ -154,7 +154,6 @@ use pocketmine\utils\Binary;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\UUID;
 use pocketmine\packs\ResourcePackInfoEntry;
-use pocketmine\entity\AttributeMap;
 
 /**
  * Main class that handles networking, recovery, and packet sending to the server part
@@ -760,9 +759,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->time = $this->level->getTime();
 			$pk->started = $this->level->stopTime == false;
 			$this->dataPacket($pk);
-			if($this->server->weatherEnabled){
-				$targetLevel->getWeather()->sendWeather($this);
-			}
+
+			$targetLevel->getWeather()->sendWeather($this);
+
 
 		}
 	}
@@ -1926,9 +1925,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if($this->isCreative()){
 			$this->inventory->sendCreativeContents();
 		}
-		if($this->server->weatherEnabled){
-			$this->level->getWeather()->sendWeather($this);
-		}
+
+		$this->level->getWeather()->sendWeather($this);
+
 		$this->forceMovement = $this->teleportPosition = $this->getPosition();
 
 		$this->server->onPlayerLogin($this);
