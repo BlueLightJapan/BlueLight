@@ -189,24 +189,26 @@ class Weather{
 		$pks[0]->data = $this->strength1;	
 		$pks[1]->evid = LevelEventPacket::EVENT_STOP_THUNDER;
 		$pks[1]->data = $this->strength2;
-		
-		switch($this->weatherNow){
-			//If the weather is not clear, overwrite the packet values with these
-			case self::RAIN:
-				$pks[0]->evid = LevelEventPacket::EVENT_START_RAIN;
-				$pks[0]->data = $this->strength1;
-				break;
-			case self::RAINY_THUNDER:
-				$pks[0]->evid = LevelEventPacket::EVENT_START_RAIN;
-				$pks[0]->data = $this->strength1;
-				$pks[1]->evid = LevelEventPacket::EVENT_START_THUNDER;
-				$pks[1]->data = $this->strength2;
-				break;
-			case self::THUNDER:
-				$pks[1]->evid = LevelEventPacket::EVENT_START_THUNDER;
-				$pks[1]->data = $this->strength2;
-				break;
-			default: break;
+
+		if($this->level->getServer()->weatherEnabled){
+
+			switch($this->weatherNow){
+				case self::RAIN:
+					$pks[0]->evid = LevelEventPacket::EVENT_START_RAIN;
+					$pks[0]->data = $this->strength1;
+					break;
+				case self::RAINY_THUNDER:
+					$pks[0]->evid = LevelEventPacket::EVENT_START_RAIN;
+					$pks[0]->data = $this->strength1;
+					$pks[1]->evid = LevelEventPacket::EVENT_START_THUNDER;
+					$pks[1]->data = $this->strength2;
+					break;
+				case self::THUNDER:
+					$pks[1]->evid = LevelEventPacket::EVENT_START_THUNDER;
+					$pks[1]->data = $this->strength2;
+					break;
+				default: break;
+			}
 		}
 		
 		foreach($pks as $pk){
