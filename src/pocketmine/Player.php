@@ -286,7 +286,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	public function setExp(int $exp){
-		$this->exp = $ev->getExp();
+		$this->exp = $exp;
 		$this->calcExpLevel();
 		$this->updateExperience();
 	}
@@ -321,7 +321,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	public function addExpLevel(int $level){
-		$this->expLevel = $this->expLevel + $ev->getExpLevel();
+		$this->expLevel = $this->expLevel + $level;
 		$this->exp = $this->server->getExpectedExperience($this->expLevel);
 		$this->calcExpLevel();
 		$this->updateExperience();
