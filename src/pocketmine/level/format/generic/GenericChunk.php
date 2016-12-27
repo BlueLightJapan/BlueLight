@@ -162,7 +162,7 @@ class GenericChunk implements Chunk{
 	}
 
 	public function getFullBlock(int $x, int $y, int $z) : int{
-		return $this->getSubChunk($y >> 4)->getFullBlock($x, $y & 0x0f, $z);
+		return $this->getSubChunk($y >> 4,true)->getFullBlock($x, $y & 0x0f, $z);
 	}
 
 	public function setBlock(int $x, int $y, int $z, $blockId = null, $meta = null) : bool{
