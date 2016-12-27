@@ -322,6 +322,7 @@ class Server{
 	public $allowSplashPotion = true;
 	public $devtools = true;
 	public $crashdumps = true;
+	public $destroyblockparticle = true;
 
 	/**
 	 * @return string
@@ -1184,7 +1185,7 @@ class Server{
 	//BlueLight custom settings.
 	private function getBlueLightProperty($var,$defaultValue = true){
 		$v =  $this->bluelightconfig->get($var);
-		return $v != null ? $v : $defaultValue;
+		return $v == null ? false : true;
 	}
 
 	/**
@@ -1495,6 +1496,7 @@ class Server{
 			$this->allowSplashPotion = $this->getProperty("allowSplashPotion", true);
 			$this->expEnabled = $this->getProperty("expEnabled", true);
 			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
+			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
 
 			
 			if($this->crashdump){

@@ -1637,7 +1637,6 @@ class Level implements ChunkManager, Metadatable{
 			if($player !== null){
 				//unset($players[$player->getLoaderId()]);
 			}
-
 			$this->addParticle(new DestroyBlockParticle($target->add(0.5), $target), $players);
 		}
 
