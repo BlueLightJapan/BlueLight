@@ -69,6 +69,7 @@ class InventoryType{
 		//6: dispenser
 		//7: dropper
 		//8: hopper
+		//9: beacon
 	}
 
 	/**
