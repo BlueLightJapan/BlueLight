@@ -68,7 +68,7 @@ class BeaconBlock extends Solid{
 				$beacon = $t;
 			}else{
 				$nbt = new CompoundTag("", [
-					new StringTag("id", Tile::Beacon),
+					new StringTag("id", Tile::BEACON),
 					new IntTag("x", $this->x),
 					new IntTag("y", $this->y),
 					new IntTag("z", $this->z)
