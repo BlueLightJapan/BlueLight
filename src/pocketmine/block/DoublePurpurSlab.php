@@ -21,15 +21,38 @@
 
 namespace pocketmine\block;
 
-class ActivatorRail extends Solid{
+use pocketmine\item\Item;
+use pocketmine\item\Tool;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\Player;
 
-	protected $id = self::ACTIVATOR_RAIL;
+class DoublePurpurSlab extends DoubleSlab{
+
+	protected $id = self::DOUBLE_PURPUR_SLAB;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
+	public function getHardness() {
+		return 3;
+	}
+
 	public function getName() : string{
-		return "Activator Rail";
+		return "Double Purpur Slab";
+	}
+
+	public function getToolType(){
+		return Tool::TYPE_PICKAXE;
+	}
+
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 1){
+			return [
+				[Item::DOUBLE_PURPUR_SLAB, $this->meta, 2],
+			];
+		}else{
+			return [];
+		}
 	}
 }

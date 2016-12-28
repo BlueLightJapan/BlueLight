@@ -153,7 +153,7 @@ interface BlockIds{
 	const COCOA_BLOCK = 127, COCOA_PODS = 127;
 	const SANDSTONE_STAIRS = 128;
 	const EMERALD_ORE = 129;
-
+	const ENDER_CHEST = 130;
 	const TRIPWIRE_HOOK = 131;
 	const TRIPWIRE = 132;
 	const EMERALD_BLOCK = 133;
@@ -218,6 +218,18 @@ interface BlockIds{
 	const DARK_OAK_DOOR_BLOCK = 197;
 	const GRASS_PATH = 198;
 	const ITEM_FRAME_BLOCK = 199;
+	const CHORUS_FLOWER = 200;
+	const PURPUR_BLOCK = 201;
+
+	const PURPUR_STAIRS = 203;
+	const DOUBLE_PURPUR_SLAB = 204;
+	const PURPUR_SLAB = 205;
+	const END_STONE_BRICKS = 206;
+
+	const END_ROD = 208;
+	const END_GATEWAY = 209;
+
+	const CHORUS_PLANT = 240;
 
 	const PODZOL = 243;
 	const BEETROOT_BLOCK = 244;
