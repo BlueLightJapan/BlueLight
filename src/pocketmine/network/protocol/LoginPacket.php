@@ -39,6 +39,9 @@ class LoginPacket extends DataPacket{
 
 	public $skinId;
 	public $skin = null;
+	public $isXbox = false;
+
+	const MOJANG_PUBKEY = "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
 
 	public function getName(){
 		return "LoginPacket";
@@ -68,6 +71,7 @@ class LoginPacket extends DataPacket{
 					$this->clientUUID = $webtoken["extraData"]["identity"];
 				}
 				if(isset($webtoken["identityPublicKey"])){
+					if($webtoken["identityPublicKey"] == self::MOJANG_PUBKEY) $this->isXbox = true;
 					$this->identityPublicKey = $webtoken["identityPublicKey"];
 				}
 			}

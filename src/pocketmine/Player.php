@@ -267,6 +267,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $exp = 0;
 	protected $expCooldown = 0;
 
+	public $isXbox = false;
+
+	public function isXbox(){
+		return $this->isXbox;
+	}
+
 	public function sendCredit($value = true){
 		$pk = new ShowCreditsPacket();
 		if($value == true){
@@ -2005,6 +2011,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$this->uuid = UUID::fromString($packet->clientUUID);
 				$this->rawUUID = $this->uuid->toBinary();
+
+				$this->isXbox = $packet->isXbox;
 
 				$valid = true;
 				$len = strlen($packet->username);
