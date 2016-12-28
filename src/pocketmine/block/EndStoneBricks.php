@@ -21,11 +21,26 @@
 
 namespace pocketmine\block;
 
-class AcaciaWoodStairs extends WoodStairs{
+use pocketmine\item\Item;
+use pocketmine\item\Tool;
 
-	protected $id = self::ACACIA_WOOD_STAIRS;
+class EndStoneBricks extends Solid{
+
+	protected $id = self::END_STONE_BRICKS;
+
+	public function __construct($meta = 0){
+		$this->meta = $meta;
+	}
+
+	public function getHardness() {
+		return 1.5;
+	}
 
 	public function getName() : string{
-		return "Acacia Wood Stairs";
+		return "End Stone Bricks";
+	}
+
+	public function getToolType(){
+		return Tool::TYPE_PICKAXE;
 	}
 }
