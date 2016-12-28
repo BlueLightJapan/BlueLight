@@ -147,6 +147,7 @@ use pocketmine\plugin\ScriptPluginLoader;
 use pocketmine\plugin\FolderPluginLoader;
 use pocketmine\scheduler\FileWriteTask;
 use pocketmine\scheduler\ServerScheduler;
+use pocketmine\tile\Beacon;
 use pocketmine\tile\Chest;
 use pocketmine\tile\EnchantTable;
 use pocketmine\tile\FlowerPot;
@@ -2559,6 +2560,7 @@ class Server{
 	}
 
 	private function registerTiles(){
+		Tile::registerTile(Beacon::class);
 		Tile::registerTile(Chest::class);
 		Tile::registerTile(EnchantTable::class);
 		Tile::registerTile(FlowerPot::class);
