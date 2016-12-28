@@ -222,7 +222,8 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::ENDER_PEARL] = EnderPearl::class;
 			self::$list[self::EYE_OF_ENDER] = EyeOfEnder::class;
 			self::$list[self::ELYTRA] = Elytra::class;
-
+			self::$list[self::ENCHANTING_BOTTLE] = EnchantingBottle::class;
+			
 			for($i = 0; $i < 256; ++$i){
 				if(Block::$list[$i] !== null){
 					self::$list[$i] = Block::$list[$i];
