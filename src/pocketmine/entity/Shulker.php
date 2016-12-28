@@ -21,62 +21,28 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\level\format\Chunk;
 use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as ItemItem;
 
-class Bat extends FlyingAnimal{
+class Shulker extends Monster{
+	const NETWORK_ID = 54;
 
-	const NETWORK_ID = 19;
+	public $width = 0.5;
+	public $length = 0.9;
+	public $height = 1.0;
 
-	const DATA_IS_RESTING = 16;
-
-	public $width = 0.6;
-	public $length = 0.6;
-	public $height = 0.6;
-
-	public $flySpeed = 0.8;
-	public $switchDirectionTicks = 100;
-
-	public function getName() : string {
-		return "Bat";
+	public $dropExp = [1, 4];
+	
+	public function getName() : string{
+		return "Shulker";
 	}
-
-	public function initEntity(){
-		$this->setMaxHealth(6);
-		parent::initEntity();
-	}
-
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		if(!isset($nbt->isResting)){
-			$nbt->isResting = new ByteTag("isResting", 0);
-		}
-		parent::__construct($chunk, $nbt);
-
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_RESTING, $this->isResting());
-	}
-
-	public function isResting() : int{
-		return (int) $this->namedtag["isResting"];
-	}
-
-	public function setResting(bool $resting){
-		$this->namedtag->isResting = new ByteTag("isResting", $resting ? 1 : 0);
-	}
-
-	public function onUpdate($currentTick){
-		if ($this->age > 20 * 60 * 10) {
-			$this->kill();
-		}
-		return parent::onUpdate($currentTick);
-	}
-
+	
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
-		$pk->type = Bat::NETWORK_ID;
+		$pk->type = Shulker::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -87,7 +53,14 @@ class Bat extends FlyingAnimal{
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
-
 		parent::spawnTo($player);
+	}
+	
+	public function getDrops(){
+		$drops = [];
+		if ($this->lastDamageCause instanceof EntityDamageByEntityEvent and $this->lastDamageCause->getEntity() instanceof Player) {
+			if (mt_rand(0, 1) === 1) $drops[] = ItemItem::get(ItemItem::SHULKER_SHELL, 0, 1);
+		}
+		return $drops;
 	}
 }

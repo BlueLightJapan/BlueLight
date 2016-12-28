@@ -106,7 +106,7 @@ class Attribute{
 		return null;
 	}
 
-	public function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
+	private function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
 		$this->id = (int) $id;
 		$this->name = (string) $name;
 		$this->minValue = (float) $minValue;
@@ -169,7 +169,7 @@ class Attribute{
 		return $this->currentValue;
 	}
 
-	public function setValue($value, $fit = true, bool $shouldSend = false){
+	public function setValue($value, $fit = false){
 		if($value > $this->getMaxValue() or $value < $this->getMinValue()){
 			if(!$fit){
 				throw new \InvalidArgumentException("Value $value exceeds the range!");
@@ -180,10 +180,6 @@ class Attribute{
 		if($this->currentValue != $value){
 			$this->desynchronized = true;
 			$this->currentValue = $value;
-		}
-
-		if($shouldSend){
-			$this->desynchronized = true;
 		}
 		return $this;
 	}
