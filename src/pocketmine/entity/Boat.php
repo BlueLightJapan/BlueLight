@@ -28,7 +28,7 @@ use pocketmine\math\Vector3;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\network\protocol\EntityEventPacket;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\level\format\FullChunk;
+use pocketmine\level\format\chunk as FullChunk;
 use pocketmine\nbt\tag\CompoundTag;
 
 class Boat extends Vehicle{
