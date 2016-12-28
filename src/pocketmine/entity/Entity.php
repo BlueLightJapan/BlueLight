@@ -27,6 +27,7 @@ namespace pocketmine\entity;
 use pocketmine\block\Block;
 use pocketmine\block\Water;
 use pocketmine\block\SlimeBlock;
+use pocketmine\item\Elytra;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
@@ -1176,6 +1177,12 @@ abstract class Entity extends Location implements Metadatable{
 		//Get the block directly beneath the player's feet, check if it is a slime block
 		if($this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0)) instanceof SlimeBlock){
 			$damage = 0;
+		}
+		//If player's using Elytra
+		if($this instanceof Player){
+			if($this->getInventory()->getChestplate() instanceof Elytra){
+				$damage = 0;
+			}
 		}
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
