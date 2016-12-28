@@ -24,7 +24,7 @@
 
 namespace pocketmine\block;
 
-//use pocketmine\inventory\BeaconInventory;
+use pocketmine\inventory\BeaconInventory;
 use pocketmine\item\Item;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -44,9 +44,9 @@ class BeaconBlock extends Solid{
 		$this->meta = $meta;
 	}
 
-	/*public function canBeActivated() : bool{
+	public function canBeActivated() : bool{
 		return true;
-	}*/
+	}
 
 	public function getLightLevel(){
 		return 15;
@@ -60,7 +60,7 @@ class BeaconBlock extends Solid{
         return "Beacon Block";
 	}
 
-	/*public function onActivate(Item $item, Player $player = null){
+	public function onActivate(Item $item, Player $player = null){
 		if($player instanceof Player){
 			$t = $this->getLevel()->getTile($this);
 			$beacon = false;
@@ -87,7 +87,7 @@ class BeaconBlock extends Solid{
 		}
 
 		return true;
-	}*/
+	}
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$this->getLevel()->setBlock($block, Block::get(Block::BEACON_BLOCK, 0), true, true);
