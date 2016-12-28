@@ -267,10 +267,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $exp = 0;
 	protected $expCooldown = 0;
 
-	public function sendCredit(){
+	public function sendCredit($value = true){
 		$pk = new ShowCreditsPacket();
-		$pk->type = ShowCreditsPacket::TYPE_ADD;
-		$this->dataPacket($pk);
+		if($value == true){
+			$pk->type = ShowCreditsPacket::TYPE_ADD;
+			$this->dataPacket($pk);
+		}else{
+			$pk->type = ShowCreditsPacket::TYPE_REMOVE;
+			$this->dataPacket($pk);
+		}
 	}
 
 	public function getLeaveMessage(){
