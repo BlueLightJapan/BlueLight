@@ -288,7 +288,7 @@ class ServerScheduler{
 			}else{
 				$taskName = "Callback#" . $callable;
 			}
-			Server::getInstance()->getLogger()->warning("A plugin attempted to register a deprecated CallbackTask ($taskName)");
+			Server::getInstance()->getLogger()->info("A plugin attempted to register a deprecated CallbackTask ($taskName)");
 		}
 
 		if($delay <= 0){
