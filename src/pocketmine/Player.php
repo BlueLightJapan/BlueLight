@@ -267,15 +267,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $exp = 0;
 	protected $expCooldown = 0;
 
-	public function sendCredit($value = true){
+	public function sendCredit(){
 		$pk = new ShowCreditsPacket();
-		if($value == true){
-			$pk->type = ShowCreditsPacket::TYPE_ADD;
-			$this->dataPacket($pk);
-		}else{
-			$pk->type = ShowCreditsPacket::TYPE_REMOVE;
-			$this->dataPacket($pk);
-		}
+		$pk->type = ShowCreditsPacket::TYPE_ADD;
+		$this->dataPacket($pk);
 	}
 
 	public function getLeaveMessage(){
@@ -2029,7 +2024,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				if($this->getServer()->getProperty("function.SteveKick", false)){
+				if($this->getServer()->getProperty("SteveKick", false)){
 					if($this->iusername === "steve"){
 						$this->close("", "disconnectionScreen.invalidName");
 						break;
