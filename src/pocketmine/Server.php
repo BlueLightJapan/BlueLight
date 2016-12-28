@@ -323,6 +323,8 @@ class Server{
 	public $devtools = true;
 	public $crashdumps = true;
 	public $destroyblockparticle = true;
+	public $titletick = true;
+	public $stevekick = true;
 
 	/**
 	 * @return string
@@ -1448,13 +1450,24 @@ class Server{
 			
 			$this->logger->info("Loading bluelight.properties...");
 			
-			if(!file_exists($this->dataPath . "bluelight.properties")){
-				$content = file_get_contents($this->filePath . "src/pocketmine/resources/bluelight.properties");
-				@file_put_contents($this->dataPath . "bluelight.properties", $content);
-			}
+			//if(!file_exists($this->dataPath . "bluelight.properties")){
+			//	$content = file_get_contents($this->filePath . "src/pocketmine/resources/bluelight.properties");
+			//	@file_put_contents($this->dataPath . "bluelight.properties", $content);
+			//}
 			
 			$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
-			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES);
+			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES, [
+				"CustomConfigVersion" => 1,
+				"DevTools" => true,
+				"CrashDump" => true,
+				"foodEnabled" => false,
+				"expEnabled" => false,
+				"weatherEnabled" => false,
+				"allowSplashPotion" => true,
+				"DestroyBlockParticle" => true,
+				"TitleTick" => true,
+				"SteveKick" => false
+			]);
 			
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
@@ -1497,6 +1510,8 @@ class Server{
 			$this->expEnabled = $this->getProperty("expEnabled", true);
 			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
+			$this->titletick = $this->getProperty("TitleTick", true);
+			$this->stevekick = $this->getProperty("SteveKick", true);
 
 			
 			if($this->crashdump){
@@ -2367,6 +2382,20 @@ class Server{
 	private function titleTick(){
 		if(!Terminal::hasFormattingCodes()){
 			return;
+		}
+		if($this->titletick){
+			$d = Utils::getRealMemoryUsage();
+
+			$u = Utils::getMemoryUsage(true);
+			$usage = round(($u[0] / 1024) / 1024, 2) . "/" . round(($d[0] / 1024) / 1024, 2) . "/" . round(($u[1] / 1024) / 1024, 2) . "/" . round(($u[2] / 1024) / 1024, 2) . " MB @ " . Utils::getThreadCount() . " threads";
+
+			echo "\x1b]0;" . "BlueLight" .
+				" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
+				" | Memory " . $usage .
+				" | U " . round($this->network->getUpload() / 1024, 2) .
+				" D " . round($this->network->getDownload() / 1024, 2) .
+				" kB/s | TPS " . $this->getTicksPerSecondAverage() .
+				" | Load " . $this->getTickUsageAverage() . "%\x07";
 		}
 
 		$this->network->resetStatistics();
