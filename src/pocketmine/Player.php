@@ -2029,7 +2029,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				if($this->getServer()->getProperty("function.SteveKick", false)){
+				if($this->getServer()->getProperty("SteveKick", false)){
 					if($this->iusername === "steve"){
 						$this->close("", "disconnectionScreen.invalidName");
 						break;
