@@ -23,27 +23,24 @@ namespace pocketmine\entity;
 
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as ItemItem;
 
-class Ghast extends FlyingAnimal{
-	const NETWORK_ID = 41;
+class Camera extends Living{
+	const NETWORK_ID = 62;
 
-	public $width = 6;
-	public $length = 6;
-	public $height = 6;
+	public $width = 1;
+	public $length = 2;
+	public $height = 2;
 	
 	public function getName() : string{
-		return "Ghast";
-	}
-
-	public function initEntity(){
-		$this->setMaxHealth(10);
-		parent::initEntity();
+		return "Camera";
 	}
 	
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
-		$pk->type = Ghast::NETWORK_ID;
+		$pk->type = Camera::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -54,7 +51,10 @@ class Ghast extends FlyingAnimal{
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
-
 		parent::spawnTo($player);
+	}
+	
+	public function getDrops(){
+		return [];
 	}
 }

@@ -21,6 +21,7 @@
 
 namespace pocketmine\entity;
 
-class Skeleton extends Monster implements ProjectileSource{
+
+class Ozelot extends Animal implements Tameable{
 
 }

@@ -21,70 +21,35 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\level\format\Chunk;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
+use pocketmine\network\protocol\AddEntityPacket;
 
-class Bat extends FlyingAnimal{
+class ZombieVillager extends Zombie{
+	const NETWORK_ID = 44;
 
-	const NETWORK_ID = 19;
-
-	const DATA_IS_RESTING = 16;
-
-	public $width = 0.6;
-	public $length = 0.6;
-	public $height = 0.6;
-
-	public $flySpeed = 0.8;
-	public $switchDirectionTicks = 100;
-
-	public function getName() : string {
-		return "Bat";
-	}
+	public $width = 1.031;
+	public $length = 0.891;
+	public $height = 2.125;
 
 	public function initEntity(){
-		$this->setMaxHealth(6);
+		$this->setMaxHealth(20);
 		parent::initEntity();
 	}
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		if(!isset($nbt->isResting)){
-			$nbt->isResting = new ByteTag("isResting", 0);
-		}
-		parent::__construct($chunk, $nbt);
-
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_RESTING, $this->isResting());
-	}
-
-	public function isResting() : int{
-		return (int) $this->namedtag["isResting"];
-	}
-
-	public function setResting(bool $resting){
-		$this->namedtag->isResting = new ByteTag("isResting", $resting ? 1 : 0);
-	}
-
-	public function onUpdate($currentTick){
-		if ($this->age > 20 * 60 * 10) {
-			$this->kill();
-		}
-		return parent::onUpdate($currentTick);
+	public function getName() : string{
+		return "Zombie Villager";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
+		$pk->type = ZombieVillager::NETWORK_ID;
 		$pk->eid = $this->getId();
-		$pk->type = Bat::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 

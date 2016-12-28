@@ -36,8 +36,14 @@ class Lightning extends Animal{
 	public $length = 0.9;
 	public $height = 1.8;
 
-	public function getName(){
+	public function getName() : string{
 		return "Lightning";
+	}
+
+	public function initEntity(){
+		parent::initEntity();
+		$this->setMaxHealth(2);
+		$this->setHealth(2);
 	}
 
 	public function onUpdate($tick){
@@ -75,4 +81,35 @@ class Lightning extends Animal{
 		parent::spawnTo($player);
 	}
 
+	public function spawnToAll(){
+		parent::spawnToAll();
+
+		if($this->getLevel()->getServer()->lightningFire){
+			$fire = ItemItem::get(ItemItem::FIRE)->getBlock();
+			$oldBlock = $this->getLevel()->getBlock($this);
+			if($oldBlock instanceof Liquid){
+
+			}elseif($oldBlock->isSolid()){
+				$v3 = new Vector3($this->x, $this->y + 1, $this->z);
+			}else{
+				$v3 = new Vector3($this->x, $this->y, $this->z);
+			}
+			if(isset($v3)) $this->getLevel()->setBlock($v3, $fire);
+
+			foreach($this->level->getNearbyEntities($this->boundingBox->grow(4, 3, 4), $this) as $entity){
+				if($entity instanceof Player){
+					$damage = mt_rand(8, 20);
+					$ev = new EntityDamageByEntityEvent($this, $entity, EntityDamageByEntityEvent::CAUSE_LIGHTNING, $damage);
+					if($entity->attack($ev->getFinalDamage(), $ev) === true){
+						$ev->useArmors();
+					}
+					$entity->setOnFire(mt_rand(3, 8));
+				}
+
+				if($entity instanceof Creeper){
+					$entity->setPowered(true, $this);
+				}
+			}
+		}
+	}
 }

@@ -50,17 +50,13 @@ abstract class Living extends Entity implements Damageable{
 		if(isset($this->namedtag->HealF)){
 			$this->namedtag->Health = new ShortTag("Health", (int) $this->namedtag["HealF"]);
 			unset($this->namedtag->HealF);
-		}
-		if(!isset($this->namedtag->Health) or !($this->namedtag->Health instanceof ShortTag)){
+		}elseif(!isset($this->namedtag->Health) or !($this->namedtag->Health instanceof ShortTag)){
 			$this->namedtag->Health = new ShortTag("Health", $this->getMaxHealth());
 		}
 
-		if($this->namedtag["Health"] <= 0)
-			$this->setHealth(20);
-		else $this->setHealth($this->namedtag["Health"]);
-
-
+		$this->setHealth($this->namedtag["Health"]);
 	}
+
 	protected function addAttributes(){
 		$this->attributeMap->addAttribute(Attribute::getAttribute(Attribute::HEALTH));
 		$this->attributeMap->addAttribute(Attribute::getAttribute(Attribute::FOLLOW_RANGE));
@@ -73,7 +69,7 @@ abstract class Living extends Entity implements Damageable{
 	public function setHealth($amount){
 		$wasAlive = $this->isAlive();
 		parent::setHealth($amount);
-//		$this->attributeMap->getAttribute(Attribute::HEALTH)->setValue($this->getHealth());
+		$this->attributeMap->getAttribute(Attribute::HEALTH)->setValue($this->getHealth());
 		if($this->isAlive() and !$wasAlive){
 			$pk = new EntityEventPacket();
 			$pk->eid = $this->getId();
@@ -83,7 +79,7 @@ abstract class Living extends Entity implements Damageable{
 	}
 
 	public function setMaxHealth($amount){
-//		$this->attributeMap->getAttribute(Attribute::HEALTH)->setMaxValue($amount);
+		$this->attributeMap->getAttribute(Attribute::HEALTH)->setMaxValue($amount);
 	}
 
 	public function saveNBT(){
@@ -135,9 +131,6 @@ abstract class Living extends Entity implements Damageable{
 			$deltaX = $this->x - $e->x;
 			$deltaZ = $this->z - $e->z;
 			$this->knockBack($e, $damage, $deltaX, $deltaZ, $source->getKnockBack());
-			if($e instanceof Husk){
-				$this->addEffect(Effect::getEffect(Effect::HUNGER)->setDuration(7 * 20 * $this->server->getDifficulty()));
-			}
 		}
 
 		$pk = new EntityEventPacket();
