@@ -15,6 +15,7 @@
 
 namespace pocketmine\entity;
 
+//For Player Skin class
 class Skin{
 
 	const SINGLE_SKIN_SIZE = 64 * 32 * 4;
@@ -23,7 +24,9 @@ class Skin{
 	const MODEL_STEVE = "Standard_Steve";
 	const MODEL_ALEX = "Standard_Alex";
 
+	/** @var (Base64 decoded) string */
 	protected $data;
+	/** @var  string */
 	protected $model;
 
 	public function __construct($data, $model){
@@ -41,8 +44,7 @@ class Skin{
 
 	public function setData($data){
 		if(strlen($data) != self::SINGLE_SKIN_SIZE && strlen($data) != self::DOUBLE_SKIN_SIZE){
-			$logger = Server::getInstance()->getLogger();
-			$logger->critical("Invalid skin");
+			Server::getInstance()->getLogger()->critical("Invalid skin");
 			return false;
 		}
 		$this->data = $data;
