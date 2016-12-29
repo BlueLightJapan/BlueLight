@@ -708,14 +708,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setDisplayName($name){
 		$this->displayName = $name;
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $this->getSkinId(), $this->getSkinData());
+			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $this->getSkin());
 		}
 	}
 
-	public function setSkin($str, $skinId){
-		parent::setSkin($str, $skinId);
+	public function setSkin($skin){
+		parent::setSkin($skin);
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $skinId, $str);
+			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $skin);
 		}
 	}
 
@@ -2044,12 +2044,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 				}
 
-				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
+				if(strlen($packet->skin->getData()) !== Skin::SINGLE_SKIN_SIZE and strlen($packet->skin->getData()) !== Skin::DOUBLE_SKIN_SIZE){
 					$this->close("", "disconnectionScreen.invalidSkin");
 					break;
 				}
-
-				$this->setSkin($packet->skin, $packet->skinId);
+				$skin = new Skin($packet->skin->getData(), $packet->skin->getModel());
+				$this->setSkin($skin);
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerPreLoginEvent($this, "Plugin reason"));
 				if($ev->isCancelled()){
