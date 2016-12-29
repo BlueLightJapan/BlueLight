@@ -1134,23 +1134,7 @@ abstract class Entity extends Location implements Metadatable{
 	public function canTriggerWalking(){
 		return true;
 	}
-        public function resetFallDistance(){
-		$this->fallDistance = 0;
-	}
-	
-	protected function updateFallState($distanceThisTick, $onGround){
-		if($onGround === true){
-			if($this->fallDistance > 0){
-				if($this instanceof Living){
-					$this->fall($this->fallDistance);
-				}
-				$this->resetFallDistance();
-			}
-		}elseif($distanceThisTick < 0){
-			$this->fallDistance -= $distanceThisTick;
-		}
-	}
-	
+
 	public function getBoundingBox(){
 		return $this->boundingBox;
 	}
@@ -1279,7 +1263,7 @@ abstract class Entity extends Location implements Metadatable{
 			}*/
 		}
 		$this->isCollided = $this->onGround;
-                $this->updateFallState($dy, $this->onGround);
+
 
 		Timings::$entityMoveTimer->stopTiming();
 
@@ -1420,8 +1404,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->checkChunks();
 
 			$this->checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz);
-                        $this->updateFallState($dy, $this->onGround);
-			
+
 			if($movX != $dx){
 				$this->motionX = 0;
 			}
@@ -1616,7 +1599,6 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->setMotion($this->temporalVector->setComponents(0, 0, 0));
 		if($this->setPositionAndRotation($pos, $yaw === null ? $this->yaw : $yaw, $pitch === null ? $this->pitch : $pitch) !== false){
-			$this->resetFallDistance();
 			$this->onGround = true;
 
 			$this->lastX = $this->x;
