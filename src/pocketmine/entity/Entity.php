@@ -1162,6 +1162,7 @@ abstract class Entity extends Location implements Metadatable{
 	}
 	
 	public function resetFallDistance(){
+	$this->fallDistance = 0;
  	}
 
 	public function handleLavaMovement(){ //TODO
