@@ -229,6 +229,7 @@ abstract class Entity extends Location implements Metadatable{
 	protected $stepHeight = 0;
 	public $keepMovement = false;
 
+	public $fallDistance = 0;
 	public $ticksLived = 0;
 	public $lastUpdate;
 	public $maxFireTicks;
@@ -301,6 +302,11 @@ abstract class Entity extends Location implements Metadatable{
 		if(is_nan($this->x) or is_infinite($this->x) or is_nan($this->y) or is_infinite($this->y) or is_nan($this->z) or is_infinite($this->z)){
 			throw new \InvalidStateException("Invalid entity coordinates");
 		}
+
+		if(!isset($this->namedtag->FallDistance)){
+			$this->namedtag->FallDistance = new FloatTag("FallDistance", 0);
+		}
+		$this->fallDistance = $this->namedtag["FallDistance"];
 
 		if(!isset($this->namedtag->Fire)){
 			$this->namedtag->Fire = new ShortTag("Fire", 0);
@@ -407,14 +413,6 @@ abstract class Entity extends Location implements Metadatable{
 
 	public function setImmobile($value = true){
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IMMOBILE, $value);
-	}
-
-	public function isGliding(){
-		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING);
-	}
-
-	public function setGliding($value = true){
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING, (bool) $value);
 	}
 
 	public function setUnlink(Entity $entity){
@@ -612,6 +610,7 @@ abstract class Entity extends Location implements Metadatable{
 			new FloatTag(1, $this->pitch)
 		]);
 
+		$this->namedtag->FallDistance = new FloatTag("FallDistance", $this->fallDistance);
 		$this->namedtag->Fire = new ShortTag("Fire", $this->fireTicks);
 		$this->namedtag->Air = new ShortTag("Air", $this->getDataProperty(self::DATA_AIR));
 		$this->namedtag->OnGround = new ByteTag("OnGround", $this->onGround == true ? 1 : 0);
@@ -1135,6 +1134,23 @@ abstract class Entity extends Location implements Metadatable{
 		return true;
 	}
 
+	public function resetFallDistance(){
+		$this->fallDistance = 0;
+	}
+
+	protected function updateFallState($distanceThisTick, $onGround){
+		if($onGround === true){
+			if($this->fallDistance > 0){
+				if($this instanceof Living){
+					$this->fall($this->fallDistance);
+				}
+				$this->resetFallDistance();
+			}
+		}elseif($distanceThisTick < 0){
+			$this->fallDistance -= $distanceThisTick;
+		}
+	}
+
 	public function getBoundingBox(){
 		return $this->boundingBox;
 	}
@@ -1150,8 +1166,24 @@ abstract class Entity extends Location implements Metadatable{
 		if($this instanceof Player and $this->isSpectator()){
 			return;
 		}
-		$this->getLevel()->addParticle(new DestroyBlockParticle($this, $this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0))));
+		if($fallDistance > 3){
+			$this->getLevel()->addParticle(new DestroyBlockParticle($this, $this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0))));
+		}
+		if($this->isInsideOfWater()){
+			return;
+		}
 		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
+
+		//Get the block directly beneath the player's feet, check if it is a slime block
+		if($this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0)) instanceof SlimeBlock){
+			$damage = 0;
+		}
+		//If player's using Elytra
+		if($this instanceof Player){
+			if($this->getInventory()->getChestplate() instanceof Elytra){
+				$damage = 0;
+			}
+		}
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
 			$this->attack($ev->getFinalDamage(), $ev);
@@ -1160,10 +1192,6 @@ abstract class Entity extends Location implements Metadatable{
 
 
 	}
-	
-	public function resetFallDistance(){
-	$this->fallDistance = 0;
- 	}
 
 	public function handleLavaMovement(){ //TODO
 
@@ -1267,6 +1295,7 @@ abstract class Entity extends Location implements Metadatable{
 			}*/
 		}
 		$this->isCollided = $this->onGround;
+		$this->updateFallState($dy, $this->onGround);
 
 
 		Timings::$entityMoveTimer->stopTiming();
@@ -1408,6 +1437,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->checkChunks();
 
 			$this->checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz);
+			$this->updateFallState($dy, $this->onGround);
 
 			if($movX != $dx){
 				$this->motionX = 0;
@@ -1603,6 +1633,7 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->setMotion($this->temporalVector->setComponents(0, 0, 0));
 		if($this->setPositionAndRotation($pos, $yaw === null ? $this->yaw : $yaw, $pitch === null ? $this->pitch : $pitch) !== false){
+			$this->resetFallDistance();
 			$this->onGround = true;
 
 			$this->lastX = $this->x;
