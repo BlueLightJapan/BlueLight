@@ -2045,12 +2045,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 				}
 
-				if(strlen($packet->skin) !== Skin::SINGLE_SKIN_SIZE and strlen($packet->skin) !== Skin::DOUBLE_SKIN_SIZE){
+				if(strlen($packet->skin->getData()) !== Skin::SINGLE_SKIN_SIZE and strlen($packet->skin->getData()) !== Skin::DOUBLE_SKIN_SIZE){
 					$this->close("", "disconnectionScreen.invalidSkin");
 					break;
 				}
 
-				$skin = new Skin($packet->skin, $packet->skinId);
+				$skin = new Skin($packet->skin->getData(), $packet->skin->getModel());
 				$this->setSkin($skin);
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerPreLoginEvent($this, "Plugin reason"));
