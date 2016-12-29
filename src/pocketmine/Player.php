@@ -2304,16 +2304,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$item->setCount($item->getCount() - 1);
 							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
 						}
-						if($thrownExpBottle instanceof Projectile){
-							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
-							if($projectileEv->isCancelled()){
-								$thrownExpBottle->kill();
-							}else{
-								$thrownExpBottle->spawnToAll();
-								$this->level->addSound(new LaunchSound($this), $this->getViewers());
-							}
+						
+						$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
+						if($projectileEv->isCancelled()){
+							$thrownExpBottle->kill();
 						}else{
 							$thrownExpBottle->spawnToAll();
+							$this->level->addSound(new LaunchSound($this), $this->getViewers());
 						}
 					}elseif($item->getId() == Item::SPLASH_POTION and $this->server->allowSplashPotion){
 						$nbt = new CompoundTag("", [
