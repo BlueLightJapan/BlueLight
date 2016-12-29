@@ -37,7 +37,6 @@ class LoginPacket extends DataPacket{
 	public $identityPublicKey;
 	public $serverAddress;
 
-	public $skinId;
 	public $skin = null;
 	public $isXbox = false;
 
@@ -84,11 +83,12 @@ class LoginPacket extends DataPacket{
 		if(isset($skinToken["ServerAddress"])){
 			$this->serverAddress = $skinToken["ServerAddress"];
 		}
-		if(isset($skinToken["SkinData"])){
-			$this->skin = base64_decode($skinToken["SkinData"]);
-		}
+		$skinId = "";
 		if(isset($skinToken["SkinId"])){
-			$this->skinId = $skinToken["SkinId"];
+			$skinId = $skinToken["SkinId"];
+		}
+		if(isset($skinToken["SkinData"])){
+			$this->skin = new Skin(base64_decode($skinToken["SkinData"]), $skinId);
 		}
 	}
 

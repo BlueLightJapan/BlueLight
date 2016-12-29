@@ -73,7 +73,6 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	public $height = 1.8;
 	public $eyeHeight = 1.62;
 
-	protected $skinId;
 	protected $skin;
 
 	protected $foodTickTimer = 0;
@@ -82,12 +81,16 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	protected $xpSeed;
 	protected $xpCooldown = 0;
 
-	public function getSkinData(){
+	public function getSkin(){
 		return $this->skin;
 	}
 
+	public function getSkinData(){
+		return $this->skin->getData();
+	}
+
 	public function getSkinId(){
-		return $this->skinId;
+		return $this->skin->getModel();
 	}
 
 	/**
@@ -108,9 +111,8 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	 * @param string $str
 	 * @param string $skinId
 	 */
-	public function setSkin($str, $skinId){
-		$this->skin = $str;
-		$this->skinId = $skinId;
+	public function setSkin($skin){
+		$this->skin = $skin;
 	}
 
 	public function getFood() : float{
@@ -369,7 +371,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			}
 
 			if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
-				$this->setSkin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Name"]);
+				$this->setSkin(new Skin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Name"]));
 			}
 
 			$this->uuid = UUID::fromData($this->getId(), $this->getSkinData(), $this->getNameTag());
@@ -556,12 +558,12 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		if($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])){
 			$this->hasSpawned[$player->getLoaderId()] = $player;
 
-			if(strlen($this->skin) < 64 * 32 * 4){
+			if(strlen($this->skin->getData()) < 64 * 32 * 4){
 				throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");
 			}
 
 			if(!($this instanceof Player)){
-				$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getName(), $this->skinId, $this->skin, [$player]);
+				$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getName(), $this->skin, [$player]);
 			}
 
 			$pk = new AddPlayerPacket();
