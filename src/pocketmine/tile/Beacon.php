@@ -106,7 +106,7 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 			}
 		}
 
-		return -1;*
+		return -1;
 	}
 
 	/**

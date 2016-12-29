@@ -57,7 +57,7 @@ class BeaconBlock extends Solid{
 	}
 
 	public function getName() : string{
-        return "Beacon Block";
+		return "Beacon Block";
 	}
 
 	public function onActivate(Item $item, Player $player = null){
@@ -93,19 +93,20 @@ class BeaconBlock extends Solid{
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$this->getLevel()->setBlock($block, Block::get(Block::BEACON_BLOCK, 0), true, true);
 		$nbt = new CompoundTag("", [
+			new ListTag("Items", []),
 			new StringTag("id", Tile::BEACON),
 			new IntTag("x", $block->x),
 			new IntTag("y", $block->y),
 			new IntTag("z", $block->z)
 		]);
+		$nbt->Items->setTagType(NBT::TAG_Compound);
 		if($item->hasCustomBlockData()){
 			foreach($item->getCustomBlockData() as $key => $v){
 				$nbt->{$key} = $v;
 			}
 		}
 
-		$chunk = $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4);
-		$beacon = Tile::createTile(Tile::BEACON, $chunk, $nbt);
+		$beacon = Tile::createTile("Beacon", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
 		return true;
 	}
 
