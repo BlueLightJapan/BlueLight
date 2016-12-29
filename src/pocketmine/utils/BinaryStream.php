@@ -24,7 +24,6 @@ namespace pocketmine\utils;
 #include <rules/DataPacket.h>
 
 use pocketmine\item\Item;
-use pocketmine\entity\Skin;
 
 class BinaryStream extends \stdClass{
 
@@ -310,17 +309,6 @@ class BinaryStream extends \stdClass{
 		$this->putLFloat($x);
 		$this->putLFloat($y);
 		$this->putLFloat($z);
-	}
-
-	public function getSkin($skin){
-		$data = $this->getString();
-		$model = $this->getString();
-		return new Skin($data, $model);
-	}
-
-	public function putSkin($skin){
-		$this->putString($skin->getData());
-		$this->putString($skin->getModel());
 	}
 
 	public function feof(){

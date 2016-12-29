@@ -21,7 +21,6 @@
 
 namespace pocketmine\tile;
 
-use pocketmine\block\Block;
 use pocketmine\inventory\BeaconInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
@@ -40,24 +39,13 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 
 	public function __construct(Chunk $chunk, CompoundTag $nbt){
 		parent::__construct($chunk, $nbt);
-		$this->inventory = new BeaconInventory($this);
-		echo($this->inventory->getItem(0)->getId());
-
-		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof ListTag)){
-			$this->namedtag->Items = new ListTag("Items", []);
-			$this->namedtag->Items->setTagType(NBT::TAG_Compound);
-		}
-
-		for($i = 0; $i < $this->getSize(); ++$i){
-			$this->inventory->setItem($i, $this->getItem($i));
-		}
 
 		if(!isset($nbt->Lock)){
 			$nbt->Lock = new StringTag("Lock", "");
 		}
 
-		if(!isset($nbt->Level)){
-			$nbt->Level = new IntTag("Level", 0);
+		if(!isset($nbt->Levels)){
+			$nbt->Levels = new IntTag("Levels", 0);
 		}
 
 		if(!isset($nbt->Primary)){
@@ -66,6 +54,17 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 
 		if(!isset($nbt->Secondary)){
 			$nbt->Secondary = new IntTag("Secondary", 0);
+		}
+
+		$this->inventory = new BeaconInventory($this);
+
+		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof ListTag)){
+			$this->namedtag->Items = new ListTag("Items", []);
+			$this->namedtag->Items->setTagType(NBT::TAG_Compound);
+		}
+
+		for($i = 0; $i < $this->getSize(); ++$i){
+			$this->inventory->setItem($i, $this->getItem($i));
 		}
 
 		$this->scheduleUpdate();
@@ -84,7 +83,7 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 		$this->namedtag->Items = new ListTag("Items", []);
 		$this->namedtag->Items->setTagType(NBT::TAG_Compound);
 		for($index = 0; $index < $this->getSize(); ++$index){
-			$this->setItem($index, $this->getInventory()->getItem($index));
+			$this->setItem($index, $this->inventory->getItem($index));
 		}
 	}
 
@@ -188,7 +187,7 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 			new IntTag("y", (int) $this->y),
 			new IntTag("z", (int) $this->z),
 			new StringTag("Lock", $this->namedtag["Lock"]),
-			new IntTag("Level", $this->namedtag["Level"]),
+			new IntTag("Levels", $this->namedtag["Levels"]),
 			new IntTag("Primary", $this->namedtag["Primary"]),
 			new IntTag("Secondary", $this->namedtag["Secondary"])
 		]);
@@ -220,7 +219,7 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 			$queryY = $tileY - $powerLevel;
 			for ($queryX = $tileX - $powerLevel; $queryX <= $tileX + $powerLevel; $queryX++) {
 				for ($queryZ = $tileZ - $powerLevel; $queryZ <= $tileZ + $powerLevel; $queryZ++) {
-					$testBlockId = $this->level->getBlockIdAt($queryX, $queryY, $queryZ);
+					$testBlockId = $level->getBlockIdAt($queryX, $queryY, $queryZ);
 						if (
 							$testBlockId != Block::IRON_BLOCK &&
 							$testBlockId != Block::GOLD_BLOCK &&
@@ -240,7 +239,7 @@ class Beacon extends Spawnable implements InventoryHolder, Container, Nameable{
 	}
 
 	public function setPowerLevel($level){
-		$currentLevel = $this->getPowerLevel();
+		$currentLevel = getPowerLevel();
 			if($level != $currentLevel) {
 				$this->namedtag["Level"] = new IntTag("Level", $level);
 				$this->chunk->setChanged();
