@@ -1465,6 +1465,7 @@ class Server{
 				"weatherEnabled" => false,
 				"allowSplashPotion" => true,
 				"DestroyBlockParticle" => true,
+				"keepInventory" => false,
 				"TitleTick" => true,
 				"SteveKick" => false
 			]);
@@ -1512,7 +1513,7 @@ class Server{
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
 			$this->titletick = $this->getProperty("TitleTick", true);
 			$this->stevekick = $this->getProperty("SteveKick", true);
-
+			$this->keepInventory = $this->getProperty("keepInventory", false);
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){

@@ -3610,6 +3610,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 		}
 
+		if($this->server->keepInventory){
+			if($this->inventory !== null){
+				$this->inventory->clearAll();
+			}
+		}
+
 		if($this->server->expEnabled){
 			$exp = $this->getExp();
 			$exp = min(100, $exp);
