@@ -21,8 +21,6 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\entity\Skin;
-
 #include <rules/DataPacket.h>
 
 
@@ -39,6 +37,7 @@ class LoginPacket extends DataPacket{
 	public $identityPublicKey;
 	public $serverAddress;
 
+	public $skinId;
 	public $skin = null;
 	public $isXbox = false;
 
@@ -85,12 +84,11 @@ class LoginPacket extends DataPacket{
 		if(isset($skinToken["ServerAddress"])){
 			$this->serverAddress = $skinToken["ServerAddress"];
 		}
-		$skinId = "";
-		if(isset($skinToken["SkinId"])){
-			$skinId = $skinToken["SkinId"];
-		}
 		if(isset($skinToken["SkinData"])){
-			$this->skin = new Skin(base64_decode($skinToken["SkinData"]), $skinId);
+			$this->skin = base64_decode($skinToken["SkinData"]);
+		}
+		if(isset($skinToken["SkinId"])){
+			$this->skinId = $skinToken["SkinId"];
 		}
 	}
 
