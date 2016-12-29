@@ -31,7 +31,6 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Horse;
-use pocketmine\entity\Skin;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
@@ -68,7 +67,6 @@ use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
-use pocketmine\event\player\PlayerToggleGlideEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSprintEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -514,6 +512,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return false;
 	}
 
+	public function resetFallDistance(){
+		parent::resetFallDistance();
+		if($this->inAirTicks !== 0){
+			$this->startAirTicks = 5;
+		}
+		$this->inAirTicks = 0;
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -709,14 +715,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setDisplayName($name){
 		$this->displayName = $name;
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $this->getSkin());
+			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $this->getSkinId(), $this->getSkinData());
 		}
 	}
 
-	public function setSkin($skin){
-		parent::setSkin($skin);
+	public function setSkin($str, $skinId){
+		parent::setSkin($str, $skinId);
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $skin);
+			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $skinId, $str);
 		}
 	}
 
@@ -745,13 +751,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 */
 	public function isSleeping(){
 		return $this->sleeping !== null;
-	}
-
-	public function resetFallDistance(){
-		if($this->inAirTicks !== 0){
-			$this->startAirTicks = 5;
-		}
-		$this->inAirTicks = 0;
 	}
 
 	public function getInAirTicks(){
@@ -2045,12 +2044,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 				}
 
-				if(strlen($packet->skin->getData()) !== Skin::SINGLE_SKIN_SIZE and strlen($packet->skin->getData()) !== Skin::DOUBLE_SKIN_SIZE){
+				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
 					$this->close("", "disconnectionScreen.invalidSkin");
 					break;
 				}
-				$skin = new Skin($packet->skin->getData(), $packet->skin->getModel());
-				$this->setSkin($skin);
+
+				$this->setSkin($packet->skin, $packet->skinId);
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerPreLoginEvent($this, "Plugin reason"));
 				if($ev->isCancelled()){
@@ -2539,7 +2538,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 						$this->setSprinting(false);
 						$this->setSneaking(false);
-						$this->setGliding(false);
 
 						$this->extinguish();
 						$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 400, false);
@@ -2602,24 +2600,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$this->sendData($this);
 						}else{
 							$this->setSneaking(false);
-						}
-						break 2;
-					case PlayerActionPacket::ACTION_START_GLIDE:
-						$ev = new PlayerToggleGlideEvent($this, true);
-						$this->server->getPluginManager()->callEvent($ev);
-						if($ev->isCancelled()){
-							$this->sendData($this);
-						}else{
-							$this->setGliding(true);
-						}
-						break 2;
-					case PlayerActionPacket::ACTION_STOP_GLIDE:
-						$ev = new PlayerToggleGlideEvent($this, false);
-						$this->server->getPluginManager()->callEvent($ev);
-						if($ev->isCancelled()){
-							$this->sendData($this);
-						}else{
-							$this->setGliding(false);
 						}
 						break 2;
 				}
@@ -3259,9 +3239,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 					//$this->setGamemode($packet->gamemode, true);
 				}
-				break;
-			case ProtocolInfo::PLAYER_FALL_PACKET:
-				$this->fall($packet->fallDistance);
 				break;
 			default:
 				break;
