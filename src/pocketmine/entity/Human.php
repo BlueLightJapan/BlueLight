@@ -435,7 +435,12 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$this->xpSeed = $this->namedtag["XpSeed"];
 		}
 	}
-
+        public function getAbsorption() : int{
+	   return $this->attributeMap->getAttribute(Attribute::ABSORPTION)->getValue();
+	}
+	public function setAbsorption(int $absorption){
+	   $this->attributeMap->getAttribute(Attribute::ABSORPTION)->setValue($absorption);
+	}
 	protected function addAttributes(){
 		parent::addAttributes();
 
