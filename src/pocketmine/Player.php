@@ -3320,7 +3320,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
  		$pk->message = $message;
  		$this->dataPacket($pk);
  		
- 		/*
               /*
 		$mes = explode("\n", $this->server->getLanguage()->translateString($message));
 		foreach($mes as $m){
