@@ -20,8 +20,6 @@ settings:
  #Set this approximately to your number of cores.
  #If set to auto, it'll try to detect the number of cores (or use 2)
  async-workers: 4
- #Enables use of non-production, development builds. WARNING: DO NOT enable this unless you are sure you know what you are doing.
- enable-testing: false
 
 memory:
  #Global soft memory limit in megabytes. Set to 0 to disable
@@ -34,7 +32,7 @@ memory:
 
  #Main thread hard memory limit in megabytes. Set to 0 to disable
  #This will stop the server when the limit is surpassed
- main-hard-limit: 1024
+ main-hard-limit: 2024
 
  #Period in ticks to check memory (default 1 second)
  check-rate: 20
