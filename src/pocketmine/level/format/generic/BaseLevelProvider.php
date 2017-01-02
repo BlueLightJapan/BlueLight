@@ -34,7 +34,7 @@ use pocketmine\nbt\tag\LongTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\utils\LevelException;
 
-abstract class BaseLevelProvider implements Level{
+abstract class BaseLevelProvider implements LevelProvider{
 	/** @var Level */
 	protected $level;
 	/** @var string */
