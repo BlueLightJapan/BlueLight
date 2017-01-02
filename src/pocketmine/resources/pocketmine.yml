@@ -74,7 +74,7 @@ network:
  #Set to 0 to compress everything, -1 to disable.
  batch-threshold: 256
  #Compression level used when sending batched packets. Higher = Uses More CPU, Less = More Bandwidth Usage
- compression-level: 2
+ compression-level: 7
  #Use AsyncTasks for compression. Adds half/one tick delay, less CPU load on main thread
  async-compression: true
  #Experimental, only for Windows. Tries to use UPnP to automatically port forward
@@ -92,12 +92,9 @@ player:
 
 level-settings:
  #The default format that levels will use when created
- default-format: anvil
- #If true, converts from a format that is not the default to the default format on load
- #NOTE: This is currently not implemented
- convert-format: false
+ default-format: pmanvil
  #Automatically change levels tick rate to maintain 20 ticks per second
- auto-tick-rate: false
+ auto-tick-rate: true
  auto-tick-rate-limit: 20
  #Sets the base tick rate (1 = 20 ticks per second, 2 = 10 ticks per second, etc.)
  base-tick-rate: 1
@@ -106,7 +103,7 @@ level-settings:
 
 chunk-sending:
  #Amount of chunks sent to players per tick
- per-tick: 1
+ per-tick: 4
  #Amount of chunks sent around each player
  max-chunks: 32
  #Amount of chunks that need to be sent before spawning the player
@@ -125,9 +122,9 @@ chunk-ticking:
 
 chunk-generation:
  #Max. amount of chunks in the waiting queue to be generated
- queue-size: 2
+ queue-size: 4
  #Max. amount of chunks in the waiting queue to be populated
- population-queue-size: 2
+ population-queue-size: 4
 
 ticks-per:
  animal-spawns: 400
