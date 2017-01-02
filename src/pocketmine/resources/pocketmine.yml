@@ -1,7 +1,3 @@
-# Main configuration file for PocketMine-MP
-# These settings are the ones that cannot be included in server.properties
-# Some of these settings are safe, others can break your server if modified incorrectly
-# New settings/defaults won't appear automatically on this file when upgrading.
 
 settings:
  #Three-letter language code for server-side localization
@@ -9,6 +5,7 @@ settings:
  language: "eng"
  #Whether to send all strings translated to server locale or let the device handle them
  force-language: false
+ #When server shut down, the players will get kicked and this is what will show on there screen.
  shutdown-message: "Server closed"
  #Allow listing plugins via Query
  query-plugins: true
@@ -22,7 +19,7 @@ settings:
  #Used for plugin asynchronous tasks, world generation, compression and web communication.
  #Set this approximately to your number of cores.
  #If set to auto, it'll try to detect the number of cores (or use 2)
- async-workers: auto
+ async-workers: 4
 
 memory:
  #Global soft memory limit in megabytes. Set to 0 to disable
@@ -35,7 +32,7 @@ memory:
 
  #Main thread hard memory limit in megabytes. Set to 0 to disable
  #This will stop the server when the limit is surpassed
- main-hard-limit: 1024
+ main-hard-limit: 2024
 
  #Period in ticks to check memory (default 1 second)
  check-rate: 20
@@ -59,7 +56,7 @@ memory:
 
  max-chunks:
   #Limit of chunks to load per player, overrides chunk-sending.max-chunks
-  trigger-limit: 96
+  trigger-limit: 28
 
   #Do chunk garbage collection on trigger
   trigger-chunk-collect: true
@@ -76,30 +73,26 @@ network:
  #Threshold for batching packets, in bytes. Only these packets will be compressed
  #Set to 0 to compress everything, -1 to disable.
  batch-threshold: 256
- #Compression level used when sending batched packets. Higher = more CPU, less bandwidth usage
+ #Compression level used when sending batched packets. Higher = Uses More CPU, Less = More Bandwidth Usage
  compression-level: 7
  #Use AsyncTasks for compression. Adds half/one tick delay, less CPU load on main thread
- async-compression: false
+ async-compression: true
  #Experimental, only for Windows. Tries to use UPnP to automatically port forward
  upnp-forwarding: false
 
 debug:
- #To enable assertion execution, set zend.assertions in your php.ini to 1
  #If > 1, it will show debug messages in the console
  level: 1
  #Enables /status, /gc
- commands: false
- 
+ commands: true
+
 player:
  #Choose whether to enable player data saving.
  save-player-data: true
 
 level-settings:
  #The default format that levels will use when created
- default-format: mcregion
- #If true, converts from a format that is not the default to the default format on load
- #NOTE: This is currently not implemented
- convert-format: false
+ default-format: pmanvil
  #Automatically change levels tick rate to maintain 20 ticks per second
  auto-tick-rate: true
  auto-tick-rate-limit: 20
@@ -112,16 +105,16 @@ chunk-sending:
  #Amount of chunks sent to players per tick
  per-tick: 4
  #Amount of chunks sent around each player
- max-chunks: 192
+ max-chunks: 32
  #Amount of chunks that need to be sent before spawning the player
- spawn-threshold: 56
+ spawn-threshold: 28
  #Save a serialized copy of the chunk in memory for faster sending
  #Useful in mostly-static worlds where lots of players join at the same time
- cache-chunks: false
+ cache-chunks: true
 
 chunk-ticking:
  #Max amount of chunks processed each tick
- per-tick: 40
+ per-tick: 16
  #Radius of chunks around a player to tick
  tick-radius: 3
  light-updates: false
@@ -129,26 +122,21 @@ chunk-ticking:
 
 chunk-generation:
  #Max. amount of chunks in the waiting queue to be generated
- queue-size: 8
+ queue-size: 4
  #Max. amount of chunks in the waiting queue to be populated
- population-queue-size: 8
+ population-queue-size: 4
 
 ticks-per:
  animal-spawns: 400
  monster-spawns: 1
  autosave: 6000
  cache-cleanup: 900
-
+ 
 spawn-limits:
   monsters: 70
   animals: 15
   water-animals: 5
   ambient: 15
-
-aliases:
- #Examples:
- #showtheversion: version
- #savestop: [save-all, stop]
 
 worlds:
  #These settings will override the generator set in server.properties and allows loading multiple levels
