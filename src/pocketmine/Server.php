@@ -1627,58 +1627,7 @@ class Server{
 			Enchantment::init();
 			Attribute::init();
 			$this->craftingManager = new CraftingManager();
-
-			$this->pluginManager = new PluginManager($this, $this->commandMap);
-			$this->pluginManager->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this->consoleSender);
-			$this->pluginManager->setUseTimings($this->getProperty("settings.enable-profiling", false));
-			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
-			$this->pluginManager->registerInterface(PharPluginLoader::class);
-			$this->pluginManager->registerInterface(FolderPluginLoader::class);
-			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
-
-			register_shutdown_function([$this, "crashDump"]);
-
-			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
-			$this->network->registerInterface(new RakLibInterface($this));
-			$this->pluginManager->loadPlugins($this->pluginPath);
-			$this->enablePlugins(PluginLoadOrder::STARTUP);
 			
-                       $this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
-			define("BOOTUP_RANDOM", random_bytes(16));
-			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
-
-			$this->getLogger()->debug("Server unique id: " . $this->getServerUniqueId());
-			$this->getLogger()->debug("Machine unique id: " . Utils::getMachineUniqueId());
-
-			$this->network = new Network($this);
-			$this->network->setName($this->getMotd());
-
-
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.info", [
-				$this->getName(),
-				($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
-				$this->getCodename(),
-				$this->getApiVersion()
-			]));
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.license", [$this->getName()]));
-
-			Timings::init();
-
-			$this->consoleSender = new ConsoleCommandSender();
-			$this->commandMap = new SimpleCommandMap($this);
-
-			$this->registerEntities();
-
-			Tile::init();
-			InventoryType::init();
-			Block::init();
-			Enchantment::init();
-			Item::init();
-			Biome::init();
-			Effect::init();
-			Attribute::init();
-			$this->craftingManager = new CraftingManager();
-
 			$this->pluginManager = new PluginManager($this, $this->commandMap);
 			$this->pluginManager->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this->consoleSender);
 			$this->pluginManager->setUseTimings($this->getProperty("settings.enable-profiling", false));
