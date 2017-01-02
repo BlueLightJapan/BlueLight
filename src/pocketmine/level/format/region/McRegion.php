@@ -66,11 +66,10 @@ class McRegion extends BaseLevelProvider{
 		$data = "";
 		$blockLight = "";
 		$skyLight = "";
-		$subChunks = $chunk->getSubChunks();
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){
 				for($y = 0; $y < 8; ++$y){
-					$subChunk = $subChunks[$y];
+					$subChunk = $chunk->getSubChunk($y);
 					$ids .= $subChunk->getBlockIdColumn($x, $z);
 					$data .= $subChunk->getBlockDataColumn($x, $z);
 					$blockLight .= $subChunk->getBlockLightColumn($x, $z);
@@ -136,10 +135,10 @@ class McRegion extends BaseLevelProvider{
 			$chunk = $chunk->Level;
 
 			$subChunks = [];
-			$fullIds = isset($chunk->Blocks) ? $chunk->Blocks->getValue() : str_repeat("\x00", 32768);
-			$fullData = isset($chunk->Data) ? $chunk->Data->getValue() : ($half = str_repeat("\x00", 16384));
-			$fullBlockLight = isset($chunk->BlockLight) ? $chunk->BlockLight->getValue() : $half;
-			$fullSkyLight = isset($chunk->SkyLight) ? $chunk->SkyLight->getValue() : str_repeat("\xff", 16384);
+			$fullIds = $chunk->Blocks instanceof ByteArrayTag ? $chunk->Blocks->getValue() : str_repeat("\x00", 32768);
+			$fullData = $chunk->Data instanceof ByteArrayTag ? $chunk->Data->getValue() : ($half = str_repeat("\x00", 16384));
+			$fullBlockLight = $chunk->BlockLight instanceof ByteArrayTag ? $chunk->BlockLight->getValue() : $half;
+			$fullSkyLight = $chunk->SkyLight instanceof ByteArrayTag ? $chunk->SkyLight->getValue() : str_repeat("\xff", 16384);
 
 			for($y = 0; $y < 8; ++$y){
 				$offset = ($y << 4);
@@ -166,7 +165,7 @@ class McRegion extends BaseLevelProvider{
 					$skyLight .= substr($fullSkyLight, $offset, 8);
 					$offset += 64;
 				}
-				$subChunks[$y] = new SubChunk($ids, $data, $blockLight, $skyLight);
+				$subChunks[] = new SubChunk($y, $ids, $data, $blockLight, $skyLight);
 			}
 
 			if(isset($chunk->BiomeColors)){
@@ -182,10 +181,10 @@ class McRegion extends BaseLevelProvider{
 				$chunk["xPos"],
 				$chunk["zPos"],
 				$subChunks,
-				isset($chunk->Entities) ? $chunk->Entities->getValue() : [],
-				isset($chunk->TileEntities) ? $chunk->TileEntities->getValue() : [],
+				$chunk->Entities->getValue(),
+				$chunk->TileEntities->getValue(),
 				$biomeIds,
-				isset($chunk->HeightMap) ? $chunk->HeightMap->getValue() : [] //this shouldn't exist in normal mcregion worlds anyway...
+				$chunk->HeightMap->getValue()
 			);
 			$result->setLightPopulated(isset($chunk->LightPopulated) ? ((bool) $chunk->LightPopulated->getValue()) : false);
 			$result->setPopulated(isset($chunk->TerrainPopulated) ? ((bool) $chunk->TerrainPopulated->getValue()) : false);

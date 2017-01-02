@@ -19,11 +19,10 @@
  *
 */
 
-declare(strict_types = 1);
-
 namespace pocketmine\level\format\generic;
 
 class SubChunk{
+	protected $y;
 
 	protected $ids;
 	protected $data;
@@ -39,11 +38,16 @@ class SubChunk{
 		}
 	}
 
-	public function __construct(string $ids = "", string $data = "", string $blockLight = "", string $skyLight = ""){
+	public function __construct(int $y, string $ids = "", string $data = "", string $blockLight = "", string $skyLight = ""){
+		$this->y = $y;
 		self::assignData($this->ids, $ids, 4096);
 		self::assignData($this->data, $data, 2048);
 		self::assignData($this->blockLight, $blockLight, 2048);
 		self::assignData($this->skyLight, $skyLight, 2048);
+	}
+
+	public function getY() : int{
+		return $this->y;
 	}
 
 	public function isEmpty() : bool{
@@ -207,7 +211,7 @@ class SubChunk{
 	}
 
 	public function fastSerialize() : string{
-		// ids, data, skylight, blocklight
-		return $this->ids . $this->data . $this->skyLight . $this->blockLight;
+		// y, ids, data, skylight, blocklight
+		return chr($this->y) . $this->ids . $this->data . $this->skyLight . $this->blockLight;
 	}
 }

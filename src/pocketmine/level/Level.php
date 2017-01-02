@@ -996,8 +996,11 @@ class Level implements ChunkManager, Metadatable{
 			foreach($chunk->getEntities() as $entity){
 				$entity->scheduleUpdate();
 			}
-		foreach($chunk->getSubChunks() as $Y => $subChunk){
+
+
+			foreach($chunk->getSubChunks() as $subChunk){
 				if(!$subChunk->isEmpty()){
+					$Y = $subChunk->getY();
 					$k = mt_rand(0, 0x7fffffff);
 					for($i = 0; $i < 3; ++$i, $k >>= 10){
 						$x = $k & 0x0f;
@@ -1396,7 +1399,6 @@ class Level implements ChunkManager, Metadatable{
 	}
 
 	private function computeRemoveBlockLight(int $x, int $y, int $z, int $currentLight, \SplQueue $queue, \SplQueue $spreadQueue, array &$visited, array &$spreadVisited){
-		if($y < 0) return;
 		$current = $this->getBlockLightAt($x, $y, $z);
 
 		if($current !== 0 and $current < $currentLight){
@@ -1417,7 +1419,6 @@ class Level implements ChunkManager, Metadatable{
 	}
 
 	private function computeSpreadBlockLight(int $x, int $y, int $z, int $currentLight, \SplQueue $queue, array &$visited){
-		if($y < 0) return;
 		$current = $this->getBlockLightAt($x, $y, $z);
 
 		if($current < $currentLight){
@@ -1637,7 +1638,6 @@ class Level implements ChunkManager, Metadatable{
 			if($player !== null){
 				//unset($players[$player->getLoaderId()]);
 			}
-
 			$this->addParticle(new DestroyBlockParticle($target->add(0.5), $target), $players);
 		}
 
@@ -2620,6 +2620,10 @@ class Level implements ChunkManager, Metadatable{
 		$spawnZ = $this->provider->getSpawn()->getZ() >> 4;
 
 		return abs($X - $spawnX) <= 1 and abs($Z - $spawnZ) <= 1;
+	}
+
+	public function getSpawn(){
+		return $this->getSpawnLocation();
 	}
 
 	/**
