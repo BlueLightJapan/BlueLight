@@ -67,7 +67,6 @@ use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\generic\BaseLevelProvider;
-use pocketmine\level\format\generic\GenericChunk;
 use pocketmine\level\format\generic\EmptyChunkSection;
 use pocketmine\level\format\LevelProvider;
 use pocketmine\level\generator\GenerationTask;
@@ -93,7 +92,6 @@ use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\nbt\tag\LongTag;
 use pocketmine\network\protocol\DataPacket;
 use pocketmine\network\protocol\FullChunkDataPacket;
 use pocketmine\network\protocol\LevelEventPacket;
@@ -109,10 +107,6 @@ use pocketmine\tile\Tile;
 use pocketmine\utils\LevelException;
 use pocketmine\utils\Random;
 use pocketmine\utils\ReversePriorityQueue;
-use pocketmine\level\weather\Weather;
-use pocketmine\level\weather\WeatherManager;
-use pocketmine\entity\Lightning;
-use pocketmine\entity\XPOrb;
 
 #include <rules/Level.h>
 
@@ -124,7 +118,6 @@ class Level implements ChunkManager, Metadatable{
 
 	const Y_MASK = 0xFF;
 	const Y_MAX = 0x100; //256
-	const HEIGHT = 256;
 
 	const BLOCK_UPDATE_NORMAL = 1;
 	const BLOCK_UPDATE_RANDOM = 2;
@@ -138,9 +131,6 @@ class Level implements ChunkManager, Metadatable{
 	const TIME_SUNRISE = 23000;
 
 	const TIME_FULL = 24000;
-
-	/** @var Weather */
-	private $weather;
 
 	/** @var Tile[] */
 	private $tiles = [];
@@ -278,10 +268,6 @@ class Level implements ChunkManager, Metadatable{
 		return PHP_INT_SIZE === 8 ? (($x & 0xFFFFFFF) << 36) | (($y & Level::Y_MASK) << 28) | ($z & 0xFFFFFFF) : $x . ":" . $y . ":" . $z;
 	}
 
-	public static function chunkBlockHash(int $x, int $y, int $z) : int{
-		return ($x << 12) | ($z << 8) | $y;
-	}
-
 	public static function getBlockXYZ($hash, &$x, &$y, &$z){
 		if(PHP_INT_SIZE === 8){
 			$x = $hash >> 36;
@@ -363,72 +349,6 @@ class Level implements ChunkManager, Metadatable{
 		$this->temporalPosition = new Position(0, 0, 0, $this);
 		$this->temporalVector = new Vector3(0, 0, 0);
 		$this->tickRate = 1;
-		$this->weather = new Weather($this, 0);
-		WeatherManager::registerLevel($this);
-		$this->weather->setCanCalculate(true);
-	}
-
-	public function spawnLightning(Vector3 $pos) : Lightning{
-		$nbt = new CompoundTag("", [
-			"Pos" => new ListTag("Pos", [
-				new DoubleTag("", $pos->getX()),
-				new DoubleTag("", $pos->getY()),
-				new DoubleTag("", $pos->getZ())
-			]),
-			"Motion" => new ListTag("Motion", [
-				new DoubleTag("", 0),
-				new DoubleTag("", 0),
-				new DoubleTag("", 0)
-			]),
-			"Rotation" => new ListTag("Rotation", [
-				new FloatTag("", 0),
-				new FloatTag("", 0)
-			]),
-		]);
-
-		$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
-
-		$lightning = new Lightning($chunk, $nbt);
-		$lightning->spawnToAll();
-
-		return $lightning;
-	}
-
-	public function spawnXPOrb(Vector3 $pos, int $exp = 1){
-		if($exp > 0){
-			$nbt = new CompoundTag("", [
-				"Pos" => new ListTag("Pos", [
-					new DoubleTag("", $pos->getX()),
-					new DoubleTag("", $pos->getY() + 0.5),
-					new DoubleTag("", $pos->getZ())
-				]),
-				"Motion" => new ListTag("Motion", [
-					new DoubleTag("", 0),
-					new DoubleTag("", 0),
-					new DoubleTag("", 0)
-				]),
-				"Rotation" => new ListTag("Rotation", [
-					new FloatTag("", 0),
-					new FloatTag("", 0)
-				]),
-				"Experience" => new LongTag("Experience", $exp),
-			]);
-
-			$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
-
-			$expOrb = new XPOrb($chunk, $nbt);
-			$expOrb->spawnToAll();
-
-			return $expOrb;
-		}
-		return false;
-	}
-
-	/**
-	 * @return Weather
-	 */
-	public function getWeather(){
-		return $this->weather;
 	}
 
 	public function getTickRate() : int{
@@ -594,8 +514,6 @@ class Level implements ChunkManager, Metadatable{
 			$this->server->setDefaultLevel(null);
 		}
 
-		if($this->weather != null) WeatherManager::unregisterLevel($this);
-
 		$this->close();
 
 		return true;
@@ -715,8 +633,6 @@ class Level implements ChunkManager, Metadatable{
 		$this->timings->doTick->startTiming();
 
 		$this->checkTime();
-
-		$this->weather->calcWeather($currentTick);
 
 		$this->unloadChunks();
 
@@ -998,9 +914,8 @@ class Level implements ChunkManager, Metadatable{
 			}
 
 
-			foreach($chunk->getSubChunks() as $subChunk){
+			foreach($chunk->getSubChunks() as $Y => $subChunk){
 				if(!$subChunk->isEmpty()){
-					$Y = $subChunk->getY();
 					$k = mt_rand(0, 0x7fffffff);
 					for($i = 0; $i < 3; ++$i, $k >>= 10){
 						$x = $k & 0x0f;
@@ -1399,6 +1314,7 @@ class Level implements ChunkManager, Metadatable{
 	}
 
 	private function computeRemoveBlockLight(int $x, int $y, int $z, int $currentLight, \SplQueue $queue, \SplQueue $spreadQueue, array &$visited, array &$spreadVisited){
+		if($y < 0) return;
 		$current = $this->getBlockLightAt($x, $y, $z);
 
 		if($current !== 0 and $current < $currentLight){
@@ -1419,6 +1335,7 @@ class Level implements ChunkManager, Metadatable{
 	}
 
 	private function computeSpreadBlockLight(int $x, int $y, int $z, int $currentLight, \SplQueue $queue, array &$visited){
+		if($y < 0) return;
 		$current = $this->getBlockLightAt($x, $y, $z);
 
 		if($current < $currentLight){
@@ -1636,8 +1553,9 @@ class Level implements ChunkManager, Metadatable{
 		if($createParticles){
 			$players = $this->getChunkPlayers($target->x >> 4, $target->z >> 4);
 			if($player !== null){
-				//unset($players[$player->getLoaderId()]);
+				unset($players[$player->getLoaderId()]);
 			}
+
 			$this->addParticle(new DestroyBlockParticle($target->add(0.5), $target), $players);
 		}
 
@@ -2620,10 +2538,6 @@ class Level implements ChunkManager, Metadatable{
 		$spawnZ = $this->provider->getSpawn()->getZ() >> 4;
 
 		return abs($X - $spawnX) <= 1 and abs($Z - $spawnZ) <= 1;
-	}
-
-	public function getSpawn(){
-		return $this->getSpawnLocation();
 	}
 
 	/**
