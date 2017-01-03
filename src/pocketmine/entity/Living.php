@@ -73,7 +73,6 @@ abstract class Living extends Entity implements Damageable{
 	public function setHealth($amount){
 		$wasAlive = $this->isAlive();
 		parent::setHealth($amount);
-//		$this->attributeMap->getAttribute(Attribute::HEALTH)->setValue($this->getHealth());
 		if($this->isAlive() and !$wasAlive){
 			$pk = new EntityEventPacket();
 			$pk->eid = $this->getId();
@@ -83,7 +82,8 @@ abstract class Living extends Entity implements Damageable{
 	}
 
 	public function setMaxHealth($amount){
-//		$this->attributeMap->getAttribute(Attribute::HEALTH)->setMaxValue($amount);
+		parent::setHealth($amount);
+
 	}
 
 	public function saveNBT(){
