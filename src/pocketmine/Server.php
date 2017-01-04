@@ -325,6 +325,7 @@ class Server{
 	public $destroyblockparticle = true;
 	public $titletick = true;
 	public $stevekick = false;
+	public $golemspawn = false;
 	public $keepInventory = false;
 
 	/**
@@ -1469,6 +1470,7 @@ class Server{
 				"keepInventory" => false,
 				"TitleTick" => true,
 				"SteveKick" => false,
+				"GolemSpawn" => false,
 			]);
 			
 			$this->logger->info("Loading server properties...");
@@ -1515,6 +1517,7 @@ class Server{
 			$this->keepInventory = $this->getProperty("keepInventory", false);
 			$this->titletick = $this->getProperty("TitleTick", true);
 			$this->stevekick = $this->getProperty("SteveKick", false);
+			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
