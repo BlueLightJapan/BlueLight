@@ -2714,7 +2714,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$this->isLinked = true;
 							$this->setLink($target);
 							$this->linkedentity = $target;
-							$this->setDataProperty(Entity::DATA_RIDE_SEAT, Entity::DATA_TYPE_VECTOR3F, [-0.2, 2.3, 0.2]);
 
 
 						}elseif($target instanceof Pig){
