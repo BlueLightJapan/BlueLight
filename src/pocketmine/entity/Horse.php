@@ -177,18 +177,7 @@ class Horse extends Living{
 	public function isGoing($vector3){
 		$level = $this->getLevel();
 		$block = $level->getBlock($vector3);
-		$id = $block->getID();
-		$damage = $block->getDamage();
-		switch($id){
-			case 0:case 6:case 27:case 31:case 50:
-			case 63:case 66:case 68:case 78:case 141:
-			case 142:case 171:case 175:case 244:
-			case 323:case 70:case 72:case 147:case 148:case 44:case 64:
-				return true;
-			break;
-			default:
-				return false;
-			break;
-		}
+		if($block->isTransparent()) return true;
+		else return false;
 	}
 }//written by Kametan
