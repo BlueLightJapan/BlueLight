@@ -31,6 +31,7 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Horse;
+use pocketmine\entity\Pig;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
@@ -179,6 +180,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public $loggedIn = false;
 	public $gamemode;
 	public $lastBreak;
+	public $isXbox = false;
 
 	protected $windowCnt = 2;
 	/** @var \SplObjectStorage<Inventory> */
@@ -268,8 +270,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $exp = 0;
 	protected $expCooldown = 0;
 
-	public $isXbox = false;
-
+	/** @var LinkedEntity */
+	public $linkedentity;
+	public $isLinked = false;
 	public function isXbox(){
 		return $this->isXbox;
 	}
@@ -2092,6 +2095,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->setRotation($packet->yaw, $packet->pitch);
 					$this->newPosition = $newPos;
 				}
+
+
+
+				if($this->isLinked){
+					$entity = $this->linkedentity;
+					$entity->yaw = $this->yaw;
+					$entity->pitch = $this->pitch;
+				}
+
 				$this->forceMovement = null;
 
 				break;
@@ -2674,6 +2686,16 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
 				break;
+			case ProtocolInfo::PLAYER_INPUT_PACKET:
+				//var_dump($packet);
+				if($packet->motionX == 0 and $packet->motionY == 1){
+					$this->linkedentity->goStraight($this);
+				}elseif($packet->motionX == 0 and $packet->motionY == -1){
+					$this->linkedentity->goBack($this);
+				}
+			break;
+
+
 			case ProtocolInfo::INTERACT_PACKET:
 
 				if($this->spawned === false or !$this->isAlive() or $this->blocked){
@@ -2689,7 +2711,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				switch($packet->action){
 					case InteractPacket::ACTION_RIGHT_CLICK:
 						if($target instanceof Horse){
-						//$this->setLink($target);
+							$this->isLinked = true;
+							$this->setLink($target);
+							$this->linkedentity = $target;
+							$this->setDataProperty(Entity::DATA_RIDE_SEAT, Entity::DATA_TYPE_VECTOR3F, [-0.2, 2.3, 0.2]);
+
+
+						}elseif($target instanceof Pig){
+							$this->isLinked = true;
+							$this->setLink($target);
+							$this->linkedentity = $target;
+
 						}
 					break;
 					case InteractPacket::ACTION_LEFT_CLICK:
