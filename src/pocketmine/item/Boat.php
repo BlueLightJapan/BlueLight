@@ -28,6 +28,7 @@ use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
@@ -65,6 +66,7 @@ class Boat extends Item{
 				new FloatTag("", lcg_value() * 360),
 				new FloatTag("", 0)
 			]),
+			"woodID" => new ByteTag("woodID", $this->getDamage()),
 		]);
 
 		/*if($this->hasCustomName()){

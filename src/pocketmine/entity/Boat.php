@@ -21,7 +21,7 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
@@ -44,7 +44,7 @@ class Boat extends Vehicle{
 
 	public function __construct(Chunk $chunk, CompoundTag $nbt){
 		if(!isset($nbt->WoodID)){
-			$nbt->WoodID = new IntTag("WoodID", 0);
+			$nbt->WoodID = new ByteTag("WoodID", 0);
 		}
 		parent::__construct($chunk, $nbt);
 		$this->setDataProperty(self::DATA_WOOD_ID, self::DATA_TYPE_BYTE, $this->getWoodID());
@@ -109,7 +109,7 @@ class Boat extends Vehicle{
 		$this->move($this->motionX, $this->motionY, $this->motionZ);
 		$this->updateMovement();
 
-		if($this->linkedEntity == null or $this->linkedType = 0){
+		/*if($this->linkedEntity == null or $this->linkedType = 0){
 			if($this->age > 1500){
 				$this->close();
 				$hasUpdate = true;
@@ -118,7 +118,7 @@ class Boat extends Vehicle{
 				$this->age = 0;
 			}
 			$this->age++;
-		}else $this->age = 0;
+		}else $this->age = 0;*/
 
 		$this->timings->stopTiming();
 
