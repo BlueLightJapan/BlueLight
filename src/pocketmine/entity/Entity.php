@@ -108,10 +108,7 @@ abstract class Entity extends Location implements Metadatable{
 	 * 52 (short) */
 	const DATA_BOUNDING_BOX_WIDTH = 54; //float
 	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
-	/* 56 (vector3f)
-	 * 57 (byte)
-	 * 58 (float)
-	 * 59 (float) */
+	const DATA_RIDE_SEAT = 56; //vector3
 
 	const DATA_FLAG_ONFIRE = 0;
 	const DATA_FLAG_SNEAKING = 1;
@@ -440,20 +437,20 @@ abstract class Entity extends Location implements Metadatable{
 		return true;
 	}
 
-	public function setLink(Entity $entity){
+	public function setLink(Entity $entity){//Player $this Horse $entity
 
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();
 		$pk->to = $this->getId();
-		$pk->type = 2;
+		$pk->type = 1;
 		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
-		if($this instanceof Player){
-			$pk = new SetEntityLinkPacket();
-			$pk->from = $entity->getId();
-			$pk->to = 0;
-			$pk->type = 2;
-			$this->dataPacket($pk);
-		}
+
+		$pk = new SetEntityLinkPacket();
+		$pk->from = $entity->getId();
+		$pk->to = 0;
+		$pk->type = 1;
+		$this->dataPacket($pk);
+
 		return true;
 	}
 
