@@ -108,7 +108,6 @@ abstract class Entity extends Location implements Metadatable{
 	 * 52 (short) */
 	const DATA_BOUNDING_BOX_WIDTH = 54; //float
 	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
-	const DATA_RIDE_SEAT = 56; //vector3
 
 	const DATA_FLAG_ONFIRE = 0;
 	const DATA_FLAG_SNEAKING = 1;

@@ -29,8 +29,8 @@ class PlayerInputPacket extends DataPacket{
 
 	public $motionX;
 	public $motionY;
-	public $unknownBool1;
-	public $unknownBool2;
+	public $bool1;
+	public $bool2;
 
 	public function getName(){
 		return "PlayerInputPacket";
@@ -39,8 +39,8 @@ class PlayerInputPacket extends DataPacket{
 	public function decode(){
 		$this->motionX = $this->getLFloat();
 		$this->motionY = $this->getLFloat();
-		$this->unknownBool1 = $this->getBool();
-		$this->unknownBool2 = $this->getBool();
+		$this->bool1 = $this->getBool();
+		$this->bool2 = $this->getBool();
 	}
 
 	public function encode(){
