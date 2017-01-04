@@ -82,7 +82,7 @@ abstract class Living extends Entity implements Damageable{
 	}
 
 	public function setMaxHealth($amount){
-		parent::setHealth($amount);
+		parent::setMaxHealth($amount);
 
 	}
 
