@@ -21,8 +21,66 @@
 
 namespace pocketmine\item;
 
+use pocketmine\block\Block;
+use pocketmine\entity\Entity;
+use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\Player;
+
 class Boat extends Item{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(self::BOAT, $meta, $count, "Boat");
+	}
+
+	public function canBeActivated(){
+		return true;
+	}
+
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		if($face != 1) return false;
+		$entity = null;
+		$chunk = $level->getChunk($block->getX() >> 4, $block->getZ() >> 4);
+
+		if(!($chunk instanceof Chunk)){
+			return false;
+		}
+
+		$nbt = new CompoundTag("", [
+			"Pos" => new ListTag("Pos", [
+				new DoubleTag("", $block->getX() + 0.5),
+				new DoubleTag("", $block->getY() + 0.625),
+				new DoubleTag("", $block->getZ() + 0.5)
+			]),
+			"Motion" => new ListTag("Motion", [
+				new DoubleTag("", 0),
+				new DoubleTag("", 0),
+				new DoubleTag("", 0)
+			]),
+			"Rotation" => new ListTag("Rotation", [
+				new FloatTag("", lcg_value() * 360),
+				new FloatTag("", 0)
+			]),
+		]);
+
+		/*if($this->hasCustomName()){
+			$nbt->CustomName = new StringTag("CustomName", $this->getCustomName());
+		}*/
+
+		$entity = Entity::createEntity("Boat", $chunk, $nbt);
+
+		if($entity instanceof Entity){
+			if($player->isSurvival()){
+				--$this->count;
+			}
+			$entity->spawnToAll();
+			return true;
+		}
+
+		return false;
 	}
 }
