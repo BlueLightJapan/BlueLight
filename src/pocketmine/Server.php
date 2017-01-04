@@ -324,7 +324,8 @@ class Server{
 	public $crashdumps = true;
 	public $destroyblockparticle = true;
 	public $titletick = true;
-	public $stevekick = true;
+	public $stevekick = false;
+	public $keepInventory = false;
 
 	/**
 	 * @return string
@@ -1467,7 +1468,7 @@ class Server{
 				"DestroyBlockParticle" => true,
 				"keepInventory" => false,
 				"TitleTick" => true,
-				"SteveKick" => false
+				"SteveKick" => false,
 			]);
 			
 			$this->logger->info("Loading server properties...");
@@ -1511,9 +1512,9 @@ class Server{
 			$this->expEnabled = $this->getProperty("expEnabled", true);
 			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
-			$this->titletick = $this->getProperty("TitleTick", true);
-			$this->stevekick = $this->getProperty("SteveKick", true);
 			$this->keepInventory = $this->getProperty("keepInventory", false);
+			$this->titletick = $this->getProperty("TitleTick", true);
+			$this->stevekick = $this->getProperty("SteveKick", false);
 			
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
