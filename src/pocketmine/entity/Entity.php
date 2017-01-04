@@ -1168,7 +1168,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->attack($ev->getFinalDamage(), $ev);
 		}
 */
-		if($this instanceof Player and $this->isSpectator()){
+		if($this instanceof Player){// and $this->isSpectator()){
 			return;
 		}
 		if($fallDistance > 3){
@@ -1183,12 +1183,12 @@ abstract class Entity extends Location implements Metadatable{
 		if($this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0)) instanceof SlimeBlock){
 			$damage = 0;
 		}
-		//If player's using Elytra
+		/*//If player's using Elytra
 		if($this instanceof Player){
 			if($this->getInventory()->getChestplate() instanceof Elytra){
 				$damage = 0;
 			}
-		}
+		}*/
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
 			$this->attack($ev->getFinalDamage(), $ev);
