@@ -3306,7 +3306,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 				break;
 			case ProtocolInfo::PLAYER_FALL_PACKET:
-				$this->fall($packet->fallDistance);
+				$this->PlayerFall($packet->fallDistance);
 				break;
 			default:
 				break;
@@ -3315,7 +3315,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$timings->stopTiming();
 	}
 
-	public function fall($fallDistance){
+	public function PlayerFall($fallDistance){
 /*
 		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
 		if($damage > 0){
