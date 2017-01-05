@@ -23,6 +23,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Tool;
 use pocketmine\item\Item;
+use pocketmine\level\particle\NoteParticle;
 use pocketmine\level\sound\NoteblockSound;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
@@ -139,6 +140,7 @@ class NoteBlock extends Solid{
 		$up = $this->getSide(Vector3::SIDE_UP);
 		if($up->getId() == 0){
 			$this->getLevel()->addSound(new NoteblockSound($this, $this->getInstrument(), $this->getStrength()));
+			$this->getLevel()->addParticle(new NoteParticle($this->add(0.5, 1.2, 0.5), $this->getStrength()));
 			return true;
 		}else{
 			return false;
