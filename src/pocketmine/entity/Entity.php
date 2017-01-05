@@ -348,9 +348,15 @@ abstract class Entity extends Location implements Metadatable{
 
 	}
 
-	/*public function setSize($size){//Int
- 		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $size);
-	}*/
+	public function setSize($scale){
+		$this->scale = $scale;
+		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $scale);
+
+		$height = $this->getHeight() * $this->scale;
+		$radius = ($this->getWidth() * $this->scale) / 2;
+
+		$this->boundingBox->setBounds($this->x - $radius, $this->y, $this->z - $radius, $this->x + $radius, $this->y + $height, $this->z + $radius);
+	}
 
 	public function setScale($scale){
 		$this->scale = $scale;
@@ -362,6 +368,10 @@ abstract class Entity extends Location implements Metadatable{
 		$this->boundingBox->setBounds($this->x - $radius, $this->y, $this->z - $radius, $this->x + $radius, $this->y + $height, $this->z + $radius);
 	}
 
+	/**
+	 * @return int
+	 */
+
 	public function getScale(){
 		return $this->scale;
 	}
@@ -371,7 +381,11 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	public function getHeight(){
-		return $this->height;
+		if(isset($this->height)){
+			return $this->height;
+		}else{
+			return 1;
+		}
 	}
 
 	public function setWidth($width){
@@ -379,7 +393,11 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	public function getWidth(){
-		return $this->width;
+		if(isset($this->width)){
+			return $this->width;
+		}else{
+			return 1;
+		}
 	}
 
 	public function setLength($length){
