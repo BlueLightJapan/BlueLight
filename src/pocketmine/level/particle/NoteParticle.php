@@ -22,13 +22,31 @@
 namespace pocketmine\level\particle;
 
 use pocketmine\math\Vector3;
+use pocketmine\network\protocol\BlockEventPacket;
 
 class NoteParticle extends GenericParticle{
-	public function __construct(Vector3 $pos, $pitch){
+	protected $instrument;
+	protected $pitch;
+
+	public function __construct(Vector3 $pos, $instrument, $pitch){
 		parent::__construct($pos, Particle::TYPE_NOTE, $this->getColorByPitch($pitch));
+		$this->instrument = $instrument;
+		$this->pitch = $pitch;
+	}
+
+	public function encode(){
+		$pk = new BlockEventPacket();
+		$pk->x = $this->x;
+		$pk->y = $this->y;
+		$pk->z = $this->z;
+		$pk->case1 = $this->instrument;
+		$pk->case2 = $this->pitch;
+
+		return $pk;
 	}
 
 	public function getColorByPitch($pitch){
+		return $pitch * 100;
 		$a = 255;
 		switch($pitch){
 			case 0:

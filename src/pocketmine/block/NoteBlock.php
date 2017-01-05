@@ -140,7 +140,7 @@ class NoteBlock extends Solid{
 		$up = $this->getSide(Vector3::SIDE_UP);
 		if($up->getId() == 0){
 			$this->getLevel()->addSound(new NoteblockSound($this, $this->getInstrument(), $this->getStrength()));
-			$this->getLevel()->addParticle(new NoteParticle($this->add(0.5, 1.2, 0.5), $this->getStrength()));
+			$this->getLevel()->addParticle(new NoteParticle($this, $this->getInstrument(), $this->getStrength()));
 			return true;
 		}else{
 			return false;

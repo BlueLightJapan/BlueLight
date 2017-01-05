@@ -49,7 +49,7 @@ class NoteblockSound extends GenericSound{
 		$pk->z = $this->z;
 		$pk->volume = $this->instrument;
 		$pk->pitch = $this->pitch;
-		$pk->unknownBool = true;
+		$pk->unknownBool = false;
 		$pk->unknownBool2 = true;
 
 		return $pk;
