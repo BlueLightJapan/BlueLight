@@ -34,6 +34,7 @@ class ChunkRadiusUpdatedPacket extends DataPacket{
 	}
 
 	public function decode(){
+		$this->radius = $this->getVarInt();
 	}
 
 	public function encode(){
