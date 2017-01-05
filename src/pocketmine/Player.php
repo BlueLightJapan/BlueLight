@@ -32,6 +32,7 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Horse;
 use pocketmine\entity\Pig;
+use pocketmine\entity\Boat;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
@@ -272,7 +273,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $expCooldown = 0;
 
 	/** @var LinkedEntity */
-	public $linkedentity;
+	public $linkedentity = null;
 	public $isLinked = false;
 	public function isXbox(){
 		return $this->isXbox;
@@ -2101,8 +2102,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				if($this->isLinked){
 					$entity = $this->linkedentity;
+
+					if($entity instanceof Boat){
+						$entity->goStraight($packet->x,$packet->y,$packet->z);
+					}else{
 					$entity->yaw = $this->yaw;
 					$entity->pitch = $this->pitch;
+					}
 				}
 
 				$this->forceMovement = null;
@@ -2553,6 +2559,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$this->setSprinting(false);
 						$this->setSneaking(false);
 						$this->setGliding(false);
+						$this->isLinked = false;
+						$this->linkedentity = null;
 
 						$this->extinguish();
 						$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 400, false);
@@ -2689,9 +2697,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 			case ProtocolInfo::PLAYER_INPUT_PACKET:
 				//var_dump($packet);
-				if($packet->motionX == 0 and $packet->motionY == 1){
+				if($packet->motionX == 0 and $packet->motionY == 1){//go
 					$this->linkedentity->goStraight($this);
-				}elseif($packet->motionX == 0 and $packet->motionY == -1){
+				}elseif($packet->motionX == 0 and $packet->motionY == -1){//back
 					$this->linkedentity->goBack($this);
 				}
 			break;
@@ -2716,8 +2724,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$this->setLink($target);
 							$this->linkedentity = $target;
 
-
 						}elseif($target instanceof Pig){
+							$this->isLinked = true;
+							$this->setLink($target);
+							$this->linkedentity = $target;
+
+						}elseif($target instanceof Boat){
+
 							$this->isLinked = true;
 							$this->setLink($target);
 							$this->linkedentity = $target;

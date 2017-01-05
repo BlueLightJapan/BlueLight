@@ -25,7 +25,7 @@ use pocketmine\Player;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\MobArmorEquipmentPacket;
-#use pocketmine\item\Item;
+use pocketmine\item\Item;
 use pocketmine\math\Vector3;
 
 class Horse extends Living{
@@ -134,7 +134,6 @@ class Horse extends Living{
 		$player->dataPacket($pk);
 
 	}
-
 
 	public function goBack(Player $player){
 		$xz = $this->getXZ($this->yaw,$this->pitch);

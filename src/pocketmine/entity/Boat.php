@@ -1,23 +1,22 @@
 <?php
 
 /*
- *
- *  _____   _____   __   _   _   _____  __    __  _____
- * /  ___| | ____| |  \ | | | | /  ___/ \ \  / / /  ___/
- * | |     | |__   |   \| | | | | |___   \ \/ /  | |___
- * | |  _  |  __|  | |\   | | | \___  \   \  /   \___  \
- * | |_| | | |___  | | \  | | |  ___| |   / /     ___| |
- * \_____/ |_____| |_|  \_| |_| /_____/  /_/     /_____/
- *
+ *   ____  _            _      _       _     _
+ *  |  _ \| |          | |    (_)     | |   | |
+ *  | |_) | |_   _  ___| |     _  __ _| |__ | |_
+ *  |  _ <| | | | |/ _ \ |    | |/ _` | '_ \| __|
+ *  | |_) | | |_| |  __/ |____| | (_| | | | | |_
+ *  |____/|_|\__,_|\___|______|_|\__, |_| |_|\__|
+ *                                __/ |
+ *                               |___/
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author iTX Technologies
- * @link https://itxtech.org
- *
- */
+ * @author BlueLightJapan Team
+ * 
+*/
 
 namespace pocketmine\entity;
 
@@ -36,12 +35,6 @@ class Boat extends Vehicle{
 
 	const DATA_WOOD_ID = 20;
 
-	public $height = 0.7;
-	public $width = 1.6;
-
-	public $gravity = 0.5;
-	public $drag = 0.1;
-
 	public function __construct(Chunk $chunk, CompoundTag $nbt){
 		if(!isset($nbt->WoodID)){
 			$nbt->WoodID = new ByteTag("WoodID", 0);
@@ -50,14 +43,14 @@ class Boat extends Vehicle{
 		$this->setDataProperty(self::DATA_WOOD_ID, self::DATA_TYPE_BYTE, $this->getWoodID());
 	}
 
-	public function getWoodID() : int{
-		return (int) $this->namedtag["WoodID"];
+	public function getWoodID(){
+		return $this->namedtag["WoodID"];
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
-		$pk->type = Boat::NETWORK_ID;
+		$pk->type = self::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -85,51 +78,16 @@ class Boat extends Vehicle{
 		}
 	}
 
-	public function onUpdate($currentTick){
-		if($this->closed){
-			return false;
-		}
-		$tickDiff = $currentTick - $this->lastUpdate;
-		if($tickDiff <= 0 and !$this->justCreated){
-			return true;
-		}
+	public function goStraight($x,$y,$z){
 
-		$this->lastUpdate = $currentTick;
-
-		$this->timings->startTiming();
-
-		$hasUpdate = $this->entityBaseTick($tickDiff);
-
-		if(!$this->level->getBlock(new Vector3($this->x,$this->y,$this->z))->getBoundingBox()==null or $this->isInsideOfWater()){
-			$this->motionY = 0.1;
-		}else{
-			$this->motionY = -0.08;
-		}
-
-		$this->move($this->motionX, $this->motionY, $this->motionZ);
-		$this->updateMovement();
-
-		/*if($this->linkedEntity == null or $this->linkedType = 0){
-			if($this->age > 1500){
-				$this->close();
-				$hasUpdate = true;
-				//$this->scheduleUpdate();
-
-				$this->age = 0;
-			}
-			$this->age++;
-		}else $this->age = 0;*/
-
-		$this->timings->stopTiming();
-
-
-		return $hasUpdate or !$this->onGround or abs($this->motionX) > 0.00001 or abs($this->motionY) > 0.00001 or abs($this->motionZ) > 0.00001;
+		$this->x = $x;
+		$this->y = $y;
+		$this->z = $z;
 	}
-
 
 	public function getDrops(){
 		return [
-			ItemItem::get(ItemItem::BOAT, 0, 1)
+			ItemItem::get(ItemItem::BOAT,$this->getWoodID() , 1)
 		];
 	}
 
