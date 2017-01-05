@@ -26,7 +26,7 @@ use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\MobArmorEquipmentPacket;
 use pocketmine\math\Vector3;
-//use pocketmine\item\Item;
+use pocketmine\item\Item as ItemItem;
 
 class Pig extends Animal implements Rideable{
 	const NETWORK_ID = 12;
