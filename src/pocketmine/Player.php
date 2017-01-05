@@ -3706,12 +3706,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if(!($ev->getKeepInventory())){
 			if(!($this->server->keepInventory)){
 
-			foreach($ev->getDrops() as $item){
-				$this->level->dropItem($this, $item);
-			}
+				foreach($ev->getDrops() as $item){
+					$this->level->dropItem($this, $item);
+				}
 
-			if($this->inventory !== null){
-				$this->inventory->clearAll();
+				if($this->inventory !== null){
+					$this->inventory->clearAll();
+				}
 			}
 		}
 
