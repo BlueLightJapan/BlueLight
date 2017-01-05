@@ -26,6 +26,7 @@ use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\MobArmorEquipmentPacket;
 use pocketmine\math\Vector3;
+use pocketmine\item\Item;
 
 class Pig extends Animal implements Rideable{
 	const NETWORK_ID = 12;
@@ -80,7 +81,6 @@ class Pig extends Animal implements Rideable{
 
 	public function setAttribute(Player $player){
 		$entry = array();
-		$entry[] = new Attribute($this->getId(), "minecraft:horse.jump_strength", 0, 2, 0.6679779);
 		$entry[] = new Attribute($this->getId(), "minecraft:fall_damage", 0, 3.402823, 1);
 		$entry[] = new Attribute($this->getId(), "minecraft:luck", -1024, 1024, 0);
 		$entry[] = new Attribute($this->getId(), "minecraft:movement", 0, 3.402823, 0.223);
