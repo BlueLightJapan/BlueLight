@@ -25,6 +25,7 @@ use pocketmine\Player;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\MobArmorEquipmentPacket;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\math\Vector3;
 
 class Horse extends Living{
@@ -86,7 +87,7 @@ class Horse extends Living{
 		Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
 		Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
 		Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
-
+		40 => [Entity::DATA_TYPE_STRING,"ride"]
 		];
 
 		$player->dataPacket($pk);
@@ -105,7 +106,7 @@ class Horse extends Living{
 	
 }
 	public function getDrops(){
-		return [Item::get(Item::LEATHER, 0, mt_rand(0, 2))];
+		return [ItemItem::get(ItemItem::LEATHER, 0, mt_rand(0, 2))];
 	}
 
 	public function setChestPlate($id = 419){
@@ -113,10 +114,10 @@ class Horse extends Living{
 		$pk->eid = $this->getId();
 		$pk->slots = [
 
-		Item::get(0,0),
-		Item::get($id,0),
-		Item::get(0,0),
-		Item::get(0,0)
+		ItemItem::get(0,0),
+		ItemItem::get($id,0),
+		ItemItem::get(0,0),
+		ItemItem::get(0,0)
 
 		];
 		foreach($this->level->getPlayers() as $player){
@@ -189,4 +190,5 @@ class Horse extends Living{
 		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
 		$this->updateMovement();
 	}
+
 }//written by Kametan
