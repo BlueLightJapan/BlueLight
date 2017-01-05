@@ -76,7 +76,7 @@ class Pig extends Animal implements Rideable{
 	}
 
 	public function getDrops(){
-		return [Item::get(Item::LEATHER, 0, mt_rand(0, 2))];
+		return [ItemItem::get(ItemItem::LEATHER, 0, mt_rand(0, 2))];
 	}
 
 	public function setAttribute(Player $player){
