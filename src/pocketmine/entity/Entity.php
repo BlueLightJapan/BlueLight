@@ -106,8 +106,8 @@ abstract class Entity extends Location implements Metadatable{
 	 * 50 (long)
 	 * 51 (long)
 	 * 52 (short) */
-	const DATA_BOUNDING_BOX_WIDTH = 54; //float
-	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
+	const DATA_BOUNDING_BOX_WIDTH = 53; //float
+	const DATA_BOUNDING_BOX_HEIGHT = 54; //float
 	/* 56 (vector3f)
 	 * 57 (byte)
 	 * 58 (float)
@@ -445,13 +445,13 @@ abstract class Entity extends Location implements Metadatable{
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();
 		$pk->to = $this->getId();
-		$pk->type = 1;
+		$pk->type = 2;
 		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
 
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();
 		$pk->to = 0;
-		$pk->type = 1;
+		$pk->type = 2;
 		$this->dataPacket($pk);
 
 		return true;

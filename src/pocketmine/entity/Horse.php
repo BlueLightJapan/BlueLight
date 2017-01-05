@@ -53,6 +53,12 @@ class Horse extends Living{
 	const TYPE_WEAR_GOLD = 20;
 	const TYPE_WEAR_DIAMOND = 21;
 
+	public $width = 0.6;
+	public $length = 1.8;
+	public $height = 1.8;
+
+	public $maxjump = 3;
+
 	public function getName(){
 		return "Horse";
 	}
@@ -121,7 +127,7 @@ class Horse extends Living{
 
 	public function setAttribute(Player $player){
 		$entry = array();
-		$entry[] = new Attribute($this->getId(), "minecraft:horse.jump_strength", 0, 2, 0.6679779);
+		$entry[] = new Attribute($this->getId(), "minecraft:horse.jump_strength", 0, $this->maxjump, 0.6679779);
 		$entry[] = new Attribute($this->getId(), "minecraft:fall_damage", 0, 3.402823, 1);
 		$entry[] = new Attribute($this->getId(), "minecraft:luck", -1024, 1024, 0);
 		$entry[] = new Attribute($this->getId(), "minecraft:movement", 0, 3.402823, 0.223);
@@ -178,5 +184,10 @@ class Horse extends Living{
 		$block = $level->getBlock($vector3);
 		if($block->isTransparent()) return true;
 		else return false;
+	}
+
+	public function jump($power){
+		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
+		$this->updateMovement();
 	}
 }//written by Kametan

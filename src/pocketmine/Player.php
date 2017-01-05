@@ -3308,6 +3308,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::PLAYER_FALL_PACKET:
 				$this->PlayerFall($packet->fallDistance);
 				break;
+			case ProtocolInfo::RIDER_JUMP_PACKET:
+				if($this->linkedentity instanceof Horse){
+					$this->linkedentity->jump($packet->power);
+				}
+				break;
 			default:
 				break;
 		}
