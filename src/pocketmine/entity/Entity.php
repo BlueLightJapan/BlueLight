@@ -221,6 +221,8 @@ abstract class Entity extends Location implements Metadatable{
 	public $width;
 	public $length;
 
+	public $scale = 1;
+
 	/** @var int */
 	private $health = 20;
 	private $maxHealth = 20;
@@ -328,6 +330,12 @@ abstract class Entity extends Location implements Metadatable{
 		}
 		$this->invulnerable = $this->namedtag["Invulnerable"] > 0 ? true : false;
 
+		if(!isset($this->namedtag->Scale)){
+			$this->namedtag->Scale = new FloatTag("Scale", 1);
+		}
+		$this->scale = $this->namedtag["Scale"];
+		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $this->namedtag["Scale"], false);
+
 		$this->attributeMap = new AttributeMap();
 
 		$this->chunk->addEntity($this);
@@ -340,8 +348,22 @@ abstract class Entity extends Location implements Metadatable{
 
 	}
 
-	public function setSize($size){//Int
+	/*public function setSize($size){//Int
  		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $size);
+	}*/
+
+	public function setScale($scale){
+		$this->scale = $scale;
+		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $scale);
+
+		$height = $this->getHeight() * $this->scale;
+		$radius = ($this->getWidth() * $this->scale) / 2;
+
+		$this->boundingBox->setBounds($this->x - $radius, $this->y, $this->z - $radius, $this->x + $radius, $this->y + $height, $this->z + $radius);
+	}
+
+	public function getScale(){
+		return $this->scale;
 	}
 
 	/**
@@ -1579,8 +1601,10 @@ abstract class Entity extends Location implements Metadatable{
 		$this->y = $pos->y;
 		$this->z = $pos->z;
 
-		$radius = $this->width / 2;
-		$this->boundingBox->setBounds($pos->x - $radius, $pos->y, $pos->z - $radius, $pos->x + $radius, $pos->y + $this->height, $pos->z + $radius);
+		$height = $this->getHeight() * $this->scale;
+		$radius = ($this->getWidth() * $this->scale) / 2;
+
+		$this->boundingBox->setBounds($pos->x - $radius, $pos->y, $pos->z - $radius, $pos->x + $radius, $pos->y + $height, $pos->z + $radius);
 
 		$this->checkChunks();
 
