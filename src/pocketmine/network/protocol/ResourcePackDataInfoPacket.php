@@ -26,7 +26,7 @@ namespace pocketmine\network\protocol;
 class ResourcePackDataInfoPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_DATA_INFO_PACKET;
 
-	public $packageId;
+	public $packid;
 	public $int1;
 	public $int2;
 	public $size;
@@ -43,10 +43,10 @@ class ResourcePackDataInfoPacket extends DataPacket{
 	public function encode(){
 		$this->reset();
 
-		$this->putString($this->packageId);
+		$this->putString($this->packid);
 		$this->putVarInt($this->int1);
 		$this->putVarInt($this->int2);
-		$this->putVarInt($this->size);
+		$this->putUnsignedVarLong($this->size);
 		$this->putString($this->pack);
 
 

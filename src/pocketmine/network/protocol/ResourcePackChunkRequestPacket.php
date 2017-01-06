@@ -40,5 +40,5 @@ class ResourcePackChunkRequestPacket extends DataPacket{
 		$this->reset();
 		$this->putString($this->packid);
 		$this->putVarInt($this->int);
-
-}}
+	}
+}

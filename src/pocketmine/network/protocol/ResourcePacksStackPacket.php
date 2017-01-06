@@ -27,6 +27,12 @@ namespace pocketmine\network\protocol;
 class ResourcePacksInfoPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACKS_STACK_PACKET;
 
+	public $mustAccept = false; //force client to use selected resource packs
+	/** @var ResourcePackInfoEntry */
+	public $behaviourPackEntries = [];
+	/** @var ResourcePackInfoEntry */
+	public $resourcePackEntries = [];
+
 	public function decode(){
 
 	}
