@@ -26,6 +26,7 @@ use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Attribute;
+use pocketmine\entity\AttributeMap;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -1640,7 +1641,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public $foodTick = 0;
 	public $starvationTick = 0;
 	public $foodUsageTime = 0;
-	protected $moving = false;
 
 	public function setMoving($moving){
 		$this->moving = $moving;
@@ -2134,7 +2134,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
 				if($newPos->distanceSquared($this) < 0.01 and ($packet->yaw % 360) === $this->yaw and ($packet->pitch % 360) === $this->pitch){
-				$this->moving = false;
 
 					break;
 				}
@@ -2147,7 +2146,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				if($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert)){
 					$this->sendPosition($this->forceMovement, $packet->yaw, $packet->pitch);
-					$this->moving = true;
 				}else{
 					$packet->yaw %= 360;
 					$packet->pitch %= 360;
