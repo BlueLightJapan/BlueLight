@@ -1496,6 +1496,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	protected function processMovement($tickDiff){
 		if(!$this->isAlive() or !$this->spawned or $this->newPosition === null or $this->teleportPosition !== null){
+			$this->setMoving(false);
 			return;
 		}
 
@@ -1567,9 +1568,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			if(!$isFirst){
 				$ev = new PlayerMoveEvent($this, $from, $to);
-
 				$this->server->getPluginManager()->callEvent($ev);
-
+				$this->setMoving(true);
 				if(!($revert = $ev->isCancelled())){ //Yes, this is intended
 					if($to->distanceSquared($ev->getTo()) > 0.01){ //If plugins modify the destination
 						$this->teleport($ev->getTo());
@@ -1586,6 +1586,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->speed = $from->subtract($to);
 		}elseif($distanceSquared == 0){
 			$this->speed = new Vector3(0, 0, 0);
+			$this->setMoving(false);
 		}
 
 		if($revert){
@@ -1641,6 +1642,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public $foodTick = 0;
 	public $starvationTick = 0;
 	public $foodUsageTime = 0;
+
+	protected $moving = false;
 
 	public function setMoving($moving){
 		$this->moving = $moving;
