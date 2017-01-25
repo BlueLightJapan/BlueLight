@@ -33,14 +33,17 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
 abstract class Tile extends Position{
-	const SIGN = "Sign";
-	const CHEST = "Chest";
-	const FURNACE = "Furnace";
-	const FLOWER_POT = "FlowerPot";
-	const MOB_SPAWNER = "MobSpawner";
-	const SKULL = "Skull";
 	const BREWING_STAND = "BrewingStand";
+	const CAULDRON = "Cauldron";
+	const CHEST = "Chest";
 	const ENCHANT_TABLE = "EnchantTable";
+	const ENDER_CHEST = "EnderChest";
+	const FLOWER_POT = "FlowerPot";
+	const FURNACE = "Furnace";
+	const ITEM_FRAME = "ItemFrame";
+	const MOB_SPAWNER = "MobSpawner";
+	const SIGN = "Sign";
+	const SKULL = "Skull";
 	const BEACON = "Beacon";
 
 	public static $tileCount = 1;
@@ -66,6 +69,19 @@ abstract class Tile extends Position{
 	/** @var \pocketmine\event\TimingsHandler */
 	public $tickTimer;
 
+	public static function init(){
+		self::registerTile(BrewingStand::class);
+		self::registerTile(Cauldron::class);
+		self::registerTile(Chest::class);
+		self::registerTile(EnchantTable::class);
+		self::registerTile(EnderChest::class);
+		self::registerTile(FlowerPot::class);
+		self::registerTile(Furnace::class);
+		self::registerTile(ItemFrame::class);
+		self::registerTile(MobSpawner::class);
+		self::registerTile(Sign::class);
+		self::registerTile(Skull::class);
+	}
 	/**
 	 * @param string      $type
 	 * @param Chunk   $chunk
