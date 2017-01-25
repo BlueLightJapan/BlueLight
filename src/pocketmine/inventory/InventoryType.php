@@ -71,6 +71,7 @@ class InventoryType{
 		//7: dropper
 		//8: hopper
 		static::$default[static::BEACON] = new InventoryType(1, "Beacon", 9); //1 INPUT
+		static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0);
 	}
 
 	/**
