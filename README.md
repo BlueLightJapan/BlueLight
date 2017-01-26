@@ -5,7 +5,7 @@
 
 <a name="ENG"></a>
 BlueLight is server software for Minecraft: PocketEdition.<br>
-This software is based on **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**.<br>
+This software is based on **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP)**.<br>
 Most of the original code was written by **PocketMine Team**.<br>
 Part of the code was written by **iTXTech**<br>
 If we quote the code from other software, it stated in the file.<br>
@@ -27,7 +27,7 @@ If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/i
 <br>
 <a name="JPN"></a>
 BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
-このソフトウェアは **[PocketMine-MP](http://github.com/PocketMine/PocketMine-MP)** を基につくられています<br>
+このソフトウェアは **[PocketMine-MP](http://github.com/pmmp/PocketMine-MP)** を基につくられています<br>
 大半のコードは **PocketMine Team** によって書かれています<br>
 一部のコードはGenisysから引用しており、 **iTXTech** によって書かれています<br>
 他のソフトからコードを引用する場合、ファイル内に明記します<br>
