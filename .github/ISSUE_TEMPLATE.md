@@ -1,5 +1,4 @@
 ### Issue description
-<!--- use our forum https://forums.pmmp.io for questions -->
 Write a short description about the issue
 
 ### Steps to reproduce the issue
