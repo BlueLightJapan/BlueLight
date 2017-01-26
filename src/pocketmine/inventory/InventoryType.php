@@ -35,8 +35,8 @@ class InventoryType{
 	const BREWING_STAND = 7;
 	const ANVIL = 8;
 	const ENCHANT_TABLE = 9;
-	const BEACON = 10;
 	
+	const BEACON = 10;
 	const ENDER_CHEST = 13;
 
 	private static $default = [];
