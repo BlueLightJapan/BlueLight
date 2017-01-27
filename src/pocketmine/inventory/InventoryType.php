@@ -71,7 +71,7 @@ class InventoryType{
 		//7: dropper
 		//8: hopper
 		static::$default[static::BEACON] = new InventoryType(1, "Beacon", 9); //1 INPUT
-	}
+//	}
 
 	/**
 	 * @param int    $defaultSize
