@@ -22,161 +22,118 @@
 /**
  * All the Tile classes and related classes
  */
-namespace pocketmine\tile;
+namespace pocketmine\block;
 
-use pocketmine\event\Timings;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
+use pocketmine\item\Item;
+use pocketmine\item\Tool;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\Player;
+use pocketmine\tile\EnderChest as TileEnderChest;
+use pocketmine\tile\Tile;
 
-abstract class Tile extends Position{
-	
-	const SIGN = "Sign";
-	const CHEST = "Chest";
-	const FURNACE = "Furnace";
-	const FLOWER_POT = "FlowerPot";
-	const MOB_SPAWNER = "MobSpawner";
-	const SKULL = "Skull";
-	const BREWING_STAND = "BrewingStand";
-	const ENCHANT_TABLE = "EnchantTable";
-	const BEACON = "Beacon";
-	const ENDER_CHEST = "EnderChest";
+class EnderChest extends Transparent{
 
-	public static $tileCount = 1;
+	protected $id = self::ENDER_CHEST;
 
-	private static $knownTiles = [];
-	private static $shortNames = [];
-
-	/** @var Chunk */
-	public $chunk;
-	public $name;
-	public $id;
-	public $x;
-	public $y;
-	public $z;
-	public $attach;
-	public $metadata;
-	public $closed = false;
-	public $namedtag;
-	protected $lastUpdate;
-	protected $server;
-	protected $timings;
-
-	/** @var \pocketmine\event\TimingsHandler */
-	public $tickTimer;
-
-	/**
-	 * @param string      $type
-	 * @param Chunk   $chunk
-	 * @param CompoundTag $nbt
-	 * @param             $args
-	 *
-	 * @return Tile
-	 */
-	public static function createTile($type, Chunk $chunk, CompoundTag $nbt, ...$args){
-		if(isset(self::$knownTiles[$type])){
-			$class = self::$knownTiles[$type];
-			return new $class($chunk, $nbt, ...$args);
-		}
-
-		return null;
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
-	/**
-	 * @param $className
-	 *
-	 * @return bool
-	 */
-	public static function registerTile($className){
-		$class = new \ReflectionClass($className);
-		if(is_a($className, Tile::class, true) and !$class->isAbstract()){
-			self::$knownTiles[$class->getShortName()] = $className;
-			self::$shortNames[$className] = $class->getShortName();
+	public function canBeActivated() : bool{
+		return true;
+	}
+
+	public function getHardness(){
+		return 22.5;
+	}
+
+	public function getToolType(){
+		return Tool::TYPE_PICKAXE;
+	}
+
+	public function getName() : string{
+		return "Ender Chest";
+	}
+
+	protected function recalculateBoundingBox(){
+		return new AxisAlignedBB(
+			$this->x + 0.0625,
+			$this->y,
+			$this->z + 0.0625,
+			$this->x + 0.9375,
+			$this->y + 0.9475,
+			$this->z + 0.9375
+		);
+	}
+
+	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+			$faces = [
+				0 => 4,
+				1 => 2,
+				2 => 5,
+				3 => 3,
+			];
+			
+			$this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
+			
+			$this->getLevel()->setBlock($block, $this, true, true);
+			$nbt = new CompoundTag("", [
+				new ListTag("Items", []),
+				new StringTag("id", Tile::ENDER_CHEST),
+				new IntTag("x", $this->x),
+				new IntTag("y", $this->y),
+				new IntTag("z", $this->z)
+			]);
+			$nbt->Items->setTagType(NBT::TAG_Compound);
+
+			if($item->hasCustomName()){
+				$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
+			}
+
+			$tile = Tile::createTile("EnderChest", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+
 			return true;
 		}
 
-		return false;
+	public function onBreak(Item $item){
+		$this->getLevel()->setBlock($this, new Air(), true, true);
+
+		return true;
 	}
 
-	/**
-	 * Returns the short save name
-	 *
-	 * @return string
-	 */
-	public function getSaveId(){
-		return self::$shortNames[static::class];
-	}
-
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		assert($chunk !== null and $chunk->getProvider() !== null);
-
-		$this->timings = Timings::getTileEntityTimings($this);
-
-		$this->server = $chunk->getProvider()->getLevel()->getServer();
-		$this->chunk = $chunk;
-		$this->setLevel($chunk->getProvider()->getLevel());
-		$this->namedtag = $nbt;
-		$this->name = "";
-		$this->lastUpdate = microtime(true);
-		$this->id = Tile::$tileCount++;
-		$this->x = (int) $this->namedtag["x"];
-		$this->y = (int) $this->namedtag["y"];
-		$this->z = (int) $this->namedtag["z"];
-
-		$this->chunk->addTile($this);
-		$this->getLevel()->addTile($this);
-		$this->tickTimer = Timings::getTileEntityTimings($this);
-	}
-
-	public function getId(){
-		return $this->id;
-	}
-
-	public function saveNBT(){
-		$this->namedtag->id = new StringTag("id", $this->getSaveId());
-		$this->namedtag->x = new IntTag("x", $this->x);
-		$this->namedtag->y = new IntTag("y", $this->y);
-		$this->namedtag->z = new IntTag("z", $this->z);
-	}
-
-	/**
-	 * @return \pocketmine\block\Block
-	 */
-	public function getBlock(){
-		return $this->level->getBlock($this);
-	}
-
-	public function onUpdate(){
-		return false;
-	}
-
-	public final function scheduleUpdate(){
-		$this->level->updateTiles[$this->id] = $this;
-	}
-
-	public function __destruct(){
-		$this->close();
-	}
-
-	public function close(){
-		if(!$this->closed){
-			$this->closed = true;
-			unset($this->level->updateTiles[$this->id]);
-			if($this->chunk instanceof Chunk){
-				$this->chunk->removeTile($this);
+	public function onActivate(Item $item, Player $player = null){
+		if($player instanceof Player){
+			$top = $this->getSide(1);
+			if($top->isTransparent() !== true){
+				return true;
 			}
-			if(($level = $this->getLevel()) instanceof Level){
-				$level->removeTile($this);
+
+			if(!($this->getLevel()->getTile($this) instanceof TileEnderChest)) {
+				$nbt = new CompoundTag("", [
+					new StringTag("id", Tile::ENDER_CHEST),
+					new IntTag("x", $this->x),
+					new IntTag("y", $this->y),
+					new IntTag("z", $this->z)
+				]);
+ 				Tile::createTile("EnderChest", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
 			}
-			$this->level = null;
+
+			if($player->isCreative() and $player->getServer()->limitedCreative){
+				return true;
+			}
+
+			$player->getEnderChestInventory()->openAt($this);
 		}
+
+		return true;
 	}
 
-	public function getName(){
-		return $this->name;
-	}
-
-}
+	public function getDrops(Item $item) : array{
+		return [
+			[Item::OBSIDIAN, 0, 8],
+		];
