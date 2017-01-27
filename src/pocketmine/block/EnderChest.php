@@ -30,7 +30,7 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
-use pocketmine\tile\Chest as TileChest;
+use pocketmine\tile\EnderChest;
 use pocketmine\tile\Tile;
 
 class EnderChest extends Transparent{
