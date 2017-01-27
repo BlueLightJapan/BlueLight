@@ -33,6 +33,7 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 
 abstract class Tile extends Position{
+	
 	const SIGN = "Sign";
 	const CHEST = "Chest";
 	const FURNACE = "Furnace";
@@ -42,6 +43,7 @@ abstract class Tile extends Position{
 	const BREWING_STAND = "BrewingStand";
 	const ENCHANT_TABLE = "EnchantTable";
 	const BEACON = "Beacon";
+	const ENDER_CHEST = "EnderChest";
 
 	public static $tileCount = 1;
 
