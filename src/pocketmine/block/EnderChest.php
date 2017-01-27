@@ -35,7 +35,7 @@ use pocketmine\tile\Tile;
 
 class EnderChest extends Transparent{
 
-	protected $id = self::ENDER CHEST;
+	protected $id = self::ENDER_CHEST;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
