@@ -25,7 +25,6 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerExperienceChangeEvent;
-use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\FloatingInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\InventoryType;
@@ -58,9 +57,6 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 
 	/** @var PlayerInventory */
 	protected $inventory;
-
-	/** @var EnderChestInventory */
-	protected $enderChestInventory;
 
 	/** @var FloatingInventory */
 	protected $floatingInventory;
@@ -359,18 +355,12 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->inventory;
 	}
 
-	
-	public function getEnderChestInventory(){
-		return $this->enderChestInventory;
-	}
-	
 	protected function initEntity(){
+
 		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, false, self::DATA_TYPE_BYTE);
 		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0], false);
 
 		$this->inventory = new PlayerInventory($this);
-		
-		$this->enderChestInventory = new EnderChestInventory($this, ($this->namedtag->EnderChestInventory ?? null));
 		if($this instanceof Player){
 			$this->addWindow($this->inventory, 0);
 		}else{
@@ -558,16 +548,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 				}
 			}
 		}
-		
-		$this->namedtag->EnderChestInventory = new ListTag("EnderChestInventory", []);
-		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
-		if($this->enderChestInventory !== null){
-			for($slot = 0; $slot < $this->enderChestInventory->getSize(); $slot++){
-				if(($item = $this->enderChestInventory->getItem($slot)) instanceof ItemItem){
-					$this->namedtag->EnderChestInventory[$slot] = $item->nbtSerialize($slot);
-				}
-			}
-		}
+
 		if(strlen($this->getSkinData()) > 0){
 			$this->namedtag->Skin = new CompoundTag("Skin", [
 				"Data" => new StringTag("Data", $this->getSkinData()),
