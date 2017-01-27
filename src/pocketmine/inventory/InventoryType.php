@@ -35,9 +35,7 @@ class InventoryType{
 	const BREWING_STAND = 7;
 	const ANVIL = 8;
 	const ENCHANT_TABLE = 9;
-	
 	const BEACON = 10;
-	const ENDER_CHEST = 13;
 
 	private static $default = [];
 
@@ -73,7 +71,6 @@ class InventoryType{
 		//7: dropper
 		//8: hopper
 		static::$default[static::BEACON] = new InventoryType(1, "Beacon", 9); //1 INPUT
-		static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0);
 	}
 
 	/**
