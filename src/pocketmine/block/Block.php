@@ -258,6 +258,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
 			
 			self::$list[self::SLIME_BLOCK] = SlimeBlock::class;
+			self::$list[self::ENDER_CHEST] = EnderChest::class;
 
 			foreach(self::$list as $id => $class){
 				if($class !== null){
