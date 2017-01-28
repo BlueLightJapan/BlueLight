@@ -36,6 +36,7 @@ class InventoryType{
 	const ANVIL = 8;
 	const ENCHANT_TABLE = 9;
 	const BEACON = 10;
+	const ENDER_CHEST = 13;
 
 	private static $default = [];
 
@@ -59,7 +60,7 @@ class InventoryType{
 
 		static::$default[static::CHEST] = new InventoryType(27, "Chest", 0);
 		static::$default[static::DOUBLE_CHEST] = new InventoryType(27 + 27, "Double Chest", 0);
-		//static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0); dont  work 
+		static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0); dont  work 
 		static::$default[static::PLAYER] = new InventoryType(36 + 4, "Player", 0); //36 CONTAINER, 4 ARMOR
 		static::$default[static::CRAFTING] = new InventoryType(5, "Crafting", 1); //4 CRAFTING slots, 1 RESULT
 		static::$default[static::WORKBENCH] = new InventoryType(10, "Crafting", 1); //9 CRAFTING slots, 1 RESULT
