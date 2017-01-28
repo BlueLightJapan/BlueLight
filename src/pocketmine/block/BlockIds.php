@@ -241,4 +241,5 @@ interface BlockIds{
 	const BLOCK_MOVED_BY_PISTON = 250;
 	const OBSERVER = 251;
 	const INFO_RESERVED6 = 255;
+	const ENDER_CHEST = 130;
 }
