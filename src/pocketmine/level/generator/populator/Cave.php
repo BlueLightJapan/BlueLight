@@ -23,6 +23,7 @@ namespace pocketmine\level\generator\populator;
 
 use pocketmine\block\Block;
 use pocketmine\level\ChunkManager;
+use pocketmine\level\generator\populator\Populator;
 use pocketmine\math\Math;
 use pocketmine\math\Vector3;
 use pocketmine\math\VectorMath;
@@ -30,15 +31,15 @@ use pocketmine\utils\Random;
 
 class Cave extends Populator{
 	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random){
-		$overLap = 8;
+		$overlap = 8;
 		$firstSeed = $random->nextInt();
 		$secondSeed = $random->nextInt();
 		for($cxx = 0; $cxx < 1; $cxx++){
 			for($czz = 0; $czz < 1; $czz++){
 				$dcx = $chunkX + $cxx;
 				$dcz = $chunkZ + $czz;
-				for($cxxx = -$overLap; $cxxx <= $overLap; $cxxx++){
-					for($czzz = -$overLap; $czzz <= $overLap; $czzz++){
+				for($cxxx = -$overlap; $cxxx <= $overlap; $cxxx++){
+					for($czzz = -$overlap; $czzz <= $overlap; $czzz++){
 						$dcxx = $dcx + $cxxx;
 						$dczz = $dcz + $czzz;
 						$this->pop($level, $dcxx, $dczz, $dcx, $dcz, new Random(($dcxx * $firstSeed) ^ ($dczz * $secondSeed) ^ $random->getSeed()));
@@ -56,19 +57,19 @@ class Cave extends Populator{
 		}
 		$chunk = new Vector3($x << 4, 0, $z << 4);
 		$originChunk = new Vector3($chunkX << 4, 0, $chunkZ << 4);
-		if($random->nextBoundedInt(15) != 0){
+		if($random->nextRange(0, 15) != 0){
 			return;
 		}
 
-		$numberOfCaves = $random->nextBoundedInt($random->nextBoundedInt($random->nextBoundedInt(40) + 1) + 1);
+		$numberOfCaves = $random->nextRange(0, $random->nextRange(0, $random->nextRange(0, 40) + 1) + 1);
 		for($caveCount = 0; $caveCount < $numberOfCaves; $caveCount++){
-			$target = new Vector3($chunk->getX() + $random->nextBoundedInt(16), $random->nextBoundedInt($random->nextBoundedInt(120) + 8), $chunk->getZ() + $random->nextBoundedInt(16));
+			$target = new Vector3($chunk->getX() + $random->nextRange(0, 16), $random->nextRange(0, $random->nextRange(0, 120) + 8), $chunk->getZ() + $random->nextRange(0, 16));
 
 			$numberOfSmallCaves = 1;
 
-			if($random->nextBoundedInt(4) == 0){
+			if($random->nextRange(0, 4) == 0){
 				$this->generateLargeCaveBranch($level, $originChunk, $target, new Random($random->nextInt()));
-				$numberOfSmallCaves += $random->nextBoundedInt(4);
+				$numberOfSmallCaves += $random->nextRange(0, 4);
 			}
 
 			for($count = 0; $count < $numberOfSmallCaves; $count++){
@@ -76,7 +77,7 @@ class Cave extends Populator{
 				$randomVerticalAngle = (($random->nextFloat() - 0.5) * 2) / 8;
 				$horizontalScale = $random->nextFloat() * 2 + $random->nextFloat();
 
-				if($random->nextBoundedInt(10) == 0){
+				if($random->nextRange(0, 10) == 0){
 					$horizontalScale *= $random->nextFloat() * $random->nextFloat() * 3 + 1;
 				}
 
@@ -92,11 +93,11 @@ class Cave extends Populator{
 
 		if($nodeAmount <= 0){
 			$size = 7 * 16;
-			$nodeAmount = $size - $random->nextBoundedInt($size / 4);
+			$nodeAmount = $size - $random->nextRange(0, $size / 4);
 		}
 
-		$intersectionMode = $random->nextBoundedInt($nodeAmount / 2) + $nodeAmount / 4;
-		$extraVerticalScale = $random->nextBoundedInt(6) == 0;
+		$intersectionMode = $random->nextRange(0, $nodeAmount / 2) + $nodeAmount / 4;
+		$extraVerticalScale = $random->nextRange(0, 6) == 0;
 
 		if($startingNode == -1){
 			$startingNode = $nodeAmount / 2;
@@ -129,7 +130,7 @@ class Cave extends Populator{
 					return;
 				}
 
-				if($random->nextBoundedInt(4) == 0){
+				if($random->nextRange(0, 4) == 0){
 					continue;
 				}
 			}
