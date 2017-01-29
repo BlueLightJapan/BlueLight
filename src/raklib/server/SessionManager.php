@@ -101,12 +101,12 @@ class SessionManager{
 
         while(!$this->shutdown){
             $start = microtime(true);
-            $max = 5000;
+            $max = 10000;
             while(--$max and $this->receivePacket());
 	        while($this->receiveStream());
 			$time = microtime(true) - $start;
-			if($time < 0.05){
-				time_sleep_until(microtime(true) + 0.05 - $time);
+			if($time < 0.025){
+				@time_sleep_until(microtime(true) + 0.025 - $time);
 			}
 			$this->tick();
         }
@@ -155,7 +155,8 @@ class SessionManager{
 
 
     private function receivePacket(){
-        if(($len = $this->socket->readPacket($buffer, $source, $port)) > 0){
+        $len = $this->socket->readPacket($buffer, $source, $port);
+        if($buffer !== null){
             $this->receiveBytes += $len;
             if(isset($this->block[$source])){
                 return true;
@@ -167,33 +168,30 @@ class SessionManager{
                 $this->ipSec[$source] = 1;
             }
 
-            $pid = ord($buffer{0});
-            
-            if($pid == UNCONNECTED_PONG::$ID){
-                return false;
-            }
+            if($len > 0){
+                $pid = ord($buffer{0});
 
-            if(($packet = $this->getPacketFromPool($pid)) !== null){
-                $packet->buffer = $buffer;
-                $this->getSession($source, $port)->handlePacket($packet);
-	            return true;
-            }elseif($pid === UNCONNECTED_PING::$ID){
-                //No need to create a session for just pings
-                $packet = new UNCONNECTED_PING;
-                $packet->buffer = $buffer;
-                $packet->decode();
+                if($pid === UNCONNECTED_PING::$ID){
+                    //No need to create a session for just pings
+                    $packet = new UNCONNECTED_PING;
+                    $packet->buffer = $buffer;
+                    $packet->decode();
 
-                $pk = new UNCONNECTED_PONG();
-                $pk->serverID = $this->getID();
-                $pk->pingID = $packet->pingID;
-                $pk->serverName = $this->getName();
-                $this->sendPacket($pk, $source, $port);
-            }elseif($buffer !== ""){
-                $this->streamRaw($source, $port, $buffer);
-	            return true;
-            }else{
-	            return false;
+                    $pk = new UNCONNECTED_PONG();
+                    $pk->serverID = $this->getID();
+                    $pk->pingID = $packet->pingID;
+                    $pk->serverName = $this->getName();
+                    $this->sendPacket($pk, $source, $port);
+                }elseif($pid === UNCONNECTED_PONG::$ID){
+                    //ignored
+                }elseif(($packet = $this->getPacketFromPool($pid)) !== null){
+                    $packet->buffer = $buffer;
+                    $this->getSession($source, $port)->handlePacket($packet);
+                }else{
+                    $this->streamRaw($source, $port, $buffer);
+                }
             }
+            return true;
         }
 
         return false;
@@ -201,7 +199,7 @@ class SessionManager{
 
     public function sendPacket(Packet $packet, $dest, $port){
         $packet->encode();
-        $this->sendBytes += $this->socket->writePacket($packet->buffer, $dest, $port);
+		$this->sendBytes += $this->socket->writePacket($packet->buffer, $dest, $port);    
     }
 
     public function streamEncapsulated(Session $session, EncapsulatedPacket $packet, $flags = RakLib::PRIORITY_NORMAL){

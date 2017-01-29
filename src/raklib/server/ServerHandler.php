@@ -32,10 +32,13 @@ class ServerHandler{
     }
 
     public function sendEncapsulated($identifier, EncapsulatedPacket $packet, $flags = RakLib::PRIORITY_NORMAL){
-
-	    $buffer = chr(RakLib::PACKET_ENCAPSULATED) . chr(strlen($identifier)) . $identifier . chr($flags) . $packet->toBinary(true);
+        $buffer = chr(RakLib::PACKET_ENCAPSULATED) . chr(strlen($identifier)) . $identifier . chr($flags) . $packet->toBinary(true);
         $this->server->pushMainToThreadPacket($buffer);
     }
+	
+	public function sendReadyEncapsulated($buffer){
+		$this->server->pushMainToThreadPacket($buffer);
+	}
 
     public function sendRaw($address, $port, $payload){
         $buffer = chr(RakLib::PACKET_RAW) . chr(strlen($address)) . $address . Binary::writeShort($port) . $payload;
@@ -61,9 +64,10 @@ class ServerHandler{
         $buffer = chr(RakLib::PACKET_SHUTDOWN);
         $this->server->pushMainToThreadPacket($buffer);
         $this->server->shutdown();
-	$serv = $this->server;
-        $this->server->synchronized(function() use(&$serv){
-            $serv->wait(20000);
+        $this->server->synchronized(function(){
+			if (!is_null($this->server)) {
+				$this->server->wait(20000);
+			}
         });
         $this->server->join();
     }
@@ -86,6 +90,7 @@ class ServerHandler{
             $id = ord($packet{0});
             $offset = 1;
             if($id === RakLib::PACKET_ENCAPSULATED){
+//				var_dump(debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 20));
                 $len = ord($packet{$offset++});
                 $identifier = substr($packet, $offset, $len);
                 $offset += $len;
@@ -122,7 +127,7 @@ class ServerHandler{
                 $identifier = substr($packet, $offset, $len);
                 $offset += $len;
                 $len = ord($packet{$offset++});
-                $reason = substr($packet, $offset, $len);
+                $reason = substr($packet, $offset);
                 $this->instance->closeSession($identifier, $reason);
             }elseif($id === RakLib::PACKET_INVALID_SESSION){
                 $len = ord($packet{$offset++});
@@ -138,6 +143,7 @@ class ServerHandler{
 
             return true;
         }
+
         return false;
     }
 }
