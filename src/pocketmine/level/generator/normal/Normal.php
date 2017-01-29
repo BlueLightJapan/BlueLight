@@ -225,7 +225,7 @@ class Normal extends Generator{
 				$minSum /= $weightSum;
 				$maxSum /= $weightSum;
 
-				$chunk->setBiomeColor($x, $z, sqrt($color[0] / $weightSum), sqrt($color[1] / $weightSum), sqrt($color[2] / $weightSum));
+				//$chunk->setBiomeColor($x, $z, sqrt($color[0] / $weightSum), sqrt($color[1] / $weightSum), sqrt($color[2] / $weightSum));
 
 				$solidLand = false;
 				for($y = 127; $y >= 0; --$y){
