@@ -190,13 +190,13 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::ENCHANTING_TABLE] = EnchantingTable::class;
 			self::$list[self::BREWING_STAND_BLOCK] = BrewingStand::class;
-			self::$list[self::ENDER_CHEST] = EnderChest::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
 			self::$list[self::END_STONE] = EndStone::class;
 			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
 			self::$list[self::LIT_REDSTONE_LAMP] = LitRedstoneLamp::class;
 			self::$list[self::SANDSTONE_STAIRS] = SandstoneStairs::class;
 			self::$list[self::EMERALD_ORE] = EmeraldOre::class;
+			self::$list[self::ENDER_CHEST] = EnderChest::class;
 			self::$list[self::TRIPWIRE_HOOK] = TripwireHook::class;
 			self::$list[self::TRIPWIRE] = Tripwire::class;
 			self::$list[self::EMERALD_BLOCK] = Emerald::class;
@@ -259,7 +259,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
 			
 			self::$list[self::SLIME_BLOCK] = SlimeBlock::class;
-			
+
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
