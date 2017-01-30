@@ -14,7 +14,7 @@ use pocketmine\Player;
 use pocketmine\tile\EnderChest as enderchesttile;
 use pocketmine\tile\Tile;
 
-class EnderChest extends Transparent{
+class Transparent{
 
 	protected $id = self::ENDER_CHEST;
 
