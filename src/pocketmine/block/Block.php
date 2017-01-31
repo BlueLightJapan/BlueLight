@@ -251,6 +251,8 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::DOUBLE_PURPUR_SLAB] = DoublePurpurSlab::class;
 			self::$list[self::PURPUR_STAIRS] = PurpurStairs::class;
 
+			self::$list[self::ITEM_FRAME_BLOCK] = ItemFrame::class;
+			
 			self::$list[self::GRASS_PATH] = GrassPath::class;
 
 			self::$list[self::PODZOL] = Podzol::class;
