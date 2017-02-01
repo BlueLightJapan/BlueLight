@@ -3398,7 +3398,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$this->sendSettings();
 					}
 				}
-						break;
+				break;
 			case ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
@@ -3415,10 +3415,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 					$tile->setItem(null);
 					$tile->setItemRotation(0);
-				}
-
-				break;
-					//$this->setGamemode($packet->gamemode, true);
 				}
 				break;
 			case ProtocolInfo::PLAYER_FALL_PACKET:
