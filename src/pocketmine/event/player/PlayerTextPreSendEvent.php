@@ -25,14 +25,15 @@ use pocketmine\event\Cancellable;
 use pocketmine\Player;
 
 /**
- * Called when a player is sent a message via sendMessage, sendPopup or sendTip
+ * Called when a player is sent a message via sendMessage, sendPopup, sendTip or sendWhisper
  */
 class PlayerTextPreSendEvent extends PlayerEvent implements Cancellable{
 	const MESSAGE = 0;
 	const POPUP = 1;
 	const TIP = 2;
 	const TRANSLATED_MESSAGE = 3;
-
+	const WHISPER = 4;
+	
 	public static $handlerList = null;
 
 	protected $message;
