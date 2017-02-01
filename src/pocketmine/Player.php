@@ -3396,8 +3396,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$pk->gamemode = $this->gamemode & 0x01;
 						$this->dataPacket($pk);
 						$this->sendSettings();
+						}
 						break;
-						case ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET:
+			case ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
