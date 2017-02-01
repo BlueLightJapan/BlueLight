@@ -64,6 +64,7 @@ use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSprintEvent;
+use pocketmine\event\player\PlayerTextPreSendEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\TextContainer;
@@ -3015,7 +3016,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 			$message = $message->getText();
 		}
-
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::MESSAGE);
+		$this->server->getPluginManager()->callEvent($ev);
+		if(!$ev->isCancelled()){
 		//TODO: Remove this workaround (broken client MCPE 1.0.0)
 		$this->messageQueue[] = $this->server->getLanguage()->translateString($message);
 		/*
@@ -3024,6 +3027,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->message = $this->server->getLanguage()->translateString($message);
 		$this->dataPacket($pk);
 		*/
+		return true;
+		}
+		return false;
 	}
 
 	public function sendTranslation($message, array $parameters = []){
@@ -3043,18 +3049,30 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	public function sendPopup($message, $subtitle = ""){
-		$pk = new TextPacket();
-		$pk->type = TextPacket::TYPE_POPUP;
-		$pk->source = $message;
-		$pk->message = $subtitle;
-		$this->dataPacket($pk);
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::POPUP);
+		$this->server->getPluginManager()->callEvent($ev);
+		if(!$ev->isCancelled()){
+	  		$pk = new TextPacket();
+			$pk->type = TextPacket::TYPE_POPUP;
+			$pk->source = $message;
+			$pk->message = $subtitle;
+			$this->dataPacket($pk);
+			return true;
+		}
+		return false;
 	}
 
 	public function sendTip($message){
-		$pk = new TextPacket();
-		$pk->type = TextPacket::TYPE_TIP;
-		$pk->message = $message;
-		$this->dataPacket($pk);
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::TIP);
+		$this->server->getPluginManager()->callEvent($ev);
+		if(!$ev->isCancelled()){
+			$pk = new TextPacket();
+			$pk->type = TextPacket::TYPE_TIP;
+			$pk->message = $message;
+			$this->dataPacket($pk);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -3062,11 +3080,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @param string $message
 	 */
 	public function sendWhisper($sender, $message){
-		$pk = new TextPacket();
-		$pk->type = TextPacket::TYPE_WHISPER;
-		$pk->source = $sender;
-		$pk->message = $message;
-		$this->dataPacket($pk);
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::WHISPER);
+		$this->server->getPluginManager()->callEvent($ev);
+		if(!$ev->isCancelled()){
+			$pk = new TextPacket();
+			$pk->type = TextPacket::TYPE_WHISPER;
+			$pk->source = $sender;
+			$pk->message = $message;
+			$this->dataPacket($pk);
+			return true;
+		}
+		return false;
 	}
 
 	/**
