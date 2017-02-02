@@ -122,7 +122,8 @@ abstract class DefaultPermissions{
 		self::registerPermission(new Permission(self::ROOT . ".command.timings", "Allows the user to records timings for all plugin events", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.spawnpoint", "Allows the user to change player's spawnpoint", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.setworldspawn", "Allows the user to change the world spawn", Permission::DEFAULT_OP), $commands);
-
+		self::registerPermission(new Permission(self::ROOT . ".command.transfer", "", Permission::DEFAULT_OP), $commands);
+		
 		$commands->recalculatePermissibles();
 
 		$parent->recalculatePermissibles();
