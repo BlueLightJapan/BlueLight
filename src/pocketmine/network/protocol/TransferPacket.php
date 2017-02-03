@@ -7,7 +7,7 @@ class TransferPacket extends DataPacket{
     const NETWORK_ID = Info::TRANSFER_PACKET;
     
     public $address;
-    public $port;
+    public $port = 19132; //default Port
     
     public function decode(){
     
