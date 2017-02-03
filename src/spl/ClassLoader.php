@@ -2,7 +2,7 @@
 
 /*
  * PocketMine Standard PHP Library
- * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/PocketMine-SPL>
+ * Copyright (C) 2014-2017 PocketMine Team <https://github.com/PocketMine/PocketMine-SPL>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,66 +17,66 @@
 
 interface ClassLoader{
 
-    /**
-     * @param ClassLoader $parent
-     */
-    public function __construct(ClassLoader $parent = null);
+	/**
+	 * @param ClassLoader $parent
+	 */
+	public function __construct(ClassLoader $parent = null);
 
-    /**
-     * Adds a path to the lookup list
-     *
-     * @param string $path
-     * @param bool   $prepend
-     */
-    public function addPath($path, $prepend = false);
+	/**
+	 * Adds a path to the lookup list
+	 *
+	 * @param string $path
+	 * @param bool   $prepend
+	 */
+	public function addPath($path, $prepend = false);
 
-    /**
-     * Removes a path from the lookup list
-     *
-     * @param $path
-     */
-    public function removePath($path);
+	/**
+	 * Removes a path from the lookup list
+	 *
+	 * @param $path
+	 */
+	public function removePath($path);
 
-    /**
-     * Returns an array of the classes loaded
-     *
-     * @return string[]
-     */
-    public function getClasses();
+	/**
+	 * Returns an array of the classes loaded
+	 *
+	 * @return string[]
+	 */
+	public function getClasses();
 
-    /**
-     * Returns the parent ClassLoader, if any
-     *
-     * @return ClassLoader
-     */
-    public function getParent();
+	/**
+	 * Returns the parent ClassLoader, if any
+	 *
+	 * @return ClassLoader
+	 */
+	public function getParent();
 
-    /**
-     * Attaches the ClassLoader to the PHP runtime
-     *
-     * @param bool $prepend
-     *
-     * @return bool
-     */
-    public function register($prepend = false);
+	/**
+	 * Attaches the ClassLoader to the PHP runtime
+	 *
+	 * @param bool $prepend
+	 *
+	 * @return bool
+	 */
+	public function register($prepend = false);
 
-    /**
-     * Called when there is a class to load
-     *
-     * @param string $name
-     *
-     * @return bool
-     *
-     * @throws ClassNotFoundException
-     */
-    public function loadClass($name);
+	/**
+	 * Called when there is a class to load
+	 *
+	 * @param string $name
+	 *
+	 * @return bool
+	 *
+	 * @throws ClassNotFoundException
+	 */
+	public function loadClass($name);
 
-    /**
-     * Returns the path for the class, if any
-     *
-     * @param string $name
-     *
-     * @return string|null
-     */
-    public function findClass($name);
+	/**
+	 * Returns the path for the class, if any
+	 *
+	 * @param string $name
+	 *
+	 * @return string|null
+	 */
+	public function findClass($name);
 }

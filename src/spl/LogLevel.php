@@ -2,7 +2,7 @@
 
 /*
  * PocketMine Standard PHP Library
- * Copyright (C) 2014 PocketMine Team <https://github.com/PocketMine/PocketMine-SPL>
+ * Copyright (C) 2014-2017 PocketMine Team <https://github.com/PocketMine/PocketMine-SPL>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,12 +16,12 @@
 */
 
 interface LogLevel{
-    const EMERGENCY = "emergency";
-    const ALERT = "alert";
-    const CRITICAL = "critical";
-    const ERROR = "error";
-    const WARNING = "warning";
-    const NOTICE = "notice";
-    const INFO = "info";
-    const DEBUG = "debug";
+	const EMERGENCY = "emergency";
+	const ALERT = "alert";
+	const CRITICAL = "critical";
+	const ERROR = "error";
+	const WARNING = "warning";
+	const NOTICE = "notice";
+	const INFO = "info";
+	const DEBUG = "debug";
 }

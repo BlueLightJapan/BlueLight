@@ -15,6 +15,6 @@
  * GNU General Public License for more details.
 */
 
-class StringOutOfBoundsException extends OutOfBoundsException{
+class ThreadException extends RuntimeException{
 
 }
