@@ -8,6 +8,7 @@ BlueLight is server software for Minecraft: PocketEdition.<br>
 This software is based on **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**.<br>
 Most of the original code was written by **PocketMine Team**.<br>
 Part of the code was written by **iTXTech**<br>
+and some Part of the code was written by **Tesseract**<br>
 If we quote the code from other software, it stated in the file.<br>
 <br>
 Help & Support :<br>
