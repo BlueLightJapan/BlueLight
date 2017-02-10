@@ -15,7 +15,7 @@ class TransferCommand extends VanillaCommand{
 		$name,
 		"%pocketmine.command.transfer.description",
 		"%pocketmine.command.transfer.usage",
-		["transfer","transferserver","connect"]
+		["transfer","connect"]
 		);
 		$this->setPermission("pocketmine.command.transfer");
 	}
@@ -23,12 +23,18 @@ class TransferCommand extends VanillaCommand{
 	public function execute(CommandSender $sender, $currentAlias, array $args){
 		if($sender instanceof Player){
 
+			if(isset($args[1])){
+				$port = $args[1];
+			}else{
+				$port = 19132;
+			}
+
         		$pk = new TransferPacket();
         		$pk->address = $args[0];
-        		$pk->port = $args[1];
+        		$pk->port = $port;
         		$sender->dataPacket($pk);
 
-        		Command::broadcastCommandMessage($sender, "Transferred to " . $args[0] . ":" . $args[1]);
+        		Command::broadcastCommandMessage($sender, "Transferred to " . $args[0] . ":" . $port);
 		}else{
 			$sender->sendMessage("Run this command in game!");
 		}
