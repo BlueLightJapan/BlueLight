@@ -33,10 +33,10 @@ class GroundCover extends Populator{
 	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random){
 		$chunk = $level->getChunk($chunkX, $chunkZ);
 		if($level instanceof Level or $level instanceof SimpleChunkManager){
-			$waterHeight = $level->getWaterHeight();
-		} else $waterHeight = 0;
-		for($x = 0; $x < 16; ++$x){
-			for($z = 0; $z < 16; ++$z){
+			//$waterHeight = $level->getWaterHeight();
+		//} else $waterHeight = 0;
+		//for($x = 0; $x < 16; ++$x){
+			//for($z = 0; $z < 16; ++$z){
 				$biome = Biome::getBiome($chunk->getBiomeId($x, $z));
 				$cover = $biome->getGroundCover();
 				if(count($cover) > 0){
@@ -58,7 +58,7 @@ class GroundCover extends Populator{
 						if($column{$y} === "\x00" and $b->isSolid()){
 							break;
 						}
-						if($y <= $waterHeight and $b->getId() == Block::GRASS and $chunk->getBlockId($x, $y + 1, $z) == Block::STILL_WATER){
+						if($y <= $b->getId() == Block::GRASS and $chunk->getBlockId($x, $y + 1, $z) == Block::STILL_WATER){
 							$b = Block::get(Block::DIRT);
 						}
 						if($b->getDamage() === 0){
