@@ -1,4 +1,6 @@
-﻿#BlueLight for 1.0.3
+﻿# ![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.png)
+
+#BlueLight for 1.0.3
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ###Build Status(Stable) [![Build Status](http://jenkins.haniokasai.com/buildStatus/icon?job=BlueLight-PMMP)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/ "Jenkins ")<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/"><img src= https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/></a>
