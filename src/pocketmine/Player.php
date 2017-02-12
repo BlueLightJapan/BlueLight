@@ -25,6 +25,7 @@ use pocketmine\block\Air;
 use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\data\CommandParameter;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\AttributeMap;
 use pocketmine\entity\Arrow;
@@ -3031,11 +3032,55 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->craftingType = 0;
 				Timings::$playerCommandTimer->startTiming();
 				$commandText = $packet->command;
-				if($packet->args !== null){
+				$command = $this->getServer()->getCommandMap()->getCommand($commandText);
+				if($command !== null){
+					if($packet->args !== null && count($packet->args) > 0){
+						$pars = $command->getCommandParameter($packet->overload);
+						if($pars !== null){
+							foreach($pars as $par){
+								$arg = $packet->args->{$par->name};
+								if($arg !== null){
+									var_dump($arg);
+									echo(CommandParameter::ARG_TYPE_RAW_TEXT);
+									switch($par->type){
+										case CommandParameter::ARG_TYPE_TARGET:
+											if(isset($arg->rules)){
+												$commandText .= " " . $arg->rules[0]->value;
+											}else{
+												switch($arg->selector){//TODO
+													case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_NEAREST_PLAYER:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_RANDOM_PLAYER:
+														break;
+												}
+											}
+											break;
+										case CommandParameter::ARG_TYPE_BLOCK_POS:
+											$commandText .= " " . $arg->x . " " . $arg->y + " " . $arg->z;
+											break;
+										case CommandParameter::ARG_TYPE_STRING:
+										case CommandParameter::ARG_TYPE_STRING_ENUM:
+										case CommandParameter::ARG_TYPE_RAW_TEXT:
+											$commandText .= " " . $arg;
+											break;
+										default:
+											$commandText .= " " . $arg;
+											break;
+									}
+								}
+							}
+						}
+					}
+				}
+				/*if($packet->args !== null){
 					foreach($packet->args as $arg){ //command ordering will be an issue
 						$commandText .= " " . $arg;
 					}
-				}
+				}:*/
 				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
 
 				if($ev->isCancelled()){  

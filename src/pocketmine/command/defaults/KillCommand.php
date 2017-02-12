@@ -38,6 +38,7 @@ class KillCommand extends VanillaCommand{
 			["suicide"]
 		);
 		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
+		$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
