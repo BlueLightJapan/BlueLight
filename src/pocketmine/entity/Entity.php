@@ -80,7 +80,7 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FLAGS = 0;
 	//1 (int)
 	const DATA_VARIANT = 2; //int
-	const DATA_COLOUR = 3; //byte
+	const DATA_COLOUR = 3, DATA_COLOR = 3; //byte
 	const DATA_NAMETAG = 4; //string
 	const DATA_OWNER_EID = 5; //long
 
@@ -347,6 +347,9 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->scheduleUpdate();
 
+	}
+
+	public function onRightClick(Player $player){
 	}
 
 	public function setSize($scale){

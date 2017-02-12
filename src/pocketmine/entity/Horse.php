@@ -93,7 +93,7 @@ class Horse extends Living implements Rideable{
 
 		$player->dataPacket($pk);
 
-		$this->setAttribute($player);
+		$this->sendAttribute($player);
 
 		parent::spawnTo($player);
 
@@ -126,7 +126,7 @@ class Horse extends Living implements Rideable{
 		}
 	}
 
-	public function setAttribute(Player $player){
+	public function sendAttribute(Player $player){
 		$entry = array();
 		$entry[] = new Attribute($this->getId(), "minecraft:horse.jump_strength", 0, $this->maxjump, 0.6679779);
 		$entry[] = new Attribute($this->getId(), "minecraft:fall_damage", 0, 3.402823, 1);

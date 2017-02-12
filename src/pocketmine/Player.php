@@ -2825,6 +2825,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				switch($packet->action){
 					case InteractPacket::ACTION_RIGHT_CLICK:
+						$target->onRightClick($this);
 						if($target instanceof Horse){
 							$this->isLinked = true;
 							$this->setLink($target);
@@ -3040,8 +3041,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							foreach($pars as $par){
 								$arg = $packet->args->{$par->name};
 								if($arg !== null){
-									var_dump($arg);
-									echo(CommandParameter::ARG_TYPE_RAW_TEXT);
 									switch($par->type){
 										case CommandParameter::ARG_TYPE_TARGET:
 											if(isset($arg->rules)){
