@@ -2180,8 +2180,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if($entity instanceof Boat){
 						$entity->goStraight($packet->x,$packet->y,$packet->z);
 					}else{
-					$entity->yaw = $this->yaw;
-					$entity->pitch = $this->pitch;
+						$entity->yaw = $this->yaw;
+						$entity->pitch = $this->pitch;
 					}
 				}
 

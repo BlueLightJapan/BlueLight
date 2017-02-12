@@ -106,12 +106,13 @@ abstract class Entity extends Location implements Metadatable{
 	 * 50 (long)
 	 * 51 (long)
 	 * 52 (short) */
-	const DATA_BOUNDING_BOX_WIDTH = 53; //float
-	const DATA_BOUNDING_BOX_HEIGHT = 54; //float
-	/* 56 (vector3f)
-	 * 57 (byte)
-	 * 58 (float)
-	 * 59 (float) */
+	const DATA_BOUNDING_BOX_WIDTH = 54; //float
+	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
+	const DATA_FUSE_LENGTH = 56; //int
+	const DATA_RIDE_POSITION = 57; //vector3f
+	/* 58 (byte)
+	 * 59 (float)
+	 * 60 (float) */
 
 	const DATA_FLAG_ONFIRE = 0;
 	const DATA_FLAG_SNEAKING = 1;
@@ -505,6 +506,9 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	public function setLink(Entity $entity){//Player $this Horse $entity
+		if($entity instanceof Rideable){
+			$this->setDataProperty(Entity::DATA_RIDE_POSITION, Entity::DATA_TYPE_VECTOR3F, $entity->getRidePosition(), true);
+		}
 
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();

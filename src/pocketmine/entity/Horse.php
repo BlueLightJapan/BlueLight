@@ -28,7 +28,7 @@ use pocketmine\network\protocol\MobArmorEquipmentPacket;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\math\Vector3;
 
-class Horse extends Living{
+class Horse extends Living implements Rideable{
 
 	const NETWORK_ID = 23;
 
@@ -62,6 +62,7 @@ class Horse extends Living{
 	public function getName(){
 		return "Horse";
 	}
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -103,8 +104,8 @@ class Horse extends Living{
 	public function getSaveId(){
 		$class = new \ReflectionClass(static::class);
 		return $class->getShortName();
-	
-}
+	}
+
 	public function getDrops(){
 		return [ItemItem::get(ItemItem::LEATHER, 0, mt_rand(0, 2))];
 	}
@@ -189,6 +190,10 @@ class Horse extends Living{
 	public function jump($power){
 		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
 		$this->updateMovement();
+	}
+
+	public function getRidePosition(){
+		return [-0.02, 2.3, 0.19];
 	}
 
 }//written by Kametan

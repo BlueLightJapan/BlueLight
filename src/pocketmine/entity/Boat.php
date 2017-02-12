@@ -95,4 +95,8 @@ class Boat extends Vehicle{
 		$class = new \ReflectionClass(static::class);
 		return $class->getShortName();
 	}
+
+	public function getRidePosition(){
+		return [0, 1, 0];
+	}
 }

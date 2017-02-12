@@ -59,4 +59,8 @@ class Minecart extends Vehicle{
 
 		parent::spawnTo($player);
 	}
+
+	public function getRidePosition(){
+		return [0, 1, 0];
+	}
 }
