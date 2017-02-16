@@ -333,7 +333,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP-DerivedVersion";
+          return "BlueLight";
 	}
 
 	/**
@@ -343,7 +343,7 @@ class Server{
 		return $this->isRunning === true;
 	}
 
-	/**
+	/** 
 	 * @return string
 	 */
 	public function getPocketMineVersion(){
