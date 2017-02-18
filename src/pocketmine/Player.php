@@ -357,7 +357,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function canPickupExp(): bool{
 		return microtime(true) - $this->expCooldown > 0.1;
 	}
-	
 	public function resetExpCooldown(){
 		$this->expCooldown = microtime(true);
 	}
