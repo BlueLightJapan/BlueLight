@@ -41,7 +41,10 @@ class CrashDump{
 	public function __construct(Server $server){
 		$this->time = time();
 		$this->server = $server;
-		$this->path = $this->server->getCrashPath() . "CrashDump_" . date("D_M_j-H.i.s-T_Y", $this->time) . ".log";
+		if(!is_dir($this->server->getDataPath() . "crashdumps")){
+			mkdir($this->server->getDataPath() . "crashdumps");
+		}
+		$this->path = $this->server->getDataPath() . "crashdumps/" . date("D_M_j-H.i.s-T_Y", $this->time) . ".log";
 		$this->fp = @fopen($this->path, "wb");
 		if(!is_resource($this->fp)){
 			throw new \RuntimeException("Could not create Crash Dump");
@@ -109,14 +112,28 @@ class CrashDump{
 	private function extraData(){
 		global $arguments;
 
-		$this->data["pocketmine.yml"] = "";
-		$this->data["server.properties"] = "";
-		$this->data["parameters"] = [];
+		if($this->server->getProperty("auto-report.send-settings", true) !== false){
+			$this->data["parameters"] = (array) $arguments;
+			$this->data["server.properties"] = @file_get_contents($this->server->getDataPath() . "server.properties");
+			$this->data["server.properties"] = preg_replace("#^rcon\\.password=(.*)$#m", "rcon.password=******", $this->data["server.properties"]);
+			$this->data["pocketmine.yml"] = @file_get_contents($this->server->getDataPath() . "pocketmine.yml");
+		}else{
+			$this->data["pocketmine.yml"] = "";
+			$this->data["server.properties"] = "";
+			$this->data["parameters"] = [];
+		}
 		$extensions = [];
 		foreach(get_loaded_extensions() as $ext){
 			$extensions[$ext] = phpversion($ext);
 		}
 		$this->data["extensions"] = $extensions;
+
+		if($this->server->getProperty("auto-report.send-phpinfo", true) !== false){
+			ob_start();
+			phpinfo();
+			$this->data["phpinfo"] = ob_get_contents();
+			ob_end_clean();
+		}
 	}
 
 	private function baseCrash(){
@@ -146,7 +163,7 @@ class CrashDump{
 			];
 			$error["fullFile"] = $error["file"];
 			$error["file"] = cleanPath($error["file"]);
-			$error["type"] = isset($errorConversion[$error["type"]]) ? $errorConversion[$error["type"]] : $error["type"];
+			$error["type"] = $errorConversion[$error["type"]] ?? $error["type"];
 			if(($pos = strpos($error["message"], "\n")) !== false){
 				$error["message"] = substr($error["message"], 0, $pos);
 			}
@@ -187,6 +204,14 @@ class CrashDump{
 		$this->addLine();
 		$this->addLine("Code:");
 		$this->data["code"] = [];
+
+		if($this->server->getProperty("auto-report.send-code", true) !== false){
+			$file = @file($error["fullFile"], FILE_IGNORE_NEW_LINES);
+			for($l = max(0, $error["line"] - 10); $l < $error["line"] + 10; ++$l){
+				$this->addLine("[" . ($l + 1) . "] " . @$file[$l]);
+				$this->data["code"][$l + 1] = @$file[$l];
+			}
+		}
 
 		$this->addLine();
 		$this->addLine("Backtrace:");

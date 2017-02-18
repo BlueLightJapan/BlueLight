@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
@@ -30,8 +30,7 @@ interface Info{
 	/**
 	 * Actual Minecraft: PE protocol version
 	 */
-	const CURRENT_PROTOCOL = 100;
-	const ACCEPTED_PROTOCOLS = [100];
+	const CURRENT_PROTOCOL = 101;
 
 	const LOGIN_PACKET = 0x01;
 	const PLAY_STATUS_PACKET = 0x02;
@@ -114,5 +113,6 @@ interface Info{
 	const RESOURCE_PACK_DATA_INFO_PACKET = 0x4f;
 	const RESOURCE_PACK_CHUNK_DATA_PACKET = 0x50;
 	const RESOURCE_PACK_CHUNK_REQUEST_PACKET = 0x51;
+	const TRANSFER_PACKET = 0x52;
 
 }

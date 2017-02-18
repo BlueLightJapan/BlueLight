@@ -26,6 +26,7 @@ use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Villager extends Creature implements NPC, Ageable{
+
 	const PROFESSION_FARMER = 0;
 	const PROFESSION_LIBRARIAN = 1;
 	const PROFESSION_PRIEST = 2;
@@ -38,6 +39,7 @@ class Villager extends Creature implements NPC, Ageable{
 	public $width = 0.6;
 	public $length = 0.6;
 	public $height = 1.8;
+	public $maxhealth = 20;
 
 	public function getName(){
 		return "Villager";

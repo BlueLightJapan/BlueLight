@@ -33,7 +33,8 @@ class Blaze extends Monster{
 	public $width = 0.3;
 	public $length = 0.9;
 	public $height = 1.8;
-	
+	public $maxhealth = 20;
+
 	public function getName() : string{
 		return "Blaze";
 	}

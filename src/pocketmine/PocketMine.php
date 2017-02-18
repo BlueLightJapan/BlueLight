@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
@@ -27,7 +27,7 @@ namespace {
 				case is_array($var):
 					echo str_repeat("  ", $cnt) . "array(" . count($var) . ") {" . PHP_EOL;
 					foreach($var as $key => $value){
-						echo str_repeat("  ", $cnt + 1) . "[" . (is_integer($key) ? $key : '"' . $key . '"') . "]=>" . PHP_EOL;
+						echo str_repeat("  ", $cnt + 1) . "[" . (is_int($key) ? $key : '"' . $key . '"') . "]=>" . PHP_EOL;
 						++$cnt;
 						safe_var_dump($value);
 						--$cnt;
@@ -70,14 +70,14 @@ namespace pocketmine {
 	use pocketmine\utils\ServerKiller;
 	use pocketmine\utils\Terminal;
 	use pocketmine\utils\Utils;
-	use pocketmine\wizard\Installer;
+	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
-	const VERSION = "1.9dev";
-	const API_VERSION = "2.0.0";
+	const VERSION = "2.0dev";
+	const API_VERSION = "3.0.0";
 	const CODENAME = "BlueLight";
-	const MINECRAFT_VERSION = "v1.0.0 alpha";
-	const MINECRAFT_VERSION_NETWORK = "1.0.0";
+	const MINECRAFT_VERSION = "v1.0.3 alpha";
+	const MINECRAFT_VERSION_NETWORK = "1.0.3";
 	const BLUELIGHT_VERSION = "2.0.0";
 
 	/*
@@ -113,10 +113,9 @@ namespace pocketmine {
 		}
 		require_once(\pocketmine\PATH . "src/spl/ClassLoader.php");
 		require_once(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
-		require_once(\pocketmine\PATH . "src/pocketmine/CompatibleClassLoader.php");
 	}
 
-	$autoloader = new CompatibleClassLoader();
+	$autoloader = new \BaseClassLoader();
 	$autoloader->addPath(\pocketmine\PATH . "src");
 	$autoloader->addPath(\pocketmine\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
 	$autoloader->register(true);
@@ -416,10 +415,6 @@ namespace pocketmine {
 		++$errors;
 	}
 
-	if(!extension_loaded("uopz")){
-		//$logger->notice("Couldn't find the uopz extension. Some functions may be limited");
-	}
-
 	if(extension_loaded("pocketmine")){
 		if(version_compare(phpversion("pocketmine"), "0.0.1") < 0){
 			$logger->critical("You have the native PocketMine extension, but your version is lower than 0.0.1.");
@@ -430,6 +425,15 @@ namespace pocketmine {
 		}
 	}
 
+	if(extension_loaded("xdebug")){
+		$logger->warning("
+
+
+	You are running PocketMine with xdebug enabled. This has a major impact on performance.
+
+		");
+	}
+
 	if(!extension_loaded("curl")){
 		$logger->critical("Unable to find the cURL extension.");
 		++$errors;
@@ -437,11 +441,6 @@ namespace pocketmine {
 
 	if(!extension_loaded("yaml")){
 		$logger->critical("Unable to find the YAML extension.");
-		++$errors;
-	}
-
-	if(!extension_loaded("sqlite3")){
-		$logger->critical("Unable to find the SQLite3 extension.");
 		++$errors;
 	}
 
@@ -457,9 +456,18 @@ namespace pocketmine {
 		exit(1); //Exit with error
 	}
 
-	if(file_exists(\pocketmine\PATH . ".git/refs/heads/master")){ //Found Git information!
-		define('pocketmine\GIT_COMMIT', strtolower(trim(file_get_contents(\pocketmine\PATH . ".git/refs/heads/master"))));
-	}else{ //Unknown :(
+	if(file_exists(\pocketmine\PATH . ".git/HEAD")){ //Found Git information!
+		$ref = trim(file_get_contents(\pocketmine\PATH . ".git/HEAD"));
+		if(preg_match('/^[0-9a-f]{40}$/i', $ref)){
+			define('pocketmine\GIT_COMMIT', strtolower($ref));
+		}elseif(substr($ref, 0, 5) === "ref: "){
+			$refFile = \pocketmine\PATH . ".git/" . substr($ref, 5);
+			if(is_file($refFile)){
+				define('pocketmine\GIT_COMMIT', strtolower(trim(file_get_contents($refFile))));
+			}
+		}
+	}
+	if(!defined('pocketmine\GIT_COMMIT')){ //Unknown :(
 		define('pocketmine\GIT_COMMIT', str_repeat("00", 20));
 	}
 
@@ -467,31 +475,48 @@ namespace pocketmine {
 	@define("INT32_MASK", is_int(0xffffffff) ? 0xffffffff : -1);
 	@ini_set("opcache.mmap_base", bin2hex(random_bytes(8))); //Fix OPCache address errors
 
-	if(!file_exists(\pocketmine\DATA . "server.properties") and !isset($opts["no-wizard"])){
-		new Installer();
-	}
 
-	if(\Phar::running(true) === ""){
+	if(!file_exists(\pocketmine\DATA . "server.properties") and !isset($opts["no-wizard"])){
+		$installer = new SetupWizard();
+		if(!$installer->run()){
+			$logger->shutdown();
+			$logger->join();
+			exit(-1);
+		}
 	}
 
 	ThreadManager::init();
-	$server = new Server($autoloader, $logger, \pocketmine\PATH, \pocketmine\DATA, \pocketmine\PLUGIN_PATH);
+	new Server($autoloader, $logger, \pocketmine\PATH, \pocketmine\DATA, \pocketmine\PLUGIN_PATH);
 
 	$logger->info("Stopping other threads");
-
-	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){
-		$logger->debug("Stopping " . $thread->getThreadName() . " thread");
-		$thread->quit();
-	}
 
 	$killer = new ServerKiller(8);
 	$killer->start();
 
+	$erroredThreads = 0;
+	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){
+		$logger->debug("Stopping " . $thread->getThreadName() . " thread");
+		try{
+			$thread->quit();
+			$logger->debug($thread->getThreadName() . " thread stopped successfully.");
+		}catch(\ThreadException $e){
+			++$erroredThreads;
+			$logger->debug("Could not stop " . $thread->getThreadName() . " thread: " . $e->getMessage());
+		}
+	}
+
 	$logger->shutdown();
 	$logger->join();
 
-	echo Terminal::$FORMAT_RESET . "\n";
+	echo Terminal::$FORMAT_RESET . PHP_EOL;
 
-	exit(0);
+	if($erroredThreads > 0){
+		if(\pocketmine\DEBUG > 1){
+			echo "Some threads could not be stopped, performing a force-kill" . PHP_EOL . PHP_EOL;
+		}
+		kill(getmypid());
+	}else{
+		exit(0);
+	}
 
 }

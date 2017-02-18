@@ -24,6 +24,7 @@
  */
 namespace pocketmine\command;
 
+use pocketmine\command\data\CommandParameter;
 use pocketmine\event\TextContainer;
 use pocketmine\event\TimingsHandler;
 use pocketmine\event\TranslationContainer;
@@ -66,10 +67,10 @@ abstract class Command{
 	protected $usageMessage;
 
 	/** @var string */
-	private $permission = null;
-
-	/** @var string */
 	private $permissionMessage = null;
+
+	/** @var String|CommandParameter[] */
+	protected $commandParameters = [];
 
 	/** @var TimingsHandler */
 	public $timings;
@@ -87,6 +88,7 @@ abstract class Command{
 		$this->usageMessage = $usageMessage === null ? "/" . $name : $usageMessage;
 		$this->setAliases($aliases);
 		$this->timings = new TimingsHandler("** Command: " . $name);
+		$this->commandParameters["default"] = [new CommandParameter("args", "rawtext", true)];
 	}
 
 	/**
@@ -96,6 +98,22 @@ abstract class Command{
 	 */
 	public function getDefaultCommandData() : \stdClass{
 		return $this->commandData;
+	}
+
+	public function getCommandParameter(String $key) {
+		return $this->commandParameters[$key];
+	}
+
+	public function getCommandParameters() {
+		return $this->commandParameters;
+	}
+
+	public function setCommandParameters(array $commandParameters) {
+		$this->commandParameters = $commandParameters;
+	}
+
+	public function addCommandParameter(String $key, array $parameters) {
+		$this->commandParameters[$key] = $parameters;
 	}
 
 	/**
@@ -113,11 +131,24 @@ abstract class Command{
 		}*/
 		$customData = clone $this->commandData;
 		$customData->aliases = $this->getAliases();
+		$customData->description = $player->getServer()->getLanguage()->translateString($this->getDescription());
+		$customData->permission = $player->hasPermission($this->getPermission()) ? "any" : "false";
 		/*foreach($customData->overloads as &$overload){
 			if(($p = @$overload->pocketminePermission) !== null and !$player->hasPermission($p)){
 				unset($overload);
 			}
 		}*/
+		foreach($this->commandParameters as $key => $par){
+			$overload = new \stdClass();
+			$overload->input = new \stdClass();
+			$overload->input->parameters = $par;
+			$customData->overloads = [];
+			$customData->overloads[$key] = $overload;
+		}
+		if (count($customData->overloads) == 0) $customData->overloads["default"] = new \stdClass();
+		$versions = new \stdClass();
+		$versions->versions = [];
+		$versions->versions[] = $customData;
 		return $customData;
 	}
 
@@ -147,7 +178,7 @@ abstract class Command{
 	public function getPermission(){
 		return $this->commandData->pocketminePermission ?? null;
 	}
-	
+
 
 	/**
 	 * @param string|null $permission

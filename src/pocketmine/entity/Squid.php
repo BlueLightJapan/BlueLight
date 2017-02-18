@@ -36,6 +36,7 @@ class Squid extends WaterAnimal implements Ageable{
 	public $width = 0.95;
 	public $length = 0.95;
 	public $height = 0.95;
+	public $maxhealth = 10;
 
 	/** @var Vector3 */
 	public $swimDirection = null;

@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,13 +15,11 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
 namespace pocketmine\network\protocol;
-
-use pocketmine\entity\Skin;
 
 #include <rules/DataPacket.h>
 
@@ -39,19 +37,16 @@ class LoginPacket extends DataPacket{
 	public $identityPublicKey;
 	public $serverAddress;
 
+	public $skinId;
 	public $skin = null;
-	public $isXbox = false;
 
-	const MOJANG_PUBKEY = "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
-
-	public function getName(){
-		return "LoginPacket";
-	}
+	public $clientData = [];
 
 	public function decode(){
 		$this->protocol = $this->getInt();
 
 		if($this->protocol !== Info::CURRENT_PROTOCOL){
+			$this->buffer = null;
 			return; //Do not attempt to decode for non-accepted protocols
 		}
 
@@ -72,25 +67,19 @@ class LoginPacket extends DataPacket{
 					$this->clientUUID = $webtoken["extraData"]["identity"];
 				}
 				if(isset($webtoken["identityPublicKey"])){
-					if($webtoken["identityPublicKey"] == self::MOJANG_PUBKEY) $this->isXbox = true;
 					$this->identityPublicKey = $webtoken["identityPublicKey"];
 				}
 			}
 		}
 
-		$skinToken = $this->decodeToken($this->get($this->getLInt()));
-		if(isset($skinToken["ClientRandomId"])){
-			$this->clientId = $skinToken["ClientRandomId"];
-		}
-		if(isset($skinToken["ServerAddress"])){
-			$this->serverAddress = $skinToken["ServerAddress"];
-		}
-		$skinId = "";
-		if(isset($skinToken["SkinId"])){
-			$skinId = $skinToken["SkinId"];
-		}
-		if(isset($skinToken["SkinData"])){
-			$this->skin = new Skin(base64_decode($skinToken["SkinData"]), $skinId);
+		$this->clientData = $this->decodeToken($this->get($this->getLInt()));
+
+		$this->clientId = $this->clientData["ClientRandomId"] ?? null;
+		$this->serverAddress = $this->clientData["ServerAddress"] ?? null;
+		$this->skinId = $this->clientData["SkinId"] ?? null;
+
+		if(isset($this->clientData["SkinData"])){
+			$this->skin = base64_decode($this->clientData["SkinData"]);
 		}
 	}
 

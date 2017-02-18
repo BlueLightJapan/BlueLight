@@ -31,6 +31,7 @@ class Sheep extends Animal{
 	public $width = 0.3;
 	public $length = 0.9;
 	public $height = 1.9;
+	public $maxhealth = 8;
 
 	public function getName(){
 		return "Sheep";

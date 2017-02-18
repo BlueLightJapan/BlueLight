@@ -15,7 +15,6 @@
 
 namespace pocketmine\entity;
 
-//For Player Skin class
 class Skin{
 
 	const SINGLE_SKIN_SIZE = 64 * 32 * 4;

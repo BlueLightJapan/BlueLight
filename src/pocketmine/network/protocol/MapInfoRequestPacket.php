@@ -25,10 +25,6 @@ class MapInfoRequestPacket extends DataPacket{
 
 	public $mapid;
 
-	public function getName(){
-		return "MapInfoRequestPacket";
-	}
-
 	public function decode(){
 		$this->mapid = $this->getVarInt();
 	}

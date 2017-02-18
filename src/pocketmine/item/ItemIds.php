@@ -168,7 +168,6 @@ interface ItemIds extends BlockIds{
 	const MOB_HEAD = 397, SKULL = 397;
 	const CARROT_ON_A_STICK = 398;
 	const NETHER_STAR = 399;
-
 	const PUMPKIN_PIE = 400;
 
 	const ENCHANTED_BOOK = 403;
@@ -177,8 +176,9 @@ interface ItemIds extends BlockIds{
 	const QUARTZ = 406;
 	const NETHER_QUARTZ = 406;
 	const MINECART_WITH_TNT = 407;
+	const MINECART_WITH_HOPPER = 408;
 	const PRISMARINE_SHARD = 409;
-	const MINECART_WITH_HOPPER = 408, HOPPER = 410;
+	const HOPPER = 410;
 	const RAW_RABBIT = 411;
 	const COOKED_RABBIT = 412;
 	const RABBIT_STEW = 413;
@@ -201,7 +201,9 @@ interface ItemIds extends BlockIds{
 	const DARK_OAK_DOOR = 431;
 
 	const SPLASH_POTION = 438;
+
 	const ELYTRA = 444;
+
 	const BEETROOT = 457;
 	const BEETROOT_SEEDS = 458, BEETROOT_SEED = 458;
 	const BEETROOT_SOUP = 459;

@@ -28,18 +28,56 @@ use pocketmine\network\protocol\ResourcePackChunkDataPacket;
 
 class ResourcePacks{
 
-	public function __construct(ResourcePackIdVersion $idver, , $){
-		$this->packId = $packId;
-		$this->version = $version;
-		$this->packSize = $packSize;
+	public $mustAccept = false;
+
+	/** @var ResourcePackInfoEntry */
+	public $behaviourPackEntries = [];
+	/** @var ResourcePackInfoEntry */
+	public $resourcePackEntries = [];
+	/** @var ResourcePackInfoEntry */
+	public $packEntries = [];
+
+	public function __construct(){
 	}
 
-	public function sendInfo($player){
+	public function sendPacksInfo($player){
+		$info = new ResourcePacksInfoPacket();
+		$info->mustAccept = $this->mustAccept;
+		$info->behaviourPackEntries = $this->behaviourPackEntries;
+		$info->resourcePackEntries = $this->resourcePackEntries;
 
+		$player->dataPacket($info);
 	}
 
-	public function sendData($player){
+	public function sendPackDataInfo($player, $packid){
+		$datainfo = new ReourcePackDataInfoPacket();
+		$datainfo->packid = $packid;
+		$datainfo->int1 = 0;
+		$datainfo->int2 = 1;
+		$datainfo->size = $packEntries[$packid]->getPackSize();
+		$datainfo->pack = $packEntries[$packid]->getPackData();
 
+		$player->dataPacket($datainfo);
+	}
+
+	public function sendPackStack($player){
+		$stack = new ResourcePackStackPacket();
+		$stack->mustAccept = $this->mustAccept;
+		$stack->behaviourPackEntries = $this->behaviourPackEntries;
+		$stack->resourcePackEntries = $this->resourcePackEntries;
+
+		$player->dataPacket($stack);
+	}
+
+	public function sendPackChunkData($player, $packid){
+		$chunkdata = new ReourcePackDataChunkPacket();
+		$chunkdata->packid = $packid;
+		$chunkdata->int1 = 0;
+		$chunkdata->size = $packEntries[$packid]->getPackSize();
+		$chunkdata->int2 = 1;
+		$chunkdata->payload = $packEntries[$packid]->getPackData();
+
+		$player->dataPacket($chunkdata);
 	}
 
 

@@ -32,10 +32,6 @@ class PlayerInputPacket extends DataPacket{
 	public $unknownBool1;
 	public $unknownBool2;
 
-	public function getName(){
-		return "PlayerInputPacket";
-	}
-
 	public function decode(){
 		$this->motionX = $this->getLFloat();
 		$this->motionY = $this->getLFloat();

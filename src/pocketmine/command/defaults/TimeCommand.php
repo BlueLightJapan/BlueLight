@@ -27,6 +27,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\level\Level;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class TimeCommand extends VanillaCommand{
 
@@ -37,6 +38,8 @@ class TimeCommand extends VanillaCommand{
 			"%pocketmine.command.time.usage"
 		);
 		$this->setPermission("pocketmine.command.time.add;pocketmine.command.time.set;pocketmine.command.time.start;pocketmine.command.time.stop");
+		//$this->commandParameters["default"] = [new CommandParameter("recipient", CommandParameter::ARG_TYPE_PLAYER, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
