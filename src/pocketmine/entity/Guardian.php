@@ -26,6 +26,11 @@ use pocketmine\Player;
 class Guardian extends Animal{
 	const NETWORK_ID = 49;
 
+	public $width = 0.6;
+	public $length = 0.6;
+	public $height = 1.8;
+	public $maxhealth = 30;
+
 	public function getName(){
 		return "Guardian";
 	}

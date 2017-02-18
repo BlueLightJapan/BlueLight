@@ -23,11 +23,11 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\data\CommandParameter;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class KillCommand extends VanillaCommand{
 
@@ -40,6 +40,7 @@ class KillCommand extends VanillaCommand{
 		);
 		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
 		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

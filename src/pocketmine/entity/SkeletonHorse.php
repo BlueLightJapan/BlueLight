@@ -23,10 +23,15 @@ namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class SkeletonHorse extends Monster{
+class SkeletonHorse extends Animal{
 	const NETWORK_ID = 26;
 
-		public function getName(){
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 52;
+
+	public function getName(){
 		return "Skeleton Horse";
 	}
 	

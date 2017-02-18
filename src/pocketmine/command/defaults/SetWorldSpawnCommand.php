@@ -27,6 +27,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class SetWorldSpawnCommand extends VanillaCommand{
 
@@ -37,6 +38,8 @@ class SetWorldSpawnCommand extends VanillaCommand{
 			"%commands.setworldspawn.usage"
 		);
 		$this->setPermission("pocketmine.command.setworldspawn");
+		//$this->commandParameters["default"] = [new CommandParameter("spawnPoint", CommandParameter::ARG_TYPE_BLOCK_POS, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

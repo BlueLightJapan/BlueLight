@@ -25,7 +25,12 @@ use pocketmine\Player;
 class Mule extends Animal{
 	const NETWORK_ID = 25;
 
-		public function getName(){
+	public $width = 0.6;
+	public $length = 0.6;
+	public $height = 1.8;
+	public $maxhealth = 52;
+
+	public function getName(){
 		return "Mule";
 	}
 	

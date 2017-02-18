@@ -42,10 +42,6 @@ class BossEventPacket extends DataPacket{
 	public $string1;
 	public $string2;
 
-	public function getName(){
-		return "BossEventPacket";
-	}
-
 	public function decode(){
 	}
 
@@ -54,8 +50,6 @@ class BossEventPacket extends DataPacket{
 
 		$this->putVarInt($this->eid);
 		$this->putUnsignedVarInt($this->type);
-
-///////////////////////////////////UNKNOWN////////////////////////////////
 
 		$this->putString($this->string1);
  		$this->putLFloat($this->float1);

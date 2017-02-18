@@ -22,13 +22,16 @@
 namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
+
 class Enderman extends Monster{
+
 	const NETWORK_ID = 38;
 
 	public $width = 0.3;
 	public $length = 0.9;
 	public $height = 1.8;
-	
+	public $maxhealth = 40;
+
 	public function getName(){
 		return "Enderman";
 	}

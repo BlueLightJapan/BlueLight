@@ -57,6 +57,8 @@ class Horse extends Living implements Rideable{
 	public $length = 1.8;
 	public $height = 1.8;
 
+	public $maxhealth = 52;
+
 	public $maxjump = 3;
 
 	public function getName(){

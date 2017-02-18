@@ -24,6 +24,7 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
+use pocketmine\command\data\CommandParameter;
 
 class PardonIpCommand extends VanillaCommand{
 
@@ -34,6 +35,8 @@ class PardonIpCommand extends VanillaCommand{
 			"%commands.unbanip.usage"
 		);
 		$this->setPermission("pocketmine.command.unban.ip");
+		//$this->commandParameters["default"] = [new CommandParameter("ip", CommandParameter::ARG_TYPE_INT, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

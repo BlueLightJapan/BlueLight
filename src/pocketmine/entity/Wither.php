@@ -23,8 +23,13 @@ namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Wither extends Animal{
+class Wither extends Monster{
 	const NETWORK_ID = 52;
+
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 300;
 
 	public function getName(){
 		return "Wither";

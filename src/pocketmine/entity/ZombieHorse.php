@@ -25,7 +25,12 @@ use pocketmine\Player;
 class ZombieHorse extends Monster{
 	const NETWORK_ID = 27;
 
-		public function getName(){
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 52;
+
+	public function getName(){
 		return "Zombie Horse";
 	}
 	

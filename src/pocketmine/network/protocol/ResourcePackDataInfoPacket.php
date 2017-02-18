@@ -32,10 +32,6 @@ class ResourcePackDataInfoPacket extends DataPacket{
 	public $size;
 	public $pack;
 
-	public function getName(){
-		return "ResourcePackDataInfoPacket";
-	}
-
 	public function decode(){
 
 	}

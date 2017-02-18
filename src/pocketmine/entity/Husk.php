@@ -27,7 +27,12 @@ use pocketmine\network\protocol\AddEntityPacket;
 
 class Husk extends Monster{
 	const NETWORK_ID = 47;
-	
+
+	public $width = 0.6;
+	public $length = 0.6;
+	public $height = 1.8;
+	public $maxhealth = 20;
+
 	public function getName(){
 		return "Husk";
 	}

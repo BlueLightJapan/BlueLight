@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,34 +14,14 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
 
 namespace pocketmine\event\entity;
 
-use pocketmine\entity\Entity;
-use pocketmine\Event;
-use pocketmine\event\Cancellable;
-use pocketmine\entity\Effect;
-
-class EntityEffectRemoveEvent extends EntityEvent implements Cancellable{
-
+class EntityEffectRemoveEvent extends EntityEffectEvent{
 	public static $handlerList = null;
 
-	/** @var Effect */
-	protected $effect;
-
-	public function __construct(Entity $entity, int $effect){
-		$this->entity = $entity;
-		$this->effect = $effect;
-	}
-
-	/**
-	 * @return Effect
-	 */
-	public function getEffect(){
-		return $this->effect;
-	}
 }

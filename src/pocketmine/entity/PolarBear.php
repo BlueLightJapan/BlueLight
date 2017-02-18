@@ -26,6 +26,11 @@ use pocketmine\Player;
 class PolarBear extends Animal{
 	const NETWORK_ID = 28;
 
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 30;
+
 	public function getName(){
 		return "PolarBear";
 	}

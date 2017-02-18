@@ -27,10 +27,6 @@ class ResourcePackChunkRequestPacket extends DataPacket{
 	public $packid;
 	public $int;
 
-	public function getName(){
-		return "ResourcePackChunkRequestPacket";
-	}
-
 	public function decode(){
 		$this->packid = $this->getString();
 		$this->int = $this->getVarInt();

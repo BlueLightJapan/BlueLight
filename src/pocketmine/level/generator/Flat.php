@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
@@ -32,7 +32,6 @@ use pocketmine\block\RedstoneOre;
 use pocketmine\item\Item;
 use pocketmine\level\ChunkManager;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\generator\biome\Biome;
 use pocketmine\level\generator\populator\Ore;
 use pocketmine\level\generator\populator\Populator;
 use pocketmine\math\Vector3;
@@ -83,6 +82,21 @@ class Flat extends Generator{
 		}*/
 	}
 
+	public static function parseLayers(string $layers) : array{
+		$result = [];
+		preg_match_all('#^(([0-9]*x|)([0-9]{1,3})(|:[0-9]{0,2}))$#m', str_replace(",", "\n", $layers), $matches);
+		$y = 0;
+		foreach($matches[3] as $i => $b){
+			$b = Item::fromString($b . $matches[4][$i]);
+			$cnt = $matches[2][$i] === "" ? 1 : intval($matches[2][$i]);
+			for($cY = $y, $y += $cnt; $cY < $y; ++$cY){
+				$result[$cY] = [$b->getId(), $b->getDamage()];
+			}
+		}
+
+		return $result;
+	}
+
 	protected function parsePreset($preset, $chunkX, $chunkZ){
 		$this->preset = $preset;
 		$preset = explode(";", $preset);
@@ -90,19 +104,11 @@ class Flat extends Generator{
 		$blocks = $preset[1] ?? "";
 		$biome = $preset[2] ?? 1;
 		$options = $preset[3] ?? "";
-		preg_match_all('#^(([0-9]*x|)([0-9]{1,3})(|:[0-9]{0,2}))$#m', str_replace(",", "\n", $blocks), $matches);
-		$y = 0;
-		$this->structure = [];
-		$this->chunks = [];
-		foreach($matches[3] as $i => $b){
-			$b = Item::fromString($b . $matches[4][$i]);
-			$cnt = $matches[2][$i] === "" ? 1 : intval($matches[2][$i]);
-			for($cY = $y, $y += $cnt; $cY < $y; ++$cY){
-				$this->structure[$cY] = [$b->getId(), $b->getDamage()];
-			}
-		}
+		$this->structure = self::parseLayers($blocks);
 
-		$this->floorLevel = $y;
+		$this->chunks = [];
+
+		$this->floorLevel = $y = count($this->structure);
 
 		for(; $y < 0xFF; ++$y){
 			$this->structure[$y] = [0, 0];

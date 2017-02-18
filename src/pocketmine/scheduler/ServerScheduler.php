@@ -25,8 +25,8 @@
 namespace pocketmine\scheduler;
 
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginException;
 use pocketmine\Server;
-use pocketmine\utils\PluginException;
 use pocketmine\utils\ReversePriorityQueue;
 
 class ServerScheduler{
@@ -277,6 +277,7 @@ class ServerScheduler{
 			}elseif(!$task->getOwner()->isEnabled()){
 				throw new PluginException("Plugin '" . $task->getOwner()->getName() . "' attempted to register a task while disabled");
 			}
+
 		}elseif($task instanceof CallbackTask and Server::getInstance()->getProperty("settings.deprecated-verbose", true)){
 			$callable = $task->getCallable();
 			if(is_array($callable)){
@@ -288,7 +289,7 @@ class ServerScheduler{
 			}else{
 				$taskName = "Callback#" . $callable;
 			}
-			Server::getInstance()->getLogger()->info("A plugin attempted to register a deprecated CallbackTask ($taskName)");
+			Server::getInstance()->getLogger()->warning("A plugin attempted to register a deprecated CallbackTask ($taskName)");
 		}
 
 		if($delay <= 0){
