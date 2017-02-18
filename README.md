@@ -1,4 +1,5 @@
-﻿#BlueLight Development Version for 1.0.0
+﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)
+#BlueLight for 1.0.3
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ###Build Status(Stable) [![Build Status](http://jenkins.haniokasai.com/buildStatus/icon?job=BlueLight-PMMP)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/ "Jenkins ")<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/"><img src= https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/></a>
@@ -7,7 +8,7 @@
 BlueLight is server software for Minecraft: PocketEdition.<br>
 This software is based on **[PocketMine-MP](https://github.com/PocketMine/PocketMine-MP)**.<br>
 Most of the original code was written by **PocketMine Team**.<br>
-Part of the code was written by **iTXTech**<br>
+Part of the code was written by **iTXTech** and **Tesseract**<br>
 If we quote the code from other software, it stated in the file.<br>
 <br>
 Help & Support :<br>
@@ -20,6 +21,7 @@ Download Phar : Jenkins  http://jenkins.haniokasai.com/job/BlueLight-PMMP<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
 Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 HP : http://bluelight.cf/?lang=en<br>
+<br>If you find bugs,you can open issues freely,But DO NOT OPEN ISSUE ABOUT PLUGIN PROBLEM.
 <br>
 If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
@@ -42,6 +44,7 @@ Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
 便利な詰め合わせ : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 Lobi : https://web.lobi.co/game/minecraftpe/group/d95ef7462b185454741ad90520e4ba23fe7738c4<br>
 HP : http://bluelight.cf<br>
+<br>バグを発見したら、自由にissueを建てることができますが、srcのバグ以外は報告しないでください。
 <br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
