@@ -268,7 +268,6 @@ class Server{
 	public $keepInventory = false;
 	public $rideableentity = true;
 
-
 	/**
 	 * @return string
 	 */
@@ -1423,7 +1422,7 @@ class Server{
 				"DevTools" => true,
 				"CrashDump" => true,
 				"FoodEnabled" => true,
-				"ExpEnabled" => true,
+				"ExpEnabled" => false,
 				"WeatherEnabled" => false,
 				"WeatherRandomDurationMin" => 6000,
 				"WeatherRandomDurationMan" => 12000,

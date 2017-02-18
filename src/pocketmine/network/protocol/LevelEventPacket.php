@@ -61,6 +61,7 @@ class LevelEventPacket extends DataPacket{
 
 	const EVENT_SOUND_CAMERA = 1050;
 	const EVENT_SOUND_ORB = 1051;
+	const EVENT_SOUND_EXP_PICKUP = 1051;
 	const EVENT_SOUND_BLOCK_PLACE = 1052;
 
 	const EVENT_PARTICLE_SHOOT = 2000;
