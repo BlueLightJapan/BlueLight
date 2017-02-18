@@ -24,8 +24,9 @@ namespace pocketmine\level\generator\object;
 use pocketmine\level\ChunkManager;
 use pocketmine\math\VectorMath;
 use pocketmine\utils\Random;
+use pocketmine\level\generator\object\Object;
 
-class Ore{
+class Ore extends Object{
 	private $random;
 	public $type;
 
@@ -39,7 +40,7 @@ class Ore{
 	}
 
 	public function canPlaceObject(ChunkManager $level, $x, $y, $z){
-		return ($level->getBlockIdAt($x, $y, $z) === 1);
+		return (($level->getBlockIdAt($x, $y, $z) === 1) or ($level->getBlockIdAt($x, $y, $z) === 87));
 	}
 
 	public function placeObject(ChunkManager $level, $x, $y, $z){
@@ -79,7 +80,7 @@ class Ore{
 								$sizeZ = ($z + 0.5 - $seedZ) / $size;
 								$sizeZ *= $sizeZ;
 
-								if(($sizeX + $sizeY + $sizeZ) < 1 and $level->getBlockIdAt($x, $y, $z) === 1){
+								if(($sizeX + $sizeY + $sizeZ) < 1 and (($level->getBlockIdAt($x, $y, $z) === 1) or ($level->getBlockIdAt($x, $y, $z) === 87)) ){
 									$level->setBlockIdAt($x, $y, $z, $this->type->material->getId());
 									if($this->type->material->getDamage() !== 0){
 										$level->setBlockDataAt($x, $y, $z, $this->type->material->getDamage());

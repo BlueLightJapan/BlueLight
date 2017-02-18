@@ -25,22 +25,15 @@ use pocketmine\block\Block;
 use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 use pocketmine\block\Flower as FlowerBlock;
+use pocketmine\level\generator\populator\VariableAmountPopulator;
 
-class Flower extends Populator{
+class Flower extends VariableAmountPopulator{
 	/** @var ChunkManager */
 	private $level;
-	private $randomAmount;
-	private $baseAmount = 8;
+	protected $baseAmount = 8;
 
 	private $flowerTypes = [];
 
-	public function setRandomAmount($amount){
-		$this->randomAmount = $amount;
-	}
-
-	public function setBaseAmount($amount){
-		$this->baseAmount = $amount;
-	}
 
 	public function addType($type){
 		$this->flowerTypes[] = $type;
@@ -52,7 +45,7 @@ class Flower extends Populator{
 
 	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random){
 		$this->level = $level;
-		$amount = $random->nextRange(0, $this->randomAmount + 1) + $this->baseAmount;
+		$amount = $this->getAmount($random);
 
 		if(count($this->flowerTypes) === 0){
 			$this->addType([Block::DANDELION, 0]);
