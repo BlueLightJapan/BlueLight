@@ -44,10 +44,6 @@ class ClientboundMapItemDataPacket extends DataPacket{
 	public $int10;
 	public $int11;
 
-	public function getName(){
-		return "ClientboundMapItemDataPacket";
-	}
-
 	public function decode(){
 
 	}

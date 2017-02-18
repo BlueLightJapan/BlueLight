@@ -40,6 +40,7 @@ class Ocelot extends Animal{
 	public $width = 0.312;
 	public $length = 2.188;
 	public $height = 0.75;
+	public $maxhealth = 10;
 	
 	public function getName() : string{
 		return "Ocelot";

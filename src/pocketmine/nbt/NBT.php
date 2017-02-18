@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
@@ -41,7 +41,6 @@ use pocketmine\nbt\tag\Tag;
 
 #ifndef COMPILE
 use pocketmine\utils\Binary;
-
 #endif
 
 
@@ -375,7 +374,7 @@ class NBT{
 			if($c === ":"){
 				++$offset;
 				break;
-			}elseif($c !== " " and $c !== "\r" and $c !== "\n" and $c !== "\t"){
+			}elseif($c !== " " and $c !== "\r" and $c !== "\n" and $c !== "\t" and $c !== "\""){
 				$key .= $c;
 			}
 		}
@@ -434,6 +433,8 @@ class NBT{
 
 
 	/**
+	 * @param bool $network
+	 *
 	 * @return string|bool
 	 */
 	public function write(bool $network = false){
@@ -594,13 +595,13 @@ class NBT{
 	}
 
 	public function getString(bool $network = false){
-		$len = $network ? $this->getByte() : $this->getShort();
+		$len = $network ? Binary::readUnsignedVarInt($this) : $this->getShort();
 		return $this->get($len);
 	}
 
 	public function putString($v, bool $network = false){
 		if($network === true){
-			$this->putByte(strlen($v));
+			$this->put(Binary::writeUnsignedVarInt(strlen($v)));
 		}else{
 			$this->putShort(strlen($v));
 		}

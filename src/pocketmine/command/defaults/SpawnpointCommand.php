@@ -27,6 +27,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class SpawnpointCommand extends VanillaCommand{
 
@@ -37,6 +38,8 @@ class SpawnpointCommand extends VanillaCommand{
 			"%commands.spawnpoint.usage"
 		);
 		$this->setPermission("pocketmine.command.spawnpoint");
+		//$this->commandParameters["default"] = [new CommandParameter("spawnPoint", CommandParameter::ARG_TYPE_BLOCK_POS, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

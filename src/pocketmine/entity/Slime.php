@@ -31,6 +31,7 @@ class Slime extends Living{
 	public $width = 0.3;
 	public $length = 0.9;
 	public $height = 5;
+	public $maxhealth = 16;
 	
 	public function getName(){
 		return "Slime";

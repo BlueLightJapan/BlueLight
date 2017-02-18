@@ -284,6 +284,8 @@ class MemoryManager{
 
 			echo "[Dump] Wrote " . count($objects) . " objects\n";
 		}while($continue);
+		
+		fclose($obData);
 
 		file_put_contents($outputFolder . "/staticProperties.js", json_encode($staticProperties, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 		file_put_contents($outputFolder . "/serverEntry.js", json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
@@ -292,8 +294,6 @@ class MemoryManager{
 		echo "[Dump] Finished!\n";
 
 		gc_enable();
-
-		$this->server->forceShutdown();
 	}
 
 	private function continueDump($from, &$data, &$objects, &$refCounts, $recursion, $maxNesting, $maxStringSize){
@@ -323,7 +323,7 @@ class MemoryManager{
 				$this->continueDump($value, $data[$key], $objects, $refCounts, $recursion + 1, $maxNesting, $maxStringSize);
 			}
 		}elseif(is_string($from)){
-			$data = sprintf("(string) len(%d) " . substr(Utils::printable($from), 0, $maxStringSize), strlen($from));
+			$data = "(string) len(". strlen($from) .") " . substr(Utils::printable($from), 0, $maxStringSize);
 		}elseif(is_resource($from)){
 			$data = "(resource) " . print_r($from, true);
 		}else{

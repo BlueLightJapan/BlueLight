@@ -20,12 +20,10 @@
 */
 
 /**
- * Various Utilities used around the code
+ * Methods for working with binary strings
  */
 namespace pocketmine\utils;
 
-use pocketmine\entity\Entity;
-use pocketmine\item\Item;
 
 class Binary{
 	const BIG_ENDIAN = 0x00;
@@ -79,119 +77,6 @@ class Binary{
 	 */
 	public static function writeLTriad($value){
 		return substr(pack("V", $value), 0, -1);
-	}
-
-	/**
-	 * Writes a coded metadata string
-	 *
-	 * @param array $data
-	 *
-	 * @return string
-	 */
-	public static function writeMetadata(array $data){
-		$stream = new BinaryStream();
-		$stream->putUnsignedVarInt(count($data));
-		foreach($data as $key => $d){
-			$stream->putUnsignedVarInt($key); //data key
-			$stream->putUnsignedVarInt($d[0]); //data type
-			switch($d[0]){
-				case Entity::DATA_TYPE_BYTE:
-					$stream->putByte($d[1]);
-					break;
-				case Entity::DATA_TYPE_SHORT:
-					$stream->putLShort($d[1]); //SIGNED short!
-					break;
-				case Entity::DATA_TYPE_INT:
-					$stream->putVarInt($d[1]);
-					break;
-				case Entity::DATA_TYPE_FLOAT:
-					$stream->putLFloat($d[1]);
-					break;
-				case Entity::DATA_TYPE_STRING:
-					$stream->putString($d[1]);
-					break;
-				case Entity::DATA_TYPE_SLOT:
-					//TODO: change this implementation (use objects)
-					$stream->putSlot(Item::get($d[1][0], $d[1][2], $d[1][1])); //ID, damage, count
-					break;
-				case Entity::DATA_TYPE_POS:
-					//TODO: change this implementation (use objects)
-					$stream->putBlockCoords($d[1][0], $d[1][1], $d[1][2]); //x, y, z
-					break;
-				case Entity::DATA_TYPE_LONG:
-					$stream->putVarInt($d[1]); //TODO: varint64 support
-					break;
-				case Entity::DATA_TYPE_VECTOR3F:
-					//TODO: change this implementation (use objects)
-					$stream->putVector3f($d[1][0], $d[1][1], $d[1][2]); //x, y, z
-			}
-		}
-
-		return $stream->getBuffer();
-	}
-
-	/**
-	 * Reads a metadata coded string
-	 *
-	 * @param      $value
-	 * @param bool $types
-	 *
-	 * @return array
-	 */
-	public static function readMetadata($value, $types = false){
-		$stream = new BinaryStream();
-		$stream->setBuffer($value);
-		$count = $stream->getUnsignedVarInt();
-		$data = [];
-		for($i = 0; $i < $count; ++$i){
-			$key = $stream->getUnsignedVarInt();
-			$type = $stream->getUnsignedVarInt();
-			$value = null;
-			switch($type){
-				case Entity::DATA_TYPE_BYTE:
-					$value = $stream->getByte();
-					break;
-				case Entity::DATA_TYPE_SHORT:
-					$value = $stream->getLShort(true); //signed
-					break;
-				case Entity::DATA_TYPE_INT:
-					$value = $stream->getVarInt();
-					break;
-				case Entity::DATA_TYPE_FLOAT:
-					$value = $stream->getLFloat();
-					break;
-				case Entity::DATA_TYPE_STRING:
-					$value = $stream->getString();
-					break;
-				case Entity::DATA_TYPE_SLOT:
-					//TODO: use objects directly
-					$item = $stream->getSlot();
-					$value[0] = $item->getId();
-					$value[1] = $item->getCount();
-					$value[2] = $item->getDamage();
-					break;
-				case Entity::DATA_TYPE_POS:
-					$value = [0, 0, 0];
-					$stream->getBlockCoords($value[0], $value[1], $value[2]);
-					break;
-				case Entity::DATA_TYPE_LONG:
-					$value = $stream->getVarInt(); //TODO: varint64 proper support
-					break;
-				case Entity::DATA_TYPE_VECTOR3F:
-					$value = [0.0, 0.0, 0.0];
-					$stream->getVector3f($value[0], $value[1], $value[2]);
-					break;
-				default:
-					$value = [];
-			}
-			if($types === true){
-				$data[$key] = [$value, $type];
-			}else{
-				$data[$key] = $value;
-			}
-		}
-
-		return $data;
 	}
 
 	/**
@@ -354,18 +239,28 @@ class Binary{
 		return pack("V", $value);
 	}
 
-	public static function readFloat($str){
+	public static function readFloat($str, int $accuracy = -1){
 		self::checkLength($str, 4);
-		return ENDIANNESS === self::BIG_ENDIAN ? unpack("f", $str)[1] : unpack("f", strrev($str))[1];
+		$value = ENDIANNESS === self::BIG_ENDIAN ? unpack("f", $str)[1] : unpack("f", strrev($str))[1];
+		if($accuracy > -1){
+			return round($value, $accuracy);
+		}else{
+			return $value;
+		}
 	}
 
 	public static function writeFloat($value){
 		return ENDIANNESS === self::BIG_ENDIAN ? pack("f", $value) : strrev(pack("f", $value));
 	}
 
-	public static function readLFloat($str){
+	public static function readLFloat($str, int $accuracy = -1){
 		self::checkLength($str, 4);
-		return ENDIANNESS === self::BIG_ENDIAN ? unpack("f", strrev($str))[1] : unpack("f", $str)[1];
+		$value = ENDIANNESS === self::BIG_ENDIAN ? unpack("f", strrev($str))[1] : unpack("f", $str)[1];
+		if($accuracy > -1){
+			return round($value, $accuracy);
+		}else{
+			return $value;
+		}
 	}
 
 	public static function writeLFloat($value){

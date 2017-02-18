@@ -22,7 +22,6 @@
 namespace pocketmine\level\generator;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\generic\GenericChunk;
 use pocketmine\level\Level;
 use pocketmine\level\SimpleChunkManager;
 use pocketmine\scheduler\AsyncTask;
@@ -33,13 +32,11 @@ class GenerationTask extends AsyncTask{
 	public $state;
 	public $levelId;
 	public $chunk;
-	public $chunkClass;
 
 	public function __construct(Level $level, Chunk $chunk){
 		$this->state = true;
 		$this->levelId = $level->getId();
-		$this->chunk = GenericChunk::fastSerialize($chunk);
-		$this->chunkClass = get_class($chunk);
+		$this->chunk = $chunk->fastSerialize();
 	}
 
 	public function onRun(){
@@ -53,8 +50,7 @@ class GenerationTask extends AsyncTask{
 		}
 
 		/** @var Chunk $chunk */
-		$chunk = $this->chunkClass;
-		$chunk = GenericChunk::fastDeserialize($this->chunk);
+		$chunk = Chunk::fastDeserialize($this->chunk);
 		if($chunk === null){
 			//TODO error
 			return;
@@ -66,7 +62,7 @@ class GenerationTask extends AsyncTask{
 
 		$chunk = $manager->getChunk($chunk->getX(), $chunk->getZ());
 		$chunk->setGenerated();
-		$this->chunk = GenericChunk::fastSerialize($chunk);
+		$this->chunk = $chunk->fastSerialize();
 
 		$manager->setChunk($chunk->getX(), $chunk->getZ(), null);
 	}
@@ -79,8 +75,7 @@ class GenerationTask extends AsyncTask{
 				return;
 			}
 			/** @var Chunk $chunk */
-			$chunk = $this->chunkClass;
-			$chunk = GenericChunk::fastDeserialize($this->chunk, $level->getProvider());
+			$chunk = Chunk::fastDeserialize($this->chunk, $level->getProvider());
 			if($chunk === null){
 				//TODO error
 				return;

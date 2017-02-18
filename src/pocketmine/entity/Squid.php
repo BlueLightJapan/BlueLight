@@ -36,6 +36,7 @@ class Squid extends WaterAnimal implements Ageable{
 	public $width = 0.95;
 	public $length = 0.95;
 	public $height = 0.95;
+	public $maxhealth = 10;
 
 	/** @var Vector3 */
 	public $swimDirection = null;
@@ -66,7 +67,9 @@ class Squid extends WaterAnimal implements Ageable{
 			$pk = new EntityEventPacket();
 			$pk->eid = $this->getId();
 			$pk->event = EntityEventPacket::SQUID_INK_CLOUD;
-			Server::broadcastPacket($this->hasSpawned, $pk);
+			foreach($this->hasSpawned as $player){
+				$player->dataPacket($pk);
+			}
 		}
 	}
 

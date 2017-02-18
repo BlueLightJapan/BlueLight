@@ -57,18 +57,12 @@ use pocketmine\command\defaults\TeleportCommand;
 use pocketmine\command\defaults\TellCommand;
 use pocketmine\command\defaults\TimeCommand;
 use pocketmine\command\defaults\TimingsCommand;
-use pocketmine\command\defaults\TransferCommand;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\defaults\VersionCommand;
-use pocketmine\command\defaults\WeatherCommand;
 use pocketmine\command\defaults\WhitelistCommand;
-use pocketmine\command\defaults\XpCommand;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
-
-use pocketmine\command\defaults\ExtractPluginCommand;
-use pocketmine\command\defaults\MakePluginCommand;
 
 class SimpleCommandMap implements CommandMap{
 
@@ -117,24 +111,15 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new KillCommand("kill"));
 		$this->register("pocketmine", new SpawnpointCommand("spawnpoint"));
 		$this->register("pocketmine", new SetWorldSpawnCommand("setworldspawn"));
-		$this->register("pocketmine", new TeleportCommand("teleport"));
 		$this->register("pocketmine", new TeleportCommand("tp"));
 		$this->register("pocketmine", new TimeCommand("time"));
 		$this->register("pocketmine", new TimingsCommand("timings"));
 		$this->register("pocketmine", new ReloadCommand("reload"));
-		$this->register("pocketmine", new XpCommand("xp"));
-		$this->register("pocketmine", new WeatherCommand("weather"));
-		$this->register("pocketmine", new TransferCommand("transfer"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
-		}
-
-		if($this->server->devtools){
-			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
-			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
 		}
 	}
 

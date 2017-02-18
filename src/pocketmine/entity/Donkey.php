@@ -23,9 +23,15 @@ use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Donkey extends Animal{
+
 	const NETWORK_ID = 24;
 
-		public function getName(){
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 52;
+
+	public function getName(){
 		return "Donkey";
 	}
 	

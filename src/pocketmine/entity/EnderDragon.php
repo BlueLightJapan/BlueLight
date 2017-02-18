@@ -26,6 +26,11 @@ use pocketmine\Player;
 class EnderDragon extends Monster{
 	const NETWORK_ID = 53;
 
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 200;
+
 	public function getName(){
 		return "EnderDragon";
 	}

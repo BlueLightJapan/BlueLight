@@ -34,10 +34,6 @@ class ResourcePackStackPacket extends DataPacket{
 	public $behaviourid;
 	public $behaviourversion;
 
-	public function getName(){
-		return "ResourcePackStackPacket";
-	}
-
 	public function decode(){
 
 	}

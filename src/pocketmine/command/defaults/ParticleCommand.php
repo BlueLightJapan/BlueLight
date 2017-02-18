@@ -57,6 +57,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class ParticleCommand extends VanillaCommand{
 
@@ -123,8 +124,13 @@ class ParticleCommand extends VanillaCommand{
 	}
 
 	/**
-	 * @param $name
+	 * @param string   $name
 	 *
+	 * @param Vector3  $pos
+	 * @param int      $xd
+	 * @param float    $yd
+	 * @param float    $zd
+	 * @param int|null $data
 	 * @return Particle
 	 */
 	private function getParticle($name, Vector3 $pos, $xd, $yd, $zd, $data){

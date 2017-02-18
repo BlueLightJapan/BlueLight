@@ -231,6 +231,7 @@ class Item implements ItemIds, \JsonSerializable{
 					self::$list[$i] = Block::$list[$i];
 				}
 			}
+
 		}
 
 		self::initCreativeItems();
@@ -300,7 +301,7 @@ class Item implements ItemIds, \JsonSerializable{
 		return -1;
 	}
 
-	public static function get(int $id, $meta = 0, int $count = 1, $tags = "") : Item{
+	public static function get(int $id, int $meta = 0, int $count = 1, string $tags = "") : Item{
 		try{
 			$class = self::$list[$id];
 			if($class === null){
@@ -350,7 +351,7 @@ class Item implements ItemIds, \JsonSerializable{
 		}
 	}
 
-	public function __construct(int $id, $meta = 0, int $count = 1, string $name = "Unknown"){
+	public function __construct(int $id, int $meta = 0, int $count = 1, string $name = "Unknown"){
 		$this->id = $id & 0xffff;
 		$this->meta = $meta !== -1 ? $meta & 0xffff : -1;
 		$this->count = $count;
@@ -365,7 +366,7 @@ class Item implements ItemIds, \JsonSerializable{
 		if($tags instanceof CompoundTag){
 			$this->setNamedTag($tags);
 		}else{
-			$this->tags = $tags;
+			$this->tags = (string) $tags;
 			$this->cachedNBT = null;
 		}
 
@@ -375,7 +376,7 @@ class Item implements ItemIds, \JsonSerializable{
 	/**
 	 * @return string
 	 */
-	public function getCompoundTag(){
+	public function getCompoundTag() : string{
 		return $this->tags;
 	}
 
@@ -570,7 +571,7 @@ class Item implements ItemIds, \JsonSerializable{
 			$this->clearCustomName();
 		}
 
-		if(!($hadCompoundTag = $this->hasCompoundTag())){
+		if(!$this->hasCompoundTag()){
 			$tag = new CompoundTag("", []);
 		}else{
 			$tag = $this->getNamedTag();
@@ -584,9 +585,7 @@ class Item implements ItemIds, \JsonSerializable{
 			]);
 		}
 
-		if(!$hadCompoundTag){
-			$this->setCompoundTag($tag);
-		}
+		$this->setCompoundTag($tag);
 
 		return $this;
 	}
@@ -609,6 +608,10 @@ class Item implements ItemIds, \JsonSerializable{
 		return $this;
 	}
 
+	/**
+	 * @param $name
+	 * @return Tag|null
+	 */
 	public function getNamedTagEntry($name){
 		$tag = $this->getNamedTag();
 		if($tag !== null){
@@ -681,15 +684,15 @@ class Item implements ItemIds, \JsonSerializable{
 		return $this->id;
 	}
 
-	final public function getDamage(){
+	final public function getDamage() : int{
 		return $this->meta;
 	}
 
-	public function setDamage($meta){
+	public function setDamage(int $meta){
 		$this->meta = $meta !== -1 ? $meta & 0xFFFF : -1;
 	}
 
-	public function hasAnyDamageValue(){
+	public function hasAnyDamageValue() : bool{
 		return $this->meta === -1;
 	}
 
@@ -793,7 +796,8 @@ class Item implements ItemIds, \JsonSerializable{
 	/**
 	 * Serializes the item to an NBT CompoundTag
 	 *
-	 * @param int $slot optional, the inventory slot of the item
+	 * @param int    $slot optional, the inventory slot of the item
+	 * @param string $tagName the name to assign to the CompoundTag object
 	 *
 	 * @return CompoundTag
 	 */
@@ -808,7 +812,7 @@ class Item implements ItemIds, \JsonSerializable{
 			$tag->tag = clone $this->getNamedTag();
 			$tag->tag->setName("tag");
 		}
-		
+
 		if($slot !== -1){
 			$tag->Slot = new ByteTag("Slot", $slot);
 		}
@@ -844,4 +848,5 @@ class Item implements ItemIds, \JsonSerializable{
 
 		return $item;
 	}
+
 }
