@@ -1610,6 +1610,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 	}
 
+	/*
 	protected function processMovement($tickDiff){
 		if(!$this->isAlive() or !$this->spawned or $this->newPosition === null or $this->teleportPosition !== null or $this->isSleeping()){
 			$this->setMoving(false);
@@ -1735,6 +1736,123 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->newPosition = null;
 	}
+	*/
+
+
+	protected function processMovement($tickDiff){
+		if(!$this->isAlive() or !$this->spawned or $this->newPosition === null or $this->teleportPosition !== null or $this->isSleeping()){
+			$this->setMoving(false);
+			return;
+		}
+
+		$newPos = $this->newPosition;
+		$distanceSquared = $newPos->distanceSquared($this);
+
+		$revert = false;
+
+		if(($distanceSquared / ($tickDiff ** 2)) > 100 and !$this->allowMovementCheats){
+			$this->server->getLogger()->warning($this->getName() . " moved too fast, reverting movement");
+			$revert = true;
+		}else{
+			if($this->chunk === null or !$this->chunk->isGenerated()){
+				$chunk = $this->level->getChunk($newPos->x >> 4, $newPos->z >> 4, false);
+				if($chunk === null or !$chunk->isGenerated()){
+					$revert = true;
+					$this->nextChunkOrderRun = 0;
+				}else{
+					if($this->chunk !== null){
+						$this->chunk->removeEntity($this);
+					}
+					$this->chunk = $chunk;
+				}
+			}
+		}
+
+		if(!$revert and $distanceSquared != 0){
+			$dx = $newPos->x - $this->x;
+			$dy = $newPos->y - $this->y;
+			$dz = $newPos->z - $this->z;
+
+			$this->move($dx, $dy, $dz);
+
+			$diffX = $this->x - $newPos->x;
+			$diffY = $this->y - $newPos->y;
+			$diffZ = $this->z - $newPos->z;
+
+			$diff = ($diffX ** 2 + $diffY ** 2 + $diffZ ** 2) / ($tickDiff ** 2);
+
+			if($diff > 0){
+				$this->x = $newPos->x;
+				$this->y = $newPos->y;
+				$this->z = $newPos->z;
+				$radius = $this->width / 2;
+				$this->boundingBox->setBounds($this->x - $radius, $this->y, $this->z - $radius, $this->x + $radius, $this->y + $this->height, $this->z + $radius);
+			}
+		}
+
+		$from = new Location($this->lastX, $this->lastY, $this->lastZ, $this->lastYaw, $this->lastPitch, $this->level);
+		$to = $this->getLocation();
+
+		$delta = pow($this->lastX - $to->x, 2) + pow($this->lastY - $to->y, 2) + pow($this->lastZ - $to->z, 2);
+		$deltaAngle = abs($this->lastYaw - $to->yaw) + abs($this->lastPitch - $to->pitch);
+
+		if(!$revert and ($delta > (1 / 16) or $deltaAngle > 10)){
+
+			$isFirst = ($this->lastX === null or $this->lastY === null or $this->lastZ === null);
+
+			$this->lastX = $to->x;
+			$this->lastY = $to->y;
+			$this->lastZ = $to->z;
+
+			$this->lastYaw = $to->yaw;
+			$this->lastPitch = $to->pitch;
+
+			if(!$isFirst){
+				$ev = new PlayerMoveEvent($this, $from, $to);
+				$this->server->getPluginManager()->callEvent($ev);
+				$this->setMoving(true);
+
+				if(!($revert = $ev->isCancelled())){ //Yes, this is intended
+					if($to->distanceSquared($ev->getTo()) > 0.01){ //If plugins modify the destination
+						$this->teleport($ev->getTo());
+					}else{
+						$this->level->addEntityMovement($this->x >> 4, $this->z >> 4, $this->getId(), $this->x, $this->y + $this->getEyeHeight(), $this->z, $this->yaw, $this->pitch, $this->yaw);
+					}
+				}
+			}
+
+			if(!$this->isSpectator()){
+				$this->checkNearEntities($tickDiff);
+			}
+
+			$this->speed = ($to->subtract($from))->divide($tickDiff);
+		}elseif($distanceSquared == 0){
+			$this->speed = new Vector3(0, 0, 0);
+			$this->setMoving(false);
+
+		}
+
+		if($revert){
+
+			$this->lastX = $from->x;
+			$this->lastY = $from->y;
+			$this->lastZ = $from->z;
+
+			$this->lastYaw = $from->yaw;
+			$this->lastPitch = $from->pitch;
+
+			$this->sendPosition($from, $from->yaw, $from->pitch, MovePlayerPacket::MODE_RESET);
+			$this->forceMovement = new Vector3($from->x, $from->y, $from->z);
+		}else{
+			$this->forceMovement = null;
+			if($distanceSquared != 0 and $this->nextChunkOrderRun > 20){
+				$this->nextChunkOrderRun = 20;
+			}
+		}
+
+		$this->newPosition = null;
+	}
+
 
 	public function setMotion(Vector3 $mot){
 		if(parent::setMotion($mot)){
