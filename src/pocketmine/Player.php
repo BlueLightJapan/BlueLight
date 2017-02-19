@@ -41,6 +41,7 @@ use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
 use pocketmine\entity\ThrownExpBottle;
 use pocketmine\entity\ThrownPotion;
+use pocketmine\entity\Rideable;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -2912,6 +2913,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				switch($packet->action){
 					case InteractPacket::ACTION_RIGHT_CLICK:
 						if($this->server->rideableentity){
+							/*
 							if($target instanceof Horse){
 								$this->isLinked = true;
 								$this->setLink($target);
@@ -2923,6 +2925,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								$this->linkedentity = $target;
 
 							}elseif($target instanceof Boat){
+								$this->isLinked = true;
+								$this->setLink($target);
+								$this->linkedentity = $target;
+							}*/
+							if($target instanceof Rideable){
 								$this->isLinked = true;
 								$this->setLink($target);
 								$this->linkedentity = $target;
@@ -3093,6 +3100,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->PlayerFall($packet->fallDistance);
 				break;
 			case ProtocolInfo::RIDER_JUMP_PACKET:
+				$entity = $this->linkedentity;
+				$entity->jump($packet->power);
 				echo $packet->power."\n";
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
