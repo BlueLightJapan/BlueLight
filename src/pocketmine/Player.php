@@ -2261,8 +2261,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						if($entity instanceof Boat){
 							$entity->goStraight($packet->x,$packet->y,$packet->z);
 						}else{
-							$entity->yaw = $this->yaw;
-							$entity->pitch = $this->pitch;
+							$entity->setRotation($this->yaw,$this->pitch);
+
 						}
 					}
 				}
@@ -3074,6 +3074,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}
 						break;
 				}
+				break;
+			case ProtocolInfo::PLAYER_FALL_PACKET:
+				$this->PlayerFall($packet->fallDistance);
+				break;
+			case ProtocolInfo::RIDER_JUMP_PACKET:
+				echo $packet->power."\n";
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
@@ -3976,6 +3982,32 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->exhaust(0.3, PlayerExhaustEvent::CAUSE_DAMAGE);
 			}
 		}
+	}
+
+	public function PlayerFall($fallDistance){
+/*
+		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
+		if($damage > 0){
+			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
+			$this->attack($ev->getFinalDamage(), $ev);
+		}
+*/
+		if($this->isSpectator()){
+			return;
+		}
+		if($fallDistance > 3){
+			$this->getLevel()->addParticle(new DestroyBlockParticle($this, $this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0))));
+		}
+
+		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
+
+		if($damage > 0){
+			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
+			$this->attack($ev->getFinalDamage(), $ev);
+		}
+
+
+
 	}
 
 	public function sendPosition(Vector3 $pos, $yaw = null, $pitch = null, $mode = MovePlayerPacket::MODE_NORMAL, array $targets = null){
