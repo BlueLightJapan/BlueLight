@@ -1496,8 +1496,8 @@ class Server{
 				}
 			}
 			if($this->devtools){
-				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
-					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
 				}
 			}
 
@@ -1606,8 +1606,9 @@ class Server{
 			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
 			$this->pluginManager->registerInterface(PharPluginLoader::class);
 			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
-			$this->pluginManager->registerInterface(FolderPluginLoader::class);
-
+			if($this->devtools){
+				$this->pluginManager->registerInterface(FolderPluginLoader::class);
+			}
 			register_shutdown_function([$this, "crashDump"]);
 
 			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
@@ -1948,8 +1949,9 @@ class Server{
 
 		$this->pluginManager->registerInterface(PharPluginLoader::class);
 		$this->pluginManager->registerInterface(ScriptPluginLoader::class);
-		$this->pluginManager->registerInterface(FolderPluginLoader::class);
-
+		if($this->devtools){
+			$this->pluginManager->registerInterface(FolderPluginLoader::class);
+		}
 		$this->pluginManager->loadPlugins($this->pluginPath);
 		$this->enablePlugins(PluginLoadOrder::STARTUP);
 		$this->enablePlugins(PluginLoadOrder::POSTWORLD);

@@ -124,6 +124,8 @@ abstract class DefaultPermissions{
 		self::registerPermission(new Permission(self::ROOT . ".command.weather", "Allows the user to change weather", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.xp", "Allows the user to give/take xp", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.transfer", "Allows the user to transfer", Permission::DEFAULT_OP), $commands);
+		self::registerPermission(new Permission(self::ROOT . ".command.makeplugin", "Allows the user to make plugin", Permission::DEFAULT_OP), $commands);
+		self::registerPermission(new Permission(self::ROOT . ".command.extractplugin", "Allows the user to extract plugin", Permission::DEFAULT_OP), $commands);
 
 		$commands->recalculatePermissibles();
 
