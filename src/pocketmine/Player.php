@@ -287,6 +287,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $foodDepletion = 0;
 	protected $foodEnabled = true;
 
+	/** @var DeviceModel */
+	protected $deviceModel;
+	protected $os;
+
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -474,6 +478,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 */
 	public function isXbox(){
 		return $this->isXbox;
+	}
+	
+	public function getDeviceModel(){
+		return $this->deviceModel;
+	}
+
+	public function getOS(){
+		return $this->os;
 	}
 
 	public function getClientId(){
@@ -2155,6 +2167,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->username = TextFormat::clean($packet->username);
 				$this->displayName = $this->username;
 				$this->iusername = strtolower($this->username);
+				$this->deviceModel = $packet->deviceModel;
+				$this->os = $packet->os;
 				$this->setDataProperty(self::DATA_NAMETAG, self::DATA_TYPE_STRING, $this->username, false);
 
 				if(count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers() and $this->kick("disconnectionScreen.serverFull", false)){
