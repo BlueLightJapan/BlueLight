@@ -75,6 +75,7 @@ use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSprintEvent;
+use pocketmine\event\player\PlayerUseFishingRodEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\TextContainer;
@@ -2491,7 +2492,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 									"Rotation" => new ListTag("Rotation", [
 										new FloatTag("", $this->yaw),
 										new FloatTag("", $this->pitch)
-									])
+									]),
+									//"OwnerEid" => new LongTag("OwnerEid", $this->getUniqueId()),
 								]);
 
 								$f = 0.6;
