@@ -37,26 +37,27 @@ class ResourcePacks{
 	/** @var ResourcePackInfoEntry */
 	public $packEntries = [];
 
-	public function __construct(){
+	public function __construct($resourcePackEntries){
+		$this->resourcePackEntries = $resourcePackEntries;
+		$this->packEntries[$resourcePackEntries->getPackId()] = $resourcePackEntries;
 	}
 
 	public function sendPacksInfo($player){
 		$info = new ResourcePacksInfoPacket();
 		$info->mustAccept = $this->mustAccept;
-		$info->behaviourPackEntries = $this->behaviourPackEntries;
-		$info->resourcePackEntries = $this->resourcePackEntries;
-
+		$info->behaviourPackEntries[] = $this->behaviourPackEntries;
+		$info->resourcePackEntries[] = $this->resourcePackEntries;
 		$player->dataPacket($info);
 	}
 
 	public function sendPackDataInfo($player, $packid){
-		$datainfo = new ReourcePackDataInfoPacket();
+		$datainfo = new ResourcePackDataInfoPacket();
 		$datainfo->packid = $packid;
 		$datainfo->int1 = 0;
 		$datainfo->int2 = 1;
-		$datainfo->size = $packEntries[$packid]->getPackSize();
-		$datainfo->pack = $packEntries[$packid]->getPackData();
-
+		$datainfo->size = $this->packEntries[$packid]->getPackSize();
+		$datainfo->pack = $this->packEntries[$packid]->getPackData();
+		$datainfo->pack = "";
 		$player->dataPacket($datainfo);
 	}
 

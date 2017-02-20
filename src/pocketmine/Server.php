@@ -103,6 +103,8 @@ use pocketmine\utils\TextFormat;
 use pocketmine\utils\Utils;
 use pocketmine\utils\UUID;
 use pocketmine\utils\VersionString;
+use pocketmine\packs\ResourcePackInfoEntry;
+use pocketmine\packs\ResourcePacks;
 
 /**
  * The class that manages everything
@@ -268,6 +270,14 @@ class Server{
 	public $golemspawn = false;
 	public $keepInventory = false;
 	public $rideableentity = true;
+
+	/** @var ResourcePack */
+	public $packEnabled  = false;
+	public $pack;
+	public $packEntry;
+	public $packId = "";
+	public $packVersion;
+	public $packPath;
 
 	/**
 	 * @return string
@@ -1100,6 +1110,21 @@ class Server{
 	 *
 	 * @return string
 	 */
+	public function getBlueLightConfigString($variable, $defaultValue = ""){
+		$v = getopt("", ["$variable::"]);
+		if(isset($v[$variable])){
+			return (string) $v[$variable];
+		}
+
+		return $this->bluelightconfig->exists($variable) ? $this->bluelightconfig->get($variable) : $defaultValue;
+	}
+
+	/**
+	 * @param string $variable
+	 * @param string $defaultValue
+	 *
+	 * @return string
+	 */
 	public function getConfigString($variable, $defaultValue = ""){
 		$v = getopt("", ["$variable::"]);
 		if(isset($v[$variable])){
@@ -1436,6 +1461,11 @@ class Server{
 				"HungerHealth" => 10,
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
+				"ResourcePackEnabled" => false,
+				"ResourcePackId" => "6ed420fd-c7b7-39d8-820c-89b86da3cbef",
+				"ResourcePackVersion" => "0.0.1",
+				"ResourcePackPath" => "packdata\\ResourcePack.mcpack",
+
 			]);
 
 			$this->logger->info("Loading server properties...");
@@ -1489,6 +1519,11 @@ class Server{
 			$this->titletick = $this->getProperty("TitleTick", true);
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
+
+			$this->packEnabled = $this->getProperty("ResourcePackEnabled", false);
+			$this->packId = $this->getBlueLightConfigString("ResourcePackId", "");
+			$this->packVersion = $this->getBlueLightConfigString("ResourcePackVersion", "");
+			$this->packPath = $this->getBlueLightConfigString("ResourcePackPath", "");
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
@@ -1617,6 +1652,11 @@ class Server{
 			$this->pluginManager->loadPlugins($this->pluginPath);
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
+
+			if($this->packEnabled){
+				$this->packEntry = new ResourcePackInfoEntry($this->packId, $this->packVersion, $this->packPath);
+				$this->pack = new ResourcePacks($this->packEntry);
+			}
 
 			LevelProviderManager::addProvider(Anvil::class);
 			LevelProviderManager::addProvider(McRegion::class);

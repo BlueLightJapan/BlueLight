@@ -40,7 +40,7 @@ class ResourcePackChunkDataPacket extends DataPacket{
 		$this->reset();
 		$this->putString($this->packid);
 		$this->putVarInt($this->int1);
-		$this->putVarInt($this->size);
+		$this->putLong($this->size);
 		$this->putVarInt($this->int2);
 		$this->putByte($this->byte);
 

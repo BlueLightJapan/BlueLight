@@ -51,7 +51,8 @@ class ResourcePacksInfoPacket extends DataPacket{
 		}
 		$this->putShort(count($this->resourcePackEntries));
 		foreach($this->resourcePackEntries as $entry){
-			$this->putString($entry->getPackId());
+			$id = $entry->getPackId();
+			$this->putString($id);
 			$this->putString($entry->getVersion());
 			$this->putLong($entry->getPackSize());
 		}

@@ -25,18 +25,24 @@ class ResourcePackInfoEntry{
 	protected $packId; //UUID
 	protected $version;
 	protected $packSize;
+	protected $packData;
 
-	public function __construct(string $packId, string $version, $packSize){
+	public function __construct(string $packId, string $version ,$path){
 		$this->packId = $packId;
 		$this->version = $version;
-		$this->packSize = $packSize;
+		$this->path = $path;
+		$this->packSize = filesize($path);
+
+		$handle = fopen($path,"rb");
+		$this->packData = fread($handle, $this->packSize);
+
 	}
 
-	public function getPackId() : string{
+	public function getPackId(){
 		return $this->packId;
 	}
 
-	public function getVersion() : string{
+	public function getVersion(){
 		return $this->version;
 	}
 
@@ -45,7 +51,7 @@ class ResourcePackInfoEntry{
 	}
 
 	public function getPackData(){
-		//return $this->packSize;
+		return $this->packData;
 	}
 
 }

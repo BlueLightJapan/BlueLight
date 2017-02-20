@@ -293,6 +293,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $deviceModel;
 	protected $os;
 
+	/** @var ResourcePack */
+	public $pack;
+
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -1853,7 +1856,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->newPosition = null;
 	}
 
-
 	public function setMotion(Vector3 $mot){
 		if(parent::setMotion($mot)){
 			if($this->chunk !== null){
@@ -2180,7 +2182,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->inventory->setHeldItemSlot($this->inventory->getHotbarSlotIndex(0));
 		}
 
-		$this->dataPacket(new ResourcePacksInfoPacket());
+		if($this->server->packEnabled){
+			$this->pack = $this->server->pack;
+			$this->pack->sendPacksInfo($this);
+		}else{
+			$this->dataPacket(new ResourcePacksInfoPacket());
+		}
 
 		if(!$this->hasValidSpawnPosition() and isset($this->namedtag->SpawnLevel) and ($level = $this->server->getLevelByName($this->namedtag["SpawnLevel"])) instanceof Level){
 			$this->spawnPosition = new WeakPosition($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
@@ -3038,22 +3045,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						break;
 					case InteractPacket::ACTION_RIGHT_CLICK:
 						if($this->server->rideableentity){
-							/*
-							if($target instanceof Horse){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-
-							}elseif($target instanceof Pig){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-
-							}elseif($target instanceof Boat){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-							}*/
 							if($target instanceof Rideable){
 								$this->isLinked = true;
 								$this->setLink($target);
@@ -3192,7 +3183,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->action = $ev->getAnimationType();
 				$this->server->broadcastPacket($this->getViewers(), $pk);
 				break;
-			case ProtocolInfo::SET_HEALTH_PACKET: //Not used
+			case ProtocolInfo::SET_HEALTH_PACKET:
 				break;
 			case ProtocolInfo::ENTITY_EVENT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
@@ -3227,8 +3218,26 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::RIDER_JUMP_PACKET:
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
-				echo $packet->power."\n";
+			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:var_dump($packet);
+
+				if($packet->type == 2){
+
+					$packId = $packet->packid;
+					/*
+					$pk = new ResourcePackDataInfoPacket();
+					$pk->packageId = "5abdb963-4f3f-4d97-8482-88e2049ab149";
+					$pk->uk1 = 1048576;
+					$pk->uk2 = 1;
+					$pk->uk3 = 359901;
+					$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006?L6\u0007TT/[Ux?cx*\u0005h\u0002a\u0012";
+					*/
+					$this->pack->sendPackDataInfo($this,$packId);
+				}
 				break;
+
+			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:var_dump($packet);
+				break;
+
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
 					break;
