@@ -147,7 +147,6 @@ use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
 use pocketmine\network\protocol\StartGamePacket;
 use pocketmine\network\protocol\TakeItemEntityPacket;
-use pocketmine\network\protocol\TransferPacket;
 use pocketmine\network\protocol\TextPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
@@ -155,7 +154,6 @@ use pocketmine\network\SourceInterface;
 use pocketmine\permission\PermissibleBase;
 use pocketmine\permission\PermissionAttachment;
 use pocketmine\plugin\Plugin;
-use pocketmine\tile\ItemFrame;
 use pocketmine\tile\Sign;
 use pocketmine\tile\Spawnable;
 use pocketmine\tile\Tile;
@@ -286,14 +284,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	public function isXbox(){
 		return $this->isXbox;
-	}
-
-	public function transfer($address, $port = 19132){
-
-        	$pk = new TransferPacket();
-        	$pk->address = $address;
-        	$pk->port = $port;
-        	$this->dataPacket($pk);
 	}
 
 	public function sendCredit($value = true){
@@ -3274,6 +3264,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				break;
+
 			case ProtocolInfo::CONTAINER_SET_SLOT_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
@@ -3287,33 +3278,69 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if($packet->slot >= $this->inventory->getSize()){
 						break;
 					}
-					$transaction = new BaseTransaction($this->inventory, $packet->slot, $packet->item);
+					if($this->isCreative()){
+						if(Item::getCreativeItemIndex($packet->item) !== -1){
+							$this->inventory->setItem($packet->slot, $packet->item);
+							$this->inventory->setHotbarSlotIndex($packet->slot, $packet->slot); //links $hotbar[$packet->slot] to $slots[$packet->slot]
+						}
+					}
+					$transaction = new BaseTransaction($this->inventory, $packet->slot, $this->inventory->getItem($packet->slot), $packet->item);
 				}elseif($packet->windowid === ContainerSetContentPacket::SPECIAL_ARMOR){ //Our armor
 					if($packet->slot >= 4){
 						break;
 					}
 
-					$transaction = new BaseTransaction($this->inventory, $packet->slot + $this->inventory->getSize(), $packet->item);
+					$transaction = new BaseTransaction($this->inventory, $packet->slot + $this->inventory->getSize(), $this->inventory->getArmorItem($packet->slot), $packet->item);
 				}elseif(isset($this->windowIndex[$packet->windowid])){
-					//Transaction for non-player-inventory window, such as anvil, chest, etc.
-
+					$this->craftingType = 0;
 					$inv = $this->windowIndex[$packet->windowid];
-					$achievements = [];
-
-					if($inv instanceof FurnaceInventory and $inv->getItem($packet->slot)->getId() === Item::IRON_INGOT and $packet->slot === FurnaceInventory::RESULT){
-						$achievements[] = "acquireIron";
-
-					}elseif($inv instanceof EnchantInventory and $packet->item->hasEnchantments()){
-						$inv->onEnchant($this, $inv->getItem($packet->slot), $packet->item);
-					}
-
-					$transaction = new BaseTransaction($inv, $packet->slot, $packet->item, $achievements);
+					$transaction = new BaseTransaction($inv, $packet->slot, $inv->getItem($packet->slot), $packet->item);
 				}else{
-					//Client sent a transaction for a window which the server doesn't think they have open
 					break;
 				}
 
-				$this->getTransactionQueue()->addTransaction($transaction);
+				if($transaction->getSourceItem()->deepEquals($transaction->getTargetItem()) and $transaction->getTargetItem()->getCount() === $transaction->getSourceItem()->getCount()){ //No changes!
+					//No changes, just a local inventory update sent by the server
+					break;
+				}
+
+				if($this->currentTransaction === null or $this->currentTransaction->getCreationTime() < (microtime(true) - 8)){
+					if($this->currentTransaction !== null){
+						foreach($this->currentTransaction->getInventories() as $inventory){
+							if($inventory instanceof PlayerInventory){
+								$inventory->sendArmorContents($this);
+							}
+							$inventory->sendContents($this);
+						}
+					}
+					$this->currentTransaction = new SimpleTransactionGroup($this);
+				}
+
+				$this->currentTransaction->addTransaction($transaction);
+
+				if($this->currentTransaction->canExecute()){
+					$achievements = [];
+					foreach($this->currentTransaction->getTransactions() as $ts){
+						$inv = $ts->getInventory();
+						if($inv instanceof FurnaceInventory){
+							if($ts->getSlot() === 2){
+								switch($inv->getResult()->getId()){
+									case Item::IRON_INGOT:
+										$achievements[] = "acquireIron";
+										break;
+								}
+							}
+						}
+					}
+
+					if($this->currentTransaction->execute()){
+						foreach($achievements as $a){
+							$this->awardAchievement($a);
+						}
+					}
+
+					$this->currentTransaction = null;
+				}
 
 				break;
 			case ProtocolInfo::BLOCK_ENTITY_DATA_PACKET:
@@ -3368,25 +3395,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$pk->gamemode = $this->gamemode & 0x01;
 						$this->dataPacket($pk);
 						$this->sendSettings();
-					}
-				}
-				break;
-			case ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
-					break;
-				}
-
-				if(($tile = $this->level->getTile($this->temporalVector->setComponents($packet->x, $packet->y, $packet->z))) instanceof ItemFrame){
-					if(!$tile->getItem()->equals($packet->item) and !$this->isCreative(true)){
-						$tile->spawnTo($this);
 						break;
 					}
-
-					if(lcg_value() <= $tile->getItemDropChance() and $packet->item->getId() !== Item::AIR){
-						$this->level->dropItem($tile->getBlock(), $packet->item); //Use the packet item to handle creative drops correctly
-					}
-					$tile->setItem(null);
-					$tile->setItemRotation(0);
+					//$this->setGamemode($packet->gamemode, true);
 				}
 				break;
 			case ProtocolInfo::PLAYER_FALL_PACKET:
