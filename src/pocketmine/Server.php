@@ -45,7 +45,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\inventory\CraftingManager;
 use pocketmine\inventory\InventoryType;
 use pocketmine\inventory\Recipe;
-use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\Enchantment; levelt
 use pocketmine\item\Item;
 use pocketmine\lang\BaseLang;
 use pocketmine\level\format\io\LevelProviderManager;
@@ -61,7 +61,7 @@ use pocketmine\level\generator\normal\Normal;
 use pocketmine\level\Level;
 use pocketmine\level\LevelException;
 use pocketmine\metadata\EntityMetadataStore;
-use pocketmine\metadata\LevelMetadataStore;
+use pocketmine\metadata\LevelMetadataStore; level-type
 use pocketmine\metadata\PlayerMetadataStore;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -103,6 +103,8 @@ use pocketmine\utils\TextFormat;
 use pocketmine\utils\Utils;
 use pocketmine\utils\UUID;
 use pocketmine\utils\VersionString;
+
+use pocketmine\level\generator\normal\Normal2;
 
 /**
  * The class that manages everything
@@ -385,7 +387,7 @@ class Server{
 	 * @return string
 	 */
 	public function getLevelType(){
-		return $this->getConfigString("level-type", "DEFAULT");
+		return $this->getConfigString("level-type", "Normal2");
 	}
 
 	/**
