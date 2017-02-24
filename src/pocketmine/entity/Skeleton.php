@@ -28,7 +28,12 @@ use pocketmine\item\Item as InHandItem;
 
 class Skeleton extends Monster implements ProjectileSource{
 	const NETWORK_ID = 34;
-	
+
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 20;
+
 	public function getName(){
 		return "Skeleton";
 	}

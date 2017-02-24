@@ -28,8 +28,13 @@ class LavaSlime extends Living{
 	const NETWORK_ID = 42;
 
 	const DATA_SLIME_SIZE = 16;
-	
-	public function getName() : string{
+
+	public $width = 0.6;
+	public $length = 0.6;
+	public $height = 1.8;
+	public $maxhealth = 16
+;	
+	public function getName(){
 		return "LavaSlime";
 	}
 	

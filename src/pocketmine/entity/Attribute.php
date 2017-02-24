@@ -35,6 +35,7 @@ class Attribute{
 	const ATTACK_DAMAGE = 8;
 	const EXPERIENCE_LEVEL = 9;
 	const EXPERIENCE = 10;
+	const LUCK = 11;
 
 	private $id;
 	protected $minValue;
@@ -61,7 +62,7 @@ class Attribute{
 		self::addAttribute(self::ATTACK_DAMAGE, "minecraft:attack_damage", 0.00, 340282346638528859811704183484516925440.00, 1.00, false);
 		self::addAttribute(self::EXPERIENCE_LEVEL, "minecraft:player.level", 0.00, 24791.00, 0.00);
 		self::addAttribute(self::EXPERIENCE, "minecraft:player.experience", 0.00, 1.00, 0.00);
-		//TODO: minecraft:luck (for fishing?)
+		self::addAttribute(self::LUCK, "minecraft:luck", -1024, 1024, 0.00);
 	}
 
 	/**
