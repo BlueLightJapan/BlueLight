@@ -23,6 +23,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
+use pocketmine\command\data\CommandParameter;
 
 class BanListCommand extends VanillaCommand{
 

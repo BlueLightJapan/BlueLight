@@ -67,9 +67,6 @@ abstract class Command{
 	protected $usageMessage;
 
 	/** @var string */
-	private $permission = null;
-
-	/** @var string */
 	private $permissionMessage = null;
 
 	/** @var String|CommandParameter[] */
@@ -181,7 +178,7 @@ abstract class Command{
 	public function getPermission(){
 		return $this->commandData->pocketminePermission ?? null;
 	}
-	
+
 
 	/**
 	 * @param string|null $permission

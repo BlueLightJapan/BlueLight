@@ -25,6 +25,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class TellCommand extends VanillaCommand{
 
@@ -36,6 +37,8 @@ class TellCommand extends VanillaCommand{
 			["w", "msg"]
 		);
 		$this->setPermission("pocketmine.command.tell");
+		//$this->commandParameters["default"] = [new CommandParameter("recipient", CommandParameter::ARG_TYPE_PLAYER, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

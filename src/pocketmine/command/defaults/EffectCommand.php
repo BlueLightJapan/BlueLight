@@ -26,6 +26,7 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\InstantEffect;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class EffectCommand extends VanillaCommand{
 
@@ -36,6 +37,8 @@ class EffectCommand extends VanillaCommand{
 			"%commands.effect.usage"
 		);
 		$this->setPermission("pocketmine.command.effect");
+		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -90,6 +93,13 @@ class EffectCommand extends VanillaCommand{
 
 		if(count($args) >= 4){
 			$amplification = (int) $args[3];
+			if($amplification > 255){
+				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.num.tooBig", [(string) $args[3], "255"]));
+				return true;
+			}elseif($amplification < 0){
+				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.num.tooSmall", [(string) $args[3], "0"]));
+				return true;
+			}
 		}
 
 		if(count($args) >= 5){
