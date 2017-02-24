@@ -27,6 +27,7 @@ use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerExperienceChangeEvent;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerInventory;
+use pocketmine\inventory\EnderChestInventory;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
@@ -52,6 +53,9 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 
 	/** @var PlayerInventory */
 	protected $inventory;
+
+	/** @var EnderChestInventory */
+ 	protected $enderChestInventory;
 
 	/** @var UUID */
 	protected $uuid;
@@ -403,16 +407,20 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return [$level, $progress];
 	}
 
-
 	public function getInventory(){
 		return $this->inventory;
 	}
 
+	
+	 $this->enderChestInventory = new EnderChestInventory($this, ($this->namedtag->EnderChestInventory ?? null));
+
+	
 	protected function initEntity(){
 
 		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, false, self::DATA_TYPE_BYTE);
 		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0], false);
 
+	
 		$this->inventory = new PlayerInventory($this);
 		if($this instanceof Player){
 			$this->addWindow($this->inventory, 0);
@@ -420,7 +428,11 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			if(isset($this->namedtag->NameTag)){
 				$this->setNameTag($this->namedtag["NameTag"]);
 			}
-
+			
+	public function getEnderChestInventory(){
+ 		return $this->enderChestInventory;
+ 	}
+			
 			if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
 				$this->setSkin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Name"]);
 			}
@@ -611,6 +623,16 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		if($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])){
 			$this->hasSpawned[$player->getLoaderId()] = $player;
 
+		}
+		
+	$this->namedtag->EnderChestInventory = new ListTag("EnderChestInventory", []);
+ 		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
+ 		if($this->enderChestInventory !== null){
+ 			for($slot = 0; $slot < $this->enderChestInventory->getSize(); $slot++){
+ 				if(($item = $this->enderChestInventory->getItem($slot)) instanceof ItemItem){
+ 					$this->namedtag->EnderChestInventory[$slot] = $item->nbtSerialize($slot);
+				}	
+ 
 			if(strlen($this->skin) < 64 * 32 * 4){
 				throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");
 			}
