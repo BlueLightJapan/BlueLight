@@ -29,7 +29,7 @@ use pocketmine\event\player\PlayerExperienceChangeEvent;
 use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerInventory;
-//use pocketmine\inventory\SimpleTransactionQueue;
+use pocketmine\inventory\SimpleTransactionQueue;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\math\Math;
@@ -64,7 +64,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	//protected $floatingInventory;
 
 	///** @var SimpleTransactionQueue */
-	//protected $transactionQueue = null;
+	protected $transactionQueue = null;
 
 	/** @var UUID */
 	protected $uuid;
@@ -92,7 +92,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->skinId;
 	}
 
-	/**
+	/** float
 	 * @return UUID|null
 	 */
 	public function getUniqueId(){
@@ -428,13 +428,13 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		//return $this->floatingInventory;
 	//}
 
-	//public function getTransactionQueue(){
+	public function getTransactionQueue(){
 		//////Is creating the transaction queue ondemand a good idea? I think only if it's destroyed afterwards. hmm...
-		///if($this->transactionQueue === null){
+		if($this->transactionQueue === null){
 			////Potential for crashes here if a plugin attempts to use this, say for an NPC plugin or something...
-			///$this->transactionQueue = new SimpleTransactionQueue($this);
-		//}
-		//return $this->transactionQueue;
+			$this->transactionQueue = new SimpleTransactionQueue($this);
+		}
+		return $this->transactionQueue;
 	}
 
 	protected function initEntity(){
@@ -446,7 +446,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		$this->enderChestInventory = new EnderChestInventory($this, ($this->namedtag->EnderChestInventory ?? null));
 
 		//Virtual inventory for desktop GUI crafting and anti-cheat transaction processing
-		$this->floatingInventory = new FloatingInventory($this);
+		//$this->floatingInventory = new FloatingInventory($this);
 
 		if($this instanceof Player){
 			$this->addWindow($this->inventory, 0);
