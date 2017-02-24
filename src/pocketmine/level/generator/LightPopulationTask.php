@@ -55,7 +55,7 @@ class LightPopulationTask extends AsyncTask{
 		$level = $server->getLevel($this->levelId);
 		if($level !== null){
 			/** @var Chunk $chunk */
-			$chunk = Chunk::fastDeserialize($this->chunk);
+			$chunk = Chunk::fastDeserialize($this->chunk, $level->getProvider());
 			if($chunk === null){
 				//TODO error
 				return;
