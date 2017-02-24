@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -19,36 +19,27 @@
  *
  */
 
-namespace pocketmine\event\player;
+/**
+ * Events called when a player attempts to perform movement cheats such as clipping through blocks.
+ */
+namespace pocketmine\event\player\cheat;
 
 use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
 use pocketmine\Player;
+use pocketmine\math\Vector3;
 
-class PlayerItemHeldEvent extends PlayerEvent implements Cancellable{
+class PlayerIllegalMoveEvent extends PlayerCheatEvent implements Cancellable{
 	public static $handlerList = null;
 
-	private $item;
-	private $slot;
-	private $inventorySlot;
+	private $attemptedPosition;
 
-	public function __construct(Player $player, Item $item, $inventorySlot, $slot){
+	public function __construct(Player $player, Vector3 $attemptedPosition){
+		$this->attemptedPosition = $attemptedPosition;
 		$this->player = $player;
-		$this->item = $item;
-		$this->inventorySlot = (int) $inventorySlot;
-		$this->slot = (int) $slot;
 	}
 
-	public function getSlot(){
-		return $this->slot;
-	}
-
-	public function getInventorySlot(){
-		return $this->inventorySlot;
-	}
-
-	public function getItem(){
-		return $this->item;
+	public function getAttemptedPosition() : Vector3{
+		return $this->attemptedPosition;
 	}
 
 }

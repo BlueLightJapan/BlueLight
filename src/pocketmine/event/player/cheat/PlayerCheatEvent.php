@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -19,36 +19,13 @@
  *
  */
 
-namespace pocketmine\event\player;
+/**
+ * Events called when a player attempts to cheat
+ */
+namespace pocketmine\event\player\cheat;
 
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\Player;
+use pocketmine\event\player\PlayerEvent;
 
-class PlayerItemHeldEvent extends PlayerEvent implements Cancellable{
-	public static $handlerList = null;
-
-	private $item;
-	private $slot;
-	private $inventorySlot;
-
-	public function __construct(Player $player, Item $item, $inventorySlot, $slot){
-		$this->player = $player;
-		$this->item = $item;
-		$this->inventorySlot = (int) $inventorySlot;
-		$this->slot = (int) $slot;
-	}
-
-	public function getSlot(){
-		return $this->slot;
-	}
-
-	public function getInventorySlot(){
-		return $this->inventorySlot;
-	}
-
-	public function getItem(){
-		return $this->item;
-	}
+abstract class PlayerCheatEvent extends PlayerEvent{
 
 }
