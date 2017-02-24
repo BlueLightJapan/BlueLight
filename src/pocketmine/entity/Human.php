@@ -25,11 +25,11 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerExperienceChangeEvent;
-use pocketmine\inventory\FloatingInventory;
+//use pocketmine\inventory\FloatingInventory;
 use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerInventory;
-use pocketmine\inventory\SimpleTransactionQueue;
+//use pocketmine\inventory\SimpleTransactionQueue;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\math\Math;
@@ -60,11 +60,11 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	/** @var EnderChestInventory */
 	protected $enderChestInventory;
 
-	/** @var FloatingInventory */
-	protected $floatingInventory;
+	///** @var FloatingInventory */
+	//protected $floatingInventory;
 
-	/** @var SimpleTransactionQueue */
-	protected $transactionQueue = null;
+	///** @var SimpleTransactionQueue */
+	//protected $transactionQueue = null;
 
 	/** @var UUID */
 	protected $uuid;
@@ -424,17 +424,17 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->enderChestInventory;
 	}
 
-	public function getFloatingInventory(){
-		return $this->floatingInventory;
-	}
+	//public function getFloatingInventory(){
+		//return $this->floatingInventory;
+	//}
 
-	public function getTransactionQueue(){
-		//Is creating the transaction queue ondemand a good idea? I think only if it's destroyed afterwards. hmm...
-		if($this->transactionQueue === null){
-			//Potential for crashes here if a plugin attempts to use this, say for an NPC plugin or something...
-			$this->transactionQueue = new SimpleTransactionQueue($this);
-		}
-		return $this->transactionQueue;
+	//public function getTransactionQueue(){
+		//////Is creating the transaction queue ondemand a good idea? I think only if it's destroyed afterwards. hmm...
+		///if($this->transactionQueue === null){
+			////Potential for crashes here if a plugin attempts to use this, say for an NPC plugin or something...
+			///$this->transactionQueue = new SimpleTransactionQueue($this);
+		//}
+		//return $this->transactionQueue;
 	}
 
 	protected function initEntity(){
