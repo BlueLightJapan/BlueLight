@@ -81,7 +81,6 @@ use pocketmine\network\protocol\ResourcePackClientResponsePacket;
 use pocketmine\network\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\protocol\RespawnPacket;
 use pocketmine\network\protocol\ShowCreditsPacket;
-
 use pocketmine\network\protocol\SetCommandsEnabledPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
 use pocketmine\network\protocol\SetEntityDataPacket;
@@ -97,7 +96,6 @@ use pocketmine\network\protocol\TakeItemEntityPacket;
 use pocketmine\network\protocol\TextPacket;
 use pocketmine\network\protocol\TransferPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
-use pocketmine\network\protocol\UpdateTradePacket;
 use pocketmine\network\protocol\UseItemPacket;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -266,7 +264,7 @@ class Network{
 					$pk->setBuffer($buf, 1);
 
 					$pk->decode();
-				//	assert($pk->feof(), "Still " . strlen(substr($pk->buffer, $pk->offset)) . " bytes unread in " . get_class($pk));
+					assert($pk->feof(), "Still " . strlen(substr($pk->buffer, $pk->offset)) . " bytes unread in " . get_class($pk));
 					$p->handleDataPacket($pk);
 				}
 			}
@@ -397,7 +395,6 @@ class Network{
 		$this->registerPacket(ProtocolInfo::TEXT_PACKET, TextPacket::class);
 		$this->registerPacket(ProtocolInfo::TRANSFER_PACKET, TransferPacket::class);
 		$this->registerPacket(ProtocolInfo::UPDATE_BLOCK_PACKET, UpdateBlockPacket::class);
-		$this->registerPacket(ProtocolInfo::UPDATE_TRADE_PACKET, UpdateTradePacket::class);
 		$this->registerPacket(ProtocolInfo::USE_ITEM_PACKET, UseItemPacket::class);
 	}
 }

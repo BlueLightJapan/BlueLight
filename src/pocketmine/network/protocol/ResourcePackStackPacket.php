@@ -27,16 +27,8 @@ class ResourcePackStackPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_STACK_PACKET;
 
 	public $mustAccept;
-	public $resourcecount;
-	public $resourceid;
-	public $resourceversion;
-	public $behaviourcount2;
-	public $behaviourid;
-	public $behaviourversion;
-
-	public function getName(){
-		return "ResourcePackStackPacket";
-	}
+	public $behaviourPackEntries;
+	public $resourcePackEntries;
 
 	public function decode(){
 
@@ -45,12 +37,15 @@ class ResourcePackStackPacket extends DataPacket{
 	public function encode(){
 		$this->reset();
 		$this->putBool($this->mustAccept);
-		$this->putShort($this->resourcecount);
-		$this->putString($this->resourceid);
-		$this->putString($this->resourceversion);
-
-		$this->putShort($this->behaviourcount2);
-		$this->putString($this->behaviourid);
-		$this->putString($this->behaviourversion);
+		$this->putShort(count($this->behaviourPackEntries));
+		foreach($this->behaviourPackEntries as $entry){
+			$this->putString($entry->getPackId());
+			$this->putString($entry->getVersion());
+		}
+		$this->putShort(count($this->resourcePackEntries));
+		foreach($this->resourcePackEntries as $entry){
+			$this->putString($entry->getPackId());
+			$this->putString($entry->getVersion());
+		}
 	}
 }

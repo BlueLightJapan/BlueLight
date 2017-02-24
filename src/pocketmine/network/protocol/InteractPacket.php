@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
@@ -32,21 +32,12 @@ class InteractPacket extends DataPacket{
 	const ACTION_LEAVE_VEHICLE = 3;
 	const ACTION_MOUSEOVER = 4;
 
-	/** @deprecated Do NOT use this. This constant is misleading and will be removed in the future */
-	const ACTION_JUMP = 3;
-
 	public $action;
-	public $eid;
 	public $target;
-
-	public function getName(){
-		return "InteractPacket";
-	}
 
 	public function decode(){
 		$this->action = $this->getByte();
 		$this->target = $this->getEntityId();
-		$this->eid = $this->target;
 	}
 
 	public function encode(){

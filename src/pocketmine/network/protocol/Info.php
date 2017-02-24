@@ -1,5 +1,24 @@
 <?php
 
+/*
+ *
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author PocketMine Team
+ * @link http://www.pocketmine.net/
+ *
+ *
+*/
+
 /**
  * Minecraft: PE multiplayer protocol implementation
  */
@@ -12,8 +31,7 @@ interface Info{
 	 * Actual Minecraft: PE protocol version
 	 */
 	const CURRENT_PROTOCOL = 101;
-	const ACCEPTED_PROTOCOLS = [101];
-	
+
 	const LOGIN_PACKET = 0x01;
 	const PLAY_STATUS_PACKET = 0x02;
 	const SERVER_TO_CLIENT_HANDSHAKE_PACKET = 0x03;
@@ -92,10 +110,9 @@ interface Info{
 	const SHOW_CREDITS_PACKET = 0x4c;
 	const AVAILABLE_COMMANDS_PACKET = 0x4d;
 	const COMMAND_STEP_PACKET = 0x4e;
-	const UPDATE_TRADE_PACKET = 0x4f;
-	const RESOURCE_PACK_DATA_INFO_PACKET = 0x50;
-	const RESOURCE_PACK_CHUNK_DATA_PACKET = 0x51;
-	const RESOURCE_PACK_CHUNK_REQUEST_PACKET = 0x52;
-	const TRANSFER_PACKET = 0x53;
+	const RESOURCE_PACK_DATA_INFO_PACKET = 0x4f;
+	const RESOURCE_PACK_CHUNK_DATA_PACKET = 0x50;
+	const RESOURCE_PACK_CHUNK_REQUEST_PACKET = 0x51;
+	const TRANSFER_PACKET = 0x52;
 
 }

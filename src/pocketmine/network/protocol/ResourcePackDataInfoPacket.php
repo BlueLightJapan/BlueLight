@@ -32,10 +32,6 @@ class ResourcePackDataInfoPacket extends DataPacket{
 	public $size;
 	public $pack;
 
-	public function getName(){
-		return "ResourcePackDataInfoPacket";
-	}
-
 	public function decode(){
 
 	}
@@ -46,7 +42,7 @@ class ResourcePackDataInfoPacket extends DataPacket{
 		$this->putString($this->packid);
 		$this->putVarInt($this->int1);
 		$this->putVarInt($this->int2);
-		$this->putUnsignedVarLong($this->size);
+		$this->putLong($this->size);
 		$this->putString($this->pack);
 
 
