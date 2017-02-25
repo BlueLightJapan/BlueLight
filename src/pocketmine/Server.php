@@ -275,7 +275,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP-DerivedVersion";
+		return "BlueLight";
 	}
 
 	/**
@@ -1461,7 +1461,7 @@ class Server{
 				"generator-settings" => "",
 				"level-name" => "world",
 				"level-seed" => "",
-				"level-type" => "DEFAULT",
+				"level-type" => "Normal2",
 				"enable-query" => true,
 				"enable-rcon" => false,
 				"rcon.password" => substr(base64_encode(random_bytes(20)), 3, 10),
@@ -1632,6 +1632,7 @@ class Server{
 
 			Generator::addGenerator(Flat::class, "flat");
 			Generator::addGenerator(Normal::class, "normal");
+			Generator::addGenerator(Normal2::class, "normal2");
 			Generator::addGenerator(Normal::class, "default");
 			Generator::addGenerator(Nether::class, "hell");
 			Generator::addGenerator(Nether::class, "nether");
