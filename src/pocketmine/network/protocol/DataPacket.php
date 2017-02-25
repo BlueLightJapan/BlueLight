@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____  
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- *
+ * 
  *
 */
 
@@ -27,7 +27,6 @@ use pocketmine\entity\Entity;
 use pocketmine\item\Item;
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
-
 
 abstract class DataPacket extends BinaryStream{
 
@@ -69,14 +68,7 @@ abstract class DataPacket extends BinaryStream{
 
 		return $data;
 	}
-
-	/**
-	 * Decodes entity metadata from the stream.
-	 *
-	 * @param bool $types Whether to include metadata types along with values in the returned array
-	 *
-	 * @return array
-	 */
+	
 	public function getEntityMetadata(bool $types = true) : array{
 		$count = $this->getUnsignedVarInt();
 		$data = [];
@@ -130,15 +122,9 @@ abstract class DataPacket extends BinaryStream{
 				$data[$key] = $value;
 			}
 		}
-
 		return $data;
 	}
-
-	/**
-	 * Writes entity metadata to the packet buffer.
-	 *
-	 * @param array $metadata
-	 */
+	
 	public function putEntityMetadata(array $metadata){
 		$this->putUnsignedVarInt(count($metadata));
 		foreach($metadata as $key => $d){
@@ -179,4 +165,12 @@ abstract class DataPacket extends BinaryStream{
 			}
 		}
 	}
+
+	/**
+	 * @return PacketName|string
+     */
+	public function getName(){
+		return "DataPacket";
+	}
+
 }
