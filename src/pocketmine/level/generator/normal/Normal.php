@@ -27,7 +27,7 @@ use pocketmine\level\generator\populator\Ore;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 
-class Normal
+class Normal extends Generator{
 	
 	const NAME = "Normal";
 	/** @var Simplex */
