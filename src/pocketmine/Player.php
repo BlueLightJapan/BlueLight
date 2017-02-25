@@ -2287,8 +2287,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->username = TextFormat::clean($packet->username);
 				$this->displayName = $this->username;
 				$this->iusername = strtolower($this->username);
-				$this->deviceModel = $packet->deviceModel;
-				$this->os = $packet->os;
+				//$this->deviceModel = $packet->deviceModel;
+	//			$this->os = $packet->os;
 				$this->setDataProperty(self::DATA_NAMETAG, self::DATA_TYPE_STRING, $this->username, false);
 
 				if(count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers() and $this->kick("disconnectionScreen.serverFull", false)){
