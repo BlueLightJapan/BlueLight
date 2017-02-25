@@ -33,7 +33,7 @@ class ResourcePackClientResponsePacket extends DataPacket{
 	public function decode(){
 		$this->byte = $this->getByte();
 		$this->short = $this->getShort();
-		$this->string = $this->getString();
+		//$this->string = $this->getString();
 
 	}
 
