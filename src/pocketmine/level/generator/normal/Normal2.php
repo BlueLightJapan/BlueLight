@@ -221,7 +221,7 @@ class Normal2 extends Normal{
 				//biome color
 				//todo: smooth chunk color
 				$biomeColor = $biome->getColor();
-				$chunk->setBiomeColor($genx, $genz, ($biomeColor >> 16), ($biomeColor >> 8) & 0xff, ($biomeColor & 0xff));
+				//$chunk->setBiomeColor($genx, $genz, ($biomeColor >> 16), ($biomeColor >> 8) & 0xff, ($biomeColor & 0xff)); outdated and more
 				//generating
 				$generateHeight = $genyHeight > $this->seaHeight ? $genyHeight : $this->seaHeight;
 				for($geny = 0; $geny <= $generateHeight; $geny++){
