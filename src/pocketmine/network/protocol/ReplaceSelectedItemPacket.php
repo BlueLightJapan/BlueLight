@@ -29,10 +29,6 @@ class ReplaceSelectedItemPacket extends DataPacket{
 
 	public $item;
 
-	public function getName(){
-		return "ReplaceSelectedItemPacket";
-	}
-
 	public function decode(){
 
 	}

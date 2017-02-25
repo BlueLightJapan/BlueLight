@@ -31,10 +31,6 @@ class ShowCreditsPacket extends DataPacket{
 	public $eid;
 	public $type;
 
-	public function getName(){
-		return "ShowCreditsPacket";
-	}
-
 	public function decode(){
 
 	}

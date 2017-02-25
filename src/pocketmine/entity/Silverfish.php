@@ -26,7 +26,12 @@ use pocketmine\Player;
 
 class Silverfish extends Monster{
 	const NETWORK_ID = 39;
-	
+
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 8;
+
 	public function getName(){
 		return "Silverfish";
 	}

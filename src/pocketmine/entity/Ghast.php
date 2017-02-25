@@ -30,7 +30,8 @@ class Ghast extends Monster{
 	public $width = 6;
 	public $length = 6;
 	public $height = 6;
-	
+	public $maxhealth = 10;
+
 	public function getName(){
 		return "Ghast";
 	}

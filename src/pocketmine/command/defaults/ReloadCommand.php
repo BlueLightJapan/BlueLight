@@ -25,6 +25,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class ReloadCommand extends VanillaCommand{
 

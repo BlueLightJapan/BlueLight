@@ -32,7 +32,12 @@ class Creeper extends Monster{
 	const DATA_SWELL = 17;
 	const DATA_SWELL_OLD = 18;
 	const DATA_POWERED = 19;
-	
+
+	public $width = 0.6;
+	public $length = 0.6;
+	public $height = 1.8;
+	public $maxhealth = 20;
+
 	public function getName(){
 		return "Creeper";
 	}

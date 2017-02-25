@@ -1,11 +1,12 @@
 <?php
+
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +15,15 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
+
 /**
  * All the Tile classes and related classes
  */
 namespace pocketmine\tile;
+
 use pocketmine\event\Timings;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -28,28 +31,28 @@ use pocketmine\level\Position;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
+
 abstract class Tile extends Position{
-	
-	const SIGN = "Sign";
-	const CHEST = "Chest";
-	const FURNACE = "Furnace";
-	const FLOWER_POT = "FlowerPot";
-	const MOB_SPAWNER = "MobSpawner";
-	const SKULL = "Skull";
+
 	const BREWING_STAND = "BrewingStand";
+	const CHEST = "Chest";
 	const ENCHANT_TABLE = "EnchantTable";
-	const BEACON = "Beacon";
-	const ENDER_CHEST = "EnderChest";
+	const FLOWER_POT = "FlowerPot";
+	const FURNACE = "Furnace";
+	const ITEM_FRAME = "ItemFrame";
+	const MOB_SPAWNER = "MobSpawner";
+	const SIGN = "Sign";
+	const SKULL = "Skull";
+
 	public static $tileCount = 1;
+
 	private static $knownTiles = [];
 	private static $shortNames = [];
+
 	/** @var Chunk */
 	public $chunk;
 	public $name;
 	public $id;
-	public $x;
-	public $y;
-	public $z;
 	public $attach;
 	public $metadata;
 	public $closed = false;
@@ -57,11 +60,23 @@ abstract class Tile extends Position{
 	protected $lastUpdate;
 	protected $server;
 	protected $timings;
+
 	/** @var \pocketmine\event\TimingsHandler */
 	public $tickTimer;
+
+	public static function init(){
+		self::registerTile(Chest::class);
+		self::registerTile(EnchantTable::class);
+		self::registerTile(FlowerPot::class);
+		self::registerTile(Furnace::class);
+		self::registerTile(ItemFrame::class);
+		self::registerTile(Sign::class);
+		self::registerTile(Skull::class);
+	}
+
 	/**
 	 * @param string      $type
-	 * @param Chunk   $chunk
+	 * @param Chunk       $chunk
 	 * @param CompoundTag $nbt
 	 * @param             $args
 	 *
@@ -72,8 +87,10 @@ abstract class Tile extends Position{
 			$class = self::$knownTiles[$type];
 			return new $class($chunk, $nbt, ...$args);
 		}
+
 		return null;
 	}
+
 	/**
 	 * @param $className
 	 *
@@ -86,8 +103,10 @@ abstract class Tile extends Position{
 			self::$shortNames[$className] = $class->getShortName();
 			return true;
 		}
+
 		return false;
 	}
+
 	/**
 	 * Returns the short save name
 	 *
@@ -96,9 +115,12 @@ abstract class Tile extends Position{
 	public function getSaveId(){
 		return self::$shortNames[static::class];
 	}
+
 	public function __construct(Chunk $chunk, CompoundTag $nbt){
 		assert($chunk !== null and $chunk->getProvider() !== null);
+
 		$this->timings = Timings::getTileEntityTimings($this);
+
 		$this->server = $chunk->getProvider()->getLevel()->getServer();
 		$this->chunk = $chunk;
 		$this->setLevel($chunk->getProvider()->getLevel());
@@ -109,34 +131,42 @@ abstract class Tile extends Position{
 		$this->x = (int) $this->namedtag["x"];
 		$this->y = (int) $this->namedtag["y"];
 		$this->z = (int) $this->namedtag["z"];
+
 		$this->chunk->addTile($this);
 		$this->getLevel()->addTile($this);
 		$this->tickTimer = Timings::getTileEntityTimings($this);
 	}
+
 	public function getId(){
 		return $this->id;
 	}
+
 	public function saveNBT(){
 		$this->namedtag->id = new StringTag("id", $this->getSaveId());
 		$this->namedtag->x = new IntTag("x", $this->x);
 		$this->namedtag->y = new IntTag("y", $this->y);
 		$this->namedtag->z = new IntTag("z", $this->z);
 	}
+
 	/**
 	 * @return \pocketmine\block\Block
 	 */
 	public function getBlock(){
 		return $this->level->getBlock($this);
 	}
+
 	public function onUpdate(){
 		return false;
 	}
+
 	public final function scheduleUpdate(){
 		$this->level->updateTiles[$this->id] = $this;
 	}
+
 	public function __destruct(){
 		$this->close();
 	}
+
 	public function close(){
 		if(!$this->closed){
 			$this->closed = true;
@@ -150,7 +180,9 @@ abstract class Tile extends Position{
 			$this->level = null;
 		}
 	}
+
 	public function getName(){
 		return $this->name;
 	}
+
 }

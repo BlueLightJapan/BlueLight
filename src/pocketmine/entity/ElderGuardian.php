@@ -23,8 +23,13 @@ namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class ElderGuardian extends Animal{
+class ElderGuardian extends Monster{
 	const NETWORK_ID = 50;
+
+	public $width = 0.3;
+	public $length = 0.9;
+	public $height = 1.8;
+	public $maxhealth = 80;
 
 	public function getName(){
 		return "ElderGuardian";
