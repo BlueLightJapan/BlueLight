@@ -2861,13 +2861,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$this->inventory->sendContents($this);
 						}
-						break;
+							break;
 					case PlayerActionPacket::ACTION_STOP_SLEEPING:
 						$this->stopSleep();
 						break;
-					case PlayerActionPacket::ACTION_RESPAWN:
+					case PlayerActionPacket::ACTION_RESPAWN: //todo fix this
 						if($this->spawned === false or $this->isAlive() or !$this->isOnline()){
 							break;
+						}
 						}
 
 						if($this->server->isHardcore()){
