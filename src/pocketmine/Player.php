@@ -2287,8 +2287,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->username = TextFormat::clean($packet->username);
 				$this->displayName = $this->username;
 				$this->iusername = strtolower($this->username);
-				//$this->deviceModel = $packet->deviceModel;
-	//			$this->os = $packet->os;
+				$this->deviceModel = $packet->deviceModel;
+				$this->os = $packet->os;
 				$this->setDataProperty(self::DATA_NAMETAG, self::DATA_TYPE_STRING, $this->username, false);
 
 				if(count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers() and $this->kick("disconnectionScreen.serverFull", false)){
@@ -2861,14 +2861,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$this->inventory->sendContents($this);
 						}
-							break;
+						break;
 					case PlayerActionPacket::ACTION_STOP_SLEEPING:
 						$this->stopSleep();
 						break;
-					case PlayerActionPacket::ACTION_RESPAWN: //todo fix this
+					case PlayerActionPacket::ACTION_RESPAWN:
 						if($this->spawned === false or $this->isAlive() or !$this->isOnline()){
 							break;
-						}
 						}
 
 						if($this->server->isHardcore()){
