@@ -1,9 +1,5 @@
 <?php
 
-/*
-Principal generator. Please use this generator.
- */
-
 namespace pocketmine\level\generator\normal;
 
 use pocketmine\block\Block;
@@ -42,7 +38,7 @@ class Normal2 extends Normal{
 
 	private $heightOffset;
 
-	private $seaHeight = 64;
+	private $seaHeight = 62;
 	private $seaFloorHeight = 48;
 	private $beathStartHeight = 60;
 	private $beathStopHeight = 64;
@@ -80,11 +76,43 @@ class Normal2 extends Normal{
 		$this->noiseBaseGround = new Simplex($this->random, 4, 1 / 4, 1 / 64);
 		$this->noiseRiver = new Simplex($this->random, 2, 1, 1 / 512);
 		$this->random->setSeed($this->level->getSeed());
-		
-		$this->selector = new BiomeSelector($this->random, Biome::getBiome(Biome::OCEAN));
+		$this->selector = new BiomeSelector($this->random, function($temperature, $rainfall){
+			if($rainfall < 0.25){
+				if($temperature < 0.7){
+					return Biome::OCEAN;
+				}elseif($temperature < 0.85){
+					return Biome::RIVER;
+				}else{
+					return Biome::SWAMP;
+				}
+			}elseif($rainfall < 0.60){
+				if($temperature < 0.25){
+					return Biome::ICE_PLAINS;
+				}elseif($temperature < 0.75){
+					return Biome::PLAINS;
+				}else{
+					return Biome::DESERT;
+				}
+			}elseif($rainfall < 0.80){
+				if($temperature < 0.25){
+					return Biome::TAIGA;
+				}elseif($temperature < 0.75){
+					return Biome::FOREST;
+				}else{
+					return Biome::BIRCH_FOREST;
+				}
+			}else{
+				if($temperature < 0.25){
+					return Biome::MOUNTAINS;
+				}elseif($temperature < 0.70){
+					return Biome::SMALL_MOUNTAINS;
+				}else{
+					return Biome::RIVER;
+				}
+			}
+		}, Biome::getBiome(Biome::OCEAN));
 
 		$this->heightOffset = $random->nextRange(-5, 3);
-
 		$this->selector->addBiome(Biome::getBiome(Biome::OCEAN));
 		$this->selector->addBiome(Biome::getBiome(Biome::PLAINS));
 		$this->selector->addBiome(Biome::getBiome(Biome::DESERT));
@@ -103,11 +131,10 @@ class Normal2 extends Normal{
 		$this->selector->addBiome(Biome::getBiome(Biome::BEACH));
 		$this->selector->addBiome(Biome::getBiome(Biome::JUNGLE));
 		$this->selector->addBiome(Biome::getBiome(Biome::MESA));
-
 		$this->selector->recalculate();
 
 		$cover = new GroundCover();
-		$this->generationPopulators[] = $cover;
+		$this->generationPopulators[] = $cover;;
 
 		$cave = new Cave();
 		$this->populators[] = $cave;
@@ -178,7 +205,8 @@ class Normal2 extends Normal{
 					}
 					$canRiver = false;
 				}else if($genyHeight <= $this->beathStopHeight && $genyHeight >= $this->beathStartHeight){
-					$biome = Biome::getBiome(Biome::BEACH);
+					//todo: there is no beach biome, use desert temporarily
+					$biome = Biome::getBiome(Biome::DESERT);
 				}else{
 					$biome = $this->pickBiome($chunkX * 16 + $genx, $chunkZ * 16 + $genz);
 					if($canBaseGround){
@@ -218,10 +246,7 @@ class Normal2 extends Normal{
 					}
 				}
 				$chunk->setBiomeId($genx, $genz, $biome->getId());
-				//biome color
-				//todo: smooth chunk color
-				$biomeColor = $biome->getColor();
-				//$chunk->setBiomeColor($genx, $genz, ($biomeColor >> 16), ($biomeColor >> 8) & 0xff, ($biomeColor & 0xff)); outdated and more
+
 				//generating
 				$generateHeight = $genyHeight > $this->seaHeight ? $genyHeight : $this->seaHeight;
 				for($geny = 0; $geny <= $generateHeight; $geny++){
