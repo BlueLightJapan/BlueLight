@@ -31,8 +31,8 @@ class LoginPacket extends DataPacket{
     public $AdRole;
 	public $CurrentInputMode;
 	public $DefaultInputMode;
-	public $DeviceModel;
-	public $DeviceOS;
+	//public $DeviceModel;
+	//public $DeviceOS;
 	public $GameVersion;
 	public $GuiScale;
 	public $TenantId;
