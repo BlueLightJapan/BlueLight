@@ -19,25 +19,8 @@
  *
 */
 
-/**
- * Math related classes, like matrices, bounding boxes and vector
- */
-namespace pocketmine\math;
+namespace pocketmine\utils;
 
+class LevelException extends ServerException{
 
-abstract class Math{
-
-	public static function floorFloat($n){
-		$i = (int) $n;
-		return $n >= $i ? $i : $i - 1;
-	}
-
-	public static function ceilFloat($n){
-		$i = (int) ($n + 1);
-		return $n >= $i ? $i : $i - 1;
-	}
-
-	public static function clamp($value, $low, $high){
-		return min($high, max($low, $value));
-	}
 }
