@@ -25,7 +25,6 @@ namespace pocketmine\network\protocol;
 
 
 class PlayerInputPacket extends DataPacket{
-
 	const NETWORK_ID = Info::PLAYER_INPUT_PACKET;
 
 	public $motionX;
@@ -42,13 +41,6 @@ class PlayerInputPacket extends DataPacket{
 
 	public function encode(){
 
-	}
-
-	/**
-	 * @return PacketName|string
-     */
-	public function getName(){
-		return "PlayerInputPacket";
 	}
 
 }
