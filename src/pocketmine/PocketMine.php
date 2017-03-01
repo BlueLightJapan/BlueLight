@@ -73,8 +73,8 @@ namespace pocketmine {
 	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
-	const VERSION = "2.1dev";
-	const API_VERSION = "3.0.0";
+	const VERSION = "2.2dev";
+	const API_VERSION = "3.0.1";
 	const CODENAME = "BlueLight";
 	const MINECRAFT_VERSION = "v1.0.4 alpha";
 	const MINECRAFT_VERSION_NETWORK = "1.0.4";
