@@ -1,63 +1,52 @@
 <?php
-
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+Finish
 */
-
 namespace pocketmine\level\generator\normal\biome;
-
+use pocketmine\block\Block;
 use pocketmine\block\Sapling;
 use pocketmine\level\generator\populator\TallGrass;
 use pocketmine\level\generator\populator\Tree;
-
+use pocketmine\level\generator\populator\Flower;
+use pocketmine\level\generator\populator\Pumpkin;
+use pocketmine\level\generator\populator\Mushroom;
 class ForestBiome extends GrassyBiome{
-
 	const TYPE_NORMAL = 0;
 	const TYPE_BIRCH = 1;
-
 	public $type;
-
 	public function __construct($type = self::TYPE_NORMAL){
 		parent::__construct();
-
 		$this->type = $type;
-
 		$trees = new Tree($type === self::TYPE_BIRCH ? Sapling::BIRCH : Sapling::OAK);
 		$trees->setBaseAmount(5);
 		$this->addPopulator($trees);
-
+		$mushroom = new Mushroom();
+		$this->addPopulator($mushroom);
+		$flower = new Flower();
+		$flower->setBaseAmount(0);
+		$flower->setRandomAmount(5);
+		$flower->addType([Block::DANDELION, 0]);
+		$this->addPopulator($flower);
 		$tallGrass = new TallGrass();
-		$tallGrass->setBaseAmount(3);
-
+		$tallGrass->setBaseAmount(5);
+		$tallGrass->setRandomAmount(5);
 		$this->addPopulator($tallGrass);
-
-		$this->setElevation(63, 81);
-
+		
+		$pumpkin = new Pumpkin();
+		$this->addPopulator($pumpkin);
+		$this->setElevation(63, 68);
 		if($type === self::TYPE_BIRCH){
-			$this->temperature = 0.6;
-			$this->rainfall = 0.5;
+			$this->temperature = 0.60;
+			$this->rainfall = 0.50;
 		}else{
-			$this->temperature = 0.7;
-			$this->rainfall = 0.8;
+			$this->temperature = 0.70;
+			$this->rainfall = 0.50;
 		}
 	}
-
-	public function getName(){
+	public function getName() : string{
 		return $this->type === self::TYPE_BIRCH ? "Birch Forest" : "Forest";
+	}
+	public function getColor(){
+		return 0x8CBB5F;
 	}
 }
