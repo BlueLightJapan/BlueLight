@@ -29,20 +29,16 @@ class AnimatePacket extends DataPacket{
 
 	public $action;
 	public $eid;
-	public $float;
 
 	public function decode(){
 		$this->action = $this->getVarInt();
 		$this->eid = $this->getEntityId();
-		@$this->float = $this->getLFloat();
-
 	}
 
 	public function encode(){
 		$this->reset();
 		$this->putVarInt($this->action);
 		$this->putEntityId($this->eid);
-		$this->putFloat($this->float);
 	}
 
 }

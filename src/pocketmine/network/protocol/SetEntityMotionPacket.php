@@ -33,10 +33,7 @@ class SetEntityMotionPacket extends DataPacket{
 	public $motionZ;
 
 	public function decode(){
-		$this->eid = $this->getEntityId();
-		$this->motionX = $this->getLFloat();
-		$this->motionY = $this->getLFloat();
-		$this->motionZ = $this->getLFloat();
+
 	}
 
 	public function encode(){

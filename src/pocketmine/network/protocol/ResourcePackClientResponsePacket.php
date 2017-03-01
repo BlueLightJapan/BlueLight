@@ -31,10 +31,8 @@ class ResourcePackClientResponsePacket extends DataPacket{
 	public $unknownShort;
 
 	public function decode(){
-		$this->byte = $this->getByte();
-		$this->short = $this->getShort();
-		//$this->string = $this->getString();
-
+		$this->unknownByte = $this->getByte();
+		$this->unknownShort = $this->getShort();
 	}
 
 	public function encode(){

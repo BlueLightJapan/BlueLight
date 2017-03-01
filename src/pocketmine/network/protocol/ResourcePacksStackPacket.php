@@ -23,12 +23,15 @@ namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
 
-class ShowCreditsPacket extends DataPacket{
 
-	const NETWORK_ID = Info::SHOW_CREDITS_PACKET;
+class ResourcePacksInfoPacket extends DataPacket{
+	const NETWORK_ID = Info::RESOURCE_PACKS_STACK_PACKET;
 
-	public $eid;
-	public $type;
+	public $mustAccept = false; //force client to use selected resource packs
+	/** @var ResourcePackInfoEntry */
+	public $behaviourPackEntries = [];
+	/** @var ResourcePackInfoEntry */
+	public $resourcePackEntries = [];
 
 	public function decode(){
 
@@ -36,15 +39,19 @@ class ShowCreditsPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityId($this->eid);
-		$this->putVarInt($this->type);
-	}
 
-	/**
-	 * @return PacketName|string
-     */
-	public function getName(){
-		return "ShowCreditsPacket";
+		$this->putBool($this->mustAccept);
+		$this->putShort(count($this->behaviourPackEntries));
+		foreach($this->behaviourPackEntries as $entry){
+			$this->putString($entry->getPackId());
+			$this->putString($entry->getVersion());
+			$this->putLong($entry->getUint64()); 
+		}
+		$this->putShort(count($this->resourcePackEntries));
+		foreach($this->resourcePackEntries as $entry){
+			$this->putString($entry->getPackId());
+			$this->putString($entry->getVersion());
+			$this->putLong($entry->getUint64()); 
+		}
 	}
-
 }
