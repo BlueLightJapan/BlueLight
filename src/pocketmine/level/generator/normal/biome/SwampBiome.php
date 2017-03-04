@@ -1,38 +1,48 @@
 <?php
-
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+Finish
 */
-
 namespace pocketmine\level\generator\normal\biome;
-
+use pocketmine\block\Block;
+use pocketmine\block\Flower as FlowerBlock;
+use pocketmine\level\generator\populator\Flower;
+use pocketmine\level\generator\populator\LilyPad;
+use pocketmine\level\generator\populator\Tree;
+use pocketmine\level\generator\populator\SugarCane;
+use pocketmine\level\generator\populator\TallGrass;
+use pocketmine\level\generator\populator\Mushroom;
 class SwampBiome extends GrassyBiome{
-
 	public function __construct(){
 		parent::__construct();
-
-		$this->setElevation(62, 63);
-
-		$this->temperature = 0.8;
-		$this->rainfall = 0.9;
+		$flower = new Flower();
+		$flower->setRandomAmount(3);
+		$flower->addType([Block::RED_FLOWER, FlowerBlock::TYPE_BLUE_ORCHID]);
+		$this->addPopulator($flower);
+		$lilyPad = new LilyPad();
+		$lilyPad->setBaseAmount(4);
+		$this->addPopulator($lilyPad);
+		$mushroom = new Mushroom();
+		$this->addPopulator($mushroom);
+		$tallGrass = new TallGrass();
+		$tallGrass->setBaseAmount(1);
+		
+		$sugarCane = new SugarCane();
+		$sugarCane->setBaseAmount(2);
+		$sugarCane->setRandomAmount(15);
+		
+		$trees = new Tree();
+		$trees->setBaseAmount(3);
+		$this->addPopulator($trees);
+		$this->addPopulator($sugarCane);
+		$this->addPopulator($tallGrass);
+		$this->setElevation(60, 66);
+		$this->temperature = 0.80;
+		$this->rainfall = 0.90;
 	}
-
-	public function getName(){
+	public function getName() : string{
 		return "Swamp";
+	}
+	public function getColor(){
+		return 0x6a7039;
 	}
 }

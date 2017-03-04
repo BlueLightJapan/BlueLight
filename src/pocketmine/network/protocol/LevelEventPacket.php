@@ -40,9 +40,6 @@ class LevelEventPacket extends DataPacket{
 
 	const EVENT_SOUND_DOOR_CRASH = 1012;
 
-	const EVENT_SOUND_BAT_FLY = 1015;
-	const EVENT_SOUND_ZOMBIE_INFECT = 1016;
-	const EVENT_SOUND_ZOMBIE_HEAL = 1017;
 	const EVENT_SOUND_ENDERMAN_TELEPORT = 1018;
 
 	const EVENT_SOUND_ANVIL_BREAK = 1020;
@@ -50,7 +47,7 @@ class LevelEventPacket extends DataPacket{
 	const EVENT_SOUND_ANVIL_FALL = 1022;
 
 	const EVENT_SOUND_POP = 1030;
-	const EVENT_SOUND_THROW_PROJECTILE = 1031;
+
 	const EVENT_SOUND_PORTAL = 1032;
 
 	const EVENT_SOUND_ITEMFRAME_ADD_ITEM = 1040;
@@ -61,8 +58,6 @@ class LevelEventPacket extends DataPacket{
 
 	const EVENT_SOUND_CAMERA = 1050;
 	const EVENT_SOUND_ORB = 1051;
-	const EVENT_SOUND_EXP_PICKUP = 1051;
-	const EVENT_SOUND_BLOCK_PLACE = 1052;
 
 	const EVENT_PARTICLE_SHOOT = 2000;
 	const EVENT_PARTICLE_DESTROY = 2001;
