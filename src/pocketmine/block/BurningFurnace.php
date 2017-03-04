@@ -111,7 +111,7 @@ class BurningFurnace extends Solid{
 					new IntTag("z", $this->z)
 				]);
 				$nbt->Items->setTagType(NBT::TAG_Compound);
-				$furnace = Tile::createTile("Furnace", $this->getLevel(), $nbt);
+				$furnace = Tile::createTile("Furnace", $this->getLevel(), $this->z >> 4), $nbt);
 			}
 
 			if(isset($furnace->namedtag->Lock) and $furnace->namedtag->Lock instanceof StringTag){
