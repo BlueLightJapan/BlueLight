@@ -21,7 +21,6 @@
 
 namespace pocketmine\network;
 
-
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
@@ -34,7 +33,7 @@ class CompressBatchedTask extends AsyncTask{
 
 	public function __construct($data, array $targets, $level = 7){
 		$this->data = $data;
-		$this->targets = serialize($targets);
+		$this->targets = $targets;
 		$this->level = $level;
 	}
 
@@ -48,6 +47,6 @@ class CompressBatchedTask extends AsyncTask{
 	}
 
 	public function onCompletion(Server $server){
-		$server->broadcastPacketsCallback($this->final, unserialize($this->targets));
+		$server->broadcastPacketsCallback($this->final, (array) $this->targets);
 	}
 }
