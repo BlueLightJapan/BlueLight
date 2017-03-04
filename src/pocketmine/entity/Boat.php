@@ -40,7 +40,7 @@ class Boat extends Vehicle{
 			$nbt->WoodID = new ByteTag("WoodID", 0);
 		}
 		parent::__construct($chunk, $nbt);
-		$this->setDataProperty(self::DATA_WOOD_ID, self::DATA_TYPE_BYTE, $this->getWoodID());
+		$this->setDataProperty(Entity::DATA_VARIANT, self::DATA_TYPE_INT, $this->getWoodID());
 	}
 
 	public function getWoodID(){

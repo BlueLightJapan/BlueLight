@@ -75,11 +75,9 @@ class ResourcePacks{
 		$chunkdata->int1 = 0;
 		$chunkdata->size = $packEntries[$packid]->getPackSize();
 		$chunkdata->int2 = 1;
-		$chunkdata->payload = $packEntries[$packid]->getPackData();
+		//$chunkdata->payload = $packEntries[$packid]->getPackData();
+		$chunkdata->byte = 0;
 
 		$player->dataPacket($chunkdata);
 	}
-
-
-
 }

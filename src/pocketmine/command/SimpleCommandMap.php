@@ -60,6 +60,11 @@ use pocketmine\command\defaults\TimingsCommand;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\defaults\VersionCommand;
 use pocketmine\command\defaults\WhitelistCommand;
+use pocketmine\command\defaults\WeatherCommand;
+use pocketmine\command\defaults\TransferCommand;
+use pocketmine\command\defaults\XpCommand;
+use pocketmine\command\defaults\MakePluginCommand;
+use pocketmine\command\defaults\ExtractPluginCommand;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
@@ -115,11 +120,19 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new TimeCommand("time"));
 		$this->register("pocketmine", new TimingsCommand("timings"));
 		$this->register("pocketmine", new ReloadCommand("reload"));
+		$this->register("pocketmine", new WeatherCommand("weather"));
+		$this->register("pocketmine", new TransferCommand("transfer"));
+		$this->register("pocketmine", new XpCommand("xp"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
+		}
+
+		if($this->server->devtools){
+			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
+			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
 		}
 	}
 

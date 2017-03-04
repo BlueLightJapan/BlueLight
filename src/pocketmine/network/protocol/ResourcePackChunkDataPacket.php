@@ -30,7 +30,8 @@ class ResourcePackChunkDataPacket extends DataPacket{
 	public $int1;
 	public $size;
 	public $int2;
-	public $payload;
+	public $byte;
+	//public $payload;
 
 	public function decode(){
 	}
@@ -41,7 +42,7 @@ class ResourcePackChunkDataPacket extends DataPacket{
 		$this->putVarInt($this->int1);
 		$this->putVarInt($this->size);
 		$this->putVarInt($this->int2);
-		$this->putString($this->payload);
+		$this->putByte($this->byte);
 
 	}
 }

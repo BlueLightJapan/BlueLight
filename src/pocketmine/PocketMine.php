@@ -74,7 +74,7 @@ namespace pocketmine {
 	use raklib\RakLib;
 
 	const VERSION = "2.0dev";
-	const API_VERSION = "3.0.0";
+	const API_VERSION = "3.0.0-ALPHA4";
 	const CODENAME = "BlueLight";
 	const MINECRAFT_VERSION = "v1.0.3 alpha";
 	const MINECRAFT_VERSION_NETWORK = "1.0.3";
@@ -456,20 +456,21 @@ namespace pocketmine {
 		exit(1); //Exit with error
 	}
 
+	$gitHash = str_repeat("00", 20);
 	if(file_exists(\pocketmine\PATH . ".git/HEAD")){ //Found Git information!
 		$ref = trim(file_get_contents(\pocketmine\PATH . ".git/HEAD"));
 		if(preg_match('/^[0-9a-f]{40}$/i', $ref)){
-			define('pocketmine\GIT_COMMIT', strtolower($ref));
+			$gitHash = strtolower($ref);
 		}elseif(substr($ref, 0, 5) === "ref: "){
 			$refFile = \pocketmine\PATH . ".git/" . substr($ref, 5);
 			if(is_file($refFile)){
-				define('pocketmine\GIT_COMMIT', strtolower(trim(file_get_contents($refFile))));
+				$gitHash = strtolower(trim(file_get_contents($refFile)));
 			}
 		}
 	}
-	if(!defined('pocketmine\GIT_COMMIT')){ //Unknown :(
-		define('pocketmine\GIT_COMMIT', str_repeat("00", 20));
-	}
+
+	define('pocketmine\GIT_COMMIT', $gitHash);
+
 
 	@define("ENDIANNESS", (pack("d", 1) === "\77\360\0\0\0\0\0\0" ? Binary::BIG_ENDIAN : Binary::LITTLE_ENDIAN));
 	@define("INT32_MASK", is_int(0xffffffff) ? 0xffffffff : -1);
@@ -483,6 +484,11 @@ namespace pocketmine {
 			$logger->join();
 			exit(-1);
 		}
+	}
+
+
+	if(\Phar::running(true) === ""){
+		$logger->warning("Non-packaged PocketMine-MP installation detected, do not use on production.");
 	}
 
 	ThreadManager::init();

@@ -90,6 +90,7 @@ use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginLoadOrder;
 use pocketmine\plugin\PluginManager;
 use pocketmine\plugin\ScriptPluginLoader;
+use pocketmine\plugin\FolderPluginLoader;
 use pocketmine\scheduler\FileWriteTask;
 use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
@@ -348,8 +349,19 @@ class Server{
 	/**
 	 * @return int
 	 */
-	public function getViewDistance(){
-		return max(56, $this->getProperty("chunk-sending.max-chunks", 256));
+	public function getViewDistance() : int{
+		return max(2, $this->getConfigInt("view-distance", 8));
+	}
+
+	/**
+	 * Returns a view distance up to the currently-allowed limit.
+	 *
+	 * @param int $distance
+	 *
+	 * @return int
+	 */
+	public function getAllowedViewDistance(int $distance) : int{
+		return max(2, min($distance, $this->memoryManager->getViewDistance($this->getViewDistance())));
 	}
 
 	/**
@@ -1461,6 +1473,7 @@ class Server{
 				"enable-rcon" => false,
 				"rcon.password" => substr(base64_encode(random_bytes(20)), 3, 10),
 				"auto-save" => true,
+				"view-distance" => 8
 			]);
 
 			$this->forceLanguage = $this->getProperty("settings.force-language", false);
@@ -1495,8 +1508,8 @@ class Server{
 				}
 			}
 			if($this->devtools){
-				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
-					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
 				}
 			}
 
@@ -1605,7 +1618,9 @@ class Server{
 			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
 			$this->pluginManager->registerInterface(PharPluginLoader::class);
 			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
-
+			if($this->devtools){
+				$this->pluginManager->registerInterface(FolderPluginLoader::class);
+			}
 			register_shutdown_function([$this, "crashDump"]);
 
 			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
@@ -1790,11 +1805,11 @@ class Server{
 	 * @param Player[]   $players
 	 * @param DataPacket $packet
 	 */
-	public function broadcastPacket(array $players, DataPacket $packet){
+	public static function broadcastPacket(array $players, DataPacket $packet){
 		$packet->encode();
 		$packet->isEncoded = true;
 		if(Network::$BATCH_THRESHOLD >= 0 and strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
-			$this->batchPackets($players, [$packet->buffer], false);
+			Server::getInstance()->batchPackets($players, [$packet->buffer], false);
 			return;
 		}
 
@@ -1946,6 +1961,9 @@ class Server{
 
 		$this->pluginManager->registerInterface(PharPluginLoader::class);
 		$this->pluginManager->registerInterface(ScriptPluginLoader::class);
+		if($this->devtools){
+			$this->pluginManager->registerInterface(FolderPluginLoader::class);
+		}
 		$this->pluginManager->loadPlugins($this->pluginPath);
 		$this->enablePlugins(PluginLoadOrder::STARTUP);
 		$this->enablePlugins(PluginLoadOrder::POSTWORLD);
