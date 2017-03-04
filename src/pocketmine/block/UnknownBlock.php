@@ -21,15 +21,13 @@
 
 namespace pocketmine\block;
 
-class Tripwire extends Flowable{
+class UnknownBlock extends Transparent{
 
-	protected $id = self::TRIPWIRE;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
+	public function isSolid(){
+		return false;
 	}
 
-	public function getName(){
-		return "Tripwire";
+	public function getHardness(){
+		return 0;
 	}
 }

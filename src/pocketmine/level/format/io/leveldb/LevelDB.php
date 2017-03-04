@@ -258,7 +258,7 @@ class LevelDB extends BaseLevelProvider{
 		$this->level->timings->syncChunkLoadDataTimer->startTiming();
 		$chunk = $this->readChunk($chunkX, $chunkZ);
 		if($chunk === null and $create){
-			$chunk = Chunk::getEmptyChunk($chunkX, $chunkZ, $this);
+			$chunk = Chunk::getEmptyChunk($chunkX, $chunkZ);
 		}
 		$this->level->timings->syncChunkLoadDataTimer->stopTiming();
 
@@ -392,7 +392,6 @@ class LevelDB extends BaseLevelProvider{
 			}*/ //TODO
 
 			$chunk = new Chunk(
-				$this,
 				$chunkX,
 				$chunkZ,
 				$subChunks,
@@ -469,7 +468,7 @@ class LevelDB extends BaseLevelProvider{
 
 	public function unloadChunk(int $x, int $z, bool $safe = true) : bool{
 		$chunk = $this->chunks[$index = Level::chunkHash($x, $z)] ?? null;
-		if($chunk instanceof Chunk and $chunk->unload(false, $safe)){
+		if($chunk instanceof Chunk and $chunk->unload($safe)){
 			unset($this->chunks[$index]);
 
 			return true;
@@ -478,9 +477,13 @@ class LevelDB extends BaseLevelProvider{
 		return false;
 	}
 
-	public function saveChunk(int $x, int $z) : bool{
-		if($this->isChunkLoaded($x, $z)){
-			$this->writeChunk($this->getChunk($x, $z));
+	public function saveChunk(int $chunkX, int $chunkZ) : bool{
+		if($this->isChunkLoaded($chunkX, $chunkZ)){
+			$chunk = $this->getChunk($chunkX, $chunkZ);
+			if(!$chunk->isGenerated()){
+				throw new \InvalidStateException("Cannot save un-generated chunk");
+			}
+			$this->writeChunk($chunk);
 
 			return true;
 		}
@@ -514,8 +517,6 @@ class LevelDB extends BaseLevelProvider{
 	}
 
 	public function setChunk(int $chunkX, int $chunkZ, Chunk $chunk){
-		$chunk->setProvider($this);
-
 		$chunk->setX($chunkX);
 		$chunk->setZ($chunkZ);
 

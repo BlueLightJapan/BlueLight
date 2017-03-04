@@ -318,9 +318,7 @@ abstract class Entity extends Location implements Metadatable{
 	protected $isPlayer = false;
 
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-
-		assert($chunk !== null and $chunk->getProvider() !== null);
+	public function __construct(Level $level, CompoundTag $nbt){
 
 		$this->timings = Timings::getEntityTimings($this);
 
@@ -336,9 +334,10 @@ abstract class Entity extends Location implements Metadatable{
 		$this->justCreated = true;
 		$this->namedtag = $nbt;
 
-		$this->chunk = $chunk;
-		$this->setLevel($chunk->getProvider()->getLevel());
-		$this->server = $chunk->getProvider()->getLevel()->getServer();
+		$this->chunk = $level->getChunk($this->namedtag["Pos"][0] >> 4, $this->namedtag["Pos"][2] >> 4);
+		assert($this->chunk !== null);
+		$this->setLevel($level);
+		$this->server = $level->getServer();
 
 		$this->boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 		$this->setPositionAndRotation(
@@ -613,16 +612,16 @@ abstract class Entity extends Location implements Metadatable{
 
 	/**
 	 * @param int|string  $type
-	 * @param Chunk       $chunk
+	 * @param Level       $level
 	 * @param CompoundTag $nbt
 	 * @param             $args
 	 *
 	 * @return Entity
 	 */
-	public static function createEntity($type, Chunk $chunk, CompoundTag $nbt, ...$args){
+	public static function createEntity($type, Level $level, CompoundTag $nbt, ...$args){
 		if(isset(self::$knownEntities[$type])){
 			$class = self::$knownEntities[$type];
-			return new $class($chunk, $nbt, ...$args);
+			return new $class($level, $nbt, ...$args);
 		}
 
 		return null;
@@ -759,7 +758,7 @@ abstract class Entity extends Location implements Metadatable{
 	public function sendPotionEffects(Player $player){
 		foreach($this->effects as $effect){
 			$pk = new MobEffectPacket();
-			$pk->eid = 0;
+			$pk->eid = $this->id;
 			$pk->effectId = $effect->getId();
 			$pk->amplifier = $effect->getAmplifier();
 			$pk->particles = $effect->isVisible();
@@ -790,7 +789,6 @@ abstract class Entity extends Location implements Metadatable{
 			$p->dataPacket(clone $pk);
 		}
 		if($this instanceof Player){
-			$pk->eid = 0;
 			$this->dataPacket($pk);
 		}
 	}
@@ -1232,8 +1230,13 @@ abstract class Entity extends Location implements Metadatable{
 
 
 	public function fall($fallDistance){
-/*
+
 		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
+
+		if($this->getLevel()->getBlock($this->floor()->subtract(0, 1, 0)) instanceof SlimeBlock){
+			$damage = 0;
+		}
+
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
 			$this->attack($ev->getFinalDamage(), $ev);
