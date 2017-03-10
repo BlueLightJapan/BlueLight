@@ -63,13 +63,13 @@ class ClientboundMapItemDataPacket extends DataPacket{
 	public function putDecorators(){
 		$decorators = $this->decorators;
 
-		foreach($decorators as $decorator){
-			$this->putByte($decorators->rotation);
-			$this->putByte($decorators->icon);
-			$this->putByte($decorators->x);
-			$this->putByte($decorators->z);
-			$this->putString($decorators->label);
-			$this->putLong($decorators->color);
+		foreach($decorators as $decorator){var_dump($decorator);
+			$this->putByte($decorator->rotation);
+			$this->putByte($decorator->icon);
+			$this->putByte($decorator->x);
+			$this->putByte($decorator->z);
+			$this->putString($decorator->label);
+			$this->putLong($decorator->color);
 		}
 	}
 
