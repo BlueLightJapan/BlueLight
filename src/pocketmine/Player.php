@@ -121,6 +121,7 @@ use pocketmine\network\protocol\BatchPacket;
 use pocketmine\network\protocol\ChunkRadiusUpdatedPacket;
 use pocketmine\network\protocol\ContainerClosePacket;
 use pocketmine\network\protocol\ContainerSetContentPacket;
+use pocketmine\network\protocol\ClientboundMapItemDataPacket;
 use pocketmine\network\protocol\DataPacket;
 use pocketmine\network\protocol\DisconnectPacket;
 use pocketmine\network\protocol\EntityEventPacket;
@@ -2031,7 +2032,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if(count($this->messageQueue) > 0){
 			$pk = new TextPacket();
 			$pk->type = TextPacket::TYPE_RAW;
-			$pk->message = implode(TextFormat::WHITE.TextFormat::RESET."\n", $this->messageQueue);
+			$pk->message = implode("§f§r\n", $this->messageQueue);
 			$this->dataPacket($pk);
 			$this->messageQueue = [];
 		}
@@ -2713,6 +2714,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$thrownPotion->spawnToAll();
 						}
 
+					}elseif($item->getId() == Item::EMPTY_MAP){
+
+						$item = Item::get(Item::FILLED_MAP, 0, 1);
+						$item->setMapId($this->id * 20 + 10000);
+
+
+                            			$this->inventory->addItem($item);
+
               				}elseif($item->getId() === Item::ENDER_PEARL){
 						$nbt = new CompoundTag("", [
                             				"Pos" => new ListTag("Pos", [
@@ -3249,6 +3258,24 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
 				echo $packet->power."\n";
+				break;
+			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
+				var_dump($packet);
+				$pk = new ClientboundMapItemDataPacket();
+				$pk->mapid = $packet->mapid;
+				$pk->updatetype = 6;
+				$pk->decorators = [];
+				$pk->x = 0;
+				$pk->z = 0;
+				$pk->scale = 0;
+				$pk->col = 128;
+				$pk->row = 128;
+				$pk->xoffset = 0;
+				$pk->zoffset = 0;
+				$pk->data = "";
+				var_dump($pk);
+				$this->dataPacket($pk);
+
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
