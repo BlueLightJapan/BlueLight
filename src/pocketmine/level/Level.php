@@ -397,9 +397,7 @@ class Level implements ChunkManager, Metadatable{
 			]),
 		]);
 
-		$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
-
-		$lightning = new Lightning($chunk, $nbt);
+		$lightning = new Lightning($this, $nbt);
 		$lightning->spawnToAll();
 
 		return $lightning;
@@ -425,9 +423,7 @@ class Level implements ChunkManager, Metadatable{
 				"Experience" => new LongTag("Experience", $exp),
 			]);
 
-			$chunk = $this->getChunk($pos->x >> 4, $pos->z >> 4, false);
-
-			$expOrb = new XPOrb($chunk, $nbt);
+			$expOrb = new XPOrb($this, $nbt);
 			$expOrb->spawnToAll();
 
 			return $expOrb;
