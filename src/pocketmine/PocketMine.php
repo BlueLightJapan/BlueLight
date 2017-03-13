@@ -74,7 +74,7 @@ namespace pocketmine {
 	use raklib\RakLib;
 
 	const VERSION = "2.0dev";
-	const API_VERSION = "3.0.0-ALPHA4";
+	const API_VERSION = "3.0.0";
 	const CODENAME = "BlueLight";
 	const MINECRAFT_VERSION = "v1.0.4 alpha";
 	const MINECRAFT_VERSION_NETWORK = "1.0.4";
