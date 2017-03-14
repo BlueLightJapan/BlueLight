@@ -664,6 +664,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	public function setViewDistance(int $distance){
 		$this->viewDistance = $this->server->getAllowedViewDistance($distance);
+		$this->spawnThreshold = (int) (min($this->viewDistance, $this->server->getProperty("chunk-sending.spawn-radius", 4)) ** 2 * M_PI);
 		$pk = new ChunkRadiusUpdatedPacket();
 		$pk->radius = $this->viewDistance;
 		$this->dataPacket($pk);
@@ -935,18 +936,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$index = Level::chunkHash($x, $z);
 		if(isset($this->usedChunks[$index])){
 			$chunk = $level->getChunk($x, $z);
-			foreach($chunk->getEntities() as $entity){
+			foreach($level->getChunkEntities($x, $z) as $entity){
 				if($entity !== $this){
 					$entity->despawnFrom($this);
 				}
-			}
-
-			if($level !== $this->level){
-				$pk = new FullChunkDataPacket();
-				$pk->chunkX = $x;
-				$pk->chunkZ = $z;
-				$pk->data = chr($chunk->getSubChunkSendCount());
-				$this->dataPacket($pk);
 			}
 
 			unset($this->usedChunks[$index]);
