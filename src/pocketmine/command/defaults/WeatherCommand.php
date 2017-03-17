@@ -27,6 +27,7 @@ use pocketmine\level\Level;
 use pocketmine\level\weather\Weather;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class WeatherCommand extends VanillaCommand{
 

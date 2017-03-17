@@ -25,6 +25,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\Server;
 use pocketmine\Player;
+use pocketmine\command\data\CommandParameter;
 
 class TransferCommand extends VanillaCommand{
 	

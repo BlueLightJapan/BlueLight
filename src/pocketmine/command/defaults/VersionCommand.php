@@ -26,6 +26,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\network\protocol\Info;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class VersionCommand extends VanillaCommand{
 
