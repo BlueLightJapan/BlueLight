@@ -58,7 +58,7 @@ class CommandStepPacket extends DataPacket{
 		$this->string4 = $this->getString();
 		while(!$this->feof()){
 			$this->getByte(); //prevent assertion errors. TODO: find out why there are always 3 extra bytes at the end of this packet.
-		}var_dump($this);
+		}
 	}
 
 	public function encode(){
