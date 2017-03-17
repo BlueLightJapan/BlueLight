@@ -37,8 +37,11 @@ class DifficultyCommand extends VanillaCommand{
 			"%commands.difficulty.usage"
 		);
 		$this->setPermission("pocketmine.command.difficulty");
-		//$this->commandParameters["default"] = [new CommandParameter("difficulty", CommandParameter::ARG_TYPE_INT, false)];
 
+		$this->commandParameters = [
+			new CommandParameter("difficulty", CommandParameter::ARG_TYPE_INT, false),
+
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

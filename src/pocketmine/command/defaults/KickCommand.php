@@ -47,7 +47,6 @@ class KickCommand extends VanillaCommand{
 			])
 		];*/
 
-
 		$this->commandParameters = [
 			new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, false),
 			new CommandParameter("reason", CommandParameter::ARG_TYPE_RAW_TEXT, true),

@@ -37,7 +37,11 @@ class DeopCommand extends VanillaCommand{
 			"%commands.deop.usage"
 		);
 		$this->setPermission("pocketmine.command.op.take");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, false),
+
+		];
 
 	}
 

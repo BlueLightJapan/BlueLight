@@ -36,7 +36,12 @@ class BanCommand extends VanillaCommand{
 			"%commands.ban.usage"
 		);
 		$this->setPermission("pocketmine.command.ban.player");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, false),
+			new CommandParameter("reason", CommandParameter::ARG_TYPE_RAW_TEXT, true),
+
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
