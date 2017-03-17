@@ -40,7 +40,12 @@ class GiveCommand extends VanillaCommand{
 			"%pocketmine.command.give.usage"
 		);
 		$this->setPermission("pocketmine.command.give");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false),
+			new CommandParameter("item", CommandParameter::ARG_TYPE_STRING, false),
+			new CommandParameter("number", CommandParameter::ARG_TYPE_INT, false),
+		];
 
 	}
 

@@ -36,6 +36,11 @@ class TransferCommand extends VanillaCommand{
 		["transfer","connect"]
 		);
 		$this->setPermission("pocketmine.command.transfer");
+
+		$this->commandParameters = [
+			new CommandParameter("ip", CommandParameter::ARG_TYPE_STRING, false),
+			new CommandParameter("port", CommandParameter::ARG_TYPE_INT, true),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

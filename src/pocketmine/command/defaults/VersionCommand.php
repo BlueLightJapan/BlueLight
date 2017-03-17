@@ -37,6 +37,10 @@ class VersionCommand extends VanillaCommand{
 			["ver", "about"]
 		);
 		$this->setPermission("pocketmine.command.version");
+
+		$this->commandParameters = [
+			new CommandParameter("plugin", CommandParameter::ARG_TYPE_STRING, true),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

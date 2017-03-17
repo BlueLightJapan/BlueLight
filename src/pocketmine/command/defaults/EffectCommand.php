@@ -44,7 +44,6 @@ class EffectCommand extends VanillaCommand{
 			new CommandParameter("seconds", CommandParameter::ARG_TYPE_INT, false),
 			new CommandParameter("amplifier", CommandParameter::ARG_TYPE_INT, false),
 			new CommandParameter("hideParticles", CommandParameter::ARG_TYPE_BOOL, true),
-
 		];
 
 

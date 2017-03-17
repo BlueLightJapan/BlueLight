@@ -35,8 +35,9 @@ class PardonCommand extends VanillaCommand{
 			"%commands.unban.usage"
 		);
 		$this->setPermission("pocketmine.command.unban.player");
-		//$this->commandParameters["default"] = [new CommandParameter("name", CommandParameter::ARG_TYPE_STRING, false)];
-
+		$this->commandParameters = [
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

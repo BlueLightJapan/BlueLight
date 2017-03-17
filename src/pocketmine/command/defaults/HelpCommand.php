@@ -39,6 +39,10 @@ class HelpCommand extends VanillaCommand{
 		);
 		$this->setPermission("pocketmine.command.help");
 
+		$this->commandParameters = [
+			new CommandParameter("page", CommandParameter::ARG_TYPE_INT, true),
+		];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
