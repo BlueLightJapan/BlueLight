@@ -124,18 +124,28 @@ abstract class Command{
 			$customData["overloads"]["default"]["input"]["parameters"] = [];
 
 			$parameters = $this->commandParameters;
-
-				var_dump($parameters);
-
+			echo $this->name."\n";
 			foreach($parameters as $parameter){
-				$customData["overloads"]["default"]["input"]["parameters"][] = [
-					"name" => $parameter->name,
-					"type" => $parameter->type,
-					"optional" => $parameter->optional,
-				];
+				if($parameter instanceof CommandParameter){
+					$customData["overloads"]["default"]["input"]["parameters"][] = [
+						"name" => $parameter->name ,
+						"type" => $parameter->type ,
+						"optional" => $parameter->optional
+					];
+				}elseif($parameter instanceof CommandParameters){
 
+					foreach($parameter->parameters as $parms){
+						$customData["overloads"]["default"]["input"]["parameters"][] = [
+							"name" => $parms->name ,
+							"type" => $parms->type ,
+							"optional" => $parms->optional
+						];
 
+					}
+				}
 			}
+
+			var_dump($customData);
 		}
 		return $customData;
 	}
