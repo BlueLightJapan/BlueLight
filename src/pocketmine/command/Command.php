@@ -30,6 +30,8 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
+use pocketmine\command\data\CommandParameters;
 
 abstract class Command{
 	/** @var array */
@@ -121,20 +123,19 @@ abstract class Command{
 			$customData["overloads"]["default"]["input"] = [];
 			$customData["overloads"]["default"]["input"]["parameters"] = [];
 
-			$paramaters = $this->commandParameters;
+			$parameters = $this->commandParameters;
 
-			foreach($paramaters as $paramater){
+				var_dump($parameters);
 
+			foreach($parameters as $parameter){
 				$customData["overloads"]["default"]["input"]["parameters"][] = [
-					"name" => $paramater->name,
-					"type" => $paramater->type,
-					"optional" => $paramater->optional,
+					"name" => $parameter->name,
+					"type" => $parameter->type,
+					"optional" => $parameter->optional,
 				];
+
+
 			}
-
-			$customData["overloads"]["default"]["output"] = [];
-
-
 		}
 		return $customData;
 	}
