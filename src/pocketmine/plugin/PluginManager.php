@@ -600,6 +600,10 @@ class PluginManager{
 					$newCmd->setPermissionMessage($data["permission-message"]);
 				}
 
+				if(isset($data["parameter-name"]) and (isset($data["parameter-type"]))){
+					$newCmd->setCommandParameters($data["parameter-name"], $data["parameter-type"]);
+				}
+
 				$pluginCmds[] = $newCmd;
 			}
 		}

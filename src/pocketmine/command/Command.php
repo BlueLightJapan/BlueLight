@@ -98,7 +98,52 @@ abstract class Command{
 	}
 
 	public function getCommandParameters() {
-		return $this->commandParameters;
+		if(isset($this->commandParameters)){
+			return $this->commandParameters;
+		}
+		return false;
+	}
+
+	public function setCommandParameters($name, $type) {
+		$commands = [];
+
+		while($name == null){
+			if(strstr($name, ":")){
+				$pieces = explode(":", $name);
+				$command[] = $pieces[0];
+				$name = $pieces[1];
+			}else{
+
+				$command[] = $name;
+				$name = null;
+
+			}
+
+		}
+		$parms = [];
+
+		while($type == null){
+			if(strstr($type, ":")){
+				$pieces = explode(":", $type);
+				$parms[] = $pieces[0];
+				$type = $pieces[1];
+			}else{
+
+				$parms[] = $type;
+				$type = null;
+
+			}
+
+		}
+		$this->commandParameters = [];
+		$count = 0;
+		$max = count($commands);
+		foreach($commands as $command){
+			$this->commandParameters[] = new CommandParameter($command, $parms[$count], false);
+			++$count;
+
+		}
+
 	}
 
 	/**
