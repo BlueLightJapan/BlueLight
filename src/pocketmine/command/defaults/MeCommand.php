@@ -36,8 +36,9 @@ class MeCommand extends VanillaCommand{
 			"%commands.me.usage"
 		);
 		$this->setPermission("pocketmine.command.me");
-		//$this->commandParameters["default"] = [new CommandParameter("message", CommandParameter::ARG_TYPE_STRING, false)];
-
+		$this->commandParameters = [
+			new CommandParameter("messagge", CommandParameter::ARG_TYPE_STRING, false),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

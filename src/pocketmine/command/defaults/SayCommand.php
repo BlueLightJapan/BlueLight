@@ -37,8 +37,9 @@ class SayCommand extends VanillaCommand{
 			"%commands.say.usage"
 		);
 		$this->setPermission("pocketmine.command.say");
- 		$this->commandParameters["default"] = [new CommandParameter("message", CommandParameter::ARG_TYPE_STRING, false)];
-
+		$this->commandParameters = [
+			new CommandParameter("message", CommandParameter::ARG_TYPE_STRING, false),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

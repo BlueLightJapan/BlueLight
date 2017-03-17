@@ -95,6 +95,10 @@ abstract class Command{
 		return $this->commandData;
 	}
 
+	public function getCommandParameters() {
+		return $this->commandParameters;
+	}
+
 	/**
 	 * Generates modified command data for the specified player
 	 * for AvailableCommandsPacket.
@@ -104,17 +108,34 @@ abstract class Command{
 	 * @return array
 	 */
 	public function generateCustomCommandData(Player $player){
-		//TODO: fix command permission filtering on join
-		/*if(!$this->testPermissionSilent($player)){
-			return null;
-		}*/
+
 		$customData = $this->commandData;
 		$customData["aliases"] = $this->getAliases();
-		/*foreach($customData["overloads"] as $overloadName => $overload){
-			if(isset($overload["pocketminePermission"]) and !$player->hasPermission($overload["pocketminePermission"])){
-				unset($customData["overloads"][$overloadName]);
+
+		//$customData["description"] = "commands.".$this->name.".description";
+
+		if(isset($this->commandParameters)){
+
+			$customData["overloads"] = [];
+			$customData["overloads"]["default"] = [];
+			$customData["overloads"]["default"]["input"] = [];
+			$customData["overloads"]["default"]["input"]["parameters"] = [];
+
+			$paramaters = $this->commandParameters;
+
+			foreach($paramaters as $paramater){
+
+				$customData["overloads"]["default"]["input"]["parameters"][] = [
+					"name" => $paramater->name,
+					"type" => $paramater->type,
+					"optional" => $paramater->optional,
+				];
 			}
-		}*/
+
+			$customData["overloads"]["default"]["output"] = [];
+
+
+		}
 		return $customData;
 	}
 

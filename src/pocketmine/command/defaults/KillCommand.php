@@ -28,6 +28,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use pocketmine\command\data\CommandParameter;
+use pocketmine\command\data\CommandParameters;
 
 class KillCommand extends VanillaCommand{
 
@@ -39,7 +40,10 @@ class KillCommand extends VanillaCommand{
 			["suicide"]
 		);
 		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, true),
+		];
 
 	}
 

@@ -3066,10 +3066,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::RIDER_JUMP_PACKET:
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
-				echo $packet->power."\n";
 				break;
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
-				var_dump($packet);
 				$pk = new ClientboundMapItemDataPacket();
 				$pk->mapid = $packet->mapid;
 				$pk->updatetype = 6;
@@ -3082,7 +3080,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->xoffset = 0;
 				$pk->zoffset = 0;
 				$pk->data = "";
-				var_dump($pk);
 				$this->dataPacket($pk);
 
 				break;
@@ -3116,18 +3113,61 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 				$this->craftingType = 0;
+				Timings::$playerCommandTimer->startTiming();
 				$commandText = $packet->command;
-				if($packet->args !== null){
+				$command = $this->getServer()->getCommandMap()->getCommand($commandText);
+				if($command !== null){
+					if($packet->args !== null && count($packet->args) > 0){
+						$pars = $command->getCommandParameters();
+						if($pars !== null){
+							foreach($pars as $par){
+								$arg = $packet->args->{$par->name};
+								if($arg !== null){
+									switch($par->type){
+										case CommandParameter::ARG_TYPE_TARGET:
+											if(isset($arg->rules)){
+												$commandText .= " " . $arg->rules[0]->value;
+											}else{
+												switch($arg->selector){//TODO
+													case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_NEAREST_PLAYER:
+														break;
+													case CommandParameter::ARG_TYPE_TARGET_RANDOM_PLAYER:
+														break;
+												}
+											}
+											break;
+										case CommandParameter::ARG_TYPE_BLOCK_POS:
+											$commandText .= " " . $arg->x . " " . $arg->y + " " . $arg->z;
+											break;
+										case CommandParameter::ARG_TYPE_STRING:
+										case CommandParameter::ARG_TYPE_STRING_ENUM:
+										case CommandParameter::ARG_TYPE_RAW_TEXT:
+											$commandText .= " " . $arg;
+											break;
+										default:
+											$commandText .= " " . $arg;
+											break;
+									}
+								}
+							}
+						}
+					}
+				}
+				/*if($packet->args !== null){
 					foreach($packet->args as $arg){ //command ordering will be an issue
 						$commandText .= " " . $arg;
 					}
-				}
+				}*/
 				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
-				if($ev->isCancelled()){
-					break;
-				}
 
-				Timings::$playerCommandTimer->startTiming();
+				if($ev->isCancelled()){  
+					break;  
+				}  
+				Timings::$playerCommandTimer->startTiming();  
 				$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
 				Timings::$playerCommandTimer->stopTiming();
 				break;

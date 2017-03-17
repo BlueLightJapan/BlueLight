@@ -30,7 +30,6 @@ class CommandParameter {
 	const ARG_TYPE_BLOCK_POS = "blockpos";
 	const ARG_TYPE_RAW_TEXT = "rawtext";
 	const ARG_TYPE_INT = "int";
-
 	const ARG_TYPE_TARGET_ALL_PLAYERS = "allPlayers";//@a
 	const ARG_TYPE_TARGET_ALL_ENTITIES = "allEntities";//@e
 	const ARG_TYPE_TARGET_NEAREST_PLAYER = "nearestPlayer";//@n
