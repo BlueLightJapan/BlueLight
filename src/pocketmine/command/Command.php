@@ -107,7 +107,6 @@ abstract class Command{
 	public function setCommandParameters($name, $type) {
 		$commands = [];
 
-		echo "Name = ".$name."\n";
 		if(strstr($name, ":")){
 			$count = count($pieces = explode(":", $name));
 
@@ -159,8 +158,6 @@ abstract class Command{
 		$customData = $this->commandData;
 		$customData["aliases"] = $this->getAliases();
 
-		//$customData["description"] = "commands.".$this->name.".description";
-
 		if(isset($this->commandParameters)){
 
 			$customData["overloads"] = [];
@@ -172,11 +169,13 @@ abstract class Command{
 			echo $this->name."\n";
 			foreach($parameters as $parameter){
 				if($parameter instanceof CommandParameter){
-					$customData["overloads"]["default"]["input"]["parameters"][] = [
-						"name" => $parameter->name ,
-						"type" => $parameter->type ,
-						"optional" => $parameter->optional
-					];
+						$customData["overloads"]["default"]["input"]["parameters"][] = [
+							"enum_values" => $parameter->enum_values ,
+							"name" => $parameter->name ,
+							"type" => $parameter->type ,
+							"optional" => $parameter->optional,
+						];
+	
 				}elseif($parameter instanceof CommandParameters){
 
 					foreach($parameter->parameters as $parms){
