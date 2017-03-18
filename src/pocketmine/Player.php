@@ -26,6 +26,7 @@ use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\data\CommandParameter;
+use pocketmine\command\data\CommandParameters;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\AttributeMap;
 use pocketmine\entity\Arrow;
@@ -3066,10 +3067,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::RIDER_JUMP_PACKET:
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
-				echo $packet->power."\n";
 				break;
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
-				var_dump($packet);
 				$pk = new ClientboundMapItemDataPacket();
 				$pk->mapid = $packet->mapid;
 				$pk->updatetype = 6;
@@ -3082,7 +3081,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->xoffset = 0;
 				$pk->zoffset = 0;
 				$pk->data = "";
-				var_dump($pk);
 				$this->dataPacket($pk);
 
 				break;
@@ -3116,20 +3114,101 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 				$this->craftingType = 0;
+				Timings::$playerCommandTimer->startTiming();
 				$commandText = $packet->command;
-				if($packet->args !== null){
+				$command = $this->getServer()->getCommandMap()->getCommand($commandText);
+				if($command !== null){
+					if($packet->args !== null && count($packet->args) > 0){
+						$pars = $command->getCommandParameters();
+						if($pars !== null){var_dump($pars);
+							if(is_array($pars)){
+								foreach($pars as $par){
+									if($par instanceof CommandParameter){
+										$arg = $packet->args->{$par->name};
+										if($arg !== null){
+											switch($par->type){
+												case CommandParameter::ARG_TYPE_TARGET:
+													if(isset($arg->rules)){
+														$commandText .= " " . $arg->rules[0]->value;
+													}else{
+														switch($arg->selector){//TODO
+															case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
+																$commandText .= " @a";
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_NEAREST_PLAYER:
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_RANDOM_PLAYER:
+																break;
+														}
+													}
+													break;
+												case CommandParameter::ARG_TYPE_BLOCK_POS:
+													$commandText .= " " . $arg->x . " " . $arg->y + " " . $arg->z;
+													break;
+												case CommandParameter::ARG_TYPE_STRING:
+												case CommandParameter::ARG_TYPE_STRING_ENUM:
+												case CommandParameter::ARG_TYPE_RAW_TEXT:
+													$commandText .= " " . $arg;
+													break;
+												default:
+													$commandText .= " " . $arg;
+													break;
+											}
+										}
+
+
+									}
+								}
+
+
+							}else{
+
+								foreach($packet->args as $arg){
+
+									$commandText .= " " . $arg;
+
+								}
+
+							}
+						}
+					}
+				}
+				/*if($packet->args !== null){
 					foreach($packet->args as $arg){ //command ordering will be an issue
 						$commandText .= " " . $arg;
 					}
-				}
-				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
-				if($ev->isCancelled()){
-					break;
+				}*/
+				$cmd = $commandText;
+				if(strstr($commandText, "@a")){
+					foreach($this->server->getOnlinePlayers() as $player){
+						$cmd = $commandText;
+
+						$new_cmd = str_replace('@a', $player->getName(), $cmd);
+
+						$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $new_cmd));
+
+						if($ev->isCancelled()){  
+							break;
+						}
+						Timings::$playerCommandTimer->startTiming();  
+						$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+						Timings::$playerCommandTimer->stopTiming();
+
+					}
+				}else{
+
+					$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
+
+					if($ev->isCancelled()){  
+						break;
+					}
+					Timings::$playerCommandTimer->startTiming();  
+					$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+					Timings::$playerCommandTimer->stopTiming();
 				}
 
-				Timings::$playerCommandTimer->startTiming();
-				$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
-				Timings::$playerCommandTimer->stopTiming();
 				break;
 			case ProtocolInfo::TEXT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
