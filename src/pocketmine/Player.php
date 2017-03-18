@@ -3120,9 +3120,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				if($command !== null){
 					if($packet->args !== null && count($packet->args) > 0){
 						$pars = $command->getCommandParameters();
-						if($pars !== null){
-							if($pars instanceof CommandParameter){
-								foreach($pars as $par){
+						if($pars !== null){var_dump($pars);
+							foreach($pars as $par){
+								if($par instanceof CommandParameter){
 									$arg = $packet->args->{$par->name};
 									if($arg !== null){
 										switch($par->type){
@@ -3132,6 +3132,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 												}else{
 													switch($arg->selector){//TODO
 														case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
+															$commandText .= " @a";
 															break;
 														case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
 															break;
@@ -3155,14 +3156,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 												break;
 										}
 									}
+							
+								}else{
+
+									foreach($packet->args as $arg){var_dump($arg);
+
+										$commandText .= " " . $arg;echo $commandText;
+
+									}
 								}
-							}else{
-
-								foreach($packet->args as $arg){
-
-									$commandText .= " " . $arg;echo $commandText;
-								}
-
 							}
 						}
 					}
@@ -3172,14 +3174,35 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$commandText .= " " . $arg;
 					}
 				}*/
-				$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
+				$cmd = $commandText;
+				if(strstr($commandText, "@a")){
+					foreach($this->server->getOnlinePlayers() as $player){
+						$cmd = $commandText;
 
-				if($ev->isCancelled()){  
-					break;  
-				}  
-				Timings::$playerCommandTimer->startTiming();  
-				$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
-				Timings::$playerCommandTimer->stopTiming();
+						$new_cmd = str_replace('@a', $player->getName(), $cmd);
+
+						$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $new_cmd));
+
+						if($ev->isCancelled()){  
+							break;
+						}
+						Timings::$playerCommandTimer->startTiming();  
+						$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+						Timings::$playerCommandTimer->stopTiming();
+
+					}
+				}else{
+
+					$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
+
+					if($ev->isCancelled()){  
+						break;
+					}
+					Timings::$playerCommandTimer->startTiming();  
+					$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+					Timings::$playerCommandTimer->stopTiming();
+				}
+
 				break;
 			case ProtocolInfo::TEXT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
