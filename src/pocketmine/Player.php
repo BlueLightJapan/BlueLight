@@ -3124,8 +3124,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							if(is_array($pars)){
 								foreach($pars as $par){
 									if($par instanceof CommandParameter){
-										$arg = $packet->args->{$par->name};
-										if($arg !== null){
+										if(isset($packet->args->{$par->name})){
+
+											$arg = $packet->args->{$par->name};
 											switch($par->type){
 												case CommandParameter::ARG_TYPE_TARGET:
 													if(isset($arg->rules)){
@@ -3157,7 +3158,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 													break;
 											}
 										}
-
 
 									}
 								}
@@ -3198,7 +3198,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 					}
 				}else{
-
+					//echo $commandText;
+					var_dump($packet);
 					$this->server->getPluginManager()->callEvent($ev = new PlayerCommandPreprocessEvent($this, "/" . $commandText));
 
 					if($ev->isCancelled()){  
