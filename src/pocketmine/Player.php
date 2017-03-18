@@ -3165,9 +3165,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 							}else{
 
-								foreach($packet->args as $arg){var_dump($arg);
+								foreach($packet->args as $arg){
 
-									$commandText .= " " . $arg;echo $commandText;
+									$commandText .= " " . $arg;
 
 								}
 
