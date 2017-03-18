@@ -121,12 +121,26 @@ abstract class Command{
 		}
 
 		$parms = [];
+		$values = [];
 
 		if(strstr($type, ":")){
 			$count = count($pieces = explode(":", $type));
 
 			for($i = 0;$i < $count;$i++){
-				$parms[] = $pieces[$i];
+
+				$parm = $pieces[$i];
+
+				if(strstr($parm, "stringenum")){
+					$c = count($cmd = explode("|", $parm));
+
+					for($v = 1;$v < $c;$v++){
+
+						$values[] = $cmd[$v];
+						$parm = "stringenum";
+					}
+				}
+
+				$parms[] = $parm;
 			}
 
 		}else{
@@ -139,7 +153,7 @@ abstract class Command{
 		$count = 0;
 		$max = count($commands);
 		foreach($commands as $command){
-			$this->commandParameters[] = new CommandParameter($command, $parms[$count], false);
+			$this->commandParameters[] = new CommandParameter($command, $parms[$count], false, $values);
 			++$count;
 
 		}
