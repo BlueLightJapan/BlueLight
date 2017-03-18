@@ -107,34 +107,35 @@ abstract class Command{
 	public function setCommandParameters($name, $type) {
 		$commands = [];
 
-		while($name == null){
-			if(strstr($name, ":")){
-				$pieces = explode(":", $name);
-				$command[] = $pieces[0];
-				$name = $pieces[1];
-			}else{
+		echo "Name = ".$name."\n";
+		if(strstr($name, ":")){
+			$count = count($pieces = explode(":", $name));
 
-				$command[] = $name;
-				$name = null;
-
+			for($i = 0;$i < $count;$i++){
+				$commands[] = $pieces[$i];
 			}
 
+		}else{
+
+			$commands[] = $name;
+
 		}
+
 		$parms = [];
 
-		while($type == null){
-			if(strstr($type, ":")){
-				$pieces = explode(":", $type);
-				$parms[] = $pieces[0];
-				$type = $pieces[1];
-			}else{
+		if(strstr($type, ":")){
+			$count = count($pieces = explode(":", $type));
 
-				$parms[] = $type;
-				$type = null;
-
+			for($i = 0;$i < $count;$i++){
+				$parms[] = $pieces[$i];
 			}
 
+		}else{
+
+			$parms[] = $type;
+
 		}
+
 		$this->commandParameters = [];
 		$count = 0;
 		$max = count($commands);
@@ -143,7 +144,6 @@ abstract class Command{
 			++$count;
 
 		}
-
 	}
 
 	/**
