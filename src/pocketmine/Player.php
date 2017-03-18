@@ -3121,50 +3121,56 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if($packet->args !== null && count($packet->args) > 0){
 						$pars = $command->getCommandParameters();
 						if($pars !== null){var_dump($pars);
-							foreach($pars as $par){
-								if($par instanceof CommandParameter){
-									$arg = $packet->args->{$par->name};
-									if($arg !== null){
-										switch($par->type){
-											case CommandParameter::ARG_TYPE_TARGET:
-												if(isset($arg->rules)){
-													$commandText .= " " . $arg->rules[0]->value;
-												}else{
-													switch($arg->selector){//TODO
-														case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
-															$commandText .= " @a";
-															break;
-														case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
-															break;
-														case CommandParameter::ARG_TYPE_TARGET_NEAREST_PLAYER:
-															break;
-														case CommandParameter::ARG_TYPE_TARGET_RANDOM_PLAYER:
-															break;
+							if(is_array($pars)){
+								foreach($pars as $par){
+									if($par instanceof CommandParameter){
+										$arg = $packet->args->{$par->name};
+										if($arg !== null){
+											switch($par->type){
+												case CommandParameter::ARG_TYPE_TARGET:
+													if(isset($arg->rules)){
+														$commandText .= " " . $arg->rules[0]->value;
+													}else{
+														switch($arg->selector){//TODO
+															case CommandParameter::ARG_TYPE_TARGET_ALL_PLAYERS:
+																$commandText .= " @a";
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_ALL_ENTITIES:
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_NEAREST_PLAYER:
+																break;
+															case CommandParameter::ARG_TYPE_TARGET_RANDOM_PLAYER:
+																break;
+														}
 													}
-												}
-												break;
-											case CommandParameter::ARG_TYPE_BLOCK_POS:
-												$commandText .= " " . $arg->x . " " . $arg->y + " " . $arg->z;
-												break;
-											case CommandParameter::ARG_TYPE_STRING:
-											case CommandParameter::ARG_TYPE_STRING_ENUM:
-											case CommandParameter::ARG_TYPE_RAW_TEXT:
-												$commandText .= " " . $arg;
-												break;
-											default:
-												$commandText .= " " . $arg;
-												break;
+													break;
+												case CommandParameter::ARG_TYPE_BLOCK_POS:
+													$commandText .= " " . $arg->x . " " . $arg->y + " " . $arg->z;
+													break;
+												case CommandParameter::ARG_TYPE_STRING:
+												case CommandParameter::ARG_TYPE_STRING_ENUM:
+												case CommandParameter::ARG_TYPE_RAW_TEXT:
+													$commandText .= " " . $arg;
+													break;
+												default:
+													$commandText .= " " . $arg;
+													break;
+											}
 										}
-									}
-							
-								}else{
 
-									foreach($packet->args as $arg){var_dump($arg);
-
-										$commandText .= " " . $arg;echo $commandText;
 
 									}
 								}
+
+
+							}else{
+
+								foreach($packet->args as $arg){var_dump($arg);
+
+									$commandText .= " " . $arg;echo $commandText;
+
+								}
+
 							}
 						}
 					}
