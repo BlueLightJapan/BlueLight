@@ -1578,7 +1578,7 @@ class Server{
 				@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
 			}
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [Utils::getIp(), $this->getPort()]));
 			define("BOOTUP_RANDOM", random_bytes(16));
 			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
 
@@ -1588,12 +1588,17 @@ class Server{
 			$this->network = new Network($this);
 			$this->network->setName($this->getMotd());
 
-			$this->logger->info(pack("c",0x1B)."[1;46m".pack("c",0x1B)."[1;44m" .$this->getLanguage()->translateString("pocketmine.server.info", [
+			$blue = pack("c",0x1B)."[1;44m";
+			$blue2= pack("c",0x1B)."[1;46m";
+			$reset= pack("c",0x1B)."[1;0m";
+
+			$this->logger->info($blue.$this->getLanguage()->translateString("pocketmine.server.info", [
 				$this->getName(),
 				($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
 				$this->getCodename(),
 				$this->getApiVersion()
 			]));
+
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.license", [$this->getName()]));
 
 			Timings::init();
