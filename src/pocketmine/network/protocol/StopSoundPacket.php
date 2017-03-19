@@ -19,7 +19,6 @@
  *
 */
 
-
 namespace pocketmine\network\protocol;
 
 #include <rules/DataPacket.h>
@@ -27,17 +26,17 @@ namespace pocketmine\network\protocol;
 class StopSoundPacket extends DataPacket{
 	const NETWORK_ID = Info::STOP_SOUND_PACKET;
 
-	public $string1;
+	public $sound;
 	public $stopAll;
 
 	public function decode(){
-		$this->string1 = $this->getString();
+		$this->sound = $this->getString();
 		$this->stopAll = $this->getBool();
 	}
 
 	public function encode(){
 		$this->reset();
-		$this->putString($this->string1);
+		$this->putString($this->sound);
 		$this->putBool($this->stopAll);
 	}
 
