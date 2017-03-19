@@ -27,14 +27,12 @@ namespace pocketmine\network\protocol;
 class ResourcePackClientResponsePacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
 
-	public $unknownByte;
-	public $unknownShort;
+	public $type;
+	public $short;
 
 	public function decode(){
-		$this->byte = $this->getByte();
-		$this->short = $this->getShort();
-		//$this->string = $this->getString();
-
+		$this->type = $this->getByte();
+		$this->short = $this->getLShort();
 	}
 
 	public function encode(){
