@@ -25,7 +25,7 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 class PlaySoundPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::PLAY_SOUND_PACKET;
+	const NETWORK_ID = Info::PLAY_SOUND_PACKET;
 
 	public $string1;
 	public $x;

@@ -25,7 +25,7 @@ namespace pocketmine\network\protocol;
 #include <rules/DataPacket.h>
 
 class StopSoundPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::STOP_SOUND_PACKET;
+	const NETWORK_ID = Info::STOP_SOUND_PACKET;
 
 	public $string1;
 	public $stopAll;
