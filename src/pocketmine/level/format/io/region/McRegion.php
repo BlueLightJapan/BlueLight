@@ -181,14 +181,13 @@ class McRegion extends BaseLevelProvider{
 			$heightMap = [];
 			if(isset($chunk->HeightMap)){
 				if($chunk->HeightMap instanceof ByteArrayTag){
-					$heightMap = unpack("C*", $chunk->HeightMap->getValue());
+					$heightMap = array_values(unpack("C*", $chunk->HeightMap->getValue()));
 				}elseif($chunk->HeightMap instanceof IntArrayTag){
 					$heightMap = $chunk->HeightMap->getValue(); #blameshoghicp
 				}
 			}
 
 			$result = new Chunk(
-				$this,
 				$chunk["xPos"],
 				$chunk["zPos"],
 				$subChunks,
@@ -294,9 +293,6 @@ class McRegion extends BaseLevelProvider{
 	}
 
 	public function setChunk(int $chunkX, int $chunkZ, Chunk $chunk){
-
-		$chunk->setProvider($this);
-
 		self::getRegionIndex($chunkX, $chunkZ, $regionX, $regionZ);
 		$this->loadRegion($regionX, $regionZ);
 
@@ -313,7 +309,11 @@ class McRegion extends BaseLevelProvider{
 
 	public function saveChunk(int $chunkX, int $chunkZ) : bool{
 		if($this->isChunkLoaded($chunkX, $chunkZ)){
-			$this->getRegion($chunkX >> 5, $chunkZ >> 5)->writeChunk($this->getChunk($chunkX, $chunkZ));
+			$chunk = $this->getChunk($chunkX, $chunkZ);
+			if(!$chunk->isGenerated()){
+				throw new \InvalidStateException("Cannot save un-generated chunk");
+			}
+			$this->getRegion($chunkX >> 5, $chunkZ >> 5)->writeChunk($chunk);
 
 			return true;
 		}
@@ -354,7 +354,7 @@ class McRegion extends BaseLevelProvider{
 
 	public function unloadChunk(int $chunkX, int $chunkZ, bool $safe = true) : bool{
 		$chunk = $this->chunks[$index = Level::chunkHash($chunkX, $chunkZ)] ?? null;
-		if($chunk instanceof Chunk and $chunk->unload(false, $safe)){
+		if($chunk instanceof Chunk and $chunk->unload($safe)){
 			unset($this->chunks[$index]);
 			return true;
 		}
@@ -422,7 +422,7 @@ class McRegion extends BaseLevelProvider{
 	 * @return Chunk
 	 */
 	public function getEmptyChunk(int $chunkX, int $chunkZ){
-		return Chunk::getEmptyChunk($chunkX, $chunkZ, $this);
+		return Chunk::getEmptyChunk($chunkX, $chunkZ);
 	}
 
 	/**

@@ -21,7 +21,7 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\Network;
 use pocketmine\network\protocol\AddEntityPacket;
@@ -39,8 +39,8 @@ class EnderPearl extends Projectile{
 	protected $drag = 0.01;
 	protected $player;
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt, Entity $shootingEntity = null){
-		parent::__construct($chunk, $nbt, $shootingEntity);
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
+		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
 	public function onUpdate($currentTick){

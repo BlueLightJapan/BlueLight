@@ -34,7 +34,6 @@ class ResourcePackClientResponsePacket extends DataPacket{
 	public function decode(){
 		$this->type = $this->getByte();
 		$this->short = $this->getShort();
-		@$this->packid = $this->getString();
 
 	}
 

@@ -29,20 +29,15 @@ class ClientboundMapItemDataPacket extends DataPacket{
 
 	public $mapid;
 	public $updatetype;
-	public $direction;
+	public $decorators;
 	public $x;
 	public $z;
+	public $scale;
 	public $col;
 	public $row;
 	public $xoffset;
 	public $zoffset;
 	public $data;
- 	public $int6;
-	public $int7;
-	public $int8;
-	public $int9;
-	public $int10;
-	public $int11;
 
 	public function decode(){
 
@@ -52,22 +47,30 @@ class ClientboundMapItemDataPacket extends DataPacket{
 		$this->reset();
 
 		$this->putLong($this->mapid);
-		$this->putUnsignedVarInt($this->updatetype);
-		$this->putUnsignedVarInt($this->direction);
-		$this->putVarInt($this->x);
+		$this->putByte($this->updatetype);
+		$this->putDecorators($this->decorators);
+		$this->putByte($this->x);
 		$this->putByte($this->z);
-		$this->putUnsignedVarInt($this->col);
+		$this->putVarInt($this->col);
 		$this->putVarInt($this->row);
-		$this->putByte($this->xoffset);
-		$this->putByte($this->zoffset);
+		$this->putVarInt($this->xoffset);
+		$this->putVarInt($this->zoffset);
 		$this->putString($this->data);
-		$this->putUnsignedVarInt($this->int6);
-		$this->putVarInt($this->int7);
-		$this->putVarInt($this->int8);
-		$this->putVarInt($this->int9);
-		$this->putVarInt($this->int10);
-		$this->putUnsignedVarInt($this->int11);
 
+
+	}
+
+	public function putDecorators(){
+		$decorators = $this->decorators;
+
+		foreach($decorators as $decorator){var_dump($decorator);
+			$this->putByte($decorator->rotation);
+			$this->putByte($decorator->icon);
+			$this->putByte($decorator->x);
+			$this->putByte($decorator->z);
+			$this->putString($decorator->label);
+			$this->putLong($decorator->color);
+		}
 	}
 
 }
