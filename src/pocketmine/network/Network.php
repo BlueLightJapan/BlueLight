@@ -98,10 +98,6 @@ use pocketmine\network\protocol\TransferPacket;
 use pocketmine\network\protocol\UpdateTradePacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
 use pocketmine\network\protocol\UseItemPacket;
-use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\utils\Binary;
-use pocketmine\utils\BinaryStream;
 use pocketmine\network\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\protocol\ResourcePackChunkDataPacket;
 use pocketmine\network\protocol\ResourcePackChunkRequestPacket;
@@ -111,6 +107,15 @@ use pocketmine\network\protocol\RiderJumpPacket;
 use pocketmine\network\protocol\ResourcePackStackPacket;
 use pocketmine\network\protocol\ClientboundMapItemDataPacket;
 use pocketmine\network\protocol\ReceursePackChunkDataPacket;
+use pocketmine\network\protocol\BlockPickRequestPacket;
+use pocketmine\network\protocol\CommandBlockUpdatePacket;
+use pocketmine\network\protocol\PlaySoundPacket;
+use pocketmine\network\protocol\SetTitlePacket;
+use pocketmine\network\protocol\StopSoundPacket;
+use pocketmine\Player;
+use pocketmine\Server;
+use pocketmine\utils\Binary;
+use pocketmine\utils\BinaryStream;
 
 class Network{
 
@@ -397,5 +402,10 @@ class Network{
 		$this->registerPacket(ProtocolInfo::UPDATE_BLOCK_PACKET, UpdateBlockPacket::class);
 		$this->registerPacket(ProtocolInfo::UPDATE_TRADE_PACKET, UpdateTradePacket::class);
 		$this->registerPacket(ProtocolInfo::USE_ITEM_PACKET, UseItemPacket::class);
+		$this->registerPacket(ProtocolInfo::BLOCK_PICK_REQUEST_PACKET, BlockPickRequestPacket::class);
+		$this->registerPacket(ProtocolInfo::COMMAND_BLOCK_UPDATE_PACKET, CommandBlockUpdatePacket::class);
+		$this->registerPacket(ProtocolInfo::PLAY_SOUND_PACKET, PlaySoundPacket::class);
+		$this->registerPacket(ProtocolInfo::SET_TITLE_PACKET, SetTitlePacket::class);
+		$this->registerPacket(ProtocolInfo::STOP_SOUND_PACKET, StopSoundPacket::class);
 	}
 }
