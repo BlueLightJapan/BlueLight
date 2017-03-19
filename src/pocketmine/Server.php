@@ -1473,7 +1473,7 @@ class Server{
 				"ResourcePackEnabled" => true,
 				"ResourcePackId" => "2d3c68e8-cd07-305f-a868-65fa583b8037",
 				"ResourcePackVersion" => "1.0.0",
-				"ResourcePackPath" => "packdata.txt",
+				"ResourcePackPath" => "packdata\pack.zip",
 
 			]);
 
