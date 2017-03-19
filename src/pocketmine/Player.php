@@ -132,11 +132,6 @@ use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\network\protocol\PlayerActionPacket;
 use pocketmine\network\protocol\PlayStatusPacket;
 use pocketmine\network\protocol\PlayInputPacket;
-use pocketmine\network\protocol\ResourcePacksInfoPacket;
-use pocketmine\network\protocol\ResourcePackDataInfoPacket;
-use pocketmine\network\protocol\ResourcePackStackPacket;
-use pocketmine\network\protocol\ResourcePackChunkRequestPacket;
-use pocketmine\network\protocol\ResourcePackChunkDataPacket;
 use pocketmine\network\protocol\RespawnPacket;
 use pocketmine\network\protocol\ShowCreditsPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
@@ -3058,25 +3053,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
 			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:var_dump($packet);
-
-				if($packet->type == 2){
-
-					$packId = $packet->packid;
-					/*
-					$pk = new ResourcePackDataInfoPacket();
-					$pk->packageId = "5abdb963-4f3f-4d97-8482-88e2049ab149";
-					$pk->uk1 = 1048576;
-					$pk->uk2 = 1;
-					$pk->uk3 = 359901;
-					$pk->uk4 = "9&\r2'eX?;\u001bd?D?\u0006?L6\u0007TT/[Ux?cx*\u0005h\u0002a\u0012";
-					*/
-					$this->pack->sendPackDataInfo($this,$packId);
+				if($packet->type == 1){
+				}elseif($packet->type == 2){
+					$this->pack->sendPackDataInfo($this);
+				}elseif($packet->type == 3){
+				}elseif($packet->type == 4){
+					$this->pack->sendPackStack($this);
 				}
 				break;
-
-			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:var_dump($packet);
+			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
+				$this->pack->sendPackChunkData($this);
 				break;
-
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
 				$pk = new ClientboundMapItemDataPacket();
 				$pk->mapid = $packet->mapid;
