@@ -103,8 +103,7 @@ use pocketmine\utils\TextFormat;
 use pocketmine\utils\Utils;
 use pocketmine\utils\UUID;
 use pocketmine\utils\VersionString;
-use pocketmine\packs\ResourcePackInfoEntry;
-use pocketmine\packs\ResourcePacks;
+use pocketmine\packs\ResourcePack;
 
 /**
  * The class that manages everything
@@ -272,12 +271,11 @@ class Server{
 	public $rideableentity = true;
 
 	/** @var ResourcePack */
-	public $packEnabled  = false;
+	public $packEnabled  = true;
 	public $pack;
-	public $packEntry;
-	public $packId = "";
-	public $packVersion;
-	public $packPath;
+	public $packId = "2d3c68e8-cd07-305f-a868-65fa583b8037";
+	public $packVersion = "1.0.0";
+	public $packPath = "packdata.txt";
 
 	/**
 	 * @return string
@@ -359,19 +357,8 @@ class Server{
 	/**
 	 * @return int
 	 */
-	public function getViewDistance() : int{
-		return max(2, $this->getConfigInt("view-distance", 8));
-	}
-
-	/**
-	 * Returns a view distance up to the currently-allowed limit.
-	 *
-	 * @param int $distance
-	 *
-	 * @return int
-	 */
-	public function getAllowedViewDistance(int $distance) : int{
-		return max(2, min($distance, $this->memoryManager->getViewDistance($this->getViewDistance())));
+	public function getViewDistance(){
+		return max(56, $this->getProperty("chunk-sending.max-chunks", 256));
 	}
 
 	/**
@@ -1472,10 +1459,10 @@ class Server{
 				"HungerHealth" => 10,
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
-				"ResourcePackEnabled" => false,
-				"ResourcePackId" => "6ed420fd-c7b7-39d8-820c-89b86da3cbef",
-				"ResourcePackVersion" => "0.0.1",
-				"ResourcePackPath" => "packdata\\ResourcePack.mcpack",
+				"ResourcePackEnabled" => true,
+				"ResourcePackId" => "2d3c68e8-cd07-305f-a868-65fa583b8037",
+				"ResourcePackVersion" => "1.0.0",
+				"ResourcePackPath" => "packdata.txt",
 
 			]);
 
@@ -1503,7 +1490,6 @@ class Server{
 				"enable-rcon" => false,
 				"rcon.password" => substr(base64_encode(random_bytes(20)), 3, 10),
 				"auto-save" => true,
-				"view-distance" => 8
 			]);
 
 			$this->forceLanguage = $this->getProperty("settings.force-language", false);
@@ -1533,9 +1519,9 @@ class Server{
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 
 			$this->packEnabled = $this->getProperty("ResourcePackEnabled", false);
-			$this->packId = $this->getBlueLightConfigString("ResourcePackId", "");
-			$this->packVersion = $this->getBlueLightConfigString("ResourcePackVersion", "");
-			$this->packPath = $this->getBlueLightConfigString("ResourcePackPath", "");
+			$this->packId = $this->getBlueLightConfigString("ResourcePackId", "2d3c68e8-cd07-305f-a868-65fa583b8037");
+			$this->packVersion = $this->getBlueLightConfigString("ResourcePackVersion", "1.0.0");
+			$this->packPath = $this->getBlueLightConfigString("ResourcePackPath", "packdata.txt");
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
@@ -1613,7 +1599,7 @@ class Server{
 				@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
 			}
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [Utils::getIp(), $this->getPort()]));
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
 			define("BOOTUP_RANDOM", random_bytes(16));
 			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
 
@@ -1623,17 +1609,12 @@ class Server{
 			$this->network = new Network($this);
 			$this->network->setName($this->getMotd());
 
-			$blue = pack("c",0x1B)."[1;44m";
-			$blue2= pack("c",0x1B)."[1;46m";
-			$reset= pack("c",0x1B)."[1;0m";
-
-			$this->logger->info($blue.$this->getLanguage()->translateString("pocketmine.server.info", [
+			$this->logger->info(pack("c",0x1B)."[1;46m".pack("c",0x1B)."[1;44m" .$this->getLanguage()->translateString("pocketmine.server.info", [
 				$this->getName(),
 				($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
 				$this->getCodename(),
 				$this->getApiVersion()
 			]));
-
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.license", [$this->getName()]));
 
 			Timings::init();
@@ -1671,8 +1652,7 @@ class Server{
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
 			if($this->packEnabled){
-				$this->packEntry = new ResourcePackInfoEntry($this->packId, $this->packVersion, $this->packPath);
-				$this->pack = new ResourcePacks($this->packEntry);
+				$this->pack = new ResourcePack($this->packId, $this->packVersion, $this->packPath);
 			}
 
 			LevelProviderManager::addProvider(Anvil::class);
