@@ -268,8 +268,7 @@ class Server{
 	public $golemspawn = false;
 	public $keepInventory = false;
 	public $rideableentity = true;
-	public $enchantingTableEnabled = true;
-	public $countBookshelf = false;
+
 	/**
 	 * @return string
 	 */
