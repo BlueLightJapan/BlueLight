@@ -26,11 +26,11 @@ namespace pocketmine\network\protocol;
 class ResourcePackDataInfoPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_DATA_INFO_PACKET;
 
-	public $packid;
+	public $packId;
 	public $int1;
 	public $int2;
 	public $size;
-	public $pack;
+	public $sha256;
 
 	public function decode(){
 
@@ -39,13 +39,13 @@ class ResourcePackDataInfoPacket extends DataPacket{
 	public function encode(){
 		$this->reset();
 
-		$this->putString($this->packid);
-		$this->putVarInt($this->int1);
-		$this->putVarInt($this->int2);
-		$this->putLong($this->size);
-		$this->putString($this->pack);
+		$this->putString($this->packId);
+		$this->putLInt($this->int1);
+		$this->putLInt($this->int2);
+		$this->putLLong($this->size);
+		$this->putString($this->sha256);
 
-
+		var_dump($this);
 
 	}
 
