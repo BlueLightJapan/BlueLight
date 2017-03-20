@@ -264,7 +264,7 @@ class Network{
 					$pk->setBuffer($buf, 1);
 
 					$pk->decode();
-					assert($pk->feof(), "Still " . strlen(substr($pk->buffer, $pk->offset)) . " bytes unread in " . get_class($pk));
+					//assert($pk->feof(), "Still " . strlen(substr($pk->buffer, $pk->offset)) . " bytes unread in " . get_class($pk));
 					$p->handleDataPacket($pk);
 				}
 			}

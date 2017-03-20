@@ -132,11 +132,6 @@ use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\network\protocol\PlayerActionPacket;
 use pocketmine\network\protocol\PlayStatusPacket;
 use pocketmine\network\protocol\PlayInputPacket;
-use pocketmine\network\protocol\ResourcePacksInfoPacket;
-use pocketmine\network\protocol\ResourcePackDataInfoPacket;
-use pocketmine\network\protocol\ResourcePackStackPacket;
-use pocketmine\network\protocol\ResourcePackChunkRequestPacket;
-use pocketmine\network\protocol\ResourcePackChunkDataPacket;
 use pocketmine\network\protocol\RespawnPacket;
 use pocketmine\network\protocol\ShowCreditsPacket;
 use pocketmine\network\protocol\SetDifficultyPacket;
@@ -290,6 +285,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/** @var DeviceModel */
 	protected $deviceModel;
 	protected $os;
+
+	/** @var ResourcePack */
+	public $pack;
 
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
@@ -1735,7 +1733,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->newPosition = null;
 	}
 
-
 	public function setMotion(Vector3 $mot){
 		if(parent::setMotion($mot)){
 			if($this->chunk !== null){
@@ -2056,7 +2053,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return;
 		}
 
-		$this->dataPacket(new ResourcePacksInfoPacket());
+		if($this->server->packEnabled){
+			$this->pack = $this->server->pack;
+			$this->pack->sendPacksInfo($this);
+		}else{
+			$this->dataPacket(new ResourcePacksInfoPacket());
+		}
 
 		if(!$this->hasValidSpawnPosition() and isset($this->namedtag->SpawnLevel) and ($level = $this->server->getLevelByName($this->namedtag["SpawnLevel"])) instanceof Level){
 			$this->spawnPosition = new WeakPosition($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
@@ -2877,22 +2879,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						break;
 					case InteractPacket::ACTION_RIGHT_CLICK:
 						if($this->server->rideableentity){
-							/*
-							if($target instanceof Horse){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-
-							}elseif($target instanceof Pig){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-
-							}elseif($target instanceof Boat){
-								$this->isLinked = true;
-								$this->setLink($target);
-								$this->linkedentity = $target;
-							}*/
 							if($target instanceof Rideable){
 								$this->isLinked = true;
 								$this->setLink($target);
@@ -3031,7 +3017,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->action = $ev->getAnimationType();
 				$this->server->broadcastPacket($this->getViewers(), $pk);
 				break;
-			case ProtocolInfo::SET_HEALTH_PACKET: //Not used
+			case ProtocolInfo::SET_HEALTH_PACKET:
 				break;
 			case ProtocolInfo::ENTITY_EVENT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
@@ -3066,10 +3052,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::RIDER_JUMP_PACKET:
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
-				echo $packet->power."\n";
+			case ProtocolInfo::RESOURCE_PACK_CLIENT_RESPONSE_PACKET:var_dump($packet);
+				if($packet->type == 1){
+				}elseif($packet->type == 2){
+					$this->pack->sendPackDataInfo($this);
+				}elseif($packet->type == 3){
+				}elseif($packet->type == 4){
+					$this->pack->sendPackStack($this);
+				}
+				break;
+			case ProtocolInfo::RESOURCE_PACK_CHUNK_REQUEST_PACKET:
+				$this->pack->sendPackChunkData($this);
 				break;
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
-				var_dump($packet);
 				$pk = new ClientboundMapItemDataPacket();
 				$pk->mapid = $packet->mapid;
 				$pk->updatetype = 6;
@@ -3082,9 +3077,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->xoffset = 0;
 				$pk->zoffset = 0;
 				$pk->data = "";
-				var_dump($pk);
 				$this->dataPacket($pk);
-
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){

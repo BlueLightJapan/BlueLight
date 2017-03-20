@@ -23,61 +23,80 @@ namespace pocketmine\packs;
 use pocketmine\network\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\protocol\ResourcePackStackPacket;
-use pocketmine\network\protocol\ResourcePackChunkRequestPacket;
 use pocketmine\network\protocol\ResourcePackChunkDataPacket;
 
-class ResourcePacks{
+class ResourcePack {
 
 	public $mustAccept = false;
 
-	/** @var ResourcePackInfoEntry */
-	public $behaviourPackEntries = [];
-	/** @var ResourcePackInfoEntry */
-	public $resourcePackEntries = [];
-	/** @var ResourcePackInfoEntry */
-	public $packEntries = [];
+	protected $packId;
+	protected $version;
+	protected $packSize;
+	protected $packData;
 
-	public function __construct(){
+	public $sha256;
+
+	public function __construct(string $packId, string $version, string $path){
+
+		$this->packId = $packId;
+		$this->version = $version;
+		$this->packData = file_get_contents($path);
+		$this->sha256 = hash("sha256", $this->packData);
+		$this->packSize = strlen($this->packData);
+
 	}
 
 	public function sendPacksInfo($player){
 		$info = new ResourcePacksInfoPacket();
 		$info->mustAccept = $this->mustAccept;
-		$info->behaviourPackEntries = $this->behaviourPackEntries;
-		$info->resourcePackEntries = $this->resourcePackEntries;
-
+		$info->behaviourPackEntries[] = [];
+		$info->resourcePackEntries[] = $this;
 		$player->dataPacket($info);
 	}
 
-	public function sendPackDataInfo($player, $packid){
-		$datainfo = new ReourcePackDataInfoPacket();
-		$datainfo->packid = $packid;
-		$datainfo->int1 = 0;
+	public function sendPackDataInfo($player){
+		$datainfo = new ResourcePackDataInfoPacket();
+		$datainfo->packId = $this->getPackId();
+		$datainfo->int1 = 1048576;
 		$datainfo->int2 = 1;
-		$datainfo->size = $packEntries[$packid]->getPackSize();
-		$datainfo->pack = $packEntries[$packid]->getPackData();
-
+		$datainfo->size = $this->getPackSize();
+		$datainfo->sha256 = $this->sha256;
 		$player->dataPacket($datainfo);
 	}
 
 	public function sendPackStack($player){
 		$stack = new ResourcePackStackPacket();
 		$stack->mustAccept = $this->mustAccept;
-		$stack->behaviourPackEntries = $this->behaviourPackEntries;
-		$stack->resourcePackEntries = $this->resourcePackEntries;
+		$stack->behaviourPackEntries = [];
+		$stack->resourcePackEntries[] = $this;
 
 		$player->dataPacket($stack);
 	}
 
-	public function sendPackChunkData($player, $packid){
-		$chunkdata = new ReourcePackDataChunkPacket();
-		$chunkdata->packid = $packid;
-		$chunkdata->int1 = 0;
-		$chunkdata->size = $packEntries[$packid]->getPackSize();
-		$chunkdata->int2 = 1;
-		//$chunkdata->payload = $packEntries[$packid]->getPackData();
-		$chunkdata->byte = 0;
-
+	public function sendPackChunkData($player){
+		$chunkdata = new ResourcePackChunkDataPacket();
+		$chunkdata->packId = $this->getPackId();
+		$chunkdata->int = 0;
+		$chunkdata->long = 0;
+		$chunkdata->length = $this->getPackSize();
+		$chunkdata->payload = $this->getPackData();
+		//var_dump($chunkdata);
 		$player->dataPacket($chunkdata);
+	}
+
+	public function getPackId() : string {
+		return $this->packId;
+	}
+
+	public function getVersion() : string {
+		return $this->version;
+	}
+
+	public function getPackSize() : int {
+		return $this->packSize;
+	}
+
+	public function getPackData() : string {
+		return $this->packData;
 	}
 }
