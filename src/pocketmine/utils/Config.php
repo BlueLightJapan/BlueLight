@@ -187,8 +187,7 @@ class Config{
 						$content = $this->writeProperties();
 						break;
 					case Config::JSON:
-						//$content = json_encode($this->config, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING);
-						$content = json_encode($this->config, JSON_UNESCAPED_UNICODE);
+						$content = json_encode($this->config, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING);
 						break;
 					case Config::YAML:
 						$content = yaml_emit($this->config, YAML_UTF8_ENCODING);
