@@ -39,6 +39,11 @@ class InventoryType{
 	const BREWING_STAND = 7;
 	const ANVIL = 8;
 	const ENCHANT_TABLE = 9;
+	const DISPENSER = 10;
+	const DROPPER = 11;
+	const HOPPER = 12;
+	const ENDER_CHEST = 13;
+	const BEACON = 14;
 
 	private static $default = [];
 
@@ -71,7 +76,9 @@ class InventoryType{
 			static::FURNACE =>       new InventoryType(3,       "Furnace",      InventoryNetworkIds::FURNACE), //2 INPUT, 1 OUTPUT
 			static::ENCHANT_TABLE => new InventoryType(2,       "Enchant",      InventoryNetworkIds::ENCHANTMENT), //1 INPUT/OUTPUT, 1 LAPIS
 			static::BREWING_STAND => new InventoryType(4,       "Brewing",      InventoryNetworkIds::BREWING_STAND), //1 INPUT, 3 POTION
-			static::ANVIL =>         new InventoryType(3,       "Anvil",        InventoryNetworkIds::ANVIL) //2 INPUT, 1 OUTP
+			static::ANVIL =>         new InventoryType(3,       "Anvil",        InventoryNetworkIds::ANVIL), //2 INPUT, 1 OUTP
+			static::BEACON =>        new InventoryType(2,       "Beacon",       InventoryNetworkIds::BEACON) //1 INPUT, 0 OUTP
+
 		];
 	}
 

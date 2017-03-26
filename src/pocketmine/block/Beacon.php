@@ -60,6 +60,11 @@ class Beacon extends Solid{
 		if($player instanceof Player){
 			$tile = $this->getLevel()->getTile($this);
 
+ 			$top = $this->getSide(1);
+ 			if($top->isTransparent() !== true){
+				return true;
+ 			}
+
 			if($tile instanceof BeaconTile){
 				$player->addWindow($tile->getInventory());
 				return true;
@@ -73,14 +78,15 @@ class Beacon extends Solid{
 					new IntTag("z", $this->z)]);
 
 				$nbt->Items->setTagType(NBT::TAG_Compound);
-				$beacon = Tile::createTile("Beacon", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+				$beacon = Tile::createTile("Beacon", $this->getLevel(), $nbt);
 			}
-
+			/*
 			if(isset($beacon->namedtag->Lock) and $beacon->namedtag->Lock instanceof StringTag){
 				if($beacon->namedtag->Lock->getValue() !== $item->getCustomName()){
 					return true;
 				}
 			}
+			*/
 			if($tile instanceof BeaconTile){
 
 			$player->addWindow($beacon->getInventory());
@@ -100,6 +106,8 @@ class Beacon extends Solid{
 			new IntTag("y", $block->y),
 			new IntTag("z", $block->z)
 		]);
+
+		/*
 		$nbt->Items->setTagType(NBT::TAG_Compound);
 
 		if($item->hasCustomBlockData()){
@@ -107,8 +115,9 @@ class Beacon extends Solid{
 				$nbt->{$key} = $v;
 			}
 		}
+		*/
 
-		Tile::createTile("Beacon", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		Tile::createTile(Tile::BEACON, $this->getLevel(), $nbt);
 
 		return true;
 	}
