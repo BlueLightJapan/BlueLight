@@ -81,7 +81,7 @@ class InventoryType{
 		static::$default[static::HOPPER] = new InventoryType(5, "Hopper", 8); //5 CONTAINER
 		static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0);
 		static::$default[static::BEACON] = new InventoryType(0, "Beacon", 13);
-		];
+		
 	}
 
 	/**
