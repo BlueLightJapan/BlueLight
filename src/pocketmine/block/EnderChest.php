@@ -11,10 +11,10 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
-use pocketmine\tile\EnderChest as enderchesttile;
+use pocketmine\tile\EnderChest as TileEnderChest;
 use pocketmine\tile\Tile;
 
-class Transparent{
+class EnderChest extends Transparent{
 
 	protected $id = self::ENDER_CHEST;
 
