@@ -265,6 +265,7 @@ class Server{
 	public $crashdumps = true;
 	public $destroyblockparticle = true;
 	public $titletick = true;
+	public $stevekick = false;
 	public $golemspawn = false;
 	public $keepInventory = false;
 	public $rideableentity = true;
@@ -1445,6 +1446,7 @@ class Server{
 				"DestroyBlockParticle" => true,
 				"KeepInventory" => false,
 				"TitleTick" => true,
+				"SteveKick" => false,
 				"HungerHealth" => 10,
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
@@ -1500,6 +1502,7 @@ class Server{
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
 			$this->keepInventory = $this->getProperty("keepInventory", false);
 			$this->titletick = $this->getProperty("TitleTick", true);
+			$this->stevekick = $this->getProperty("SteveKick", false);
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 

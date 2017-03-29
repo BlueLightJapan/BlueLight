@@ -2215,8 +2215,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				if(!$valid or $this->iusername === "rcon" or $this->iusername === "console"){
 					$this->close("", "disconnectionScreen.invalidName");
-
 					break;
+				}
+
+				if($this->getServer()->getProperty("SteveKick", false)){
+					if($this->iusername === "steve"){
+						$this->close("", "disconnectionScreen.invalidName");
+						break;
+					}
 				}
 
 				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
