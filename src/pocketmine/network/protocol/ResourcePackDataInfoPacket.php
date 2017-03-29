@@ -45,8 +45,6 @@ class ResourcePackDataInfoPacket extends DataPacket{
 		$this->putLLong($this->size);
 		$this->putString($this->sha256);
 
-		var_dump($this);
-
 	}
 
 }

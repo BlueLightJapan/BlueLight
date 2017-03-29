@@ -3075,7 +3075,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				echo $packet->power."\n";
 				break;
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
-				var_dump($packet);
+
 				$pk = new ClientboundMapItemDataPacket();
 				$pk->mapid = $packet->mapid;
 				$pk->updatetype = 6;
@@ -3088,7 +3088,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk->xoffset = 0;
 				$pk->zoffset = 0;
 				$pk->data = "";
-				var_dump($pk);
+
 				$this->dataPacket($pk);
 
 				break;
