@@ -27,6 +27,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use pocketmine\command\data\CommandParameter;
+use pocketmine\command\data\CommandParameters;
 
 class KickCommand extends VanillaCommand{
 
@@ -37,7 +38,20 @@ class KickCommand extends VanillaCommand{
 			"%commands.kick.usage"
 		);
 		$this->setPermission("pocketmine.command.kick");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		/*
+		$this->commandParameters = [
+			new CommandParameters([
+				new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, false),
+				new CommandParameter("reason", CommandParameter::ARG_TYPE_STRING, true),
+			])
+		];*/
+
+		$this->commandParameters = [
+			new CommandParameter("target", CommandParameter::ARG_TYPE_TARGET, false),
+			new CommandParameter("reason", CommandParameter::ARG_TYPE_RAW_TEXT, true),
+
+		];
 
 	}
 

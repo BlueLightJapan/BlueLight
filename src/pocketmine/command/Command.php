@@ -30,6 +30,8 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
+use pocketmine\command\data\CommandParameters;
 
 abstract class Command{
 	/** @var array */
@@ -95,6 +97,68 @@ abstract class Command{
 		return $this->commandData;
 	}
 
+	public function getCommandParameters() {
+		if(isset($this->commandParameters)){
+			return $this->commandParameters;
+		}
+		return false;
+	}
+
+	public function setCommandParameters($name, $type) {
+		$commands = [];
+
+		if(strstr($name, ":")){
+			$count = count($pieces = explode(":", $name));
+
+			for($i = 0;$i < $count;$i++){
+				$commands[] = $pieces[$i];
+			}
+
+		}else{
+
+			$commands[] = $name;
+
+		}
+
+		$parms = [];
+		$values = [];
+
+		if(strstr($type, ":")){
+			$count = count($pieces = explode(":", $type));
+
+			for($i = 0;$i < $count;$i++){
+
+				$parm = $pieces[$i];
+
+				if(strstr($parm, "stringenum")){
+					$c = count($cmd = explode("|", $parm));
+
+					for($v = 1;$v < $c;$v++){
+
+						$values[] = $cmd[$v];
+						$parm = "stringenum";
+					}
+				}
+
+				$parms[] = $parm;
+			}
+
+		}else{
+
+			$parms[] = $type;
+
+		}
+
+		$this->commandParameters = [];
+		$count = 0;
+		$max = count($commands);
+		foreach($commands as $command){
+			$this->commandParameters[] = new CommandParameter($command, $parms[$count], false, $values);
+			++$count;
+
+		}
+	}
+
 	/**
 	 * Generates modified command data for the specified player
 	 * for AvailableCommandsPacket.
@@ -104,17 +168,43 @@ abstract class Command{
 	 * @return array
 	 */
 	public function generateCustomCommandData(Player $player){
-		//TODO: fix command permission filtering on join
-		/*if(!$this->testPermissionSilent($player)){
-			return null;
-		}*/
+
 		$customData = $this->commandData;
 		$customData["aliases"] = $this->getAliases();
-		/*foreach($customData["overloads"] as $overloadName => $overload){
-			if(isset($overload["pocketminePermission"]) and !$player->hasPermission($overload["pocketminePermission"])){
-				unset($customData["overloads"][$overloadName]);
+
+		if(isset($this->commandParameters)){
+
+			$customData["overloads"] = [];
+			$customData["overloads"]["default"] = [];
+			$customData["overloads"]["default"]["input"] = [];
+			$customData["overloads"]["default"]["input"]["parameters"] = [];
+
+			$parameters = $this->commandParameters;
+			echo $this->name."\n";
+			foreach($parameters as $parameter){
+				if($parameter instanceof CommandParameter){
+						$customData["overloads"]["default"]["input"]["parameters"][] = [
+							"enum_values" => $parameter->enum_values ,
+							"name" => $parameter->name ,
+							"type" => $parameter->type ,
+							"optional" => $parameter->optional,
+						];
+	
+				}elseif($parameter instanceof CommandParameters){
+
+					foreach($parameter->parameters as $parms){
+						$customData["overloads"]["default"]["input"]["parameters"][] = [
+							"name" => $parms->name ,
+							"type" => $parms->type ,
+							"optional" => $parms->optional
+						];
+
+					}
+				}
 			}
-		}*/
+
+			var_dump($customData);
+		}
 		return $customData;
 	}
 

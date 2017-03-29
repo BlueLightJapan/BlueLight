@@ -35,8 +35,9 @@ class PardonIpCommand extends VanillaCommand{
 			"%commands.unbanip.usage"
 		);
 		$this->setPermission("pocketmine.command.unban.ip");
-		//$this->commandParameters["default"] = [new CommandParameter("ip", CommandParameter::ARG_TYPE_INT, false)];
-
+		$this->commandParameters = [
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

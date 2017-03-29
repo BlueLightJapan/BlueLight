@@ -37,7 +37,15 @@ class EffectCommand extends VanillaCommand{
 			"%commands.effect.usage"
 		);
 		$this->setPermission("pocketmine.command.effect");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false),
+			new CommandParameter("effectId", CommandParameter::ARG_TYPE_INT, false),
+			new CommandParameter("seconds", CommandParameter::ARG_TYPE_INT, false),
+			new CommandParameter("amplifier", CommandParameter::ARG_TYPE_INT, false),
+			new CommandParameter("hideParticles", CommandParameter::ARG_TYPE_BOOL, true),
+		];
+
 
 	}
 

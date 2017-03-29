@@ -30,20 +30,22 @@ class CommandParameter {
 	const ARG_TYPE_BLOCK_POS = "blockpos";
 	const ARG_TYPE_RAW_TEXT = "rawtext";
 	const ARG_TYPE_INT = "int";
-
-	const ARG_TYPE_TARGET_ALL_PLAYERS = "allPlayers";//@a
-	const ARG_TYPE_TARGET_ALL_ENTITIES = "allEntities";//@e
-	const ARG_TYPE_TARGET_NEAREST_PLAYER = "nearestPlayer";//@n
-	const ARG_TYPE_TARGET_RANDOM_PLAYER = "randomPlayer";//@r
+	const ARG_TYPE_TARGET_ALL_PLAYERS = "allPlayers";      // @a
+	const ARG_TYPE_TARGET_ALL_ENTITIES = "allEntities";    // @e
+	const ARG_TYPE_TARGET_NEAREST_PLAYER = "nearestPlayer";// @n
+	const ARG_TYPE_TARGET_RANDOM_PLAYER = "randomPlayer";  // @r
 
 	public $name;
 	public $type;
 	public $optional;
+	public $enum_values;
 
-	public function __construct($name, $type = self::ARG_TYPE_RAW_TEXT, $optional = false) {
+	public function __construct($name, $type = self::ARG_TYPE_RAW_TEXT, $optional = false, $enum_values = []) {
 		$this->name = $name;
 		$this->type = $type;
 		$this->optional = $optional;
+		$this->enum_values = $enum_values;
+
 	}
 
 }

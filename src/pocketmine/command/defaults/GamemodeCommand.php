@@ -38,7 +38,12 @@ class GamemodeCommand extends VanillaCommand{
 			"%commands.gamemode.usage"
 		);
 		$this->setPermission("pocketmine.command.gamemode");
-		//$this->commandParameters["default"] = [new CommandParameter("gamemode", CommandParameter::ARG_TYPE_INT, false)];
+
+		$this->commandParameters = [
+			new CommandParameter("gameMode", CommandParameter::ARG_TYPE_INT, false),
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, true),
+
+		];
 
 	}
 

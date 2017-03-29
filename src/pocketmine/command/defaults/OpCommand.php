@@ -37,8 +37,10 @@ class OpCommand extends VanillaCommand{
 			"%commands.op.usage"
 		);
 		$this->setPermission("pocketmine.command.op.give");
-		$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
 
+		$this->commandParameters = [
+			new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false),
+		];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
