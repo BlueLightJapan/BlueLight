@@ -1512,8 +1512,8 @@ class Server{
 				}
 			}
 			if($this->devtools){
-				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
-					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BlueLightDevTools");
 				}
 			}
 
