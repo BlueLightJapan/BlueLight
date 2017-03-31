@@ -146,12 +146,14 @@ use pocketmine\network\protocol\SetEntityLinkPacket;
 use pocketmine\network\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
+use pocketmine\network\protocol\SetTitlePacket;
 use pocketmine\network\protocol\StartGamePacket;
 use pocketmine\network\protocol\TakeItemEntityPacket;
 use pocketmine\network\protocol\TextPacket;
 use pocketmine\network\protocol\TransferPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
+
 use pocketmine\network\SourceInterface;
 use pocketmine\permission\PermissibleBase;
 use pocketmine\permission\PermissionAttachment;
@@ -3601,6 +3603,52 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->type = TextPacket::TYPE_WHISPER;
 		$pk->source = $sender;
 		$pk->message = $message;
+		$this->dataPacket($pk);
+	}
+
+	public function sendTitle($title, $subtitle = "", $fadein = 20, $duration = 5, $fadeout = 20){
+		$pk = new SetTitlePacket();
+		$pk->type = SetTitlePacket::TYPE_SET_TITLE;
+		$pk->text = $title;
+		$pk->fadeInTime = $fadein;
+		$pk->stayTime = $duration;
+		$pk->fadeOutTime = $fadeout;
+		$this->dataPacket($pk);
+		if($subtitle !== ""){
+			$pk = new SetTitlePacket();
+			$pk->type = SetTitlePacket::TYPE_SET_SUBTITLE;
+			$pk->text = $subtitle;
+			$pk->fadeInTime = $fadein;
+			$pk->stayTime = $duration;
+			$pk->fadeOutTime = $fadeout;
+			$this->dataPacket($pk);
+		}
+	}
+
+	public function sendSubTitle($subtitle, $fadein = 20, $duration = 5, $fadeout = 20){
+		$pk = new SetTitlePacket();
+		$pk->type = SetTitlePacket::TYPE_SET_TITLE;
+		$pk->text = "";
+		$pk->fadeInTime = $fadein;
+		$pk->stayTime = $duration;
+		$pk->fadeOutTime = $fadeout;
+		$this->dataPacket($pk);
+		$pk = new SetTitlePacket();
+		$pk->type = SetTitlePacket::TYPE_SET_SUBTITLE;
+		$pk->text = $subtitle;
+		$pk->fadeInTime = $fadein;
+		$pk->stayTime = $duration;
+		$pk->fadeOutTime = $fadeout;
+		$this->dataPacket($pk);
+	}
+
+	public function removeTitle(){
+		$pk = new SetTitlePacket();
+		$pk->type = SetTitlePacket::TYPE_CLEAR_TITLE;
+		$pk->text = "";
+		$pk->fadeInTime = 0;
+		$pk->stayTime = 0;
+		$pk->fadeOutTime = 0;
 		$this->dataPacket($pk);
 	}
 
