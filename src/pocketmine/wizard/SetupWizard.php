@@ -66,7 +66,8 @@ class SetupWizard{
 		}while($lang === null);
 
 		$this->lang = new BaseLang($lang);
-
+                $content = file_get_contents($this->server->filePath . "src/pocketmine/resources/pocketmine_$lang.yml");
+                @file_put_contents($this->server->dataPath . "pocketmine.yml", $content);
 
 		echo "[*] " . $this->lang->get("language_has_been_selected") . "\n";
 
