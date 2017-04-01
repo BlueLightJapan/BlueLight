@@ -7,7 +7,7 @@ checkout:
     - rm -rf artifacts
     - mkdir plugins
     - mkdir artifacts
-    - wget -O PHP7.tar.gz https://dl.bintray.com/pocketmine/PocketMine/PHP_7.0.6_x86-64_Linux.tar.gz --no-check-certificate
+    - wget -O PHP7.tar.gz https://jenkins.pmmp.io/job/PHP-PocketMine-Linux-x86_64/lastSuccessfulBuild/artifact/PHP_Linux-x86_64.tar.gz --no-check-certificate
     - tar -xf PHP7.tar.gz
     - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
     - bin/php7/bin/php ci.php
