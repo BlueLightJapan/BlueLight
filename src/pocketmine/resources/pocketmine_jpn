@@ -1,0 +1,198 @@
+# PocketMine-MPのメイン設定ファイル
+# これらの設定は、server.propertiesに含めることができない設定です
+# これらの設定の一部は安全です。間違って変更された場合は、サーバーを壊す可能性があります
+# アップグレード時に新しい設定/デフォルト値がこのファイルに自動的に表示されることはありません。
+
+settings:
+ #サーバーサイドのローカリゼーション用の3文字の言語コード
+ #https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes で調べることができます。
+ language: "jpn"
+ #サーバーのロケールに変換されたすべての文字列を送信するか、デバイスがそれらを処理するかどうか
+ force-language: false
+ shutdown-message: "サーバーは閉じられました。"
+ #クエリ経由でプラグインのリストを許可する
+ query-plugins: true
+ #プラグインが廃止予定のAPIメソッドを使用しているときにコンソールメッセージを表示する
+ deprecated-verbose: true
+ #プラグインとコアプロファイリングをデフォルトで有効にする
+ enable-profiling: false
+ #測定値が指定された値以下の場合にのみ結果を追加します（デフォルト20）
+ profile-report-trigger: 20
+ #AsyncTaskワーカーの数
+ #プラグインの非同期タスク、世代生成、圧縮、Web通信に使用されます
+#あなたのコア数に合わせて設定します
+#autoに設定すると、コアの数を検出しようとします（または2を使用します）
+ async-workers: auto
+
+memory:
+ #グローバルソフトメモリの上限（メガバイト）。 無効にするには0に設定します
+ #これにより、メモリ使用量の少ないトリガが発生し、使用量がこれを超えるとメモリを解放するイベントが発生します
+ global-limit: 0
+
+ #メインスレッドのソフトメモリの制限値（メガバイト）。 無効にするには0に設定します
+ #これにより、メモリ使用量の少ないトリガが発生し、使用量がこれを超えるとメモリを解放するイベントが発生します
+ main-limit: 0
+
+ #メインスレッドのソフトメモリの制限値（メガバイト）。 無効にするには0に設定します
+ #これは、制限を超えたときにサーバーを停止します。
+ main-hard-limit: 1024
+
+ #メモリーをチェックするティック数（デフォルトは1秒）
+ check-rate: 20
+
+ #メモリ不足時に低メモリトリガとイベントの発射を続ける
+ continuous-trigger: true
+
+ #memory.continuous-triggerが有効な場合のみ。 メモリのレートを指定します。チェックレートのステップ（デフォルトは30秒）
+ continuous-trigger-rate: 30
+
+ garbage-collection:
+  #ガベージコレクタを手動で起動する時間（デフォルトは30分）、無効にするには0に設定
+  #これはメインスレッドにのみ影響します。 他のスレッドは独自のコレクションを起動する必要があります
+  period: 36000
+
+  #ワーカーからゴミを収集するための非同期作業を開始する
+  collect-async-worker: true
+
+  #低メモリでトリガ
+  low-memory-trigger: true
+
+ max-chunks:
+  #低メモリがトリガされたときのプレーヤーあたりの最大レンダリング距離
+  chunk-radius: 4
+
+  #トリガでチャンクガベージコレクションを行う
+  trigger-chunk-collect: true
+
+  #低メモリでトリガ
+  low-memory-trigger: true
+
+ world-caches:
+  disable-chunk-cache: true
+  low-memory-trigger: true
+
+
+network:
+ #パケットをバッチするためのしきい値（バイト単位）。 これらのパケットだけが圧縮されます
+ #すべてを圧縮するには0に設定し、無効にするには-1を設定します。
+ batch-threshold: 256
+ #バッチパケットを送信するときに使用される圧縮レベル。 より高い=より多くのCPU、より少ない帯域幅使用
+ compression-level: 7
+ #圧縮にはAsyncTasksを使用します。 ハーフ/ 1ティック遅延、メインスレッドのCPU負荷の軽減
+ async-compression: false
+ #実験的、Windowsのみ。 UPnPを使用して自動的にポート開放を試みる
+ upnp-forwarding: false
+
+debug:
+ #アサーションの実行を有効にするには、php.iniのzend.assertionsを1に設定します
+ assertions:
+  #アサーションが有効になっていると、ランタイムのパフォーマンスに影響する可能性があるため、php.iniでアサーションが有効になっている場合に警告します。
+  warn-if-enabled: true
+  #アサーションが失敗したときにスロー例外を有効にすると、失敗したアサーションに関する詳細情報を取得できますが、サーバーがクラッシュする可能性があります。
+  #falseに設定すると、例外をスローする代わりに警告が発生します。
+  throw-exception: false
+ #もし > 1, であればコンソールにデバッグメッセージが表示されます
+ level: 1
+ #Enables /status, /gc
+ commands: false
+
+player:
+ #プレーヤーのデータ保存を有効にするかどうかを選択します。
+ save-player-data: true
+ anti-cheat:
+  #偽の場合、速度を抑え、不正行為を防ぐよう試みます。 まだ適切に実装されていないブロックで動きの問題を引き起こす可能性があります。
+  allow-movement-cheats: false
+  #偽であれば、タイムはブレイクをブロックし、プレイヤーが不正行為をしていないことを保証します。 まだ正しく実装されていないブロックで問題が発生することがあります。
+  allow-instabreak: false
+
+level-settings:
+ #作成時にレベルが使用する既定の形式
+ default-format: pmanvil
+ #自動的にレベルティックレートを変更して1秒あたり20ティックを維持する
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #基本ティックレートを設定します（1 = 1秒あたり20ティック、2 = 10ティック/秒など）
+ base-tick-rate: 1
+ #他の設定がこれを許可しなくても、すべてのプレイヤーに毎回チェックをしてください。
+ always-tick-players: false
+
+chunk-sending:
+ #サーバーの通常のレンダリング距離を変更するには、server.propertiesのview-distanceを変更します。
+ #マッチごとにプレーヤーに送られるチャンクの量
+ per-tick: 4
+ #プレーヤーをスポーンさせる前に送信する必要のあるチャンクの半径
+ spawn-radius: 4
+ #チャンクのシリアル化されたコピーをメモリに保存して送信を高速化
+ #多くのプレーヤーが同時に参加するスタティックな世界で役立ちます
+ cache-chunks: false
+ #送信のためにチャンクをシリアル化するには、AsyncTasksを使用します。
+ async-chunk-request: false
+
+chunk-ticking:
+ #tickごとに処理されるチャンクの最大量
+ per-tick: 40
+ #tickごとプレーヤーの周りのチャンクの半径
+ tick-radius: 3
+ light-updates: false
+ clear-tick-list: true
+ #ランダムティッキングを実行しないブロックのID。
+ disable-block-ticking:
+  #- 2 # grass
+
+chunk-generation:
+ #生成される待ち行列の中のチャンクの量
+ queue-size: 8
+ #占有される待機キュー内のチャンクの量
+ population-queue-size: 8
+
+ticks-per:
+ animal-spawns: 400
+ monster-spawns: 1
+ autosave: 6000
+ cache-cleanup: 900
+
+spawn-limits:
+  monsters: 70
+  animals: 15
+  water-animals: 5
+  ambient: 15
+
+auto-report:
+ #処理のためにクラッシュレポートを送信する
+ enabled: true
+ send-code: true
+ send-settings: true
+ send-phpinfo: false
+ host: crash.pocketmine.net
+
+anonymous-statistics:
+ #データ集約、プラグイン使用状況の追跡のための匿名統計を送信します。
+ enabled: true
+ host: stats.pocketmine.net
+
+auto-updater:
+ enabled: true
+ on-update:
+  warn-console: true
+  warn-ops: true
+ #development, beta又はstableにすることができます。
+ preferred-channel: stable
+ #開発版を使用している場合は、チャンネルの変更を提案します
+ suggest-channels: true
+ host: www.pocketmine.net
+
+timings:
+ #タイミング結果を表示するために使用するホストを選択します。
+ host: mcpetimings.com
+
+aliases:
+ #Examples:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #これらの設定は、server.propertiesで設定されたジェネレータをオーバーライドし、複数のレベル
+ #Example:
+ #world:
+ # seed: 404
+ # generator: FLAT:2;7,59x1,3x3,2;1;decoration(treecount=80 grasscount=45)
