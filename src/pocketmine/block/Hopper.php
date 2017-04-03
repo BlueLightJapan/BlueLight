@@ -22,10 +22,11 @@
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\Tool;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\tile\Hopper as TileHopper;
@@ -68,14 +69,6 @@ class Hopper extends Transparent{
 		}
 		return true;
 	}
-	
-	public function activate(){
-		//TODO: Hopper content freezing (requires basic redstone system upgrade)
-	}
-	
-	public function getTarget(){
-		return $this->target;
-	}
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$faces = [
@@ -108,7 +101,7 @@ class Hopper extends Transparent{
 			}
 		}
 
-		$t = Tile::createTile(Tile::HOPPER, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		$t = Tile::createTile(Tile::HOPPER, $this->getLevel(), $nbt);
 
 		return true;
 	}
