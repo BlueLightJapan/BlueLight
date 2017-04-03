@@ -49,6 +49,9 @@ HP : http://bluelight.cf<br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
 <br>
+## サーバーの負荷を調べることができます！
+http://blog.haniokasai.com/2017/04/minecraft-pcbukkitpepocketminenukkittim.html
+
 
 ## Third-party Libraries/Protocols Used
 * __[PHP Sockets](http://php.net/manual/en/book.sockets.php)__
