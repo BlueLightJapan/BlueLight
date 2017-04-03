@@ -1500,7 +1500,7 @@ class Server{
 			$this->hungerHealth = $this->getBlueLightConfigInt("HungerHealth", 10);
 			$this->hungerTimer = $this->getBlueLightConfigInt("HungerTimer", 80);
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
-			$this->keepInventory = $this->getProperty("keepInventory", false);
+			$this->keepInventory = $this->getProperty("KeepInventory", false);
 			$this->titletick = $this->getProperty("TitleTick", true);
 			$this->stevekick = $this->getProperty("SteveKick", false);
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
