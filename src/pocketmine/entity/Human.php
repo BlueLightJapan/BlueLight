@@ -26,6 +26,7 @@ use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerExperienceChangeEvent;
 use pocketmine\inventory\InventoryHolder;
+use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\NBT;
@@ -40,7 +41,6 @@ use pocketmine\network\protocol\AddPlayerPacket;
 use pocketmine\network\protocol\RemoveEntityPacket;
 use pocketmine\Player;
 use pocketmine\utils\UUID;
-use pocketmine\inventory\EnderChestInventory; 
 
 class Human extends Creature implements ProjectileSource, InventoryHolder{
 
@@ -54,9 +54,9 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	/** @var PlayerInventory */
 	protected $inventory;
 
-	/** @var EnderChestInventory */ 
-	protected $enderChestInventory; 
-	
+	/** @var EnderChestInventory */
+	protected $enderChestInventory;
+
 	/** @var UUID */
 	protected $uuid;
 	protected $rawUUID;
@@ -411,24 +411,23 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	public function getInventory(){
 		return $this->inventory;
 	}
-	
-      public function getEnderChestInventory(){ 
-	    return $this->enderChestInventory; 
- 	} 
+
+	public function getEnderChestInventory(){
+		return $this->enderChestInventory;
+	}
+
 	protected function initEntity(){
 
 		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, false, self::DATA_TYPE_BYTE);
 		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0], false);
 
 		$this->inventory = new PlayerInventory($this);
+		$this->enderChestInventory = new EnderChestInventory($this, ($this->namedtag->EnderChestInventory ?? null));
 		if($this instanceof Player){
 			$this->addWindow($this->inventory, 0);
 		}else{
 			if(isset($this->namedtag->NameTag)){
 				$this->setNameTag($this->namedtag["NameTag"]);
-				
-				$this->enderChestInventory = new EnderChestInventory($this, ($this->namedtag->EnderChestInventory ?? null)); 
-
 			}
 
 			if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
@@ -616,16 +615,16 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$this->namedtag->SelectedInventorySlot = new IntTag("SelectedInventorySlot", $this->inventory->getHeldItemIndex());
 		}
 
-			$this->namedtag->EnderChestInventory = new ListTag("EnderChestInventory", []); 
-		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound); 
-		if($this->enderChestInventory !== null){ 
-			for($slot = 0; $slot < $this->enderChestInventory->getSize(); $slot++){ 
-				if(($item = $this->enderChestInventory->getItem($slot)) instanceof ItemItem){ 
-					$this->namedtag->EnderChestInventory[$slot] = $item->nbtSerialize($slot); 
-				} 
-			} 
-		} 
- 
+		$this->namedtag->EnderChestInventory = new ListTag("EnderChestInventory", []);
+		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
+		if($this->enderChestInventory !== null){
+			for($slot = 0; $slot < $this->enderChestInventory->getSize(); $slot++){
+				if(($item = $this->enderChestInventory->getItem($slot)) instanceof ItemItem){
+					$this->namedtag->EnderChestInventory[$slot] = $item->nbtSerialize($slot);
+				}
+			}
+		}
+
 		if(strlen($this->getSkinData()) > 0){
 			$this->namedtag->Skin = new CompoundTag("Skin", [
 				"Data" => new StringTag("Data", $this->getSkinData()),
