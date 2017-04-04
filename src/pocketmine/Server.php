@@ -34,6 +34,7 @@ use pocketmine\command\SimpleCommandMap;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\entity\Human;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
 use pocketmine\event\level\LevelLoadEvent;
@@ -270,6 +271,7 @@ class Server{
 	public $keepInventory = false;
 	public $rideableentity = true;
 	public $enchantingTableEnabled = true;
+	public $cleanentity = false;
 	public $countBookshelf = false;
 	/**
 	 * @return string
@@ -1450,6 +1452,7 @@ class Server{
 				"HungerHealth" => 10,
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
+				"CleanEntity" => false,
 			]);
 
 			$this->logger->info("Loading server properties...");
@@ -1505,6 +1508,7 @@ class Server{
 			$this->stevekick = $this->getProperty("SteveKick", false);
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
+			$this->cleanentity = $this->getProperty("CleanEntity", false);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
@@ -2010,6 +2014,18 @@ class Server{
 
 			$this->getLogger()->debug("Disabling all plugins");
 			$this->pluginManager->disablePlugins();
+			if($this->cleanentity){
+				foreach($this->getLevels() as $level){
+					$i = 0;
+					foreach($level->getEntities() as $entity){
+						if(!$entity instanceof Human){
+							$entity->close();
+							$i++;
+						}
+					}
+					$this->getLogger()->debug("Closed ".$i." entities in ".$level->getName()."");
+				}
+			}
 
 			foreach($this->players as $player){
 				$player->close($player->getLeaveMessage(), $this->getProperty("settings.shutdown-message", "Server closed"));
