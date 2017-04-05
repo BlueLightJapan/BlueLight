@@ -3078,15 +3078,16 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
 				/** @var MapInfoRequestPacket $packet */
 				$path = Server::getInstance()->getFilePath() . "src/pocketmine/resources/map.png";
-
-				if ($packet->uuid == -1 || !file_exists($path)) {
-					$map = new Map($packet->uuid);
-					$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
-				} else {
-					$map = new Map($packet->uuid);
-					$map->fromPng($path);
-					$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
-					MapUtils::cacheMap($map);
+				if($this->getServer()->mapEnabled){
+					if($packet->uuid == -1 || !file_exists($path)){
+						$map = new Map($packet->uuid);
+						$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
+					}else{
+						$map = new Map($packet->uuid);
+						$map->fromPng($path);
+						$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
+						MapUtils::cacheMap($map);
+					}
 				}
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:

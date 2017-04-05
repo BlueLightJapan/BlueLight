@@ -273,6 +273,9 @@ class Server{
 	public $enchantingTableEnabled = true;
 	public $cleanentity = false;
 	public $countBookshelf = false;
+	public $mapEnabled = false;
+
+
 	/**
 	 * @return string
 	 */
@@ -1453,6 +1456,7 @@ class Server{
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
 				"CleanEntity" => false,
+				"MapEnabled" => false,
 			]);
 
 			$this->logger->info("Loading server properties...");
@@ -1509,6 +1513,7 @@ class Server{
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 			$this->cleanentity = $this->getProperty("CleanEntity", false);
+			$this->mapEnabled = $this->getProperty("MapEnabled", false);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
