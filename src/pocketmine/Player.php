@@ -2536,6 +2536,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}elseif($item->getId() == Item::EMPTY_MAP){
 
 						$item = Item::get(Item::FILLED_MAP, 0, 1);
+						$item->setMapId(1000);
                             			$this->inventory->addItem($item);
 
               				}elseif($item->getId() === Item::ENDER_PEARL){
