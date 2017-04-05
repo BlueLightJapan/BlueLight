@@ -92,6 +92,7 @@ use pocketmine\inventory\ShapedRecipe;
 use pocketmine\inventory\ShapelessRecipe;
 use pocketmine\inventory\SimpleTransactionGroup;
 use pocketmine\item\Item;
+use pocketmine\item\Map;
 use pocketmine\level\ChunkLoader;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -162,6 +163,7 @@ use pocketmine\tile\ItemFrame;
 use pocketmine\tile\Spawnable;
 use pocketmine\tile\Sign;
 use pocketmine\utils\Binary;
+use pocketmine\utils\MapUtils;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\UUID;
 use pocketmine\packs\ResourcePackInfoEntry;
@@ -2534,9 +2536,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}elseif($item->getId() == Item::EMPTY_MAP){
 
 						$item = Item::get(Item::FILLED_MAP, 0, 1);
-						$item->setMapId($this->id * 20 + 10000);
-
-
                             			$this->inventory->addItem($item);
 
               				}elseif($item->getId() === Item::ENDER_PEARL){
@@ -3074,25 +3073,21 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::RIDER_JUMP_PACKET:
 				$entity = $this->linkedentity;
 				$entity->jump($packet->power);
-				echo $packet->power."\n";
+
 				break;
 			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
+				/** @var MapInfoRequestPacket $packet */
+				$path = Server::getInstance()->getFilePath() . "src/pocketmine/resources/map.png";
 
-				$pk = new ClientboundMapItemDataPacket();
-				$pk->mapid = $packet->mapid;
-				$pk->updatetype = 6;
-				$pk->decorators = [];
-				$pk->x = 0;
-				$pk->z = 0;
-				$pk->scale = 0;
-				$pk->col = 128;
-				$pk->row = 128;
-				$pk->xoffset = 0;
-				$pk->zoffset = 0;
-				$pk->data = "";
-
-				$this->dataPacket($pk);
-
+				if ($packet->uuid == -1 || !file_exists($path)) {
+					$map = new Map($packet->uuid);
+					$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
+				} else {
+					$map = new Map($packet->uuid);
+					$map->fromPng($path);
+					$map->update(ClientboundMapItemDataPacket::BITFLAG_TEXTURE_UPDATE);
+					MapUtils::cacheMap($map);
+				}
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
