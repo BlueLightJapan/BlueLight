@@ -92,6 +92,7 @@ use pocketmine\plugin\PluginLoadOrder;
 use pocketmine\plugin\PluginManager;
 use pocketmine\plugin\ScriptPluginLoader;
 use pocketmine\plugin\FolderPluginLoader;
+use pocketmine\packs\ResourcePackManager;
 use pocketmine\scheduler\FileWriteTask;
 use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
@@ -251,6 +252,9 @@ class Server{
 	/** @var Level */
 	private $levelDefault = null;
 
+	/** @var ResourcePackManager */
+	private $resourceManager;
+
 	/** BlueLight Config */
 	public $weatherEnabled = false;
  	public $weatherRandomDurationMin = 6000;
@@ -273,6 +277,7 @@ class Server{
 	public $enchantingTableEnabled = true;
 	public $cleanentity = false;
 	public $countBookshelf = false;
+
 	/**
 	 * @return string
 	 */
@@ -605,6 +610,13 @@ class Server{
 	 */
 	public function getCraftingManager(){
 		return $this->craftingManager;
+	}
+
+	/**
+	 * @return ResourcePackManager
+	 */
+	public function getResourceManager() : ResourcePackManager{
+		return $this->resourceManager;
 	}
 
 	/**
@@ -1625,6 +1637,8 @@ class Server{
 			Attribute::init();
 			$this->craftingManager = new CraftingManager();
 
+			//$this->resourceManager = new ResourcePackManager($this, $this->getDataPath() . "resource_packs" . DIRECTORY_SEPARATOR);
+
 			$this->pluginManager = new PluginManager($this, $this->commandMap);
 			$this->pluginManager->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this->consoleSender);
 			$this->pluginManager->setUseTimings($this->getProperty("settings.enable-profiling", false));
@@ -2132,10 +2146,7 @@ class Server{
 		$errline = $e->getLine();
 
 		$type = ($errno === E_ERROR or $errno === E_USER_ERROR) ? \LogLevel::ERROR : (($errno === E_USER_WARNING or $errno === E_WARNING) ? \LogLevel::WARNING : \LogLevel::NOTICE);
-		if(($pos = strpos($errstr, "\n")) !== false){
-			$errstr = substr($errstr, 0, $pos);
-		}
-
+		$errstr = preg_replace('/\s+/', ' ', trim($errstr));
 		$errfile = cleanPath($errfile);
 
 		$this->logger->logException($e, $trace);
@@ -2146,7 +2157,7 @@ class Server{
 			"fullFile" => $e->getFile(),
 			"file" => $errfile,
 			"line" => $errline,
-			"trace" => @getTrace(1, $trace)
+			"trace" => getTrace(0, $trace)
 		];
 
 		global $lastExceptionError, $lastError;
@@ -2357,7 +2368,9 @@ class Server{
 	}
 
 	public function sendUsage($type = SendUsageTask::TYPE_STATUS){
-		$this->scheduler->scheduleAsyncTask(new SendUsageTask($this, $type, $this->uniquePlayers));
+		if($this->getProperty("anonymous-statistics.enabled", true)){
+			$this->scheduler->scheduleAsyncTask(new SendUsageTask($this, $type, $this->uniquePlayers));
+		}
 		$this->uniquePlayers = [];
 	}
 

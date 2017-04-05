@@ -3944,11 +3944,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setHealth($amount){
 		parent::setHealth($amount);
 		if($this->spawned === true){
-			/*
-			$pk = new SetHealthPacket();
-			$pk->health = $this->getHealth();
-			$this->dataPacket($pk);
-			*/
+
 			$this->foodTick = 0;
 			$this->getAttributeMap()->getAttribute(Attribute::HEALTH)->setMaxValue($this->getMaxHealth())->setValue($amount, true);
 		}
