@@ -295,6 +295,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $deviceModel;
 	protected $os;
 
+	/** @var Item[] */
+	protected $personalCreativeItems = [];
+	
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -1939,6 +1942,35 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->tryAuthenticate();
 	}
 
+	public function clearCreativeItems(){
+		$this->personalCreativeItems = [];
+	}
+
+	public function getCreativeItems() : array{
+		return $this->personalCreativeItems;
+	}
+
+	public function addCreativeItem(Item $item){
+		$this->personalCreativeItems[] = Item::get($item->getId(), $item->getDamage());
+	}
+
+	public function removeCreativeItem(Item $item){
+		$index = $this->getCreativeItemIndex($item);
+		if($index !== -1){
+			unset($this->personalCreativeItems[$index]);
+		}
+	}
+
+	public function getCreativeItemIndex(Item $item) : int{
+		foreach($this->personalCreativeItems as $i => $d){
+			if($item->equals($d, !$item->isTool())){
+				return $i;
+			}
+		}
+
+		return -1;
+	}
+	
 	public function tryAuthenticate(){
 		$pk = new PlayStatusPacket();
 		$pk->status = PlayStatusPacket::LOGIN_SUCCESS;
