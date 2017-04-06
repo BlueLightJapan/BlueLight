@@ -1960,16 +1960,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			unset($this->personalCreativeItems[$index]);
 		}
 	}
-
-	public function getCreativeItemIndex(Item $item) : int{
-		foreach($this->personalCreativeItems as $i => $d){
-			if($item->equals($d, !$item->isTool())){
-				return $i;
-			}
-		}
-
-		return -1;
-	}
 	
 	public function tryAuthenticate(){
 		$pk = new PlayStatusPacket();
