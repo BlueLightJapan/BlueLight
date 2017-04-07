@@ -63,30 +63,30 @@ abstract class Terminal{
 	}
 
 	protected static function getFallbackEscapeCodes(){
-		self::$FORMAT_BOLD = "\x1b[1m";
+		self::$FORMAT_BOLD = "\e[1m";
 		self::$FORMAT_OBFUSCATED = "";
 		self::$FORMAT_ITALIC = "\x1b[3m";
 		self::$FORMAT_UNDERLINE = "\x1b[4m";
 		self::$FORMAT_STRIKETHROUGH = "\x1b[9m";
 
-		self::$FORMAT_RESET = "\x1b[m";
+		self::$FORMAT_RESET = "\e[0m";
 
-		self::$COLOR_BLACK = "\x1b[38;5;16m";
-		self::$COLOR_DARK_BLUE = "\x1b[38;5;19m";
-		self::$COLOR_DARK_GREEN = "\x1b[38;5;34m";
-		self::$COLOR_DARK_AQUA = "\x1b[38;5;37m";
-		self::$COLOR_DARK_RED = "\x1b[38;5;124m";
-		self::$COLOR_PURPLE = "\x1b[38;5;127m";
-		self::$COLOR_GOLD = "\x1b[38;5;214m";
-		self::$COLOR_GRAY = "\x1b[38;5;145m";
-		self::$COLOR_DARK_GRAY = "\x1b[38;5;59m";
-		self::$COLOR_BLUE = "\x1b[38;5;63m";
-		self::$COLOR_GREEN = "\x1b[38;5;83m";
-		self::$COLOR_AQUA = "\x1b[38;5;87m";
-		self::$COLOR_RED = "\x1b[38;5;203m";
-		self::$COLOR_LIGHT_PURPLE = "\x1b[38;5;207m";
-		self::$COLOR_YELLOW = "\x1b[38;5;227m";
-		self::$COLOR_WHITE = "\x1b[38;5;231m";
+		self::$COLOR_BLACK = "\e[30m";
+		self::$COLOR_DARK_BLUE = "\e[34m";
+		self::$COLOR_DARK_GREEN = "\e[32m";
+		self::$COLOR_DARK_AQUA = "\e[36m";
+		self::$COLOR_DARK_RED = "\e[31m";
+		self::$COLOR_PURPLE = "\e[95m";
+		self::$COLOR_GOLD = "\e[93m";
+		self::$COLOR_GRAY = "\e[37m";
+		self::$COLOR_DARK_GRAY = "\e[90m";
+		self::$COLOR_BLUE = "\e[94m";
+		self::$COLOR_GREEN = "\e[92m";
+		self::$COLOR_AQUA = "\e[96m";
+		self::$COLOR_RED = "\e[91m";
+		self::$COLOR_LIGHT_PURPLE = "\e[35m";
+		self::$COLOR_YELLOW = "\e[93m";
+		self::$COLOR_WHITE = "\e[97m";
 	}
 
 	protected static function getEscapeCodes(){
