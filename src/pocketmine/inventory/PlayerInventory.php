@@ -39,6 +39,42 @@ class PlayerInventory extends BaseInventory{
 	/** @var int[] */
 	protected $hotbar;
 
+	protected $creativeitems = null;
+
+	public function resetCreativeItems(){
+		$this->creativeitems = null;
+	}
+
+	public function getCreativeItems(){
+		return $this->creativeitems;
+	}
+
+	public function setCreativeItems(array $items = []){
+		$this->creativeitems = $items;
+	}
+
+	public function addCreativeItem(Item $item){
+		$this->creativeitems[] = $item;
+	}
+
+	public function removeCreativeItem(Item $item){
+		$index = $this->getCreativeItemIndex($item);
+		if(isset($index)) unset($this->creativeitems[$index]);
+	}
+
+	public function getCreativeItemIndex(Item $item){
+		foreach($this->creativeitems as $index => $crea_item){
+			if($item->equals($crea_item)) return $index;
+		}
+		return null;
+	}
+
+	public function isCreativeItem(Item $item){
+		$index = $this->getCreativeItemIndex($item);
+		if(isset($index)) return true;
+		return false;
+	}
+
 	public function __construct(Human $player){
 		$this->resetHotbar(false);
 		parent::__construct($player, InventoryType::get(InventoryType::PLAYER));
@@ -498,8 +534,10 @@ class PlayerInventory extends BaseInventory{
 		$pk = new ContainerSetContentPacket();
 		$pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
 		if($this->getHolder()->getGamemode() === Player::CREATIVE){
-			foreach(Item::getCreativeItems() as $i => $item){
-				$pk->slots[$i] = clone $item;
+			$creativeitems = $this->getCreativeItems();
+			if(!isset($creativeitems)) $creativeitems = Item::getCreativeItems();
+			foreach($creativeitems as $index => $item){
+				$pk->slots[$index] = $item;
 			}
 		}
 		$this->getHolder()->dataPacket($pk);
