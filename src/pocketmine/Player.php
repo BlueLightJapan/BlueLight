@@ -179,6 +179,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	const SPECTATOR = 3;
 	const VIEW = Player::SPECTATOR;
 
+	const CRAFTING_SMALL = 0;
+	const CRAFTING_BIG = 1;
+	const CRAFTING_ANVIL = 2;
+	const CRAFTING_ENCHANT = 3;
+	
 	/** @var SourceInterface */
 	protected $interface;
 
