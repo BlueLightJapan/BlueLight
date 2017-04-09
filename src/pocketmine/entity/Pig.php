@@ -124,6 +124,6 @@ class Pig extends Animal implements Rideable{
 		}
 
 	public function getRidePosition(){
-		return [-0.02, 2, 0.19];
+		return [-0.02, 2.4, 0.19];
 	}
 }//Re-written by MalakasPlayzMC
