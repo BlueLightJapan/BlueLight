@@ -52,34 +52,16 @@ class Pig extends Animal implements Rideable{
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-
-		@$flags |= 1 << Entity::DATA_FLAG_SADDLED;
-		@$flags |= 1 << Entity::DATA_FLAG_CAN_SHOW_NAMETAG;
-		@$flags |= 1 << Entity::DATA_FLAG_ALWAYS_SHOW_NAMETAG;
-
-		$pk->metadata = [
-
-		Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
-		Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],
-		Entity::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],
-		Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
-		Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
-		Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
-
-		];
-
+		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
-
-		$this->setAttribute($player);
-
+		$this->sendAttribute($player);
 		parent::spawnTo($player);
-
 	}
 
 	public function getDrops(){
 		return [ItemItem::get(ItemItem::RAW_PORKCHOP, 0, mt_rand(0, 2))];
 	}
-
+	
 	public function setAttribute(Player $player){
 		$entry = array();
 		$entry[] = new Attribute($this->getId(), "minecraft:fall_damage", 0, 3.402823, 1);
@@ -137,13 +119,8 @@ class Pig extends Animal implements Rideable{
 	public function isGoing($vector3){
 		$level = $this->getLevel();
 		$block = $level->getBlock($vector3);
-		$id = $block->getID();
-		$damage = $block->getDamage();
-		switch($id){
-			case 0:case 6:case 27:case 31:case 50:
-			case 63:case 66:case 68:case 78:case 141:
-			case 142:case 171:case 175:case 244:
-			case 323:case 70:case 72:case 147:case 148:case 44:case 64:
+		if($block->isTransparent()) return true;
+		else return false;
 				return true;
 			break;
 			default:
@@ -153,6 +130,6 @@ class Pig extends Animal implements Rideable{
 	}
 
 	public function getRidePosition(){
-		return [0, 1, 0];
+		return [-0.02, 1, 0.19];
 	}
-}//written by Kametan
+}//Re-written by MalakasPlayzMC
