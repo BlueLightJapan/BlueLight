@@ -111,6 +111,6 @@ class Pig extends Animal implements Rideable{
 		$this->updateMovement();
 	}
 	public function getRidePosition(){
-		return [-0.02, 2.3, 0.19];
+		return [0, 1, 0];
 	}
 } //Written by kametan0730MC
