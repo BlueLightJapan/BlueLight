@@ -121,10 +121,6 @@ class Pig extends Animal implements Rideable{
 		$block = $level->getBlock($vector3);
 		if($block->isTransparent()) return true;
 		else return false;
-				return true;
-			break;
-			default:
-				return false;
 			break;
 		}
 	}
