@@ -35,6 +35,7 @@ class Pig extends Animal implements Rideable{
 	public $length = 0.9;
 	public $height = 1.9;
 	public $maxhealth = 10;
+	public $maxjump = 3
 
 	public function getName(){
 		return "Pig";
@@ -57,46 +58,33 @@ class Pig extends Animal implements Rideable{
 		$this->sendAttribute($player);
 		parent::spawnTo($player);
 	}
-
-	public function getDrops(){
-		return [ItemItem::get(ItemItem::RAW_PORKCHOP, 0, mt_rand(0, 2))];
-	}
-	
-	public function setAttribute(Player $player){
+	public function sendAttribute(Player $player){
 		$entry = array();
+		$entry[] = new Attribute($this->getId(), "minecraft:horse.jump_strength", 0, $this->maxjump, 0.6679779);
 		$entry[] = new Attribute($this->getId(), "minecraft:fall_damage", 0, 3.402823, 1);
 		$entry[] = new Attribute($this->getId(), "minecraft:luck", -1024, 1024, 0);
 		$entry[] = new Attribute($this->getId(), "minecraft:movement", 0, 3.402823, 0.223);
 		$entry[] = new Attribute($this->getId(), "minecraft:absorption", 0, 3.402823, 0);
-		$entry[] = new Attribute($this->getId(), "minecraft:health", 0, 10, 10);
-
+		$entry[] = new Attribute($this->getId(), "minecraft:health", 0, 40, 40);
 		$pk = new UpdateAttributesPacket();
 		$pk->entries = $entry;
 		$pk->entityId = $this->getId();
 		$player->dataPacket($pk);
-
 	}
-
-
 	public function goBack(Player $player){
 		$xz = $this->getXZ($this->yaw,$this->pitch);
-
 		$movex = $xz[0];
 		$movez = $xz[1];
 		$newx = ($this->x - $movex/2);
 		$newy = $this->y;
 		$newz = ($this->z - $movez/2);
-
 		if($this->isGoing(new Vector3($newx,$newy,$newz))){
-
 			$this->x -= $movex/2;
 			$this->z -= $movez/2;
 		}
 	}
 	public function goStraight(Player $player){
-
 		$xz = $this->getXZ($this->yaw,$this->pitch);
-
 		$movex = $xz[0];
 		$movez = $xz[1];
 		$newx = $this->x + $movex;
@@ -107,23 +95,22 @@ class Pig extends Animal implements Rideable{
 			$this->z += $movez;
 		}
 	}
-
 	public function getXZ($yaw,$pitch){
-
 		$x = (-sin($yaw/180*M_PI))/2;
 		$z = (cos($yaw/180*M_PI))/2;
-
 		return array($x, $z);
 	}
-
 	public function isGoing($vector3){
 		$level = $this->getLevel();
 		$block = $level->getBlock($vector3);
 		if($block->isTransparent()) return true;
 		else return false;
-		}
-
-	public function getRidePosition(){
-		return [-0.02, 2.4, 0.19];
 	}
-}//Re-written by MalakasPlayzMC
+	public function jump($power){
+		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
+		$this->updateMovement();
+	}
+	public function getRidePosition(){
+		return [-0.02, 2.3, 0.19];
+	}
+}//Code by kametan0730MC
