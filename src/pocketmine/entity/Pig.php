@@ -35,7 +35,7 @@ class Pig extends Animal implements Rideable{
 	public $length = 0.9;
 	public $height = 1.9;
 	public $maxhealth = 10;
-	public $maxjump = 3
+	public $maxjump = 3;
 
 	public function getName(){
 		return "Pig";
