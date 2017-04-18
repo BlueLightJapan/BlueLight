@@ -449,6 +449,9 @@ class Block extends Position implements BlockIds, Metadatable{
 		return false;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isSolid(){
 		return true;
 	}
