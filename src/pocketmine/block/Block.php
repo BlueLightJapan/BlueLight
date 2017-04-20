@@ -190,6 +190,7 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::ENCHANTING_TABLE] = EnchantingTable::class;
 			self::$list[self::BREWING_STAND_BLOCK] = BrewingStand::class;
+			self::$list[self::END_PORTAL] = EndPortal::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
 			self::$list[self::END_STONE] = EndStone::class;
 			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
@@ -253,6 +254,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
 
 			self::$list[self::HOPPER_BLOCK] = Hopper::class;
+		        self::$list[self::DRAGON_EGG] = DragonEgg::class;
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
