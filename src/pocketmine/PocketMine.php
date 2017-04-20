@@ -76,8 +76,8 @@ namespace pocketmine {
 	const VERSION = "2.0dev";
 	const API_VERSION = "3.0.0";
 	const CODENAME = "BlueLight";
-	const MINECRAFT_VERSION = "v1.0.7 alpha";
-	const MINECRAFT_VERSION_NETWORK = "1.0.7";
+	const MINECRAFT_VERSION = "v1.0.6 alpha";
+	const MINECRAFT_VERSION_NETWORK = "1.0.6";
 	const BLUELIGHT_VERSION = "2.0.0";
 
 	/*
