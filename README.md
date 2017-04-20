@@ -1,6 +1,6 @@
 ﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-#BlueLight for 1.0.6
+# BlueLight for 1.0.7
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ### *Don't eat my cock https://github.com/BlueLightJapan/BlueLight/issues?q=is%3Aissue+is%3Aclosed+label%3ASpam*
