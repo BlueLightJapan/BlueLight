@@ -16,107 +16,96 @@
  *
  * @author BlueLightJapan Team
  * 
-*/
+ */
 
+ 
 namespace pocketmine\block;
-
-use pocketmine\inventory\BeaconInventory;
 use pocketmine\item\Item;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
-use pocketmine\item\Tool;
-use pocketmine\tile\Beacon as BeaconTile;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\tile\Tile;
-
-class Beacon extends Solid{
-
-	protected $id = self::BEACON;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
-
-	public function canBeActivated() : bool{
-		return true;
-	}
-
+use pocketmine\tile\Beacon as TileBeacon;
+class Beacon extends Transparent{
+ 
+ 	protected $id = self::BEACON;
+ 
+ 	public function __construct($meta = 0){
+ 		$this->meta = $meta;
+ 	}
+ 
+ 	public function canBeActivated() : bool{
+ 		return true;
+ 	}
+ 
+ 	public function getName(){
+ 		return "Beacon";
+ 	}
+	
 	public function getLightLevel(){
 		return 15;
 	}
-
-	public function getHardness(){
+	
+	public function getResistance() {
+		return 15;
+	}
+	
+	public function getHardness() {
 		return 3;
 	}
-
-	public function getName(){
-		return "Beacon";
-	}
-
+ 
+ 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+ 		$this->getLevel()->setBlock($this, $this, true, true);
+ 		$nbt = new CompoundTag("", [
+ 			new StringTag("id", Tile::BEACON),
+			new ByteTag("isMovable", (bool) false),
+			new IntTag("primary", 0),
+			new IntTag("secondary", 0),
+ 			new IntTag("x", $block->x),
+ 			new IntTag("y", $block->y),
+ 			new IntTag("z", $block->z)
+ 		]);
+ 		$pot = Tile::createTile(Tile::BEACON, $this->getLevel(), $nbt);
+ 		return true;
+ 	}
+	
 	public function onActivate(Item $item, Player $player = null){
-		if($player instanceof Player){
-			$tile = $this->getLevel()->getTile($this);
-
-			if($tile instanceof BeaconTile){
-				$player->addWindow($tile->getInventory());
+ 		if($player instanceof Player){
+ 			$top = $this->getSide(1);
+ 			if($top->isTransparent() !== true){
 				return true;
-			}else{
-
-				$nbt = new CompoundTag("", [
-					new ListTag("Items", []),
-					new StringTag("id", Tile::BEACON),
-					new IntTag("x", $this->x),
-					new IntTag("y", $this->y),
-					new IntTag("z", $this->z)]);
-
-				$nbt->Items->setTagType(NBT::TAG_Compound);
-				$beacon = Tile::createTile("Beacon", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+ 			}
+ 
+			$t = $this->getLevel()->getTile($this);
+ 			$beacon = null;
+ 			if($t instanceof TileBeacon){
+ 				$beacon = $t;
+ 			}else{
+ 				$nbt = new CompoundTag("", [
+ 					new StringTag("id", Tile::BEACON),
+ 					new ByteTag("isMovable", (bool) false),
+ 					new IntTag("primary", 0),
+ 					new IntTag("secondary", 0),
+ 					new IntTag("x", $this->x),
+ 					new IntTag("y", $this->y),
+ 					new IntTag("z", $this->z)
+ 				]);
+ 				Tile::createTile(Tile::BEACON, $this->getLevel(), $nbt);
+ 			}
+			
+			if($player->isCreative() and $player->getServer()->limitedCreative){
+				return true;
 			}
-
-			if(isset($beacon->namedtag->Lock) and $beacon->namedtag->Lock instanceof StringTag){
-				if($beacon->namedtag->Lock->getValue() !== $item->getCustomName()){
-					return true;
-				}
-			}
-			if($tile instanceof BeaconTile){
-
-			$player->addWindow($beacon->getInventory());
-
-			}
-		}
-
-		return true;
-	}
-
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		$this->getLevel()->setBlock($block, Block::get(Block::BEACON, 0), true, true);
-		$nbt = new CompoundTag("", [
-			new ListTag("Items", []),
-			new StringTag("id", Tile::BEACON),
-			new IntTag("x", $block->x),
-			new IntTag("y", $block->y),
-			new IntTag("z", $block->z)
-		]);
-		$nbt->Items->setTagType(NBT::TAG_Compound);
-
-		if($item->hasCustomBlockData()){
-			foreach($item->getCustomBlockData() as $key => $v){
-				$nbt->{$key} = $v;
-			}
-		}
-
-		Tile::createTile("Beacon", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
-
-		return true;
-	}
-
+ 				$player->addWindow($beacon->getInventory());
+ 		}
+ 
+ 		return true;
+ 	}
+	
 	public function onBreak(Item $item){
 		$this->getLevel()->setBlock($this, new Air(), true, true);
-
 		return true;
 	}
-
-}
+ }
