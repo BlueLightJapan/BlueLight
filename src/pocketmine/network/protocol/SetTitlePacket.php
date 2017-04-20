@@ -56,5 +56,11 @@ class SetTitlePacket extends DataPacket{
 		$this->putVarInt($this->stayTime);
 		$this->putVarInt($this->fadeOutTime);
 	}
+        /**
+	 * @return PacketName|string
+         */
+	public function getName(){
+		return "SetTitlePacket";
+	}
 
 }
