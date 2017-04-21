@@ -257,6 +257,8 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::HOPPER_BLOCK] = Hopper::class;
 		        self::$list[self::DRAGON_EGG] = DragonEgg::class;
+			self::$list[self::CHORUS_FLOWER] = ChorusFlower::class;
+ 			self::$list[self::CHORUS_PLANT] = ChorusPlant::class;
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
