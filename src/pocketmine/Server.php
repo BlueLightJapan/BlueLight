@@ -270,7 +270,7 @@ class Server{
 	public $stevekick = false;
 	public $golemspawn = false;
 	public $keepInventory = false;
-	public $rideableentity = flase;
+	public $rideableentity = false;
 	public $enchantingTableEnabled = true;
 	public $cleanentity = false;
 	public $countBookshelf = false;
