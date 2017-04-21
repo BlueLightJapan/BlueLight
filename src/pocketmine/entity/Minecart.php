@@ -432,7 +432,7 @@ class Minecart extends Vehicle{
 	public function applyEntityCollision($entityIn){
 		if ($entityIn != $this->ridingEntity){
 			if ($entityIn instanceof Living && !($entityIn instanceof Player) && !($entityIn instanceof IronGolem) && $this->getType() == self::TYPE_NORMAL && $this->motionX * $this->motionX + $this->motionZ * $this->motionZ > 0.01 && $this->ridingEntity == null && $entityIn->ridingEntity == null){
-				//$entityInª$thisÉæé
+				//$entityIn?a$this?E?a?e
  			}
 
 			$d0 = $entityIn->x - $this->x;
@@ -494,15 +494,7 @@ class Minecart extends Vehicle{
 	public function attack($damage, EntityDamageEvent $source){
 		parent::attack($damage, $source);
 		if($source->isCancelled()) return false;
-		if($source instanceof EntityDamageByEntityEvent){
-			echo("byEntity");
-			if($source->getDamager() instanceof Player){
-				echo("byPlayer");
-				if($source->getDamager()->isCreative()){
-					echo("isCreative");
-				}
-			}
-		}
+
 		$flag = $source instanceof EntityDamageByEntityEvent && $source->getDamager() instanceof Player && $source->getDamager()->isCreative();
 		if($flag){
 			$this->kill();
