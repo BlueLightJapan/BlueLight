@@ -34,6 +34,9 @@ class Zombie extends Monster{
 	public $height = 1.8;
 	public $maxhealth = 20;
 
+	/* For AI */
+	private $siJumping = false;
+
 	public function getName(){
 		return "Zombie";
 	}
@@ -52,7 +55,7 @@ class Zombie extends Monster{
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
-
+		$this->isJumping = false;
 		parent::spawnTo($player);
 	}
 
@@ -77,5 +80,25 @@ class Zombie extends Monster{
 		}
 
 		return $drops;
+	}
+
+	public function onUpdate($currentTick) {
+		parent::onUpdate($currentTick);
+		$this->x -= (0.5 - mt_rand(0, 1));
+		$this->z -= (0.5 - mt_rand(0, 1));		
+		if($this->getNearBlockId(0, 0.5, 0) === 0) {
+			$this->y -= 0.5;
+		} else if($this->getNearBlockId(0, 1, 0) !== 0) {
+			$this->y += 1;
+		}
+
+	}
+
+	public function getNearBlockId($x, $y, $z) {
+		return $this->level->getBlockIdAt(($this->x + $x), ($this->y + $y), ($this->z + $z));
+	}
+
+	public function isJumping() {
+		return $this->isJumping ?? false;
 	}
 }
