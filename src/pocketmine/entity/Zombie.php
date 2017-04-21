@@ -48,7 +48,7 @@ class Zombie extends Monster{
 	/* For AI */
 	private $siJumping = false;
 	private $target = null;
-	private $motionCount = 10;
+	private $motionCount = 100;
 	private $motion = null;
 
 	public function getName(){
@@ -103,6 +103,7 @@ class Zombie extends Monster{
 		if($this->target === null) {
 			$this->searchTarget();
 			if($this->target === null) {
+				$this->randomWalk();
 				return;
 			}
 		}
@@ -122,7 +123,7 @@ class Zombie extends Monster{
 		$x = $this->x;
 		$z = $this->z;
 
-		if($this->motionCount < 5) {
+		if($this->motionCount > 0 and $this->motionCount < 5) {
 			$motion = $this->motion;
 
 			$this->x += $motion[0] * 0.2;
@@ -163,6 +164,47 @@ class Zombie extends Monster{
 
 	}
 
+	public function randomWalk() {
+		$this->motionCount++;
+
+		if(($this->root ?? null) === null or $this->root->isEmpty() or $this->root->isEnd()) {
+			// echo "Root...\n";			
+			$this->root = new RootExplorer([intval($this->x), intval($this->y), intval($this->z)], [intval($this->x+mt_rand(-2, 2)), intval($this->y+mt_rand(-1, 1)), intval($this->z+mt_rand(-2, 2))], $this->level);
+			$this->root->exec();
+
+			if($this->root->isEmpty())
+				return;
+		}
+
+		if($this->motionCount < 0) {
+			return;
+		}
+		
+		$motion = $this->motion ?? [0, 0, 0];
+
+		if($this->motionCount < 20) {
+			$this->x += $motion[0] * 0.2;
+			$this->y = $this->y + $this->motion[1];
+			$this->z += $motion[2] * 0.2;
+		} else {
+			$this->motion = $this->root->getRoot();
+			$this->motionCount = -10*mt_rand(0, 2);
+		}
+
+		$this->motionCount++;
+		
+		$block1 = $this->getNearBlock(0, 0.5, 0);
+		$block2 = $this->getNearBlock(0, 1.5, 0);
+		
+		$this->setRotation(rad2deg(atan2($motion[2], $motion[0])) - 90, $this->pitch);
+
+		if(($block1 instanceof Transparent) and !($block1 instanceof Stair)) {
+			$this->y -= 1;
+		} else if(!($block2 instanceof Transparent) and !($block2 instanceof Stair)){
+			$this->y += 1;
+		}
+	}
+
 	public function searchTarget() {
 		$distance = self::VIEWABLE_RANGE * self::VIEWABLE_RANGE;
 
@@ -171,7 +213,7 @@ class Zombie extends Monster{
 		foreach($this->level->getPlayers() as $player) {
 
 			$p2e_distance = ($player->x - $this->x**2 + $player->z - $this->z**2);
-			if($distance > $p2e_distance) {
+			if($distance > $p2e_distance and !$player->isCreative()) {
 				$target = $player;
 				$distance = $p2e_distance;
 			}
