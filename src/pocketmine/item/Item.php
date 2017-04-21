@@ -227,7 +227,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::ELYTRA] = Elytra::class;
 			self::$list[self::ENCHANTING_BOTTLE] = EnchantingBottle::class;
 			self::$list[self::HOPPER] = Hopper::class;
-
+			
 			for($i = 0; $i < 256; ++$i){
 				if(Block::$list[$i] !== null){
 					self::$list[$i] = Block::$list[$i];

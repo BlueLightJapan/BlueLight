@@ -93,13 +93,10 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::GLASS] = Glass::class;
 			self::$list[self::LAPIS_ORE] = LapisOre::class;
 			self::$list[self::LAPIS_BLOCK] = Lapis::class;
-			self::$list[self::ACTIVATOR_RAIL] = ActivatorRail::class;
-			self::$list[self::COCOA_BLOCK] = CocoaBlock::class;
 			self::$list[self::SANDSTONE] = Sandstone::class;
-			self::$list[self::NOTE_BLOCK] = NoteBlock::class;
+			self::$list[self::RED_SANDSTONE] = RedSandstone::class;
+			self::$list[self::RED_SANDSTONE_STAIRS] = RedSandstoneStairs::class;
 			self::$list[self::BED_BLOCK] = Bed::class;
-			self::$list[self::POWERED_RAIL] = PoweredRail::class;
-			self::$list[self::DETECTOR_RAIL] = DetectorRail::class;
 			self::$list[self::COBWEB] = Cobweb::class;
 			self::$list[self::TALL_GRASS] = TallGrass::class;
 			self::$list[self::DEAD_BUSH] = DeadBush::class;
@@ -112,6 +109,8 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::IRON_BLOCK] = Iron::class;
 			self::$list[self::DOUBLE_SLAB] = DoubleSlab::class;
 			self::$list[self::SLAB] = Slab::class;
+			self::$list[self::RED_SANDSTONE_SLAB] = RedSandstoneSlab::class;
+			self::$list[self::DOUBLE_RED_SANDSTONE_SLAB] = DoubleRedSandstoneSlab::class;
 			self::$list[self::BRICKS_BLOCK] = Bricks::class;
 			self::$list[self::TNT] = TNT::class;
 			self::$list[self::BOOKSHELF] = Bookshelf::class;
@@ -121,8 +120,8 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::FIRE] = Fire::class;
 			self::$list[self::MONSTER_SPAWNER] = MonsterSpawner::class;
 			self::$list[self::WOOD_STAIRS] = WoodStairs::class;
+			self::$list[self::ENDER_CHEST] = EnderChest::class;
 			self::$list[self::CHEST] = Chest::class;
-
 			self::$list[self::DIAMOND_ORE] = DiamondOre::class;
 			self::$list[self::DIAMOND_BLOCK] = Diamond::class;
 			self::$list[self::WORKBENCH] = Workbench::class;
@@ -138,40 +137,30 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::ACACIA_DOOR_BLOCK] = AcaciaDoor::class;
 			self::$list[self::DARK_OAK_DOOR_BLOCK] = DarkOakDoor::class;
 			self::$list[self::LADDER] = Ladder::class;
-			self::$list[self::RAIL] = Rail::class;
-
 			self::$list[self::COBBLESTONE_STAIRS] = CobblestoneStairs::class;
 			self::$list[self::WALL_SIGN] = WallSign::class;
-			self::$list[self::LEVER] = Lever::class;
-			self::$list[self::STONE_PRESSURE_PLATE] = StonePressurePlate::class;
 			self::$list[self::IRON_DOOR_BLOCK] = IronDoor::class;
-			self::$list[self::WOODEN_PRESSURE_PLATE] = WoodenPressurePlate::class;
 			self::$list[self::REDSTONE_ORE] = RedstoneOre::class;
 			self::$list[self::GLOWING_REDSTONE_ORE] = GlowingRedstoneOre::class;
-
-			self::$list[self::REDSTONE_TORCH] = RedstoneTorch::class;
-			self::$list[self::LIT_REDSTONE_TORCH] = LitRedstoneTorch::class;
-			self::$list[self::STONE_BUTTON] = StoneButton::class;
 			self::$list[self::SNOW_LAYER] = SnowLayer::class;
 			self::$list[self::ICE] = Ice::class;
 			self::$list[self::SNOW_BLOCK] = Snow::class;
 			self::$list[self::CACTUS] = Cactus::class;
 			self::$list[self::CLAY_BLOCK] = Clay::class;
 			self::$list[self::SUGARCANE_BLOCK] = Sugarcane::class;
-
 			self::$list[self::FENCE] = Fence::class;
 			self::$list[self::PUMPKIN] = Pumpkin::class;
 			self::$list[self::NETHERRACK] = Netherrack::class;
 			self::$list[self::SOUL_SAND] = SoulSand::class;
 			self::$list[self::GLOWSTONE_BLOCK] = Glowstone::class;
-
 			self::$list[self::LIT_PUMPKIN] = LitPumpkin::class;
 			self::$list[self::CAKE_BLOCK] = Cake::class;
-
 			self::$list[self::TRAPDOOR] = Trapdoor::class;
-
+			self::$list[self::IRON_TRAPDOOR] = IronTrapdoor::class;
 			self::$list[self::STONE_BRICKS] = StoneBricks::class;
-
+			
+			self::$list[self::BROWN_MUSHROOM_BLOCK] = BrownMushroomBlock::class;
+			self::$list[self::RED_MUSHROOM_BLOCK] = RedMushroomBlock::class;
 			self::$list[self::IRON_BARS] = IronBars::class;
 			self::$list[self::GLASS_PANE] = GlassPane::class;
 			self::$list[self::MELON_BLOCK] = Melon::class;
@@ -181,25 +170,25 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::FENCE_GATE] = FenceGate::class;
 			self::$list[self::BRICK_STAIRS] = BrickStairs::class;
 			self::$list[self::STONE_BRICK_STAIRS] = StoneBrickStairs::class;
-
 			self::$list[self::MYCELIUM] = Mycelium::class;
 			self::$list[self::WATER_LILY] = WaterLily::class;
 			self::$list[self::NETHER_BRICKS] = NetherBrick::class;
-			self::$list[self::NETHER_BRICK_FENCE] = NetherBrickFence::class;
+			self::$list[self::PORTAL] = Portal::class;
 			self::$list[self::NETHER_BRICKS_STAIRS] = NetherBrickStairs::class;
-
+			self::$list[self::NETHER_WART_BLOCK] = NetherWart::class;
 			self::$list[self::ENCHANTING_TABLE] = EnchantingTable::class;
 			self::$list[self::BREWING_STAND_BLOCK] = BrewingStand::class;
-			self::$list[self::END_PORTAL] = EndPortal::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
+			self::$list[self::END_PORTAL] = EndPortal::class;
 			self::$list[self::END_STONE] = EndStone::class;
-			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
-			self::$list[self::LIT_REDSTONE_LAMP] = LitRedstoneLamp::class;
+			self::$list[self::END_STONE_BRICKS] = EndStoneBricks::class;
+			self::$list[self::END_ROD] = EndRod::class;
+			self::$list[self::PURPUR] = Purpur::class;
+			self::$list[self::PURPUR_STAIRS] = PurpurStairs::class;
+			self::$list[self::CHORUS_FLOWER] = ChorusFlower::class;
+			self::$list[self::CHORUS_PLANT] = ChorusPlant::class;
 			self::$list[self::SANDSTONE_STAIRS] = SandstoneStairs::class;
 			self::$list[self::EMERALD_ORE] = EmeraldOre::class;
-			self::$list[self::ENDER_CHEST] = EnderChest::class;
-			self::$list[self::TRIPWIRE_HOOK] = TripwireHook::class;
-			self::$list[self::TRIPWIRE] = Tripwire::class;
 			self::$list[self::EMERALD_BLOCK] = Emerald::class;
 			self::$list[self::SPRUCE_WOOD_STAIRS] = SpruceWoodStairs::class;
 			self::$list[self::BIRCH_WOOD_STAIRS] = BirchWoodStairs::class;
@@ -209,54 +198,72 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::FLOWER_POT_BLOCK] = FlowerPot::class;
 			self::$list[self::CARROT_BLOCK] = Carrot::class;
 			self::$list[self::POTATO_BLOCK] = Potato::class;
-			self::$list[self::WOODEN_BUTTON] = WoodenButton::class;
-			self::$list[self::MOB_HEAD_BLOCK] = MobHead::class;
 			self::$list[self::ANVIL] = Anvil::class;
 			self::$list[self::TRAPPED_CHEST] = TrappedChest::class;
-			self::$list[self::WEIGHTED_PRESSURE_PLATE_LIGHT] = WeightedPressurePlateLight::class;
-			self::$list[self::WEIGHTED_PRESSURE_PLATE_HEAVY] = WeightedPressurePlateHeavy::class;
-
-			self::$list[self::DAYLIGHT_SENSOR] = DaylightSensor::class;
 			self::$list[self::REDSTONE_BLOCK] = Redstone::class;
-
+			
 			self::$list[self::COMMAND_BLOCK] = CommandBlock::class;
 			self::$list[self::QUARTZ_BLOCK] = Quartz::class;
 			self::$list[self::QUARTZ_STAIRS] = QuartzStairs::class;
 			self::$list[self::DOUBLE_WOOD_SLAB] = DoubleWoodSlab::class;
 			self::$list[self::WOOD_SLAB] = WoodSlab::class;
 			self::$list[self::STAINED_CLAY] = StainedClay::class;
-
 			self::$list[self::LEAVES2] = Leaves2::class;
 			self::$list[self::WOOD2] = Wood2::class;
 			self::$list[self::ACACIA_WOOD_STAIRS] = AcaciaWoodStairs::class;
 			self::$list[self::DARK_OAK_WOOD_STAIRS] = DarkOakWoodStairs::class;
+			self::$list[self::SLIME_BLOCK] = SlimeBlock::class;
 			self::$list[self::PRISMARINE] = Prismarine::class;
 			self::$list[self::SEA_LANTERN] = SeaLantern::class;
-			self::$list[self::IRON_TRAPDOOR] = IronTrapdoor::class;
 			self::$list[self::HAY_BALE] = HayBale::class;
 			self::$list[self::CARPET] = Carpet::class;
 			self::$list[self::HARDENED_CLAY] = HardenedClay::class;
 			self::$list[self::COAL_BLOCK] = Coal::class;
 			self::$list[self::PACKED_ICE] = PackedIce::class;
 			self::$list[self::DOUBLE_PLANT] = DoublePlant::class;
-
 			self::$list[self::FENCE_GATE_SPRUCE] = FenceGateSpruce::class;
 			self::$list[self::FENCE_GATE_BIRCH] = FenceGateBirch::class;
 			self::$list[self::FENCE_GATE_JUNGLE] = FenceGateJungle::class;
 			self::$list[self::FENCE_GATE_DARK_OAK] = FenceGateDarkOak::class;
 			self::$list[self::FENCE_GATE_ACACIA] = FenceGateAcacia::class;
-
-			self::$list[self::ITEM_FRAME_BLOCK] = ItemFrame::class;
-
 			self::$list[self::GRASS_PATH] = GrassPath::class;
-
 			self::$list[self::PODZOL] = Podzol::class;
 			self::$list[self::BEETROOT_BLOCK] = Beetroot::class;
 			self::$list[self::STONECUTTER] = Stonecutter::class;
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
-
+			self::$list[self::NETHER_REACTOR] = NetherReactor::class;
+			self::$list[self::NETHER_BRICK_FENCE] = NetherBrickFence::class;
+			self::$list[self::POWERED_RAIL] = PoweredRail::class;
+			self::$list[self::RAIL] = Rail::class;
+			self::$list[self::WOODEN_PRESSURE_PLATE] = WoodenPressurePlate::class;
+			self::$list[self::STONE_PRESSURE_PLATE] = StonePressurePlate::class;
+			self::$list[self::LIGHT_WEIGHTED_PRESSURE_PLATE] = LightWeightedPressurePlate::class;
+			self::$list[self::HEAVY_WEIGHTED_PRESSURE_PLATE] = HeavyWeightedPressurePlate::class;
+			self::$list[self::LIT_REDSTONE_LAMP] = LitRedstoneLamp::class;
+			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
+			self::$list[self::REDSTONE_TORCH] = RedstoneTorch::class;
+			self::$list[self::WOODEN_BUTTON] = WoodenButton::class;
+			self::$list[self::STONE_BUTTON] = StoneButton::class;
+			self::$list[self::LEVER] = Lever::class;
+			self::$list[self::DAYLIGHT_SENSOR] = DaylightDetector::class;
+			self::$list[self::DAYLIGHT_SENSOR_INVERTED] = DaylightDetectorInverted::class;
+			//self::$list[self::NOTE_BLOCK] = NoteBlock::class;
+			self::$list[self::SKULL_BLOCK] = SkullBlock::class;
+			self::$list[self::NETHER_QUARTZ_ORE] = NetherQuartzOre::class;
+			self::$list[self::ACTIVATOR_RAIL] = ActivatorRail::class;
+			self::$list[self::COCOA_BLOCK] = CocoaBlock::class;
+			self::$list[self::DETECTOR_RAIL] = DetectorRail::class;
+			self::$list[self::TRIPWIRE] = Tripwire::class;
+			self::$list[self::TRIPWIRE_HOOK] = TripwireHook::class;
+			self::$list[self::ITEM_FRAME_BLOCK] = ItemFrame::class;
+			self::$list[self::DISPENSER] = Dispenser::class;
+			self::$list[self::DROPPER] = Dropper::class;
+			self::$list[self::POWERED_REPEATER_BLOCK] = PoweredRepeater::class;
+			self::$list[self::UNPOWERED_REPEATER_BLOCK] = UnpoweredRepeater::class;
+			self::$list[self::CAULDRON_BLOCK] = Cauldron::class;
+			self::$list[self::INVISIBLE_BEDROCK] = InvisibleBedrock::class;
 			self::$list[self::HOPPER_BLOCK] = Hopper::class;
-		        self::$list[self::DRAGON_EGG] = DragonEgg::class;
+			self::$list[self::DRAGON_EGG] = DragonEgg::class;
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
