@@ -32,7 +32,7 @@ use pocketmine\level\Position;
 use pocketmine\level\Level;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
-
+use pocketmine\Server;
 
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
@@ -99,6 +99,10 @@ class Zombie extends Monster{
 
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
+
+		if(!Server::getInstance()->getProperty("ZombieAI", false)) {
+			return;
+		}
 		
 		if($this->target === null) {
 			$this->searchTarget();

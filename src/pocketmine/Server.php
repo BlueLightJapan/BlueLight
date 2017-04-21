@@ -1458,6 +1458,7 @@ class Server{
 				"RideableEntity" => false,
 				"CleanEntity" => false,
 				"MapEnabled" => false,
+				"ZombieAI" => false,
 			]);
 
 			$this->logger->info("Loading server properties...");
