@@ -222,6 +222,16 @@ interface BlockIds{
 	const DARK_OAK_DOOR_BLOCK = 197;
 	const GRASS_PATH = 198;
 	const ITEM_FRAME_BLOCK = 199;
+	const CHORUS_FLOWER = 200;
+ 
+ 	const PURPUR_BLOCK = 201;
+ 
+ 	const PURPUR_STAIRS = 203;
+ 
+ 	const END_STONE_BRICKS = 206;
+ 	const END_ROD = 208;
+ 
+ 	const CHORUS_PLANT = 240;
 
 	const PODZOL = 243;
 	const BEETROOT_BLOCK = 244;
