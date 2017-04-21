@@ -224,7 +224,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::ENCHANTED_GOLDEN_APPLE] = GoldenAppleEnchanted::class;
 			self::$list[self::ENDER_PEARL] = EnderPearl::class;
 			self::$list[self::EYE_OF_ENDER] = EyeOfEnder::class;
-			self::$list[self::DRAGONS_BREATH] = DragonsBreath::class;
+			self::$list[self::DRAGON_BREATH] = DragonBreath::class;
  			self::$list[self::POPPED_CHORUS_FRUIT] = PoppedChorusFruit::class; 
                         self::$list[self::CHORUS_FRUIT] = ChorusFruit::class;
 			self::$list[self::ELYTRA] = Elytra::class;
