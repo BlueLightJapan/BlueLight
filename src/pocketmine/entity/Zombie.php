@@ -21,23 +21,25 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\item\Item as ItemItem;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\Player;
-
-use pocketmine\level\Position;
-use pocketmine\level\Level;
 
 use pocketmine\block\Transparent;
 use pocketmine\block\Stair;
-
 use pocketmine\entity\AI\RootExplorer;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as ItemItem;
+use pocketmine\level\Position;
+use pocketmine\level\Level;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
+
 
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
 
 	const VIEWABLE_RANGE = 20;
+	const ATTACK_RANGE = 2;
+
 	public $width = 0.6;
 	public $length = 0.6;
 	public $height = 1.8;
@@ -149,6 +151,16 @@ class Zombie extends Monster{
 
 		$this->setRotation(rad2deg(atan2($motion[2], $motion[0])) - 90, $this->pitch);
 
+		$x = $this->x - $this->target->x;
+		$y = $this->y - $this->target->y;
+		$z = $this->z - $this->target->z;
+
+		$distance = ($x**2 + $y**2 + $z**2);
+
+		if($distance < self::ATTACK_RANGE**2) {
+			$this->target->attack(2, new EntityDamageByEntityEvent($this, $this->target, 1, 2));
+		}
+
 	}
 
 	public function searchTarget() {
@@ -166,6 +178,22 @@ class Zombie extends Monster{
 		}
 
 		$this->target = $target;
+	}
+
+	public function attack($damage, EntityDamageEvent $source){
+		parent::attack($damage, $source);
+
+		if($source instanceof EntityDamageByEntityEvent) {
+			$entity = $source->getDamager();
+			$x = $this->x - $entity->x;
+			$z = $this->z - $entity->z;
+			$rad =  deg2rad(rad2deg(atan2($z, $x)) + 90);
+			$this->x -= cos($rad);
+			$this->z -= sin($rad);
+			$this->updateMovement();
+			$this->root = null; //再演算
+		}
+
 	}
 
 	public function getNearBlock($x, $y, $z) {
