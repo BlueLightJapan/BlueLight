@@ -20,7 +20,6 @@
  */
 
 namespace pocketmine\utils;
-
 class Range{
 	public $minValue;
 	public $maxValue;
@@ -34,3 +33,4 @@ class Range{
 		return $v >= $this->minValue && $v <= $this->maxValue;
 	}
 }
+
