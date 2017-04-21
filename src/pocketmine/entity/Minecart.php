@@ -128,7 +128,7 @@ class Minecart extends Vehicle{
 
 		$this->setRotation($this->yaw, $this->pitch);
 		
-		$list = $this->getLevel()->getCollidingEntities($this->boundingBox->expand(0.20000000298023224, 0.0, 0.20000000298023224), $this);
+		$list = $this->getLevel()->getCollidingEntities($this->boundingBox, $this);
 
 		foreach($list as $entity){
 			$movingObjectPosition = MovingObjectPosition::fromEntity($entity);
@@ -432,7 +432,7 @@ class Minecart extends Vehicle{
 	public function applyEntityCollision($entityIn){
 		if ($entityIn != $this->ridingEntity){
 			if ($entityIn instanceof Living && !($entityIn instanceof Player) && !($entityIn instanceof IronGolem) && $this->getType() == self::TYPE_NORMAL && $this->motionX * $this->motionX + $this->motionZ * $this->motionZ > 0.01 && $this->ridingEntity == null && $entityIn->ridingEntity == null){
-				//$entityIn‚ª$this‚Éæ‚é
+				//$entityInÂ‚Âª$thisÂ‚Ã‰ÂÃ¦Â‚Ã©
  			}
 
 			$d0 = $entityIn->x - $this->x;
