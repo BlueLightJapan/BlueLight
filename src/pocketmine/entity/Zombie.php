@@ -100,7 +100,7 @@ class Zombie extends Monster{
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
 
-		if(!Server::getInstance()->getProperty("ZombieAI", false)) {
+		if(!$this->getLevel()->getServer()->zombieai) {
 			return;
 		}
 		

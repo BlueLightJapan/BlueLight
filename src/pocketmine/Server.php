@@ -275,6 +275,7 @@ class Server{
 	public $cleanentity = false;
 	public $countBookshelf = false;
 	public $mapEnabled = false;
+	public $zombieai = false;
 
 
 	/**
@@ -1516,6 +1517,7 @@ class Server{
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 			$this->cleanentity = $this->getProperty("CleanEntity", false);
 			$this->mapEnabled = $this->getProperty("MapEnabled", false);
+			$this->zombieai = $this->getProperty("ZombieAI", false);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
