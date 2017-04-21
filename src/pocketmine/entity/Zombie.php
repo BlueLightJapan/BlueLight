@@ -26,9 +26,18 @@ use pocketmine\item\Item as ItemItem;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
+use pocketmine\level\Position;
+use pocketmine\level\Level;
+
+use pocketmine\block\Transparent;
+use pocketmine\block\Stair;
+
+use pocketmine\entity\AI\RootExplorer;
+
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
 
+	const VIEWABLE_RANGE = 20;
 	public $width = 0.6;
 	public $length = 0.6;
 	public $height = 1.8;
@@ -36,10 +45,14 @@ class Zombie extends Monster{
 
 	/* For AI */
 	private $siJumping = false;
+	private $target = null;
+	private $motionCount = 10;
+	private $motion = null;
 
 	public function getName(){
 		return "Zombie";
 	}
+
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
@@ -49,7 +62,7 @@ class Zombie extends Monster{
 		$pk->y = $this->y;
 		$pk->z = $this->z;
 		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
+		// $pk->speedY = //$this->motionY;
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
@@ -84,18 +97,79 @@ class Zombie extends Monster{
 
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
-		$this->x -= (0.5 - mt_rand(0, 1));
-		$this->z -= (0.5 - mt_rand(0, 1));		
-		if($this->getNearBlockId(0, 0.5, 0) === 0) {
-			$this->y -= 0.5;
-		} else if($this->getNearBlockId(0, 1, 0) !== 0) {
-			$this->y += 1;
+		
+		if($this->target === null) {
+			$this->searchTarget();
+			if($this->target === null) {
+				return;
+			}
 		}
+
+		$target = $this->target;
+
+		if(($this->root ?? null) === null or $this->root->isEmpty() or $this->root->isEnd()) {
+			// echo "Root...\n";			
+			$this->root = new RootExplorer([intval($this->x), intval($this->y), intval($this->z)], [intval($target->x), intval($target->y), intval($target->z)], $this->level);
+			$this->root->exec();
+
+			if($this->root->isEmpty())
+				return;
+		}
+		// echo "Execute...\n";
+		
+		$x = $this->x;
+		$z = $this->z;
+
+		if($this->motionCount < 5) {
+			$motion = $this->motion;
+
+			$this->x += $motion[0] * 0.2;
+			// $this->y += $motion[1] * 0.1;
+			$this->z += $motion[2] * 0.2;
+			$this->motionCount++;			
+		} else {
+			$this->motionCount = 0;
+			$motion = $this->motion = $this->root->getRoot();
+
+			$this->x += $motion[0] * 0.2;
+			$this->y = $this->y + $this->motion[1];
+			$this->z += $motion[2] * 0.2;
+			
+			$block1 = $this->getNearBlock(0, 0.5, 0);
+			$block2 = $this->getNearBlock(0, 1.5, 0);
+
+			if(($block1 instanceof Transparent) and !($block1 instanceof Stair)) {
+				$this->y -= 1;
+			} else if(!($block2 instanceof Transparent) and !($block2 instanceof Stair)){
+				$this->y += 1;
+			}
+
+
+		}
+
+		$this->setRotation(rad2deg(atan2($motion[2], $motion[0])) - 90, $this->pitch);
 
 	}
 
-	public function getNearBlockId($x, $y, $z) {
-		return $this->level->getBlockIdAt(($this->x + $x), ($this->y + $y), ($this->z + $z));
+	public function searchTarget() {
+		$distance = self::VIEWABLE_RANGE * self::VIEWABLE_RANGE;
+
+		$target = null;
+
+		foreach($this->level->getPlayers() as $player) {
+
+			$p2e_distance = ($player->x - $this->x**2 + $player->z - $this->z**2);
+			if($distance > $p2e_distance) {
+				$target = $player;
+				$distance = $p2e_distance;
+			}
+		}
+
+		$this->target = $target;
+	}
+
+	public function getNearBlock($x, $y, $z) {
+		return $this->level->getBlock(new Position(($this->x + $x), ($this->y + $y), ($this->z + $z)));
 	}
 
 	public function isJumping() {
