@@ -70,7 +70,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$solid = new \SplFixedArray(256);
 			self::$hardness = new \SplFixedArray(256);
 			self::$transparent = new \SplFixedArray(256);
-						self::$list[self::AIR] = Air::class;
+			self::$list[self::AIR] = Air::class;
 			self::$list[self::STONE] = Stone::class;
 			self::$list[self::GRASS] = Grass::class;
 			self::$list[self::DIRT] = Dirt::class;
@@ -247,7 +247,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::LEVER] = Lever::class;
 			self::$list[self::DAYLIGHT_SENSOR] = DaylightDetector::class;
 			self::$list[self::DAYLIGHT_SENSOR_INVERTED] = DaylightDetectorInverted::class;
-			self::$list[self::NOTE_BLOCK] = Noteblock::class;
+			self::$list[self::NOTE_BLOCK] = NoteBlock::class;
 			self::$list[self::SKULL_BLOCK] = SkullBlock::class;
 			self::$list[self::NETHER_QUARTZ_ORE] = NetherQuartzOre::class;
 			self::$list[self::ACTIVATOR_RAIL] = ActivatorRail::class;
