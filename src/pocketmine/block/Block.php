@@ -190,6 +190,7 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::ENCHANTING_TABLE] = EnchantingTable::class;
 			self::$list[self::BREWING_STAND_BLOCK] = BrewingStand::class;
+			self::$list[self::END_PORTAL] = EndPortal::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
 			self::$list[self::END_STONE] = EndStone::class;
 			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
@@ -203,6 +204,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::SPRUCE_WOOD_STAIRS] = SpruceWoodStairs::class;
 			self::$list[self::BIRCH_WOOD_STAIRS] = BirchWoodStairs::class;
 			self::$list[self::JUNGLE_WOOD_STAIRS] = JungleWoodStairs::class;
+			self::$list[self::BEACON] = Beacon::class;
 			self::$list[self::STONE_WALL] = StoneWall::class;
 			self::$list[self::FLOWER_POT_BLOCK] = FlowerPot::class;
 			self::$list[self::CARROT_BLOCK] = Carrot::class;
@@ -217,6 +219,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::DAYLIGHT_SENSOR] = DaylightSensor::class;
 			self::$list[self::REDSTONE_BLOCK] = Redstone::class;
 
+			self::$list[self::COMMAND_BLOCK] = CommandBlock::class;
 			self::$list[self::QUARTZ_BLOCK] = Quartz::class;
 			self::$list[self::QUARTZ_STAIRS] = QuartzStairs::class;
 			self::$list[self::DOUBLE_WOOD_SLAB] = DoubleWoodSlab::class;
@@ -253,6 +256,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
 
 			self::$list[self::HOPPER_BLOCK] = Hopper::class;
+		        self::$list[self::DRAGON_EGG] = DragonEgg::class;
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
@@ -449,6 +453,9 @@ class Block extends Position implements BlockIds, Metadatable{
 		return false;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isSolid(){
 		return true;
 	}

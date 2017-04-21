@@ -495,6 +495,7 @@ abstract class Entity extends Location implements Metadatable{
 	 */
 	public function setUnlink(Entity $entity){
 
+		$entity->ridingEntity = null;
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();
 		$pk->to = $this->getId();
@@ -518,6 +519,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->setDataProperty(Entity::DATA_RIDE_POSITION, Entity::DATA_TYPE_VECTOR3F, $entity->getRidePosition(), true);
 		}
 
+		$entity->ridingEntity = $this;
 		$pk = new SetEntityLinkPacket();
 		$pk->from = $entity->getId();
 		$pk->to = $this->getId();

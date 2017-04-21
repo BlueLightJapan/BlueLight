@@ -18,19 +18,20 @@
  * @link https://itxtech.org
  *
  */
+ 
+namespace pocketmine\event\block;
 
-namespace pocketmine\utils;
-class Range{
-	public $minValue;
-	public $maxValue;
+use pocketmine\event\Cancellable;
 
-	public function __construct(int $min, int $max){
-		$this->minValue = $min;
-		$this->maxValue = $max;
+class BlockBurnEvent extends BlockEvent implements Cancellable{
+
+	public static $handlerList = null;
+  
+	/**
+	 * @return EventName|string
+     */
+	public function getName(){
+		return "BlockBurnEvent";
 	}
-
-	public function isInRange(int $v) : bool{
-		return $v >= $this->minValue && $v <= $this->maxValue;
-	}
+  
 }
-
