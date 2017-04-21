@@ -1,4 +1,5 @@
 <?php
+
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____  
@@ -17,7 +18,9 @@
  * 
  *
 */
+
 namespace pocketmine\block;
+
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -29,7 +32,9 @@ use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
+
 class Fire extends Flowable{
+	
 	protected $id = self::FIRE;
 	/** @var Vector3 */
 	private $temporalVector = null;
@@ -39,21 +44,27 @@ class Fire extends Flowable{
 			$this->temporalVector = new Vector3(0, 0, 0);
 		}
 	}
+	
 	public function hasEntityCollision(){
 		return true;
 	}
+	
 	public function getName() : string{
 		return "Fire Block";
 	}
+	
 	public function getLightLevel(){
 		return 15;
 	}
+	
 	public function isBreakable(Item $item){
 		return false;
 	}
+	
 	public function canBeReplaced(){
 		return true;
 	}
+	
 	public function onEntityCollide(Entity $entity){
 		$ProtectL = 0;
 		if(!$entity->hasEffect(Effect::FIRE_RESISTANCE)){
@@ -72,9 +83,11 @@ class Fire extends Flowable{
 			$entity->setOnFire($ev->getDuration());
 		}
 	}
+	
 	public function getDrops(Item $item) : array {
 		return [];
 	}
+	
 	public function onUpdate($type){
 		if($type == Level::BLOCK_UPDATE_NORMAL or $type == Level::BLOCK_UPDATE_RANDOM or $type == Level::BLOCK_UPDATE_SCHEDULED){
 			if(!$this->getSide(Vector3::SIDE_DOWN)->isTopFacingSurfaceSolid() and !$this->canNeighborBurn()){
@@ -145,9 +158,11 @@ class Fire extends Flowable{
 		}
 		return 0;
 	}
+	
 	public function getTickRate() : int{
 		return 30;
 	}
+	
 	/*public function onUpdate($type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			for($s = 0; $s <= 5; ++$s){
@@ -184,6 +199,7 @@ class Fire extends Flowable{
 			}
 		}
 	}
+	
 	private function getChanceOfNeighborsEncouragingFire(Block $block){
 		if($block->getId() !== self::AIR){
 			return 0;
