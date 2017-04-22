@@ -195,7 +195,6 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::POTION] = Potion::class;
 			self::$list[self::GLASS_BOTTLE] = GlassBottle::class;
 			self::$list[self::SPLASH_POTION] = SplashPotion::class;
-			self::$list[self::LINGERING_POTION] = LingeringPotion::class;
 			self::$list[self::SPIDER_EYE] = SpiderEye::class;
 			self::$list[self::FERMENTED_SPIDER_EYE] = FermentedSpiderEye::class;
 			self::$list[self::BLAZE_POWDER] = BlazePowder::class;
