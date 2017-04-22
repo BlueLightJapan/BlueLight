@@ -127,6 +127,7 @@ abstract class DefaultPermissions{
 		self::registerPermission(new Permission(self::ROOT . ".command.transfer", "Allows the user to transfer", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.makeplugin", "Allows the user to make plugin", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.extractplugin", "Allows the user to extract plugin", Permission::DEFAULT_OP), $commands);
+		self::registerPermission(new Permission(self::ROOT . ".command.title", "Allows the user to send title", Permission::DEFAULT_OP), $commands);
 
 		$commands->recalculatePermissibles();
 
