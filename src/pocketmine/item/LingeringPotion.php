@@ -49,11 +49,11 @@ class LingeringPotion extends Item {
 			case Potion::FIRE_RESISTANCE:
 			case Potion::FIRE_RESISTANCE_T:
 				return "Lingering Potion of Fire Residence";
-			//case Potion::SPEED:
+			/*case Potion::SPEED:
 			case Potion::SPEED_T:
 				return "Lingering Potion of Swiftness";
 			case Potion::SPEED_TWO:
-				return "Lingering Potion of Swiftness II";
+				return "Lingering Potion of Swiftness II";*/
 			case Potion::SLOWNESS:
 			case Potion::SLOWNESS_T:
 				return "Lingering Potion of Slowness";
