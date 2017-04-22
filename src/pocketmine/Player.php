@@ -3464,7 +3464,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$nbt = new NBT(NBT::LITTLE_ENDIAN);
 					$nbt->read($packet->namedtag, false, true);
 					$nbt = $nbt->getData();
-					echo($nbt->__toString());
 					if(!$t->updateCompoundTag($nbt, $this)){
 						$t->spawnTo($this);
 					}
