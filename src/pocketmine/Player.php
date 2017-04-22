@@ -300,6 +300,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $deviceModel;
 	protected $os;
 
+	public $moveForward = 0;
+
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -2588,6 +2590,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
                 		break;
 			case ProtocolInfo::PLAYER_INPUT_PACKET:
 				if($packet->motionX == 0 and $packet->motionY == 1){
+					$this->moveForward++;
 					$this->linkedentity->goStraight($this);
 				}elseif($packet->motionX == 0 and $packet->motionY == -1){
 					$this->linkedentity->goBack($this);
@@ -3462,6 +3465,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$nbt = new NBT(NBT::LITTLE_ENDIAN);
 					$nbt->read($packet->namedtag, false, true);
 					$nbt = $nbt->getData();
+					echo($nbt->__toString());
 					if(!$t->updateCompoundTag($nbt, $this)){
 						$t->spawnTo($this);
 					}
@@ -3951,6 +3955,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setHealth($amount){
 		parent::setHealth($amount);
 		if($this->spawned === true){
+			/*
+			$pk = new SetHealthPacket();
+			$pk->health = $this->getHealth();
+			$this->dataPacket($pk);
+			*/
 			$this->foodTick = 0;
 			$this->getAttributeMap()->getAttribute(Attribute::HEALTH)->setMaxValue($this->getMaxHealth())->setValue($amount, true);
 		}

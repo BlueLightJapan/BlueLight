@@ -27,6 +27,7 @@ use pocketmine\level\MovingObjectPosition;
 use pocketmine\math\Vector3;
 use pocketmine\block\Rail;
 use pocketmine\block\Block;
+use pocketmine\Server;
 use pocketmine\Player;
 
 class Minecart extends Vehicle{
@@ -143,8 +144,8 @@ class Minecart extends Vehicle{
 			$this->ridingEntity = null;
 		}
 
-			$this->move($this->motionX, $this->motionY, $this->motionZ);
-			$this->updateMovement();
+		$this->move($this->motionX, $this->motionY, $this->motionZ);
+		$this->updateMovement();
 
 		$this->timings->stopTiming();
 		return true;
@@ -157,14 +158,16 @@ class Minecart extends Vehicle{
 		$flag = false;
 		$flag1 = false;
 
-		if ($block->getId() == Block::ACTIVATOR_RAIL){
-			$flag = false;//TODO isPowered
+		if ($block->getId() == Block::POWERED_RAIL){
+			$flag = $block->getDamage() >= 8;
 			$flag1 = !$flag;
 		}
 
 		$d0 = 0.0078125;
 
-		switch ($block->getDamage()){
+		$damage = $block->getDamage();
+		if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
+		switch ($damage){
 			case Rail::SLOPED_ASCENDING_EAST:
 				$this->motionX -= 0.0078125;
 				$this->y++;
@@ -182,7 +185,7 @@ class Minecart extends Vehicle{
 				$this->y++;
 		}
 
-		$aint = $this->matrix[$block->getDamage()];
+		$aint = $this->matrix[$damage];
 		$d1 = $aint[1][0] - $aint[0][0];
 		$d2 = $aint[1][2] - $aint[0][2];
 		$d3 = sqrt($d1 * $d1 + $d2 * $d2);
@@ -203,7 +206,8 @@ class Minecart extends Vehicle{
 		$this->motionZ = $d5 * $d2 / $d3;
 
 		if ($this->ridingEntity instanceof Entity){
-			$d6 = 1;//$this->ridingEntity->moveForward;
+			$d6 = $this->ridingEntity->moveForward;
+			$this->ridingEntity->moveForward = 0;
 
 			if ($d6 > 0.0){
 				$d7 = -sin($this->ridingEntity->yaw * M_PI / 180.0);
@@ -216,7 +220,7 @@ class Minecart extends Vehicle{
 					$flag1 = false;
 				}
 			}
-      		  }
+		}
 
 		if ($flag1){
 			$d17 = sqrt($this->motionX * $this->motionX + $this->motionZ * $this->motionZ);
@@ -301,17 +305,20 @@ class Minecart extends Vehicle{
 		if ($flag){
 			$d15 = sqrt($this->motionX * $this->motionX + $this->motionZ * $this->motionZ);
 
+			$damage = $block->getDamage();
+			if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
+
 			if ($d15 > 0.01){
 				$d16 = 0.06;
-				$this->motionX += $this->motionX / d15 * d16;
-				$this->motionZ += $this->motionZ / d15 * d16;
-			}else if ($block->getDamage() == Rail::STRAIGHT_EAST_WEST){
+				$this->motionX += $this->motionX / $d15 * $d16;
+				$this->motionZ += $this->motionZ / $d15 * $d16;
+			}else if ($damage == Rail::STRAIGHT_EAST_WEST){
 				if ($this->level->getBlock($blockpos->getSide(Vector3::SIDE_WEST))->isSolid()){
 					$this->motionX = 0.02;
 				}else if ($this->level->getBlock($blockpos->getSide(Vector3::SIDE_EAST))->isSolid()){
 					$this->motionX = -0.02;
 				}
-			}else if ($block->getDamage() == Rail::STRAIGHT_NORTH_SOUTH){
+			}else if ($damage == Rail::STRAIGHT_NORTH_SOUTH){
 				if ($this->level->getBlock($blockpos->getSide(Vector3::SIDE_NORTH))->isSolid()){
 					$this->motionZ = 0.02;
 				}else if ($this->level->getBlock($blockpos->getSide(Vector3::SIDE_SOUTH))->isSolid()){
@@ -333,7 +340,10 @@ class Minecart extends Vehicle{
 		$block = $this->level->getBlock(new Vector3($i, $j, $k));
 
 		if ($block instanceof Rail){
-			$aint = $this->matrix[$block->getDamage()];
+
+			$damage = $block->getDamage();
+			if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
+			$aint = $this->matrix[$damage];
 			$d0 = 0.0;
 			$d1 = $i + 0.5 + $aint[0][0] * 0.5;
 			$d2 = $j + 0.0625 + $aint[0][1] * 0.5;
@@ -499,6 +509,11 @@ class Minecart extends Vehicle{
 		if($flag){
 			$this->kill();
 			$this->close();
+		}else{
+			//$pk = new EntityEventPacket();
+			//$pk->eid = $this->getId();
+			//$pk->event = EntityEventPacket::HURT_ANIMATION;
+			//Server::getInstance()->broadcastPacket($this->getViewers(), $pk);
 		}
 	}
 

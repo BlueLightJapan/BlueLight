@@ -110,6 +110,7 @@ class Rail extends Flowable{
 					break;
 			}
 		}
+		if($this instanceof PoweredRail && $this->isPowered()) $this->meta += 8;
 		$this->level->setBlock($this, Block::get($this->id, $this->meta), true, true);
 		return true;
 	}
@@ -166,6 +167,7 @@ class Rail extends Flowable{
 			default:
 				break;
 		}
+		if($this instanceof PoweredRail && $this->isPowered()) $this->meta += 8;
 		$this->level->setBlock($this, Block::get($this->id, $this->meta), true, true);
 		return true;
 	}
