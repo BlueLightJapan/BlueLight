@@ -194,6 +194,7 @@ interface ItemIds extends BlockIds{
 	const RAW_MUTTON = 423;
 	const COOKED_MUTTON = 424;
 
+	const END_CRYSTAL = 426;
 	const SPRUCE_DOOR = 427;
 	const BIRCH_DOOR = 428;
 	const JUNGLE_DOOR = 429;
@@ -202,8 +203,9 @@ interface ItemIds extends BlockIds{
 	const CHORUS_FRUIT = 432;
 	const POPPED_CHORUS_FRUIT = 433;
  	const DRAGON_BREATH = 437;
-	
 	const SPLASH_POTION = 438;
+	
+	const LINGERING_POTION = 441;
 
 	const ELYTRA = 444;
 	const SHULKER_SHELL = 445;
