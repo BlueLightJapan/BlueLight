@@ -2397,53 +2397,115 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$this->inventory->sendHeldItem($this);
 						break;
 					}
+					switch($item->getId()){
+						case Item::SNOWBALL:
+							$nbt = new CompoundTag("", [
+								"Pos" => new ListTag("Pos", [
+									new DoubleTag("", $this->x),
+									new DoubleTag("", $this->y + $this->getEyeHeight()),
+									new DoubleTag("", $this->z)
+								]),
+								"Motion" => new ListTag("Motion", [
+									new DoubleTag("", $aimPos->x),
+									new DoubleTag("", $aimPos->y),
+									new DoubleTag("", $aimPos->z)
+								]),
+								"Rotation" => new ListTag("Rotation", [
+									new FloatTag("", $this->yaw),
+									new FloatTag("", $this->pitch)
+								]),
+							]);
 
-					if($item->getId() === Item::SNOWBALL){
-						$nbt = new CompoundTag("", [
-							"Pos" => new ListTag("Pos", [
-								new DoubleTag("", $this->x),
-								new DoubleTag("", $this->y + $this->getEyeHeight()),
-								new DoubleTag("", $this->z)
-							]),
-							"Motion" => new ListTag("Motion", [
-								new DoubleTag("", $aimPos->x),
-								new DoubleTag("", $aimPos->y),
-								new DoubleTag("", $aimPos->z)
-							]),
-							"Rotation" => new ListTag("Rotation", [
-								new FloatTag("", $this->yaw),
-								new FloatTag("", $this->pitch)
-							]),
-						]);
-
-						$f = 1.5;
-						$snowball = Entity::createEntity("Snowball", $this->getLevel(), $nbt, $this);
-						$snowball->setMotion($snowball->getMotion()->multiply($f));
-						if($this->isSurvival()){
-							$item->setCount($item->getCount() - 1);
-							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-						}
-						if($snowball instanceof Projectile){
-							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($snowball));
-							if($projectileEv->isCancelled()){
-								$snowball->kill();
+							$f = 1.5;
+							$snowball = Entity::createEntity("Snowball", $this->getLevel(), $nbt, $this);
+							$snowball->setMotion($snowball->getMotion()->multiply($f));
+							if($this->isSurvival()){
+								$item->setCount($item->getCount() - 1);
+								$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+							}
+							if($snowball instanceof Projectile){
+								$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($snowball));
+								if($projectileEv->isCancelled()){
+									$snowball->kill();
+								}else{
+									$snowball->spawnToAll();
+									$this->level->addSound(new LaunchSound($this), $this->getViewers());
+								}
 							}else{
 								$snowball->spawnToAll();
+							}
+							break;
+						case Item::FISHING_ROD:
+							if($this->isFishing()){
+								$this->server->getPluginManager()->callEvent($ev = new PlayerUseFishingRodEvent($this, PlayerUseFishingRodEvent::ACTION_STOP_FISHING));
+							}else{
+								$this->server->getPluginManager()->callEvent($ev = new PlayerUseFishingRodEvent($this, PlayerUseFishingRodEvent::ACTION_START_FISHING));
+							}
+							if(!$ev->isCancelled()){
+								if($this->isFishing()){
+									$this->setFishingHook();
+								}else{
+									$nbt = new CompoundTag("", [
+										"Pos" => new ListTag("Pos", [
+											new DoubleTag("", $this->x),
+											new DoubleTag("", $this->y + $this->getEyeHeight()),
+											new DoubleTag("", $this->z)
+										]),
+										"Motion" => new ListTag("Motion", [
+											new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+											new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+											new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+										]),
+										"Rotation" => new ListTag("Rotation", [
+											new FloatTag("", $this->yaw),
+										new FloatTag("", $this->pitch)
+										]),
+
+									]);
+
+									$f = 0.6;
+									$this->fishingHook = new FishingHook($this->getLevel(), $nbt, $this);
+									$this->fishingHook->setMotion($this->fishingHook->getMotion()->multiply($f));
+									$this->fishingHook->spawnToAll();
+								}
+							}
+							break;
+						case Item::ENCHANTING_BOTTLE:
+							$nbt = new CompoundTag("", [
+								"Pos" => new ListTag("Pos", [
+									new DoubleTag("", $this->x),
+									new DoubleTag("", $this->y + $this->getEyeHeight()),
+									new DoubleTag("", $this->z)
+								]),
+								"Motion" => new ListTag("Motion", [
+									new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+									new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+									new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+								]),
+								"Rotation" => new ListTag("Rotation", [
+									new FloatTag("", $this->yaw),
+									new FloatTag("", $this->pitch)
+								]),
+							]);
+
+							$f = 1.1;
+							$thrownExpBottle = new ThrownExpBottle($this->getLevel(), $nbt, $this);
+							$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply($f));
+							if($this->isSurvival()){
+								$item->setCount($item->getCount() - 1);
+								$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+							}
+
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
+							if($projectileEv->isCancelled()){
+								$thrownExpBottle->kill();
+							}else{
+								$thrownExpBottle->spawnToAll();
 								$this->level->addSound(new LaunchSound($this), $this->getViewers());
 							}
-						}else{
-							$snowball->spawnToAll();
-						}
-					}elseif($item->getId() === Item::FISHING_ROD){
-						if($this->isFishing()){
-							$this->server->getPluginManager()->callEvent($ev = new PlayerUseFishingRodEvent($this, PlayerUseFishingRodEvent::ACTION_STOP_FISHING));
-						}else{
-							$this->server->getPluginManager()->callEvent($ev = new PlayerUseFishingRodEvent($this, PlayerUseFishingRodEvent::ACTION_START_FISHING));
-						}
-						if(!$ev->isCancelled()){
-							if($this->isFishing()){
-								$this->setFishingHook();
-							}else{
+							break;
+						case Item::SPLASH_POTION:
+							if($this->server->allowSplashPotion){
 								$nbt = new CompoundTag("", [
 									"Pos" => new ListTag("Pos", [
 										new DoubleTag("", $this->x),
@@ -2459,130 +2521,76 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 										new FloatTag("", $this->yaw),
 										new FloatTag("", $this->pitch)
 									]),
-									//"OwnerEid" => new LongTag("OwnerEid", $this->getUniqueId()),
+									"PotionId" => new ShortTag("PotionId", $item->getDamage()),
 								]);
 
-								$f = 0.6;
-								$this->fishingHook = new FishingHook($this->getLevel(), $nbt, $this);
-								$this->fishingHook->setMotion($this->fishingHook->getMotion()->multiply($f));
-								$this->fishingHook->spawnToAll();
+								$f = 1.1;
+								$thrownPotion = new ThrownPotion($this->getLevel(), $nbt, $this);
+								$thrownPotion->setMotion($thrownPotion->getMotion()->multiply($f));
+								if($this->isSurvival()){
+									$item->setCount($item->getCount() - 1);
+									$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+								}
+								if($thrownPotion instanceof Projectile){
+									$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownPotion));
+									if($projectileEv->isCancelled()){
+										$thrownPotion->kill();
+									}else{
+										$thrownPotion->spawnToAll();
+										$this->level->addSound(new LaunchSound($this), $this->getViewers());
+									}
+								}else{
+									$thrownPotion->spawnToAll();
+								}
 							}
-						}
-					}elseif($item->getId() == Item::ENCHANTING_BOTTLE){
-						$nbt = new CompoundTag("", [
-							"Pos" => new ListTag("Pos", [
-								new DoubleTag("", $this->x),
-								new DoubleTag("", $this->y + $this->getEyeHeight()),
-								new DoubleTag("", $this->z)
-							]),
-							"Motion" => new ListTag("Motion", [
-								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
-								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
-								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
-							]),
-							"Rotation" => new ListTag("Rotation", [
-								new FloatTag("", $this->yaw),
-								new FloatTag("", $this->pitch)
-							]),
-						]);
+							break;
 
-						$f = 1.1;
-						$thrownExpBottle = new ThrownExpBottle($this->getLevel(), $nbt, $this);
-						$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply($f));
-						if($this->isSurvival()){
-							$item->setCount($item->getCount() - 1);
-							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-						}
-						
-						$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
-						if($projectileEv->isCancelled()){
-							$thrownExpBottle->kill();
-						}else{
-							$thrownExpBottle->spawnToAll();
-							$this->level->addSound(new LaunchSound($this), $this->getViewers());
-						}
-					}elseif($item->getId() == Item::SPLASH_POTION and $this->server->allowSplashPotion){
-						$nbt = new CompoundTag("", [
-							"Pos" => new ListTag("Pos", [
-								new DoubleTag("", $this->x),
-								new DoubleTag("", $this->y + $this->getEyeHeight()),
-								new DoubleTag("", $this->z)
-							]),
-							"Motion" => new ListTag("Motion", [
-								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
-								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
-								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
-							]),
-							"Rotation" => new ListTag("Rotation", [
-								new FloatTag("", $this->yaw),
-								new FloatTag("", $this->pitch)
-							]),
-							"PotionId" => new ShortTag("PotionId", $item->getDamage()),
-						]);
+						case Item::EMPTY_MAP:
 
-						$f = 1.1;
-						$thrownPotion = new ThrownPotion($this->getLevel(), $nbt, $this);
-						$thrownPotion->setMotion($thrownPotion->getMotion()->multiply($f));
-						if($this->isSurvival()){
-							$item->setCount($item->getCount() - 1);
-							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-						}
-						if($thrownPotion instanceof Projectile){
-							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownPotion));
-							if($projectileEv->isCancelled()){
-								$thrownPotion->kill();
-							}else{
-								$thrownPotion->spawnToAll();
-								$this->level->addSound(new LaunchSound($this), $this->getViewers());
-							}
-						}else{
-							$thrownPotion->spawnToAll();
-						}
+							$item = Item::get(Item::FILLED_MAP, 0, 1);
+							$item->setMapId(1000);
+                            				$this->inventory->addItem($item);
+							break;
 
-					}elseif($item->getId() == Item::EMPTY_MAP){
-
-						$item = Item::get(Item::FILLED_MAP, 0, 1);
-						$item->setMapId(1000);
-                            			$this->inventory->addItem($item);
-
-              				}elseif($item->getId() === Item::ENDER_PEARL){
-						$nbt = new CompoundTag("", [
-                            				"Pos" => new ListTag("Pos", [
-                                				new DoubleTag("", $this->x),
-                                				new DoubleTag("", $this->y + $this->getEyeHeight()),
-                                				new DoubleTag("", $this->z)
-                            				]),
-                           				"Motion" => new ListTag("Motion", [
-                                				new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
-                                				new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
-                                				new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
-                            				]),
-                            				"Rotation" => new ListTag("Rotation", [
-                                				new FloatTag("", $this->yaw),
-                                				new FloatTag("", $this->pitch)
-                          	  			]),
-                        			]);
-                       				$f = 1.5;
-                       				$enderpearl = Entity::createEntity("EnderPearl", $this->getLevel(), $nbt, $this);
-						$enderpearl->setMotion($enderpearl->getMotion()->multiply($f));
-                        			$enderpearl->setSpawner($this);
-                        			if($this->isSurvival()){
-                            				$item->setCount($item->getCount() - 1);
-                            				$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-                        			}
-                        			if($enderpearl instanceof Projectile){
-                            				$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($enderpearl));
-                            				if($projectileEv->isCancelled()){
-                                				$enderpearl->close();
-                                				$this->teleport($enderpearl);
-                            				}else{
-                                				$enderpearl->spawnToAll();
-                                				$this->level->addSound(new LaunchSound($this), $this->getViewers());
-                            				}
-                        			}else{
-                            				$enderpearl->spawnToAll();
-                        			}
-                    			}
+              					case Item::ENDER_PEARL:
+							$nbt = new CompoundTag("", [
+                            					"Pos" => new ListTag("Pos", [
+                                					new DoubleTag("", $this->x),
+                                					new DoubleTag("", $this->y + $this->getEyeHeight()),
+                                					new DoubleTag("", $this->z)
+                            					]),
+                           					"Motion" => new ListTag("Motion", [
+                                					new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+                                					new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+                                					new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+                            					]),
+                            					"Rotation" => new ListTag("Rotation", [
+                                					new FloatTag("", $this->yaw),
+                                					new FloatTag("", $this->pitch)
+                          	  				]),
+                        				]);
+                       					$f = 1.5;
+                       					$enderpearl = Entity::createEntity("EnderPearl", $this->getLevel(), $nbt, $this);
+							$enderpearl->setMotion($enderpearl->getMotion()->multiply($f));
+                        				$enderpearl->setSpawner($this);
+                        				if($this->isSurvival()){
+                            					$item->setCount($item->getCount() - 1);
+                            					$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+                        				}
+                        				if($enderpearl instanceof Projectile){
+                            					$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($enderpearl));
+                            					if($projectileEv->isCancelled()){
+                                					$enderpearl->close();
+                                					$this->teleport($enderpearl);
+                            					}else{
+                                					$enderpearl->spawnToAll();
+                                					$this->level->addSound(new LaunchSound($this), $this->getViewers());
+                            					}
+                        				}else{
+                            					$enderpearl->spawnToAll();
+                        				}
+							break;
+					}
                     			$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
                     			$this->startAction = $this->server->getTick();
                 		}
@@ -3464,6 +3472,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$nbt = new NBT(NBT::LITTLE_ENDIAN);
 					$nbt->read($packet->namedtag, false, true);
 					$nbt = $nbt->getData();
+					echo($nbt->__toString());
 					if(!$t->updateCompoundTag($nbt, $this)){
 						$t->spawnTo($this);
 					}
