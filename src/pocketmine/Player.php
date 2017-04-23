@@ -2590,6 +2590,45 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
                             					$enderpearl->spawnToAll();
                         				}
 							break;
+
+						case Item::EGG:
+							$nbt = new CompoundTag("", [
+								"Pos" => new ListTag("Pos", [
+									new DoubleTag("", $this->x),
+									new DoubleTag("", $this->y + $this->getEyeHeight()),
+									new DoubleTag("", $this->z)
+								]),
+								"Motion" => new ListTag("Motion", [
+									new DoubleTag("", $aimPos->x),
+									new DoubleTag("", $aimPos->y),
+									new DoubleTag("", $aimPos->z)
+								]),
+								"Rotation" => new ListTag("Rotation", [
+									new FloatTag("", $this->yaw),
+									new FloatTag("", $this->pitch)
+								])
+							]);
+
+							$f = 1.5;
+							$egg = Entity::createEntity("Egg", $this->getLevel(), $nbt, $this);
+							$egg->setMotion($egg->getMotion()->multiply($f));
+							if($this->isSurvival()){
+								$item->setCount($item->getCount() - 1);
+								$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+							}
+							if($egg instanceof Projectile){
+								$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($egg));
+								if($projectileEv->isCancelled()){
+									$egg->close();
+								}else{
+									$egg->spawnToAll();
+									$this->level->addSound(new LaunchSound($this), $this->getViewers());
+								}
+							}else{
+								$egg->spawnToAll();
+							}
+							break;
+
 					}
                     			$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
                     			$this->startAction = $this->server->getTick();
