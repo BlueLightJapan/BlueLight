@@ -22,7 +22,7 @@ namespace pocketmine\command\defaults;
  
 use pocketmine\network\protocol\SetTitlePacket;
 use pocketmine\command\CommandSender;
-
+use pocketmine\Player;
 class TitleCommand extends VanillaCommand {
 
 	public function __construct($name){
@@ -37,11 +37,17 @@ class TitleCommand extends VanillaCommand {
 	public function execute(CommandSender $sender, $currentAlias, array $args){
 
 		if(!($this->testPermission($sender))) return false;
-		if(count($args) === 0) return $sender->sendMessage("Usage: /title <title> <subtile> [text]");
+		if(count($args) === 0) return $sender->sendMessage("Usage: /title <player> <title> <subtile>");
 		if(!isset($args[1])) $args[1] = "";
-		foreach($sender->getServer()->getOnlinePlayers() as $player){
-			$player->sendTitle($args[0],$args[1]);
-
+		if(!isset($args[2])) $args[2] = "";
+		$player = $sender->getServer()->getPlayer($args[0]);
+		if($player instanceof Player){
+			$player->sendTitle($args[1],$args[2]);
+			if($sender instanceof Player){
+				$sender->sendTitle($args[1],$args[2]);
+			}
+		}else{
+			$sender->sendMessage($args[0]." not found");
 		}
 	}
 }
