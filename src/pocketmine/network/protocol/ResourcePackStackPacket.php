@@ -27,8 +27,8 @@ class ResourcePackStackPacket extends DataPacket{
 	const NETWORK_ID = Info::RESOURCE_PACK_STACK_PACKET;
 
 	public $mustAccept;
-	public $behaviourPackEntries;
-	public $resourcePackEntries;
+	public $behaviourPackEntries = [];
+	public $resourcePackEntries = [];
 
 	public function decode(){
 
