@@ -533,14 +533,12 @@ class PlayerInventory extends BaseInventory{
 	public function sendCreativeContents(){
 		$pk = new ContainerSetContentPacket();
 		$pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
-		if($this->getHolder()->getGamemode() === Player::CREATIVE){
-			$creativeitems = $this->getCreativeItems();
-			if(!isset($creativeitems)) $creativeitems = Item::getCreativeItems();
-			foreach($creativeitems as $index => $item){
-				$pk->slots[$index] = $item;
-			}
+		$player = $this->getHolder();
+		if($player->getGamemode() === Player::CREATIVE){
+			$creativeitems = $player->getCreativeItems();
+			$pk->slots = array_merge(Item::getCreativeItems(), $creativeitems);
 		}
-		$this->getHolder()->dataPacket($pk);
+		$player->dataPacket($pk);
 	}
 
 	/**
