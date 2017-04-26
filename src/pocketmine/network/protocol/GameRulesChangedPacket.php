@@ -41,8 +41,8 @@ class GameRulesChangedPacket extends DataPacket{
 	public function encode(){
 		$this->reset();
 
-		$this->putVarInt(count($rules));
-		foreach($rules as $rule){
+		$this->putVarInt(count($this->rules));
+		foreach($this->rules as $rule){
 			$this->putString($rule["NAME"]);
 			$this->putBool($rule["BOOL1"]);
 			$this->putBool($rule["BOOL2"]);
