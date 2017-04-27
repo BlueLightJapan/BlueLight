@@ -302,6 +302,32 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	public $moveForward = 0;
 
+	protected $personalCreativeItems = [];
+
+	public function clearCreativeItems(){
+		$this->personalCreativeItems = [];
+	}
+
+	public function getCreativeItems() : array{
+		return $this->personalCreativeItems;
+	}
+
+	public function addCreativeItem(Item $item){
+		$this->personalCreativeItems[] = $item;
+	}
+
+	public function removeCreativeItem(Item $item){
+		$index = $this->getCreativeItemIndex($item);
+		if($index !== -1) unset($this->personalCreativeItems[$index]);
+	}
+
+	public function getCreativeItemIndex(Item $item){
+		foreach($this->personalCreativeItems as $index => $creativeitem){
+			if($item->equals($creativeitem)) return $index;
+		}
+		return -1;
+	}
+	
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
@@ -2694,8 +2720,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 										new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
 									]),
 									"Rotation" => new ListTag("Rotation", [
-										new FloatTag("", $this->yaw),
-										new FloatTag("", $this->pitch)
+										new FloatTag("", -$this->yaw),
+										new FloatTag("", 360 - $this->pitch)
 									]),
 									"Fire" => new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
 								]);
