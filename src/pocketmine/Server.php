@@ -1435,9 +1435,6 @@ class Server{
 				@file_put_contents($this->dataPath . "pocketmine.yml", $content);
 			}
 			$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
-
-			$this->logger->info("Loading bluelight.properties...");
-
 			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES, [
 				"CustomConfigVersion" => 1,
 				"DevTools" => true,
@@ -1461,8 +1458,7 @@ class Server{
 				"MapEnabled" => false,
 				"ZombieAI" => false,
 			]);
-
-			$this->logger->info("Loading server properties...");
+                        $this->logger->info($this->getLanguage()->translateString("pocketmine.server.server.properties", []));
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 				"motd" => "Minecraft: PE Server",
 				"server-port" => 19132,
@@ -1488,9 +1484,9 @@ class Server{
 				"auto-save" => true,
 				"view-distance" => 8
 			]);
-
+                        $this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.bluelight.properties", []));
 			$this->forceLanguage = $this->getProperty("settings.force-language", false);
-			$this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
 			$this->logger->info($this->getLanguage()->translateString("language.selected", [$this->getLanguage()->getName(), $this->getLanguage()->getLang()]));
 
 			$this->memoryManager = new MemoryManager($this);
@@ -1598,10 +1594,8 @@ class Server{
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [($ip = $this->getIp()) != "" ? $ip : "0.0.0.0", $this->getPort()]));
 			define("BOOTUP_RANDOM", random_bytes(16));
 			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
-
-			$this->getLogger()->debug("Server unique id: " . $this->getServerUniqueId());
-			$this->getLogger()->debug("Machine unique id: " . Utils::getMachineUniqueId());
-
+                        $this->logger->debug($this->getLanguage()->translateString("pocketmine.server.unique.id", [$this->getServerUniqueId()]));
+			$this->logger->debug($this->getLanguage()->translateString("pocketmine.server.machine.unique.id", [Utils::getMachineUniqueId()]));
 			$this->network = new Network($this);
 			$this->network->setName($this->getMotd());
 
@@ -1955,8 +1949,7 @@ class Server{
 	}
 
 	public function reload(){
-		$this->logger->info("Saving levels...");
-
+                $this->logger->info($this->getLanguage()->translateString("pocketmine.server.level.save", []));
 		foreach($this->levels as $level){
 			$level->save();
 		}
@@ -1965,7 +1958,7 @@ class Server{
 		$this->pluginManager->clearPlugins();
 		$this->commandMap->clearCommands();
 
-		$this->logger->info("Reloading properties...");
+		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.reload.properties", []));
 		$this->properties->reload();
 		$this->maxPlayers = $this->getConfigInt("max-players", 20);
 
@@ -2018,7 +2011,7 @@ class Server{
 			}
 
 			if($this->getProperty("network.upnp-forwarding", false) === true){
-				$this->logger->info("[UPnP] Removing port forward...");
+				$this->logger->info($this->getLanguage()->translateString("pocketmine.server.upnp.remove", []));
 				UPnP::RemovePortForward($this->getPort());
 			}
 
@@ -2041,26 +2034,26 @@ class Server{
 				$player->close($player->getLeaveMessage(), $this->getProperty("settings.shutdown-message", "Server closed"));
 			}
 
-			$this->getLogger()->debug("Unloading all levels");
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.level.unload.all", []));
 			foreach($this->getLevels() as $level){
 				$this->unloadLevel($level, true);
 			}
-
-			$this->getLogger()->debug("Removing event handlers");
+                        
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.event.remove", []));
 			HandlerList::unregisterAll();
 
-			$this->getLogger()->debug("Stopping all tasks");
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.task.stop", []));
 			$this->scheduler->cancelAllTasks();
 			$this->scheduler->mainThreadHeartbeat(PHP_INT_MAX);
 
-			$this->getLogger()->debug("Saving properties");
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.properties.save", []));
 			$this->properties->save();
 
-			$this->getLogger()->debug("Closing console");
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.console.close", []));
 			$this->console->shutdown();
 			$this->console->notify();
 
-			$this->getLogger()->debug("Stopping network interfaces");
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.event.remove", []));
 			foreach($this->network->getInterfaces() as $interface){
 				$interface->shutdown();
 				$this->network->unregisterInterface($interface);
