@@ -204,7 +204,7 @@ abstract class Living extends Entity implements Damageable{
 		}
 
 		$hasUpdate = parent::entityBaseTick($tickDiff);
-		if($this->server->entityAIEnabed && !($this instanceof Human)){
+		if($this->server->entityAIEnabled && !($this instanceof Human)){
 			$this->updateEntityActionState();
 			$this->moveStrafing *= 0.98;
 			$this->moveForward *= 0.98;
@@ -250,7 +250,7 @@ abstract class Living extends Entity implements Damageable{
 				}
 			}
 
-			if($this->server->entityAIEnabed){
+			if($this->server->entityAIEnabled){
 				if ($this->isJumping){
 					if ($this->isInsideOfWater()){
 						$this->updateAITick();
@@ -266,7 +266,7 @@ abstract class Living extends Entity implements Damageable{
 			}
 		}
 
-		if($this->server->entityAIEnabed && !($this instanceof Human)){
+		if($this->server->entityAIEnabled && !($this instanceof Human)){
 			if ($this->entityLivingToAttack != null){
 				if (!$this->entityLivingToAttack->isAlive()){
 					$this->setRevengeTarget(null);
