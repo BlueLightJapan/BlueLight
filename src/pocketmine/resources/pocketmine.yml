@@ -7,6 +7,7 @@ settings:
  #Three-letter language code for server-side localization
  #Check your language code on https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
  language: "eng"
+ #Check your timezone code on http://php.net/manual/en/timezones.php
  timezone: "Asia/Singapore"
  #Whether to send all strings translated to server locale or let the device handle them
  force-language: false
@@ -164,7 +165,7 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: bluelig.ht
+ host: bluelig.ht/crash
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
@@ -177,7 +178,7 @@ auto-updater:
   warn-console: true
   warn-ops: true
  #Can be development, beta or stable.
- preferred-channel: stable
+ preferred-channel: beta
  #If using a development version, it will suggest changing the channel
  suggest-channels: true
  host: www.pocketmine.net
