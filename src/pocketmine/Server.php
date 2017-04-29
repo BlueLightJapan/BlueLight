@@ -1517,7 +1517,7 @@ class Server{
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 			$this->cleanentity = $this->getProperty("CleanEntity", false);
 			$this->mapEnabled = $this->getProperty("MapEnabled", false);
-			$this->entityAIEnabled = $this->getProperty("EntityAIAnabled", false);
+			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", false);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
