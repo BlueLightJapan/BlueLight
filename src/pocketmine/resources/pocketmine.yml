@@ -7,6 +7,7 @@ settings:
  #Three-letter language code for server-side localization
  #Check your language code on https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
  language: "eng"
+ timezone: "Asia/Singapore"
  #Whether to send all strings translated to server locale or let the device handle them
  force-language: false
  shutdown-message: "Server closed"
@@ -163,7 +164,7 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: bluelig.ht/crash
+ host: bluelig.ht
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
