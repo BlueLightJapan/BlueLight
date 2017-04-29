@@ -174,7 +174,7 @@ class PathNavigateGround extends PathNavigate{
 							return false;
 						}
 
-						if ($block.getId() == Block::LAVA){
+						if ($block->getId() == Block::LAVA){
 							return false;
 						}
 					}
