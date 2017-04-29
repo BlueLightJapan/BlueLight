@@ -26,6 +26,7 @@ namespace pocketmine\entity;
 
 use pocketmine\block\Block;
 use pocketmine\block\Water;
+use pocketmine\block\Lava;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
@@ -33,6 +34,20 @@ use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
+
+use pocketmine\entity\AI\EntityAITasks;
+use pocketmine\entity\AI\EntityLookHelper;
+use pocketmine\entity\AI\EntityMoveHelper;
+use pocketmine\entity\AI\EntityJumpHelper;
+use pocketmine\entity\AI\pathfinding\PathNavigateGround;
+use pocketmine\entity\AI\EntityAIAttackOnCollide;
+use pocketmine\entity\AI\EntityAIMoveTowardsRestriction;
+use pocketmine\entity\AI\EntityAIWatchClosest;
+use pocketmine\entity\AI\EntityAIHurtByTarget;
+use pocketmine\entity\AI\EntityAILookIdle;
+use pocketmine\entity\AI\EntityAIWander;
+use pocketmine\entity\AI\EntityAINearestAttackableTarget;
+
 use pocketmine\event\Timings;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
@@ -268,6 +283,8 @@ abstract class Entity extends Location implements Metadatable{
 	public $lastYaw;
 	public $lastPitch;
 
+	public $headYaw;
+
 	/** @var AxisAlignedBB */
 	public $boundingBox;
 	public $onGround;
@@ -377,7 +394,7 @@ abstract class Entity extends Location implements Metadatable{
 		$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, $this->namedtag["Air"], false);
 
 		if(!isset($this->namedtag->OnGround)){
-			$this->namedtag->OnGround = new ByteTag("OnGround", 0);
+			$this->namedtag->OnGround = new ByteTag("OnGround", 1);
 		}
 		$this->onGround = $this->namedtag["OnGround"] > 0 ? true : false;
 
@@ -390,9 +407,22 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->chunk->addEntity($this);
 		$this->level->addEntity($this);
+
+		if(!($this instanceof Player) && $this instanceof Living){
+			$this->tasks = new EntityAITasks();
+			$this->targetTasks = new EntityAITasks();
+			$this->lookHelper = new EntityLookHelper($this);
+			$this->moveHelper = new EntityMoveHelper($this);
+			$this->jumpHelper = new EntityJumpHelper($this);
+			$this->navigator = $this->getNewNavigator($this->level);
+		}
 		$this->initEntity();
 		$this->lastUpdate = $this->server->getTick();
 		$this->server->getPluginManager()->callEvent(new EntitySpawnEvent($this));
+
+		if($this instanceof Creture){
+			$this->homePosition = new Vector3();
+		}
 
 		$this->scheduleUpdate();
 
@@ -1099,7 +1129,7 @@ abstract class Entity extends Location implements Metadatable{
 
 		$diffMotion = ($this->motionX - $this->lastMotionX) ** 2 + ($this->motionY - $this->lastMotionY) ** 2 + ($this->motionZ - $this->lastMotionZ) ** 2;
 
-		if($diffPosition > 0.04 or $diffRotation > 2.25 and ($diffMotion > 0.0001 and $this->getMotion()->lengthSquared() <= 0.00001)){ //0.2 ** 2, 1.5 ** 2
+		if($diffPosition > 0.04 or $diffRotation > 2.25 or ($diffMotion > 0.0001 and $this->getMotion()->lengthSquared() <= 0.00001)){ //0.2 ** 2, 1.5 ** 2
 			$this->lastX = $this->x;
 			$this->lastY = $this->y;
 			$this->lastZ = $this->z;
@@ -1107,7 +1137,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->lastYaw = $this->yaw;
 			$this->lastPitch = $this->pitch;
 
-			$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y + $this->getEyeHeight(), $this->z, $this->yaw, $this->pitch, $this->yaw);
+			$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y/* + $this->getEyeHeight()*/, $this->z, $this->yaw, $this->pitch, $this->headYaw);
 		}
 
 		if($diffMotion > 0.0025 or ($diffMotion > 0.0001 and $this->getMotion()->lengthSquared() <= 0.0001)){ //0.05 ** 2
@@ -1133,6 +1163,10 @@ abstract class Entity extends Location implements Metadatable{
 
 	public function getDirectionPlane(){
 		return (new Vector2(-cos(deg2rad($this->yaw) - M_PI_2), -sin(deg2rad($this->yaw) - M_PI_2)))->normalize();
+	}
+
+	public function getAge(){
+		return $this->age;
 	}
 
 	public function onUpdate($currentTick){
@@ -1274,7 +1308,24 @@ abstract class Entity extends Location implements Metadatable{
 		return $this->eyeHeight;
 	}
 
-	public function moveFlying(){ //TODO
+	public function moveFlying($strafe, $forward, $friction){
+		$f = $strafe * $strafe + $forward * $forward;
+
+		if ($f >= 1.0E-4){
+			$f = sqrt($f);
+
+			if ($f < 1.0){
+				$f = 1.0;
+			}
+
+			$f = $friction / $f;
+			$strafe = $strafe * $f;
+			$forward = $forward * $f;
+			$f1 = sin($this->yaw * M_PI / 180.0);
+			$f2 = cos($this->yaw * M_PI / 180.0);
+			$this->motionX += $strafe * $f2 - $forward * $f1;
+			$this->motionZ += $forward * $f2 + $strafe * $f1;
+		}
 
 	}
 
@@ -1319,6 +1370,17 @@ abstract class Entity extends Location implements Metadatable{
 		$block = $this->level->getBlock($this->temporalVector->setComponents(Math::floorFloat($this->x), Math::floorFloat($y = ($this->y + $this->getEyeHeight())), Math::floorFloat($this->z)));
 
 		if($block instanceof Water){
+			$f = ($block->y + 1) - ($block->getFluidHeightPercent() - 0.1111111);
+			return $y < $f;
+		}
+
+		return false;
+	}
+
+	public function isInsideOfLava(){
+		$block = $this->level->getBlock($this->temporalVector->setComponents(Math::floorFloat($this->x), Math::floorFloat($y = ($this->y + $this->getEyeHeight())), Math::floorFloat($this->z)));
+
+		if($block instanceof Lava){
 			$f = ($block->y + 1) - ($block->getFluidHeightPercent() - 0.1111111);
 			return $y < $f;
 		}
@@ -1540,6 +1602,15 @@ abstract class Entity extends Location implements Metadatable{
 		$this->isCollidedHorizontally = ($movX != $dx or $movZ != $dz);
 		$this->isCollided = ($this->isCollidedHorizontally or $this->isCollidedVertically);
 		$this->onGround = ($movY != $dy and $movY < 0);
+		$bb = clone $this->boundingBox;
+		$bb->maxY = $bb->minY + 0.5;
+		$bb->minY -= 1;
+		if(count($this->level->getCollisionBlocks($bb, true)) > 0){
+			$this->onGround = true;
+		}else{
+			$this->onGround = false;
+		}
+		$this->isCollided = $this->onGround;
 	}
 
 	public function getBlocksAround(){

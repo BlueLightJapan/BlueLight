@@ -275,7 +275,7 @@ class Server{
 	public $cleanentity = false;
 	public $countBookshelf = false;
 	public $mapEnabled = false;
-	public $zombieai = false;
+	public $entityAIEnabled = false;
 
 
 	/**
@@ -1459,7 +1459,7 @@ class Server{
 				"RideableEntity" => false,
 				"CleanEntity" => false,
 				"MapEnabled" => false,
-				"ZombieAI" => false,
+				"EntityAIEnabled" => false,
 			]);
 
 			$this->logger->info("Loading server properties...");
@@ -1517,7 +1517,7 @@ class Server{
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
 			$this->cleanentity = $this->getProperty("CleanEntity", false);
 			$this->mapEnabled = $this->getProperty("MapEnabled", false);
-			$this->zombieai = $this->getProperty("ZombieAI", false);
+			$this->entityAIEnabled = $this->getProperty("EntityAIAnabled", false);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){

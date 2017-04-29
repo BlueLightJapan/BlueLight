@@ -20,8 +20,14 @@
 */
 
 namespace pocketmine\entity;
+
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
+use pocketmine\entity\AI\EntityAISwimming;
+use pocketmine\entity\AI\EntityAIWatchClosest;
+use pocketmine\entity\AI\EntityAILookIdle;
+use pocketmine\entity\AI\EntityAIWander;
+use pocketmine\entity\AI\EntityAIPanic;
 
 class Cow extends Animal{
 	const NETWORK_ID = 11;
@@ -34,7 +40,20 @@ class Cow extends Animal{
 	public function getName(){
 		return "Cow";
 	}
-	
+
+	public function initEntity(){
+		$this->getNavigator()->setAvoidsWater(true);
+		$this->tasks->addTask(0, new EntityAISwimming($this));
+		$this->tasks->addTask(1, new EntityAIPanic($this, 2.0));
+		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
+		//$this->tasks->addTask(3, new EntityAITempt($this, 1.25, Item::WHEAT, false));
+		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.25));
+		$this->tasks->addTask(5, new EntityAIWander($this, 1.0));
+		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmin\Player", 6.0));
+		$this->tasks->addTask(7, new EntityAILookIdle($this));
+		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
+	}
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -51,5 +70,22 @@ class Cow extends Animal{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
+	}
+
+	public function onUpdate($currentTick) {
+		if($this->closed){
+			return false;
+		}
+
+
+		$tickDiff = $currentTick - $this->lastUpdate;
+		if($tickDiff <= 0 and !$this->justCreated){
+			return true;
+		}
+		$this->lastUpdate = $currentTick;
+
+		$hasUpdate = $this->entityBaseTick($tickDiff);
+		$this->updateMovement();
+		return true;
 	}
 }
