@@ -138,7 +138,6 @@ abstract class PathNavigate{
 
 			if (!$this->noPath()){
 				$vec32 = $this->currentPath->getPosition($this->theEntity);
-				echo($this->currentPath->getCurrentPathIndex()."\n");
 				if ($vec32 != null){
 					$axisalignedbb1 = (new AxisAlignedBB($vec32->x, $vec32->y, $vec32->z, $vec32->x, $vec32->y, $vec32->z))->expand(0.5, 0.5, 0.5);
 					$list = $this->worldObj->getCollidingEntities($axisalignedbb1->addCoord(0.0, -1.0, 0.0), $this->theEntity);
@@ -172,7 +171,6 @@ abstract class PathNavigate{
 			$vec31 = $this->currentPath->getVectorFromIndex($this->theEntity, $k);
 
 			if ($vec3->distanceSquared($vec31) < $f){
-				echo("up");
 				$this->currentPath->setCurrentPathIndex($k + 1);
 			}
 		}

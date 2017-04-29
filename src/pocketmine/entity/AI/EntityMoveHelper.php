@@ -41,7 +41,6 @@ class EntityMoveHelper{
 	}
 
 	public function isUpdating(){
-		echo($this->update);
 		return $this->update;
 	}
 
