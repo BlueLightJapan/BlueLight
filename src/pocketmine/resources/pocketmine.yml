@@ -165,7 +165,7 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: bluelig.ht/crash
+ host: bluelig.ht
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
@@ -178,7 +178,7 @@ auto-updater:
   warn-console: true
   warn-ops: true
  #Can be development, beta or stable.
- preferred-channel: beta
+ preferred-channel: stable
  #If using a development version, it will suggest changing the channel
  suggest-channels: true
  host: www.pocketmine.net
