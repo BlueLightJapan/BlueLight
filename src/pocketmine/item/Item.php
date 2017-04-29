@@ -524,6 +524,20 @@ class Item implements ItemIds, \JsonSerializable{
 		return null;
 	}
 
+	public function getEnchantmentLevel(int $id){
+		if(!$this->hasEnchantments()){
+			return null;
+		}
+
+		foreach($this->getNamedTag()->ench as $entry){
+			if($entry["id"] === $id){
+				return $entry["lvl"];
+			}
+		}
+
+		return 0;
+	}
+
 	/**
 	 * @param Enchantment $ench
 	 */
