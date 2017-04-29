@@ -51,7 +51,7 @@ class Cow extends Animal{
 		$this->tasks->addTask(5, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmin\Player", 6.0));
 		$this->tasks->addTask(7, new EntityAILookIdle($this));
-		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
+		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
 	}
 
 	public function spawnTo(Player $player){
