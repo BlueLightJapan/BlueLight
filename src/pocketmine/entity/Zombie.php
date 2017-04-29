@@ -60,7 +60,7 @@ class Zombie extends Monster{
 		$this->tasks->addTask(8, new EntityAILookIdle($this));
 		$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ["pocketmine\entity\PigZombie"]));
 		$this->targetTasks->addTask(2, new EntityAINearestAttackableTarget($this, "pocketmine\Player", true));
-		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
+		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 
 	public function getName(){
