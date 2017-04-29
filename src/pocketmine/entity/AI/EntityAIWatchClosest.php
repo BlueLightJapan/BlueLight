@@ -67,9 +67,9 @@ class EntityAIWatchClosest extends EntityAIBase{
 				$target = null;
 				foreach($list as $entity) {
 					if(get_class($entity) != $this->watchedClass) continue;
-					$p2e_distance = $player->distance($this->theWatcher);
+					$p2e_distance = $entity->distance($this->theWatcher);
 					if($distance > $p2e_distance) {
-						$target = $player;
+						$target = $entity;
 						$distance = $p2e_distance;
 					}
 				}
