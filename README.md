@@ -51,6 +51,9 @@ HP : http://bluelight.cf<br>
 <br>
 ## サーバーの負荷を調べることができます！
 http://blog.haniokasai.com/2017/04/minecraft-pcbukkitpepocketminenukkittim.html
+ 
+##Pharを楽して作ったり、crashdumpやvardumpが解析できます！
+http://pmt.haniokasai.com/
 
 
 ## Third-party Libraries/Protocols Used
