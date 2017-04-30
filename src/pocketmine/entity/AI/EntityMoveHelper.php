@@ -40,7 +40,6 @@ class EntityMoveHelper{
 	}
 
 	public function isUpdating() : bool{
-		echo($this->update);
 		return $this->update;
 	}
 

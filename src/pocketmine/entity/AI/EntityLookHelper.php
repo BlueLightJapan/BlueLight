@@ -89,7 +89,6 @@ class EntityLookHelper{
 			}
 		}
 		$this->entity->yaw = $this->entity->headYaw;
-		//echo($this->entity->yaw."$\n");
 	}
 
 	public function wrapAngleTo180(float $value) : float{
@@ -106,7 +105,7 @@ class EntityLookHelper{
 		return $value;
 	}
 
-	private function updateRotation(float $p_75652_1_, float $p_75652_2_, float $p_75652_3_) : float{
+	private function updateRotation($p_75652_1_, $p_75652_2_, $p_75652_3_) : float{
 		$f = self::wrapAngleTo180($p_75652_2_ - $p_75652_1_);
 
 		if ($f > $p_75652_3_){

@@ -24,7 +24,7 @@ class EntityAISwimming extends EntityAIBase{
 
 	private $theEntity;
 
-	public function __cnstruct($entitylivingIn){
+	public function __construct($entitylivingIn){
 		$this->theEntity = $entitylivingIn;
 		$this->setMutexBits(4);
 		$entitylivingIn->getNavigator()->setCanSwim(true);

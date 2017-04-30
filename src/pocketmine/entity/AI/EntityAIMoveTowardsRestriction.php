@@ -40,7 +40,7 @@ class EntityAIMoveTowardsRestriction extends EntityAIBase {
 		$this->setMutexBits(1);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		//if ($this->theEntity->isWithinHomeDistanceCurrentPosition()){
 		//	return false;
 		//}else{
@@ -58,7 +58,7 @@ class EntityAIMoveTowardsRestriction extends EntityAIBase {
 		//}
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		return !$this->theEntity->getNavigator()->noPath();
 	}
 

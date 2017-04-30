@@ -283,7 +283,7 @@ abstract class Entity extends Location implements Metadatable{
 	public $lastYaw;
 	public $lastPitch;
 
-	public $headYaw;
+	public $headYaw = 0;
 
 	/** @var AxisAlignedBB */
 	public $boundingBox;

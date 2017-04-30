@@ -50,7 +50,7 @@ class EntityAIWander extends EntityAIBase{
 
 		$vec3 = RandomPositionGenerator::findRandomTarget($this->entity, 10, 7);
 
-		if (vec3 == null){
+		if ($vec3 == null){
 			return false;
 		}else{
 			$this->xPosition = $vec3->x;

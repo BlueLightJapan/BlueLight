@@ -77,6 +77,8 @@ class Sheep extends Animal{
 		$this->tasks->addTask(7, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
 		$this->tasks->addTask(8, new EntityAILookIdle($this));
 		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
+		$this->setMaxHealth(20);
+		parent::initEntity();
 	}
 
 	public static function getRandomColor() : int{
@@ -158,6 +160,11 @@ class Sheep extends Animal{
 			//mob.sheep.shear
 		}
 		parent::onRightClick($player);
+	}
+
+	public function onUpdate($currentTick) {
+		parent::onUpdate($currentTick);
+		return true;
 	}
 
 	public function getDrops(){

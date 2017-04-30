@@ -39,7 +39,7 @@ class EntityAIWatchClosest extends EntityAIBase{
 		$this->setMutexBits(2);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		if (rand(0, 100) / 100 >= $this->chance){
 			return false;
 		}else{
@@ -61,14 +61,14 @@ class EntityAIWatchClosest extends EntityAIBase{
 				$this->closestEntity = $target;
 			}else{
 				$bb = clone $this->theWatcher->getBoundingBox();
-				$list = $this->taskOwner->level->getCollidingEntities($bb->expand($this->maxDistanceForPlayer, 3.0, $this->maxDistanceForPlayer), $this->theWatcher);
+				$list = $this->theWatcher->level->getCollidingEntities($bb->expand($this->maxDistanceForPlayer, 3.0, $this->maxDistanceForPlayer), $this->theWatcher);
 				$distance = $this->maxDistanceForPlayer;
 				$target = null;
 				foreach($list as $entity) {
 					if(get_class($entity) != $this->watchedClass) continue;
-					$p2e_distance = $player->distance($this->theWatcher);
+					$p2e_distance = $entity->distance($this->theWatcher);
 					if($distance > $p2e_distance) {
-						$target = $player;
+						$target = $entity;
 						$distance = $p2e_distance;
 					}
 				}
@@ -79,7 +79,7 @@ class EntityAIWatchClosest extends EntityAIBase{
 		}
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		if(!($this->closestEntity instanceof Entity)) return false;
 		return !$this->closestEntity->isAlive() ? false : ($this->theWatcher->distanceSquared($this->closestEntity) > ($this->maxDistanceForPlayer * $this->maxDistanceForPlayer) ? false : $this->lookTime > 0);
 	}

@@ -55,9 +55,9 @@ abstract class Living extends Entity implements Damageable{
 	protected $moveHelper;
 	protected $jumpHelper;
 
-	protected $isJumping;
+	protected $isJumping = false;
 	public $jumpMovementFactor = 0.02;
-	private $jumpTicks;
+	private $jumpTicks = 0;
 
 	public $moveForward = 0.0;
 	public $moveStrafing = 0.0;
@@ -208,8 +208,8 @@ abstract class Living extends Entity implements Damageable{
 			$this->updateEntityActionState();
 			$this->moveStrafing *= 0.98;
 			$this->moveForward *= 0.98;
-			$this->moveStrafing  = 0.01;
-			$this->moveForward = 0.05;
+			//$this->moveStrafing  = 0.01;
+			//$this->moveForward = 0.05;
 			$this->moveEntityWithHeading($this->moveStrafing, $this->moveForward);
 		}
 
@@ -330,7 +330,7 @@ abstract class Living extends Entity implements Damageable{
 				$this->motionY -= 0.02;
 			}
 		}else{
-			$d0 = $this->posY;
+			$d0 = $this->y;
 			$f1 = 0.8;
 			$f2 = 0.02;
 			$f3 = 0;//…’†ˆÚ“®‚Ì‚¦‚ñ‚¿‚á‚ñ‚ÆƒŒƒxƒ‹
@@ -349,7 +349,7 @@ abstract class Living extends Entity implements Damageable{
 			}
 
 			$this->moveFlying($strafe, $forward, $f2);
-			$this->moveEntity($this->motionX, $this->motionY, $this->motionZ);
+			$this->move($this->motionX, $this->motionY, $this->motionZ);
 			$this->motionX *= $f1;
 			$this->motionY *= 0.800000011920929;
 			$this->motionZ *= $f1;
@@ -444,6 +444,10 @@ abstract class Living extends Entity implements Damageable{
 	public function updateAITasks(){
 	}
 
+	public function updateAITick(){
+		$this->motionY += 0.03999999910593033;
+	}
+
 	protected function getJumpUpwardsMotion(){
 		return 0.42;
 	}
@@ -464,8 +468,6 @@ abstract class Living extends Entity implements Damageable{
 			$this->motionX -= sin($f) * 0.2;
 			$this->motionZ += cos($f) * 0.2;
 		}
-
-		$this->isAirBorne = true;
 	}
 
 	public function setJumping($jumping){
@@ -477,7 +479,7 @@ abstract class Living extends Entity implements Damageable{
 	}
 
 	public function getAIMoveSpeed(){
-		return 1;
+		//echo($this->landMovementFactor);
 		return $this->landMovementFactor;
 	}
 

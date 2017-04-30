@@ -45,7 +45,6 @@ class Blaze extends Monster{
 	private $heightOffsetUpdateTime;
 
 	public function initEntity(){
-
 		$this->tasks->addTask(5, new EntityAIMoveTowardsRestriction($this, 1.0));
 		$this->tasks->addTask(7, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(8, new EntityAIWatchClosest($this, "pocketmine\Player", 8.0));
@@ -53,6 +52,8 @@ class Blaze extends Monster{
 		//$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ""));
 		$this->targetTasks->addTask(2, new EntityAINearestAttackableTarget($this, "pocketmine\Player", true));
 		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
+		$this->setMaxHealth(20);
+		parent::initEntity();
 	}
 
 	public function getName() : string{
@@ -76,23 +77,11 @@ class Blaze extends Monster{
 		parent::spawnTo($player);
 	}
 
-	public function onUpdate($currentTick){
-		if($this->closed){
-			return false;
-		}
-
-
-		$tickDiff = $currentTick - $this->lastUpdate;
-		if($tickDiff <= 0 and !$this->justCreated){
-			return true;
-		}
-		$this->lastUpdate = $currentTick;
-
-		$hasUpdate = $this->entityBaseTick($tickDiff);
+	public function onUpdate($currentTick) {
+		parent::onUpdate($currentTick);
 		if (!$this->onGround && $this->motionY < 0.0){
 			$this->motionY *= 0.6;
 		}
-		$this->updateMovement();
 		return true;
 	}
 

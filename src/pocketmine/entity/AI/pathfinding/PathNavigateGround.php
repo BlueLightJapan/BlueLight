@@ -28,9 +28,9 @@ class PathNavigateGround extends PathNavigate{
 	}
 
 	private function getPathablePosY(){
-		if ($this->theEntity->isInsideOfWater() && this.getCanSwim()){
+		if ($this->theEntity->isInsideOfWater() && $this->getCanSwim()){
 			$i = $this->theEntity->getBoundingBox()->minY;
-			$block = $this->worldObj.getBlock(new Vector3(floor($this->theEntity->x), $i, floor($this->theEntity->z)));
+			$block = $this->worldObj->getBlock(new Vector3(floor($this->theEntity->x), $i, floor($this->theEntity->z)));
 			$j = 0;
 
 			while ($block->getId() == Block::WATER || $block->getId() == Block::STILL_WATER){
@@ -43,7 +43,7 @@ class PathNavigateGround extends PathNavigate{
 				}
 			}
 
-			return i;
+			return $i;
 		}else{
 			return $this->theEntity->getBoundingBox()->minY + 0.5;
 		}

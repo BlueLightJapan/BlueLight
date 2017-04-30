@@ -61,6 +61,8 @@ class Zombie extends Monster{
 		$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ["pocketmine\entity\PigZombie"]));
 		$this->targetTasks->addTask(2, new EntityAINearestAttackableTarget($this, "pocketmine\Player", true));
 		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
+		$this->setMaxHealth(20);
+		parent::initEntity();
 	}
 
 	public function getName(){
@@ -82,7 +84,6 @@ class Zombie extends Monster{
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
-		$this->isJumping = false;
 		parent::spawnTo($player);
 	}
 
@@ -110,19 +111,7 @@ class Zombie extends Monster{
 	}
 
 	public function onUpdate($currentTick) {
-		if($this->closed){
-			return false;
-		}
-
-
-		$tickDiff = $currentTick - $this->lastUpdate;
-		if($tickDiff <= 0 and !$this->justCreated){
-			return true;
-		}
-		$this->lastUpdate = $currentTick;
-
-		$hasUpdate = $this->entityBaseTick($tickDiff);
-		$this->updateMovement();
+		parent::onUpdate($currentTick);
 		return true;
 	}
 

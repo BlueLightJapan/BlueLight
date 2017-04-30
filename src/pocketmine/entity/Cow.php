@@ -49,9 +49,11 @@ class Cow extends Animal{
 		//$this->tasks->addTask(3, new EntityAITempt($this, 1.25, Item::WHEAT, false));
 		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.25));
 		$this->tasks->addTask(5, new EntityAIWander($this, 1.0));
-		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmin\Player", 6.0));
+		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
 		$this->tasks->addTask(7, new EntityAILookIdle($this));
 		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
+		$this->setMaxHealth(20);
+		parent::initEntity();
 	}
 
 	public function spawnTo(Player $player){
@@ -73,19 +75,7 @@ class Cow extends Animal{
 	}
 
 	public function onUpdate($currentTick) {
-		if($this->closed){
-			return false;
-		}
-
-
-		$tickDiff = $currentTick - $this->lastUpdate;
-		if($tickDiff <= 0 and !$this->justCreated){
-			return true;
-		}
-		$this->lastUpdate = $currentTick;
-
-		$hasUpdate = $this->entityBaseTick($tickDiff);
-		$this->updateMovement();
+		parent::onUpdate($currentTick);
 		return true;
 	}
 }
