@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -32,7 +31,7 @@ class EntityAIWatchClosest extends EntityAIBase{
 	private $chance;
 	protected $watchedClass;
 
-	public function __construct($entitylivingIn, $watchTargetClass, $maxDistance, $chanceIn = 0.02){
+	public function __construct($entitylivingIn, string $watchTargetClass, float $maxDistance, float $chanceIn = 0.02){
 		$this->theWatcher = $entitylivingIn;
 		$this->watchedClass = $watchTargetClass;
 		$this->maxDistanceForPlayer = $maxDistance;
@@ -67,9 +66,9 @@ class EntityAIWatchClosest extends EntityAIBase{
 				$target = null;
 				foreach($list as $entity) {
 					if(get_class($entity) != $this->watchedClass) continue;
-					$p2e_distance = $entity->distance($this->theWatcher);
+					$p2e_distance = $player->distance($this->theWatcher);
 					if($distance > $p2e_distance) {
-						$target = $entity;
+						$target = $player;
 						$distance = $p2e_distance;
 					}
 				}

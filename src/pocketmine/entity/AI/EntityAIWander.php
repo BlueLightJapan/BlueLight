@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -31,14 +30,14 @@ class EntityAIWander extends EntityAIBase{
 	private $executionChance;
 	private $mustUpdate;
 
-	public function __construct($creatureIn, $speedIn, $chance = 120){
+	public function __construct($creatureIn, float $speedIn, int $chance = 120){
 		$this->entity = $creatureIn;
 		$this->speed = $speedIn;
 		$this->executionChance = $chance;
 		$this->setMutexBits(1);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		if (!$this->mustUpdate){
 			if ($this->entity->getAge() >= 100){
 				return false;
@@ -51,7 +50,7 @@ class EntityAIWander extends EntityAIBase{
 
 		$vec3 = RandomPositionGenerator::findRandomTarget($this->entity, 10, 7);
 
-		if ($vec3 == null){
+		if (vec3 == null){
 			return false;
 		}else{
 			$this->xPosition = $vec3->x;
@@ -62,7 +61,7 @@ class EntityAIWander extends EntityAIBase{
 		}
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		return !$this->entity->getNavigator()->noPath();
 	}
 
@@ -74,7 +73,7 @@ class EntityAIWander extends EntityAIBase{
 		$this->mustUpdate = true;
 	}
 
-	public function setExecutionChance($newchance){
+	public function setExecutionChance(int $newchance){
 		$this->executionChance = $newchance;
 	}
 }

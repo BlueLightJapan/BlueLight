@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -27,11 +26,11 @@ abstract class EntityAIBase {
 
 	public abstract function shouldExecute();
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		return $this->shouldExecute();
 	}
 
-	public function isInterruptible(){
+	public function isInterruptible() : bool{
 		return true;
 	}
 
@@ -44,11 +43,11 @@ abstract class EntityAIBase {
 	public function updateTask(){
 	}
 
-	public function setMutexBits($mutexBitsIn){
+	public function setMutexBits(int $mutexBitsIn){
 		$this->mutexBits = $mutexBitsIn;
 	}
 
-	public function getMutexBits(){
+	public function getMutexBits() : int{
 		return $this->mutexBits;
 	}
 }

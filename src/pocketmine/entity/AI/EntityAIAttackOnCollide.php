@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -37,7 +36,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 	private $targetY;
 	private $targetZ;
 
-	public function __construct($creature, $targetClass, $speedIn, $useLongMemory){
+	public function __construct($creature, $targetClass, float $speedIn, bool $useLongMemory){
 		$this->classTarget = $targetClass;
 		$this->attacker = $creature;
 		$this->worldObj = $creature->level;
@@ -46,7 +45,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		$this->setMutexBits(3);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		$entitylivingbase = $this->attacker->getAttackTarget();
 
 		if ($entitylivingbase == null){
@@ -61,7 +60,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		}
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		$entitylivingbase = $this->attacker->getAttackTarget();
 		return $entitylivingbase == null ? false : (!$entitylivingbase->isAlive() ? false : (!$this->longMemory ? !$this->attacker->getNavigator()->noPath() : $this->attacker->isWithinHomeDistanceFromPosition($entitylivingbase)));
 	}
@@ -108,7 +107,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		}
 	}
 
-	protected function getReachableDistance($attackTarget){
+	protected function getReachableDistance($attackTarget) : float{
 		return ($this->attacker->width * 2.0 * $this->attacker->width * 2.0 + $attackTarget->width);
 	}
 }

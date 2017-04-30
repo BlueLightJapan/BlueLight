@@ -18,7 +18,6 @@
  * 
 */
 
-
 namespace pocketmine\entity;
 
 use pocketmine\entity\Attribute;

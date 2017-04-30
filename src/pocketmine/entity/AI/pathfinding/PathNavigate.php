@@ -1,24 +1,4 @@
 <?php
-
-/*
- *   ____  _            _      _       _     _
- *  |  _ \| |          | |    (_)     | |   | |
- *  | |_) | |_   _  ___| |     _  __ _| |__ | |_
- *  |  _ <| | | | |/ _ \ |    | |/ _` | '_ \| __|
- *  | |_) | | |_| |  __/ |____| | (_| | | | | |_
- *  |____/|_|\__,_|\___|______|_|\__, |_| |_|\__|
- *                                __/ |
- *                               |___/
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author BlueLightJapan Team
- * 
-*/
-
-
 namespace pocketmine\entity\AI\pathfinding;
 
 use pocketmine\math\AxisAlignedBB;
@@ -138,6 +118,7 @@ abstract class PathNavigate{
 
 			if (!$this->noPath()){
 				$vec32 = $this->currentPath->getPosition($this->theEntity);
+				echo($this->currentPath->getCurrentPathIndex()."\n");
 				if ($vec32 != null){
 					$axisalignedbb1 = (new AxisAlignedBB($vec32->x, $vec32->y, $vec32->z, $vec32->x, $vec32->y, $vec32->z))->expand(0.5, 0.5, 0.5);
 					$list = $this->worldObj->getCollidingEntities($axisalignedbb1->addCoord(0.0, -1.0, 0.0), $this->theEntity);
@@ -171,6 +152,7 @@ abstract class PathNavigate{
 			$vec31 = $this->currentPath->getVectorFromIndex($this->theEntity, $k);
 
 			if ($vec3->distanceSquared($vec31) < $f){
+				echo("up");
 				$this->currentPath->setCurrentPathIndex($k + 1);
 			}
 		}

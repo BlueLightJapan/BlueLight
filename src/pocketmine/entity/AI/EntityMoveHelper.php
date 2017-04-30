@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -40,15 +39,16 @@ class EntityMoveHelper{
 		$this->update = false;
 	}
 
-	public function isUpdating(){
+	public function isUpdating() : bool{
+		echo($this->update);
 		return $this->update;
 	}
 
-	public function getSpeed(){
+	public function getSpeed() : float{
 		return $this->speed;
 	}
 
-	public function setMoveTo($x, $y, $z, $speedIn){
+	public function setMoveTo(float $x, float $y, float $z, float $speedIn){
 		$this->posX = $x;
 		$this->posY = $y;
 		$this->posZ = $z;
@@ -79,7 +79,7 @@ class EntityMoveHelper{
 		}
 	}
 
-	public function wrapAngleTo180($value){
+	public function wrapAngleTo180(float $value) : float{
 		$value = $value % 360.0;
 
 		if ($value >= 180.0){
@@ -93,7 +93,7 @@ class EntityMoveHelper{
 		return $value;
 	}
 
-	protected function limitAngle($p_75639_1_, $p_75639_2_, $p_75639_3_){
+	protected function limitAngle(float $p_75639_1_, float $p_75639_2_, float $p_75639_3_) : float{
 		$f = self::wrapAngleTo180($p_75639_2_ - $p_75639_1_);
 
 		if ($f > $p_75639_3_){
@@ -115,15 +115,15 @@ class EntityMoveHelper{
 		return $f1;
 	}
 
-	public function getX(){
+	public function getX() : float{
 		return $this->posX;
 	}
 
-	public function getY(){
+	public function getY() : float{
 		return $this->posY;
 	}
 
-	public function getZ(){
+	public function getZ() : float{
 		return $this->posZ;
 	}
 }

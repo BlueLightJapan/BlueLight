@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -29,13 +28,13 @@ class EntityAIPanic extends EntityAIBase{
 	private $randPosY;
 	private $randPosZ;
 
-	public function __construct($creature, $speedIn){
+	public function __construct($creature, float $speedIn){
 		$this->theEntityCreature = $creature;
 		$this->speed = $speedIn;
 		$this->setMutexBits(1);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		if ($this->theEntityCreature->getAITarget() == null && !$this->theEntityCreature->isOnFire()){
 			return false;
 		}else{
@@ -56,7 +55,7 @@ class EntityAIPanic extends EntityAIBase{
 		$this->theEntityCreature->getNavigator()->tryMoveToXYZ($this->randPosX, $this->randPosY, $this->randPosZ, $this->speed);
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		return !$this->theEntityCreature->getNavigator()->noPath();
 	}
 }

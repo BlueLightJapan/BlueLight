@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -30,14 +29,14 @@ class EntityAINearestAttackableTarget extends EntityAITarget{
 	private $targetChance;
 	protected $targetEntity;
 
-	public function __construct($creature, $classTarget, $checkSight, $chance = 10, $onlyNearby = false, $targetSelector = null){
+	public function __construct($creature, int $classTarget, bool $checkSight, int $chance = 10, bool $onlyNearby = false, $targetSelector = null){
 		parent::__construct($creature, $checkSight, $onlyNearby);
 		$this->targetClass = $classTarget;
 		$this->targetChance = $chance;
 		$this->setMutexBits(1);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		if ($this->targetChance > 0 && rand(0, $this->targetChance - 1) != 0){
 			return false;
 		}else{

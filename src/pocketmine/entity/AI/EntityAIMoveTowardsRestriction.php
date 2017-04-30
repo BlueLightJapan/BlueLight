@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -35,7 +34,7 @@ class EntityAIMoveTowardsRestriction extends EntityAIBase {
 	private $movePosZ;
 	private $movementSpeed;
 
-	public function __construct($creatureIn, $speedIn) {
+	public function __construct($creatureIn, float $speedIn) {
 		$this->theEntity = $creatureIn;
 		$this->movementSpeed = $speedIn;
 		$this->setMutexBits(1);

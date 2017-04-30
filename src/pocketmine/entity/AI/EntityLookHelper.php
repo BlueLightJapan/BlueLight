@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -52,7 +51,7 @@ class EntityLookHelper{
 		$this->isLooking = true;
 	}
 
-	public function setLookPosition($x, $y, $z, $deltaYaw, $deltaPitch){
+	public function setLookPosition(float $x, float $y, float $z, float $deltaYaw, float $deltaPitch){
 		$this->posX = $x;
 		$this->posY = $y;
 		$this->posZ = $z;
@@ -93,7 +92,7 @@ class EntityLookHelper{
 		//echo($this->entity->yaw."$\n");
 	}
 
-	public function wrapAngleTo180($value){
+	public function wrapAngleTo180(float $value) : float{
 		$value = $value % 360;
 
 		if ($value >= 180.0){
@@ -107,7 +106,7 @@ class EntityLookHelper{
 		return $value;
 	}
 
-	private function updateRotation($p_75652_1_, $p_75652_2_, $p_75652_3_){
+	private function updateRotation(float $p_75652_1_, float $p_75652_2_, float $p_75652_3_) : float{
 		$f = self::wrapAngleTo180($p_75652_2_ - $p_75652_1_);
 
 		if ($f > $p_75652_3_){
@@ -121,19 +120,19 @@ class EntityLookHelper{
 		return $p_75652_1_ + $f;
 	}
 
-	public function getIsLooking(){
+	public function getIsLooking() : bool{
 		return $this->isLooking;
 	}
 
-	public function getLookPosX(){
+	public function getLookPosX() : float{
 		return $this->posX;
 	}
 
-	public function getLookPosY(){
+	public function getLookPosY() : float{
 		return $this->posY;
 	}
 
-	public function getLookPosZ(){
+	public function getLookPosZ() : float{
 		return $this->posZ;
 	}
 }

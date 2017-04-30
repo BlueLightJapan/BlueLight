@@ -1,26 +1,32 @@
 <?php
 
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
+ *   ____  _            _      _       _     _
+ *  |  _ \| |          | |    (_)     | |   | |
+ *  | |_) | |_   _  ___| |     _  __ _| |__ | |_
+ *  |  _ <| | | | |/ _ \ |    | |/ _` | '_ \| __|
+ *  | |_) | | |_| |  __/ |____| | (_| | | | | |_
+ *  |____/|_|\__,_|\___|______|_|\__, |_| |_|\__|
+ *                                __/ |
+ *                               |___/
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author BlueLightJapan Team
  * 
- *
 */
 
 namespace pocketmine\entity;
 
+use pocketmine\entity\Attribute;
+use pocketmine\entity\AI\EntityAIEatGrass;
+use pocketmine\entity\AI\EntityAISwimming;
+use pocketmine\entity\AI\EntityAIWatchClosest;
+use pocketmine\entity\AI\EntityAILookIdle;
+use pocketmine\entity\AI\EntityAIWander;
+use pocketmine\entity\AI\EntityAIPanic;
 use pocketmine\block\Wool;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;
@@ -29,6 +35,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\protocol\EntityEventPacket;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\item\enchantment\Enchantment;
 
@@ -42,6 +49,9 @@ class Sheep extends Animal{
 	public $height = 1.9;
 	public $maxhealth = 8;
 
+	private $sheepTimer;
+	private $entityAIEatGrass;
+
 	public function getName(){
 		return "Sheep";
 	}
@@ -53,6 +63,20 @@ class Sheep extends Animal{
 		parent::__construct($level, $nbt);
 
 		$this->setDataProperty(self::DATA_COLOR_INFO, self::DATA_TYPE_BYTE, $this->getColor());
+		$this->entityAIEatGrass = new EntityAIEatGrass($this);
+	}
+
+	public function initEntity(){
+		$this->tasks->addTask(0, new EntityAISwimming($this));
+		$this->tasks->addTask(1, new EntityAIPanic($this, 1.25));
+		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
+		//$this->tasks->addTask(3, new EntityAITempt($this, 1.1, ItemItem::WHEAT, false));
+		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.1));
+		$this->tasks->addTask(5, $this->entityAIEatGrass);
+		$this->tasks->addTask(6, new EntityAIWander($this, 1.0));
+		$this->tasks->addTask(7, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
+		$this->tasks->addTask(8, new EntityAILookIdle($this));
+		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 
 	public static function getRandomColor() : int{
@@ -84,6 +108,20 @@ class Sheep extends Animal{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
+	}
+
+	public function doEatGrass(){
+		$pk = new EntityEventPacket();
+		$pk->eid = $this->getId();
+		$pk->event = EntityEventPacket::EAT_GRASS_ANIMATION;
+		Server::getInstance()->broadcastPacket($this->getViewers(), $pk);
+	}
+
+	public function eatGrassBonus(){
+		$this->setSheared(false);
+		//if ($this->isBaby()){
+		//	$this->addGrowth(60);
+		//}
 	}
 
 	public function getSheared() : bool{
@@ -126,7 +164,7 @@ class Sheep extends Animal{
 		$ev = $this->getLastDamageCause();
 		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
 
-		$wools = this.rand.nextInt(2) + 1 + this.rand.nextInt(1 + looting);
+		$wools = rand(0, 1) + 1 + rand(0, $looting);
 
 		if ($this->isOnFire()){
 			$mutton = ItemItem::get(ItemItem::COOKED_MUTTON, 0, 1);

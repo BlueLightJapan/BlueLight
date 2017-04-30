@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -29,14 +28,14 @@ class EntityAIHurtByTarget extends EntityAITarget{
 	private $revengeTimerOld;
 	private $targetClasses;
 
-	public function __construct($creatureIn, $entityCallsForHelpIn, $targetClassesIn){
+	public function __construct($creatureIn, $entityCallsForHelpIn, string $targetClassesIn){
 		parent::__construct($creatureIn, false);
 		$this->entityCallsForHelp = $entityCallsForHelpIn;
 		$this->targetClasses = $targetClassesIn;
 		$this->setMutexBits(1);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		$i = $this->taskOwner->getRevengeTimer();
 		return $i != $this->revengeTimerOld && $this->isSuitableTarget($this->taskOwner->getAITarget(), false);
 	}

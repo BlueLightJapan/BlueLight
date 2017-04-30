@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -33,13 +32,13 @@ abstract class EntityAITarget extends EntityAIBase{
 	private $targetSearchDelay;
 	private $targetUnseenTicks;
 
-	public function __construct($creature, $checkSight, $onlyNearby = false){
+	public function __construct($creature, bool $checkSight, bool $onlyNearby = false){
 		$this->taskOwner = $creature;
 		$this->shouldCheckSight = $checkSight;
 		$this->nearbyOnly = $onlyNearby;
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		$entitylivingbase = $this->taskOwner->getAttackTarget();
 
 		if ($entitylivingbase == null){
@@ -68,7 +67,7 @@ abstract class EntityAITarget extends EntityAIBase{
 		}
 	}
 
-	protected function getTargetDistance(){
+	protected function getTargetDistance() : float{
 		return 16.0;
 	}
 
@@ -82,7 +81,7 @@ abstract class EntityAITarget extends EntityAIBase{
 		$this->taskOwner->setAttackTarget(null);
 	}
 
-	public function isSuitableTarget($a1, $a2, $a3 = null, $a4 = null){
+	public function isSuitableTarget($a1, $a2, $a3 = null, $a4 = null) : bool{
 		if($a3 == null){
 			$target = $a1;
 			$includeInvincibles = $a2;
@@ -145,7 +144,7 @@ abstract class EntityAITarget extends EntityAIBase{
 		}
 	}
 
-	private function canEasilyReach($livingEntity){
+	private function canEasilyReach($livingEntity) : bool{
 		$this->targetSearchDelay = 10 + rand(0, 4);
 		$pathentity = $this->taskOwner->getNavigator()->getPathToEntityLiving($livingEntity);
 

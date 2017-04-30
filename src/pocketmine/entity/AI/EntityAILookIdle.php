@@ -10,14 +10,13 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
  * 
 */
-
 
 namespace pocketmine\entity\AI;
 
@@ -33,11 +32,11 @@ class EntityAILookIdle extends EntityAIBase{
 		$this->setMutexBits(3);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		return rand(0, 100) / 100 < 0.02;
 	}
 
-	public function continueExecuting(){
+	public function continueExecuting() : bool{
 		return $this->idleTime >= 0;
 	}
 

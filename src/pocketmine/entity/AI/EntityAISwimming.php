@@ -10,7 +10,7 @@
  *                                __/ |
  *                               |___/
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
@@ -18,20 +18,19 @@
  * 
 */
 
-
 namespace pocketmine\entity\AI;
 
 class EntityAISwimming extends EntityAIBase{
 
 	private $theEntity;
 
-	public function __construct($entitylivingIn){
+	public function __cnstruct($entitylivingIn){
 		$this->theEntity = $entitylivingIn;
 		$this->setMutexBits(4);
 		$entitylivingIn->getNavigator()->setCanSwim(true);
 	}
 
-	public function shouldExecute(){
+	public function shouldExecute() : bool{
 		return $this->theEntity->isInsideOfWater() || $this->theEntity->isInsideOfLava();
 	}
 
