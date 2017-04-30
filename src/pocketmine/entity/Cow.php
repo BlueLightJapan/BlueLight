@@ -22,12 +22,19 @@
 namespace pocketmine\entity;
 
 use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\Player;
 use pocketmine\entity\AI\EntityAISwimming;
+use pocketmine\entity\AI\EntityAIMate;
 use pocketmine\entity\AI\EntityAIWatchClosest;
 use pocketmine\entity\AI\EntityAILookIdle;
 use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAIPanic;
+use pocketmine\entity\AI\EntityAITempt;
+use pocketmine\item\Item as ItemItem;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\Player;
 
 class Cow extends Animal{
 	const NETWORK_ID = 11;
@@ -45,8 +52,8 @@ class Cow extends Animal{
 		$this->getNavigator()->setAvoidsWater(true);
 		$this->tasks->addTask(0, new EntityAISwimming($this));
 		$this->tasks->addTask(1, new EntityAIPanic($this, 2.0));
-		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
-		//$this->tasks->addTask(3, new EntityAITempt($this, 1.25, Item::WHEAT, false));
+		$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
+		$this->tasks->addTask(3, new EntityAITempt($this, 1.25, ItemItem::WHEAT, false));
 		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.25));
 		$this->tasks->addTask(5, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
@@ -74,8 +81,67 @@ class Cow extends Animal{
 		parent::spawnTo($player);
 	}
 
+	public function onRightClick(Player $player){
+		$item = $player->getInventory()->getItemInHand();
+		if($item->getId() == ItemItem::BUCKET && $player->isCreative() && !$this->isBaby()){
+			$milk = ItemItem::get(ItemItem::BUCKET, 1, 1);
+			if($item->count-- == 1){
+				$player->getInventory()->setItemInHand($milk);
+			}else if(!$player->getInventory()->canAddItem($milk)){
+				$motion = $player->getDirectionVector()->multiply(0.4);
+				$player->level->dropItem($player->add(0, 1.3, 0), $milk, $motion, 40);
+			}
+		}
+		parent::onRightClick($player);
+	}
+
+	public function getDrops(){
+		$drops = [];
+		$ev = $this->getLastDamageCause();
+		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
+
+		$leathers = rand(0, 2) + 1 + rand(0, $looting);
+
+		$drops[] = ItemItem::get(ItemItem::LEATHER, 0, $leathers);
+
+		$beefs = rand(0, 2) + 1 + rand(0, $looting);
+
+		if ($this->isOnFire()){
+			$drops[] = ItemItem::get(ItemItem::COOKED_BEEF, 0, $beefs);
+		}else{
+			$drops[] = ItemItem::get(ItemItem::RAW_BEEF, 0, $beefs);
+		}
+		return $drops;
+	}
+
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
 		return true;
+	}
+
+	public function createChild($ageable){
+
+		$nbt = new CompoundTag("", [
+			"Pos" => new ListTag("Pos", [
+				new DoubleTag("", $this->getX()),
+				new DoubleTag("", $this->getY()),
+				new DoubleTag("", $this->getZ())
+			]),
+			"Motion" => new ListTag("Motion", [
+				new DoubleTag("", 0),
+				new DoubleTag("", 0),
+				new DoubleTag("", 0)
+			]),
+			"Rotation" => new ListTag("Rotation", [
+				new FloatTag("", lcg_value() * 360),
+				new FloatTag("", 0)
+			]),
+		]);
+
+		$entity = Entity::createEntity("Cow", $this->level, $nbt);
+
+		if($entity instanceof Entity){
+			return $entity;
+		}
 	}
 }

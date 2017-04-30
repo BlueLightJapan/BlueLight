@@ -37,6 +37,10 @@ class EntityLookHelper{
 	}
 
 	public function setLookPositionWithEntity($entityIn, $deltaYaw, $deltaPitch){
+		if($entityIn == null){
+			$this->isLooking = false;
+			return;
+		}
 		$this->posX = $entityIn->x;
 
 		if ($entityIn instanceof Living){

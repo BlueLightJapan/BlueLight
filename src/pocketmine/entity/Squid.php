@@ -167,8 +167,13 @@ class Squid extends WaterAnimal implements Ageable{
 	}
 
 	public function getDrops(){
+		$ev = $this->getLastDamageCause();
+		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
 		return [
-			ItemItem::get(ItemItem::DYE, 0, mt_rand(1, 3))
+			ItemItem::get(ItemItem::DYE, 0, mt_rand(1, 3 + $looting))
 		];
+	}
+
+	public function createChild($ageable){
 	}
 }

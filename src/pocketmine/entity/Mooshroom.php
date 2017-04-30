@@ -51,4 +51,7 @@ class Mooshroom extends Animal{
 		$player->dataPacket($pk);
 		parent::spawnTo($player);
 	}
+
+	public function createChild($ageable){
+	}
 }

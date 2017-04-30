@@ -118,5 +118,8 @@ class Rabbit extends Animal{
 		return $drops;
 	}
 
+	public function createChild($ageable){
+	}
+
 
 }

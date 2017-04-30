@@ -125,4 +125,7 @@ class Donkey extends Animal implements Rideable{
 	public function getRidePosition(){
 		return [-0.02, 2.3, 0.19];
 	}
+
+	public function createChild($ageable){
+	}
 }

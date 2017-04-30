@@ -27,6 +27,7 @@ use pocketmine\entity\AI\EntityAIWatchClosest;
 use pocketmine\entity\AI\EntityAILookIdle;
 use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAIPanic;
+use pocketmine\entity\AI\EntityAITempt;
 use pocketmine\block\Wool;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;
@@ -70,7 +71,7 @@ class Sheep extends Animal{
 		$this->tasks->addTask(0, new EntityAISwimming($this));
 		$this->tasks->addTask(1, new EntityAIPanic($this, 1.25));
 		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
-		//$this->tasks->addTask(3, new EntityAITempt($this, 1.1, ItemItem::WHEAT, false));
+		$this->tasks->addTask(3, new EntityAITempt($this, 1.1, ItemItem::WHEAT, false));
 		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.1));
 		$this->tasks->addTask(5, $this->entityAIEatGrass);
 		$this->tasks->addTask(6, new EntityAIWander($this, 1.0));
@@ -182,5 +183,8 @@ class Sheep extends Animal{
 			return [$mutton, ItemItem::get(ItemItem::WOOL, $this->getColor(), $wools)];
 		}
 		return [$mutton];
+	}
+
+	public function createChild($ageable){
 	}
 }

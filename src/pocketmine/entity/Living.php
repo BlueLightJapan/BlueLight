@@ -474,6 +474,10 @@ abstract class Living extends Entity implements Damageable{
 		$this->isJumping = $jumping;
 	}
 
+	public function getVerticalFaceSpeed(){
+		return 40;
+	}
+
 	public function setMoveForward($forward){
 		$this->moveForward = $forward;
 	}

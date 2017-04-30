@@ -22,6 +22,7 @@
 namespace pocketmine\entity;
 
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 
 class Slime extends Living{
@@ -32,11 +33,16 @@ class Slime extends Living{
 	public $length = 0.9;
 	public $height = 5;
 	public $maxhealth = 16;
-	
+
+	public function initEntity(){
+		$this->setDataProperty(self::DATA_SIZE, self::DATA_TYPE_INT, $this->getRandomSlimeSize());
+		parent::initEntity();
+	}
+
 	public function getName(){
 		return "Slime";
 	}
-	
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -52,6 +58,33 @@ class Slime extends Living{
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 		parent::spawnTo($player);
+	}
+
+	protected function getRandomSlimeSize() : int{
+		$i = rand(0, 2);
+
+		if ($i < 2 && (rand(0, 10) / 10) < 0.5 * 1){
+			$i++;
+		}
+
+		$j = 1 << $i;
+		return $j;
+	}
+
+	public function getSlimeSize() : int{
+		return $this->getDataProperty(self::DATA_SIZE);
+	}
+
+	public function setSlimeSize(int $size){
+		$this->setDataProperty(self::DATA_SIZE, self::DATA_TYPE_INT, $size);
+	}
+
+	public function getDrops(){
+		$drops = [];
+		if($this->getSlimeSize() == 1){
+			$drops[] = ItemItem::get(ItemItem::SLIME_BALL, 0, 1);
+		}
+		return $drops;
 	}
 
 }

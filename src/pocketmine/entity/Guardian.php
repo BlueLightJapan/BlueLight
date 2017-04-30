@@ -20,10 +20,13 @@
 
 
 namespace pocketmine\entity;
+
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 
-class Guardian extends Animal{
+class Guardian extends Monster{
 	const NETWORK_ID = 49;
 
 	public $width = 0.6;
@@ -34,7 +37,7 @@ class Guardian extends Animal{
 	public function getName(){
 		return "Guardian";
 	}
-	
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -51,5 +54,42 @@ class Guardian extends Animal{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
+	}
+
+	public function isElder() : bool{
+		return $this->getDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_ELDER);
+	}
+
+	public function setElder(bool $elder){
+		$this->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_ELDER, $elder);
+
+		if ($elder){
+			$this->width = 1.9975;
+			$this->length = 1.9975;
+			//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.30000001192092896);
+			$this->setMaxHelth(80);//AttackDamage => 8.0
+			//$this->wander->setExecutionChance(400);
+	        }
+	}
+
+	public function getDrops(){
+		$drops = [];
+		$ev = $this->getLastDamageCause();
+		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
+
+		$prismarine = rand(0, 2) + rand(0, $looting);
+
+		$drops[] = ItemItem::get(ItemItem::PRISMARINE_SHARD, 0, $prismarine);
+
+		if (rand(2 + $looting) > 1){
+			$drops[] = ItemItem::get(ItemItem::RAW_FISH, 0, 1);
+		}else if (rand(2 + $looting) > 1){
+			$drops[] = ItemItem::get(ItemItem::PRISMARINE_CRYSTALS, 0, 1);
+		}
+
+		if($ev instanceof EntityDamageByEntityEvent && $ev->getDamager() instanceof Player && $this->isElder()){
+			$drops[] = ItemItem::get(Block::SPONGE, 1, 1);
+		}
+		return $drops;
 	}
 }

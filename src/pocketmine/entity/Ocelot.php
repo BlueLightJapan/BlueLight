@@ -80,4 +80,7 @@ class Ocelot extends Animal{
 
 		parent::spawnTo($player);
 	}
+
+	public function createChild($ageable){
+	}
 }

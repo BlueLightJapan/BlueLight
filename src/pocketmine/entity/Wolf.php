@@ -151,4 +151,7 @@ class Wolf extends Animal implements Tameable{
 		$this->setDataProperty(Entity::DATA_COLOR, Entity::DATA_TYPE_BYTE, $color, true);
 		$this->setDataProperty(Entity::DATA_OWNER_EID, Entity::DATA_TYPE_LONG, 0, true);
 	}
+
+	public function createChild($ageable){
+	}
 }

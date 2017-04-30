@@ -52,4 +52,7 @@ class PolarBear extends Animal{
 
 		parent::spawnTo($player);
 	}
+
+	public function createChild($ageable){
+	}
 }

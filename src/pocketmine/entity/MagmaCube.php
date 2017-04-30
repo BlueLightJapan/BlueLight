@@ -19,28 +19,30 @@
 */
 
 namespace pocketmine\entity;
+
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 
-class Enderman extends Monster{
+class MagmaCube extends Slime{
+	const NETWORK_ID = 42;
 
-	const NETWORK_ID = 38;
+	const DATA_SLIME_SIZE = 16;
 
-	public $width = 0.3;
-	public $length = 0.9;
+	public $width = 0.6;
+	public $length = 0.6;
 	public $height = 1.8;
-	public $maxhealth = 40;
-
+	public $maxhealth = 16
+;	
 	public function getName(){
-		return "Enderman";
+		return "MagmaCube";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
-		$pk->type = Enderman::NETWORK_ID;
+		$pk->type = LavaSlime::NETWORK_ID;
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -57,12 +59,18 @@ class Enderman extends Monster{
 
 	public function getDrops(){
 		$drops = [];
-		$ev = $this->getLastDamageCause();
-		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
+		if($this->getSlimeSize() > 1){
+			$ev = $this->getLastDamageCause();
+			$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
 
-		$pearls = rand(0, 1 + $looting);
+			$creams = rand(0, 3) - 2;
 
-		$drops[] = ItemItem::get(ItemItem::ENDER_PEARL, 0, $pearls);
+			if ($looting > 0){
+				$creams += rand(0, $looting);
+			}
+
+			$drops[] = ItemItem::get(ItemItem::MAGMA_CREAM, 0, $creams);
+		}
 		return $drops;
 	}
 }

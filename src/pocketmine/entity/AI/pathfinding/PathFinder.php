@@ -13,7 +13,7 @@ class PathFinder{
 	}
 
 	public function createEntityPathTo1($worldObj, $entityFrom, $entityTo, $dist){
-		return this.createEntityPathTo3($worldObj, $entityFrom, $entityTo->x, $entityTo->getBoundingBox()->minY, $entityTo->z, $dist);
+		return $this->createEntityPathTo3($worldObj, $entityFrom, $entityTo->x, $entityTo->getBoundingBox()->minY, $entityTo->z, $dist);
 	}
 
 	public function createEntityPathTo2($worldObj, $entityIn, $targetPos, $dist){

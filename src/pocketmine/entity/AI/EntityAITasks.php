@@ -35,9 +35,9 @@ class EntityAITasks{
 	public function removeTask($task){
 		foreach($this->taskEntries as $hashObject => $entry){
 			if($task == $entry){
-				if(isset($this->executingTaskEntries[spl_object_hash($entry)])){
+				if(isset($this->executingTaskEntries[$hashObject])){
 					$entry->action->resetTask();
-					unset($this->executingTaskEntries[spl_object_hash($entry)]);
+					unset($this->executingTaskEntries[$hashObject]);
 				}
 			}
 		}
@@ -69,6 +69,9 @@ class EntityAITasks{
 					}
 					$entry = $this->executingTaskEntries[$data[$count]];
 
+					$f1 = !$this->canUse($entry);
+					$f2 = !$this->canContinue($entry);
+
 					if (!$this->canUse($entry) || !$this->canContinue($entry)){
 						$entry->action->resetTask();
 						unset($this->executingTaskEntries[spl_object_hash($entry)]);
@@ -78,7 +81,7 @@ class EntityAITasks{
 
 				if ($this->canUse($this->taskEntries[$data[$count]]) && $this->taskEntries[$data[$count]]->action->shouldExecute()){
 					$this->taskEntries[$data[$count]]->action->startExecuting();
-					$this->executingTaskEntries[spl_object_hash($this->taskEntries[$data[$count]])] = $this->taskEntries[$data[$count]];
+					$this->executingTaskEntries[$data[$count]] = $this->taskEntries[$data[$count]];
 				}
 			}
 		}else{
@@ -98,7 +101,7 @@ class EntityAITasks{
 				}
 			}
 		}
-		foreach($this->executingTaskEntries as $entry){
+		foreach($this->executingTaskEntries as $hash =>$entry){
 			$entry->action->updateTask();
 		}
 	}

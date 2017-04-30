@@ -21,6 +21,8 @@
 
 namespace pocketmine\entity;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 
 class Witch extends Monster{
@@ -30,11 +32,12 @@ class Witch extends Monster{
 	public $length = 0.9;
 	public $height = 1.8;
 	public $maxhealth = 26;
+	public $witchDrops = [ItemItem::GLOWSTONE_DUST, ItemItem::SUGAR, ItemItem::REDSTONE_DUST, ItemItem::SPIDER_EYE, ItemItem::GLASS_BOTTLE, ItemItem::GUNPOWDER, ItemItem::STICK, ItemItem::STICK];
 
 	public function getName(){
 		return "Witch";
 	}
-	
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -51,5 +54,32 @@ class Witch extends Monster{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
+	}
+
+	public function getDrops(){
+		$drops = [];
+		$ev = $this->getLastDamageCause();
+		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
+
+		$tears = rand(0, 1) + rand(0, $looting);
+
+		$drops[] = ItemItem::get(ItemItem::GHAST_TEAR, 0, $tears);
+
+		$gunpowers = rand(0, 2) + rand(0, $looting);
+
+		$drops[] = ItemItem::get(ItemItem::GUNPOWDER, 0, $gunpowers);
+		$count = rand(1, 3);
+
+		for ($j = 0; $j < $i; ++$j){
+			$k = rand(0, 2);
+			$item = $this->witchDrops[rand(0, count($this->witchDrops))];
+
+			if ($looting > 0){
+				$k += rand(0, $looting);
+			}
+
+			$drops[] = ItemItem::get($item, 0, $k);
+		}
+		return $drops;
 	}
 }
