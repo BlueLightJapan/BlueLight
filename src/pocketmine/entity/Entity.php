@@ -282,6 +282,7 @@ abstract class Entity extends Location implements Metadatable{
 
 	public $lastYaw;
 	public $lastPitch;
+	public $lastHeadYaw;
 
 	public $headYaw = 0;
 
@@ -420,9 +421,9 @@ abstract class Entity extends Location implements Metadatable{
 		$this->lastUpdate = $this->server->getTick();
 		$this->server->getPluginManager()->callEvent(new EntitySpawnEvent($this));
 
-		if($this instanceof Creture){
-			$this->homePosition = new Vector3();
-		}
+		//if($this instanceof Creture){
+		//	$this->homePosition = new Vector3();
+		//}
 
 		$this->scheduleUpdate();
 
@@ -719,7 +720,8 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->namedtag->Rotation = new ListTag("Rotation", [
 			new FloatTag(0, $this->yaw),
-			new FloatTag(1, $this->pitch)
+			new FloatTag(1, $this->pitch),
+			new FloatTag(2, $this->headYaw)
 		]);
 
 		$this->namedtag->FallDistance = new FloatTag("FallDistance", $this->fallDistance);
@@ -1125,7 +1127,7 @@ abstract class Entity extends Location implements Metadatable{
 
 	protected function updateMovement(){
 		$diffPosition = ($this->x - $this->lastX) ** 2 + ($this->y - $this->lastY) ** 2 + ($this->z - $this->lastZ) ** 2;
-		$diffRotation = ($this->yaw - $this->lastYaw) ** 2 + ($this->pitch - $this->lastPitch) ** 2;
+		$diffRotation = ($this->yaw - $this->lastYaw) ** 2 + ($this->pitch - $this->lastPitch) ** 2 + ($this->headYaw - $this->lastHeadYaw) ** 2;
 
 		$diffMotion = ($this->motionX - $this->lastMotionX) ** 2 + ($this->motionY - $this->lastMotionY) ** 2 + ($this->motionZ - $this->lastMotionZ) ** 2;
 
@@ -1136,6 +1138,7 @@ abstract class Entity extends Location implements Metadatable{
 
 			$this->lastYaw = $this->yaw;
 			$this->lastPitch = $this->pitch;
+			$this->lastHeadYaw = $this->headYaw;
 
 			$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y/* + $this->getEyeHeight()*/, $this->z, $this->yaw, $this->pitch, $this->headYaw);
 		}

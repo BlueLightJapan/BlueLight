@@ -40,7 +40,7 @@ class EntityAIEatGrass extends EntityAIBase{
 			return false;
 		}else{
 			$blockpos = new Vector3($this->grassEaterEntity->x, $this->grassEaterEntity->y, $this->grassEaterEntity->z);
-			return $this->enityWorld->getBlock($blockpos->getSide(Vector3::DOWN))->getId() == Block::GRASS;
+			return $this->entityWorld->getBlock($blockpos->getSide(Vector3::SIDE_DOWN))->getId() == Block::GRASS;
 		}
 	}
 
@@ -67,10 +67,10 @@ class EntityAIEatGrass extends EntityAIBase{
 
 		if ($this->eatingGrassTimer == 4){
 			$blockpos = new Vector3($this->grassEaterEntity->x, $this->grassEaterEntity->y, $this->grassEaterEntity->z);
-			$blockpos1 = $blockpos->getSide(Vector3::DOWN);
+			$blockpos1 = $blockpos->getSide(Vector3::SIDE_DOWN);
 
 			if ($this->entityWorld->getBlock($blockpos1)->getId() == Block::GRASS){
-				$this->entityWorld->setBlock($blockpos, Block::get(Block::DIRT));
+				$this->entityWorld->setBlock($blockpos1, Block::get(Block::DIRT));
 			}
 
 			$this->grassEaterEntity->eatGrassBonus();

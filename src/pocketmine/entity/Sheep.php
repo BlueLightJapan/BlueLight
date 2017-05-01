@@ -33,6 +33,7 @@ use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\Server;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 use pocketmine\network\protocol\AddEntityPacket;
@@ -64,10 +65,10 @@ class Sheep extends Animal{
 		parent::__construct($level, $nbt);
 
 		$this->setDataProperty(self::DATA_COLOR_INFO, self::DATA_TYPE_BYTE, $this->getColor());
-		$this->entityAIEatGrass = new EntityAIEatGrass($this);
 	}
 
 	public function initEntity(){
+		$this->entityAIEatGrass = new EntityAIEatGrass($this);
 		$this->tasks->addTask(0, new EntityAISwimming($this));
 		$this->tasks->addTask(1, new EntityAIPanic($this, 1.25));
 		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));

@@ -28,7 +28,7 @@ class EntityAIHurtByTarget extends EntityAITarget{
 	private $revengeTimerOld;
 	private $targetClasses;
 
-	public function __construct($creatureIn, $entityCallsForHelpIn, string $targetClassesIn){
+	public function __construct($creatureIn, bool $entityCallsForHelpIn, array $targetClassesIn){
 		parent::__construct($creatureIn, false);
 		$this->entityCallsForHelp = $entityCallsForHelpIn;
 		$this->targetClasses = $targetClassesIn;

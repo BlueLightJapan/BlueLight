@@ -29,7 +29,7 @@ class EntityAINearestAttackableTarget extends EntityAITarget{
 	private $targetChance;
 	protected $targetEntity;
 
-	public function __construct($creature, int $classTarget, bool $checkSight, int $chance = 10, bool $onlyNearby = false, $targetSelector = null){
+	public function __construct($creature, string $classTarget, bool $checkSight, int $chance = 10, bool $onlyNearby = false, $targetSelector = null){
 		parent::__construct($creature, $checkSight, $onlyNearby);
 		$this->targetClass = $classTarget;
 		$this->targetChance = $chance;

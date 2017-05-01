@@ -63,7 +63,6 @@ abstract class PathNavigate{
 			return null;
 		}else{
 			$f = $this->getPathSearchRange();
-			$blockpos = (new Vector3($this->theEntity->add(0, 1, 0)));
 			$pathentity = $this->pathFinder->createEntityPathTo1($this->worldObj, $this->theEntity, $entityIn, $f);
 			return $pathentity;
 		}
