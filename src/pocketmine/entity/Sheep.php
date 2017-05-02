@@ -27,6 +27,7 @@ use pocketmine\entity\AI\EntityAIWatchClosest;
 use pocketmine\entity\AI\EntityAILookIdle;
 use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAIPanic;
+use pocketmine\entity\AI\EntityAIMate;
 use pocketmine\entity\AI\EntityAITempt;
 use pocketmine\block\Wool;
 use pocketmine\item\Item as ItemItem;
@@ -71,16 +72,20 @@ class Sheep extends Animal{
 		$this->entityAIEatGrass = new EntityAIEatGrass($this);
 		$this->tasks->addTask(0, new EntityAISwimming($this));
 		$this->tasks->addTask(1, new EntityAIPanic($this, 1.25));
-		//$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
+		$this->tasks->addTask(2, new EntityAIMate($this, 1.0));
 		$this->tasks->addTask(3, new EntityAITempt($this, 1.1, ItemItem::WHEAT, false));
 		//$this->tasks->addTask(4, new EntityAIFollowParent($this, 1.1));
 		$this->tasks->addTask(5, $this->entityAIEatGrass);
 		$this->tasks->addTask(6, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(7, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
 		$this->tasks->addTask(8, new EntityAILookIdle($this));
-		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 		$this->setMaxHealth(20);
 		parent::initEntity();
+	}
+
+	protected function addAttributes(){
+		parent::addAttributes();
+		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 
 	public static function getRandomColor() : int{

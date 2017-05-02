@@ -208,7 +208,7 @@ abstract class Living extends Entity implements Damageable{
 			$this->updateEntityActionState();
 			$this->moveStrafing *= 0.98;
 			$this->moveForward *= 0.98;
-			//$this->moveStrafing  = 0.01;
+			//$this->moveStrafing  = 0.001;
 			//$this->moveForward = 0.05;
 			$this->moveEntityWithHeading($this->moveStrafing, $this->moveForward);
 		}
@@ -311,11 +311,12 @@ abstract class Living extends Entity implements Damageable{
 
 				$this->move($this->motionX, $this->motionY, $this->motionZ);
 
-				if ($this->y > 0.0){
-					$this->motionY = -0.1;
-				}else{
-					$this->motionY = 0.0;
-				}
+				//if ($this->y > 0.0){
+				//	$this->motionY = -0.1;
+				//}else{
+				//	$this->motionY = 0.0;
+				//}
+				$this->motionY -= 0.08;
 
 				$this->motionY *= 0.9800000190734863;
 				$this->motionX *= $f4;
@@ -483,7 +484,6 @@ abstract class Living extends Entity implements Damageable{
 	}
 
 	public function getAIMoveSpeed(){
-		//echo($this->landMovementFactor);
 		return $this->landMovementFactor;
 	}
 

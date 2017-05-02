@@ -22,7 +22,8 @@ namespace pocketmine\entity\AI;
 
 use pocketmine\entity\Attribute;
 use pocketmine\math\Vector3;
-use pocketmine\level\particle\FlameParticle;
+use pocketmine\Server;
+use pocketmine\network\protocol\LevelEventPacket;
 
 class EntityMoveHelper{
 
@@ -51,11 +52,10 @@ class EntityMoveHelper{
 
 	public function setMoveTo(float $x, float $y, float $z, float $speedIn){
 		$this->posX = $x;
-		$this->posY = $y;
+		$this->posY = $y + 1;
 		$this->posZ = $z;
 		$this->speed = $speedIn;
 		$this->update = true;
-		//$this->entity->level->addParticle(new FlameParticle(new Vector3($x, $y, $z));
 	}
 
 	public function onUpdateMoveHelper(){
@@ -72,9 +72,8 @@ class EntityMoveHelper{
 			if ($d3 >= 2.500000277905201E-7){
 				$f = (atan2($d1, $d0) * 180.0 / M_PI) - 90.0;
 				$this->entity->yaw = $this->limitAngle($this->entity->yaw, $f, 30.0);
-				$this->entity->setAIMoveSpeed($this->speed * 0.25);//$this->entity->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->getValue());
+				$this->entity->setAIMoveSpeed($this->speed * $this->entity->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->getValue());
 
-				//echo("x: ".$d0." z: ".$d1." y: ".$d2."\n");
 				if ($d2 > 0.0 && $d0 * $d0 + $d1 * $d1 < 1.0){
 					$this->entity->getJumpHelper()->setJumping();
 				}

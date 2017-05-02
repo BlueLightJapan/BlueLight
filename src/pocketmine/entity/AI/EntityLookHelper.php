@@ -78,21 +78,20 @@ class EntityLookHelper{
 			$this->entity->pitch = $this->updateRotation($this->entity->pitch, $f1, $this->deltaLookPitch);
 			$this->entity->headYaw = $this->updateRotation($this->entity->headYaw, $f, $this->deltaLookYaw);
 		}else{
-			$this->entity->headYaw = $this->updateRotation($this->entity->headYaw, $this->entity->lastHeadYaw, 10.0);//
+			$this->entity->headYaw = $this->updateRotation($this->entity->headYaw, $this->entity->renderYawOffset, 10.0);//
 		}
 
-		$f2 = self::wrapAngleTo180($this->entity->headYaw - $this->entity->lastHeadYaw);//
+		$f2 = self::wrapAngleTo180($this->entity->headYaw - $this->entity->renderYawOffset);//
 
 		if (!$this->entity->getNavigator()->noPath()){
 			if ($f2 < -75.0){
-				$this->entity->headYaw = $this->entity->lastHeadYaw - 75.0;//
+				$this->entity->headYaw = $this->entity->renderYawOffset - 75.0;//
 			}
 
 			if ($f2 > 75.0){
-				$this->entity->headYaw = $this->entity->lastHeadYaw + 75.0;//
+				$this->entity->headYaw = $this->entity->renderYawOffset + 75.0;//
 			}
 		}
-		//$this->entity->yaw = $this->entity->headYaw;
 	}
 
 	public function wrapAngleTo180(float $value) : float{

@@ -2,16 +2,19 @@
 namespace pocketmine\entity\AI\pathfinding;
 
 use pocketmine\math\Vector3;
+use pocketmine\Server;
+use pocketmine\network\protocol\LevelEventPacket;
 
 class PathEntity{
 
 	private $points;
-	private $currentPathIndex = 0;
+	private $currentPathIndex;
 	private $pathLength;
 
 	public function __construct($pathpoints){
 		$this->points = $pathpoints;
 		$this->pathLength = count($pathpoints);
+		$this->currentPathIndex = $this->pathLength - 1;
 	}
 
 	public function incrementPathIndex(){
@@ -47,7 +50,6 @@ class PathEntity{
 	}
 
 	public function getVectorFromIndex($entityIn, $index){
-		//if(empty($this->points[$index])) return new Vector3();
 		$d0 = $this->points[$index]->xCoord + ($entityIn->width + 1.0) * 0.5;
 		$d1 = $this->points[$index]->yCoord;
 		$d2 = $this->points[$index]->zCoord + ($entityIn->width + 1.0) * 0.5;

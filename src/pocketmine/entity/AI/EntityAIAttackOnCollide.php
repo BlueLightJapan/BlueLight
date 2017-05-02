@@ -21,6 +21,9 @@
 namespace pocketmine\entity\AI;
 
 use pocketmien\entity\Human;
+use pocketmine\math\Vector3;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 class EntityAIAttackOnCollide extends EntityAIBase{
 
@@ -36,7 +39,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 	private $targetY;
 	private $targetZ;
 
-	public function __construct($creature, $targetClass, float $speedIn, bool $useLongMemory){
+	public function __construct($creature, string $targetClass, float $speedIn, bool $useLongMemory){
 		$this->classTarget = $targetClass;
 		$this->attacker = $creature;
 		$this->worldObj = $creature->level;
@@ -81,7 +84,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		$d1 = $this->getReachableDistance($entitylivingbase);
 		--$this->delayCounter;
 
-		if (($this->longMemory && $this->delayCounter <= 0 && ($this->targetX == 0.0 && $this->targetY == 0.0 && $this->targetZ == 0.0 || $entitylivingbase->distanceSquared($this->targetX, $this->targetY, $this->targetZ) >= 1.0 || (rand(0, 100) / 100) < 0.05)){
+		if (($this->longMemory && $this->delayCounter <= 0 && ($this->targetX == 0.0 && $this->targetY == 0.0 && $this->targetZ == 0.0 || $entitylivingbase->distanceSquared(new Vector3($this->targetX, $this->targetY, $this->targetZ)) >= 1.0 || (rand(0, 100) / 100) < 0.05))){
 			$this->targetX = $entitylivingbase->x;
 			$this->targetY = $entitylivingbase->getBoundingBox()->minY;
 			$this->targetZ = $entitylivingbase->z;
@@ -103,7 +106,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		if ($d0 <= $d1 && $this->attackTick <= 0){
 			$this->attackTick = 20;
 
-			//$entitylivingbase->attack($event);
+			$entitylivingbase->attack(2, new EntityDamageByEntityEvent($this, $this->attcker, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 2));
 		}
 	}
 

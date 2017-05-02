@@ -44,7 +44,9 @@ class EntityAINearestAttackableTarget extends EntityAITarget{
 			$bb = clone $this->taskOwner->getBoundingBox();
 			$list = $this->taskOwner->level->getCollidingEntities($bb->expand($d0, 4.0, $d0), $this->taskOwner);
 			foreach ($list as $index => $entity){
-				if(!(get_class($entity) != $this->targetClass)) unset($list[$index]);
+				if(get_class($entity) != $this->targetClass){
+					unset($list[$index]);
+				}
 			}
 			if(count($list) == 0){
 				return false;

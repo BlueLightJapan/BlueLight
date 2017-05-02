@@ -284,6 +284,9 @@ abstract class Entity extends Location implements Metadatable{
 	public $lastPitch;
 	public $lastHeadYaw;
 
+	public $prevRenderYawOffset = 0;
+	public $renderYawOffset = 0;
+
 	public $headYaw = 0;
 
 	/** @var AxisAlignedBB */
@@ -1117,12 +1120,75 @@ abstract class Entity extends Location implements Metadatable{
 			}
 		}
 
+		if($this->server->entityAIEnabled){
+			$this->prevRenderYawOffset = $this->renderYawOffset;
+			$d0 = $this->x - $this->lastX;
+			$d1 = $this->z - $this->lastZ;
+			$f = $d0 * $d0 + $d1 * $d1;
+			$f1 = $this->renderYawOffset;
+			$f2 = 0.0;
+			$f3 = 0.0;
+
+			if ($f > 0.0025000002){
+				$f3 = 1.0;
+				$f2 = sqrt($f) * 3.0;
+				$f1 = atan2($d1, $d0) * 180.0 / M_PI - 90.0;
+			}
+
+			if (!$this->onGround){
+				$f3 = 0.0;
+			}
+
+			//$this->onGroundSpeedFactor += ($f3 - $this->onGroundSpeedFactor) * 0.3;
+			$f2 = $this->func_110146_f($f1, $f2);
+		}
 		$this->age += $tickDiff;
 		$this->ticksLived += $tickDiff;
 
 		Timings::$timerEntityBaseTick->stopTiming();
 
 		return $hasUpdate;
+	}
+
+	protected function func_110146_f(float $p_110146_1_, float $p_110146_2_) : float{
+		$f = self::wrapAngleTo180($p_110146_1_ - $this->renderYawOffset);
+		$this->renderYawOffset += $f * 0.3;
+		$f1 = self::wrapAngleTo180($this->yaw - $this->renderYawOffset);
+		$flag = $f1 < -90.0 || $f1 >= 90.0;
+
+		if ($f1 < -75.0){
+			$f1 = -75.0;
+		}
+
+		if ($f1 >= 75.0){
+			$f1 = 75.0;
+		}
+
+		$this->renderYawOffset = $this->yaw - $f1;
+
+		if ($f1 * $f1 > 2500.0){
+			$this->renderYawOffset += $f1 * 0.2;
+		}
+
+		if ($flag){
+			$p_110146_2_ *= -1.0;
+		}
+
+		return $p_110146_2_;
+	}
+
+	public function wrapAngleTo180(float $value) : float{
+		$value = $value % 360;
+
+		if ($value >= 180.0){
+			$value -= 360;
+		}
+
+		if ($value < -180.0){
+			$value += 360;
+		}
+
+		return $value;
 	}
 
 	protected function updateMovement(){
@@ -1200,6 +1266,17 @@ abstract class Entity extends Location implements Metadatable{
 		$hasUpdate = $this->entityBaseTick($tickDiff);
 
 		$this->updateMovement();
+
+		if($this->server->entityAIEnabled){
+
+			while ($this->renderYawOffset - $this->prevRenderYawOffset < -180.0){
+				$this->prevRenderYawOffset -= 360.0;
+			}
+
+			while ($this->renderYawOffset - $this->prevRenderYawOffset >= 180.0){
+				$this->prevRenderYawOffset += 360.0;
+			}
+		}
 
 		$this->timings->stopTiming();
 

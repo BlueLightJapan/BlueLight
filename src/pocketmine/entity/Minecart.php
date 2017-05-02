@@ -426,20 +426,6 @@ class Minecart extends Vehicle{
 		return $num < $min ? $min : ($num > $max ? $max : $num);
 	}
 
-	public function wrapAngleTo180($value){
-		$value = $value % 360.0;
-
-		if ($value >= 180.0){
-			$value -= 360.0;
-		}
-
-		if ($value < -180.0){
-			$value += 360.0;
-		}
-
-		return $value;
-	}
-
 	public function applyEntityCollision($entityIn){
 		if ($entityIn != $this->ridingEntity){
 			if ($entityIn instanceof Living && !($entityIn instanceof Player) && !($entityIn instanceof IronGolem) && $this->getType() == self::TYPE_NORMAL && $this->motionX * $this->motionX + $this->motionZ * $this->motionZ > 0.01 && $this->ridingEntity == null && $entityIn->ridingEntity == null){

@@ -120,7 +120,7 @@ abstract class PathNavigate{
 				if ($vec32 != null){
 					$axisalignedbb1 = (new AxisAlignedBB($vec32->x, $vec32->y, $vec32->z, $vec32->x, $vec32->y, $vec32->z))->expand(0.5, 0.5, 0.5);
 					$list = $this->worldObj->getCollidingEntities($axisalignedbb1->addCoord(0.0, -1.0, 0.0), $this->theEntity);
-					$d0 = -0.0;
+					$d0 = -1.0;
 					$axisalignedbb1 = $axisalignedbb1->offset(0.0, 1.0, 0.0);
 
 					foreach($list as $entity){

@@ -42,9 +42,6 @@ use pocketmine\Server;
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
 
-	const VIEWABLE_RANGE = 20;
-	const ATTACK_RANGE = 2;
-
 	public $width = 0.6;
 	public $length = 0.6;
 	public $height = 1.8;
@@ -53,22 +50,25 @@ class Zombie extends Monster{
 	public function initEntity(){
 		$this->getNavigator()->setBreakDoors(true);
 		$this->tasks->addTask(0, new EntityAISwimming($this));
-		//$this->tasks->addTask(2, new EntityAIAttackOnCollide($this, "Player", 1.0, false));//TODO 
+		$this->tasks->addTask(2, new EntityAIAttackOnCollide($this, "Player", 1.0, false));//TODO 
 		$this->tasks->addTask(5, new EntityAIMoveTowardsRestriction($this, 1.0));
 		$this->tasks->addTask(7, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(8, new EntityAIWatchClosest($this, "pocketmine\Player", 8.0));
 		$this->tasks->addTask(8, new EntityAILookIdle($this));
-		$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ["pocketmine\entity\PigZombie"]));
+		//$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ["pocketmine\entity\PigZombie"]));
 		$this->targetTasks->addTask(2, new EntityAINearestAttackableTarget($this, "pocketmine\Player", true));
-		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 		$this->setMaxHealth(20);
 		parent::initEntity();
+	}
+
+	protected function addAttributes(){
+		parent::addAttributes();
+		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 
 	public function getName(){
 		return "Zombie";
 	}
-
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
@@ -113,11 +113,5 @@ class Zombie extends Monster{
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
 		return true;
-	}
-
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
-		$this->updateMovement();
-
 	}
 }

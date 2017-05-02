@@ -58,9 +58,13 @@ class Cow extends Animal{
 		$this->tasks->addTask(5, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(6, new EntityAIWatchClosest($this, "pocketmine\Player", 6.0));
 		$this->tasks->addTask(7, new EntityAILookIdle($this));
-		//$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
 		$this->setMaxHealth(20);
 		parent::initEntity();
+	}
+
+	protected function addAttributes(){
+		parent::addAttributes();
+		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.20000000298023224);
 	}
 
 	public function spawnTo(Player $player){
@@ -83,7 +87,7 @@ class Cow extends Animal{
 
 	public function onRightClick(Player $player){
 		$item = $player->getInventory()->getItemInHand();
-		if($item->getId() == ItemItem::BUCKET && $player->isCreative() && !$this->isBaby()){
+		if($item->getId() == ItemItem::BUCKET && $item->getDamage() == 0 && !$player->isCreative() && !$this->isBaby()){
 			$milk = ItemItem::get(ItemItem::BUCKET, 1, 1);
 			if($item->count-- == 1){
 				$player->getInventory()->setItemInHand($milk);
