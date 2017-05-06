@@ -22,8 +22,6 @@ namespace pocketmine\entity\AI;
 
 use pocketmine\entity\Attribute;
 use pocketmine\math\Vector3;
-use pocketmine\Server;
-use pocketmine\network\protocol\LevelEventPacket;
 
 class EntityMoveHelper{
 

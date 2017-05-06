@@ -56,10 +56,10 @@ class WalkNodeProcessor extends NodeProcessor{
 			$j = 1;
 		}
 
-		$pathpoint = $this->getSafePoint($entityIn, $currentPoint->xCoord, $currentPoint->yCoord, $currentPoint->zCoord + 1, $j);
-		$pathpoint1 = $this->getSafePoint($entityIn, $currentPoint->xCoord - 1, $currentPoint->yCoord, $currentPoint->zCoord, $j);
-		$pathpoint2 = $this->getSafePoint($entityIn, $currentPoint->xCoord + 1, $currentPoint->yCoord, $currentPoint->zCoord, $j);
-		$pathpoint3 = $this->getSafePoint($entityIn, $currentPoint->xCoord, $currentPoint->yCoord, $currentPoint->zCoord - 1, $j);
+		$pathpoint = $this->getSafePoint($entityIn, $currentPoint->xCoord, $currentPoint->yCoord + 1, $currentPoint->zCoord + 1, $j);
+		$pathpoint1 = $this->getSafePoint($entityIn, $currentPoint->xCoord - 1, $currentPoint->yCoord + 1, $currentPoint->zCoord, $j);
+		$pathpoint2 = $this->getSafePoint($entityIn, $currentPoint->xCoord + 1, $currentPoint->yCoord + 1, $currentPoint->zCoord, $j);
+		$pathpoint3 = $this->getSafePoint($entityIn, $currentPoint->xCoord, $currentPoint->yCoord + 1, $currentPoint->zCoord - 1, $j);
 
 		if ($pathpoint != null && !$pathpoint->visited && $pathpoint->distanceTo($targetPoint) < $maxDistance){
 			$pathOptions[$i++] = $pathpoint;
@@ -110,7 +110,7 @@ class WalkNodeProcessor extends NodeProcessor{
 						break;
 					}
 
-					if ($j++ >= 3){
+					if ($j++ >= $entityIn->getMaxFallHeight()){
 						return null;
 					}
 
@@ -163,7 +163,7 @@ class WalkNodeProcessor extends NodeProcessor{
 						}
 
 						if ($entityIn->level->getBlock($mutableblockpos) instanceof Rail){
-							if (!($entityIn->level->getBlock($blockpos) instanceof Rail) && !($entityIn->level->getBlock($blockpos->getSide(Vector3::DOWN)) instanceof Rail)){
+							if (!($entityIn->level->getBlock($blockpos) instanceof Rail) && !($entityIn->level->getBlock($blockpos->getSide(Vector3::SIDE_DOWN)) instanceof Rail)){
 								return -3;
 							}
 						}else if (!$block->isTransparent() && (!$breakDoors || !($block instanceof Door)/* || block.getMaterial() != Material.wood*/)){

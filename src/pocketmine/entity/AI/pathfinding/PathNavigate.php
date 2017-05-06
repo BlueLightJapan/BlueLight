@@ -154,7 +154,7 @@ abstract class PathNavigate{
 			}
 		}
 
-		$j1 = $this->ceiling($this->theEntity->width);
+		$j1 = ceil($this->theEntity->width + 0.25);
 		$k1 = $this->theEntity->height + 1;
 		$l = $j1;
 
@@ -167,11 +167,6 @@ abstract class PathNavigate{
 		}
 
 		$this->checkForStuck($vec3);
-	}
-
-	public function ceiling($value){
-		$i = $value;
-		return $value > $i ? $i + 1 : $i;
 	}
 
 	protected function checkForStuck($positionVec3){

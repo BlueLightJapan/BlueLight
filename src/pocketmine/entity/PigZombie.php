@@ -28,7 +28,7 @@ use pocketmine\Player;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\item\enchantment\Enchantment;
 
-class PigZombie extends Zombie{
+class PigZombie extends Monster{
 	const NETWORK_ID = 36;
 
 	public $width = 0.6;
@@ -38,7 +38,10 @@ class PigZombie extends Zombie{
 
 	public $drag = 0.2;
 	public $gravity = 0.3;
-	
+
+	private $angerLevel;
+	private $angerTarget;
+
 	public function getName() : string{
 		return "PigZombie";
 	}
@@ -59,7 +62,7 @@ class PigZombie extends Zombie{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
-		
+
 		$pk = new MobEquipmentPacket();
 		$pk->eid = $this->getId();
 		$pk->item = new ItemItem(283);
@@ -67,6 +70,18 @@ class PigZombie extends Zombie{
 		$pk->selectedSlot = 0;
 
 		$player->dataPacket($pk);
+	}
+
+	private function becomeAngryAt($target){
+		$this->angerLevel = 400 + rand(0, 399);
+
+		if ($target instanceof Living){
+			$this->setRevengeTarget($target);
+		}
+	}
+
+	public function isAngry() : bool{
+		return $this->angerLevel > 0;
 	}
 
 	public function getDrops(){

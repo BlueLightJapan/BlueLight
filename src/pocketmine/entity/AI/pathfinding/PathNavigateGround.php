@@ -29,7 +29,7 @@ class PathNavigateGround extends PathNavigate{
 
 	private function getPathablePosY(){
 		if ($this->theEntity->isInsideOfWater() && $this->getCanSwim()){
-			$i = $this->theEntity->getBoundingBox()->minY;
+			$i = $this->theEntity->getBoundingBox()->minY - 1;
 			$block = $this->worldObj->getBlock(new Vector3(floor($this->theEntity->x), $i, floor($this->theEntity->z)));
 			$j = 0;
 
@@ -45,7 +45,7 @@ class PathNavigateGround extends PathNavigate{
 
 			return $i;
 		}else{
-			return $this->theEntity->getBoundingBox()->minY + 0.5;
+			return $this->theEntity->getBoundingBox()->minY;
 		}
 	}
 
@@ -84,9 +84,11 @@ class PathNavigateGround extends PathNavigate{
 			$sizeX = $sizeX + 2;
 			$sizeZ = $sizeZ + 2;
 
-			if (!$this->isSafeToStandAt($i, $posVec31->y, $j, $sizeX, $sizeY, $sizeZ, $posVec31, $d0, $d1)){
+			if (!$this->isSafeToStandAt($i, round($posVec31->y), $j, $sizeX, $sizeY, $sizeZ, $posVec31, $d0, $d1)){
 				return false;
 			}else{
+				$d0 = max($d0, 0.0001);
+				$d1 = max($d1, 0.0001);
 				$sizeX = $sizeX - 2;
 				$sizeZ = $sizeZ - 2;
 				$d4 = 1.0 / abs($d0);
@@ -122,7 +124,7 @@ class PathNavigateGround extends PathNavigate{
 						$l1 = $j1 - $j;
 					}
 
-					if (!$this->isSafeToStandAt($i, $posVec31->y, $j, $sizeX, $sizeY, $sizeZ, $posVec31, $d0, $d1)){
+					if (!$this->isSafeToStandAt($i, round($posVec31->y), $j, $sizeX, $sizeY, $sizeZ, $posVec31, $d0, $d1)){
 						return false;
 					}
 				}
@@ -165,19 +167,25 @@ class PathNavigateGround extends PathNavigate{
 		}
 	}
 
-	private function isPositionClear($p_179692_1_, $p_179692_2_, $p_179692_3_, $p_179692_4_, $p_179692_5_, $p_179692_6_, $p_179692_7_, $p_179692_8_, $p_179692_10_){
-		/*for (BlockPos blockpos : BlockPos.getAllInBox(new BlockPos(p_179692_1_, p_179692_2_, p_179692_3_), new BlockPos(p_179692_1_ + p_179692_4_ - 1, p_179692_2_ + p_179692_5_ - 1, p_179692_3_ + p_179692_6_ - 1))){
-			$d0 = $blockpos->getX() + 0.5 - $p_179692_7_->xCoord;
-			$d1 = $blockpos.getZ() + 0.5 - $p_179692_7_->z;
+	private function isPositionClear($x, $y, $z, $sizeX, $sizeY, $sizeZ, $point, $p_179692_8_, $p_179692_10_){
+		$blockpos = new Vector3();
+		for($x1 = min($x, $x + $sizeX - 1); $x1 <= max($x, $x + $sizeX - 1); $x1++){
+			for($y1 = min($y, $x + $sizeY - 1); $y1 <= max($y, $y + $sizeY - 1); $y1++){
+				for($z1 = min($z, $z + $sizeZ - 1); $z1 <= max($z, $z + $sizeZ - 1); $z1++){
+					$blockpos->setComponents($x1, $y1, $z1);
+					$d0 = $blockpos->getX() + 0.5 - $point->x;
+					$d1 = $blockpos->getZ() + 0.5 - $point->z;
 
-			if ($d0 * $p_179692_8_ + $d1 * $p_179692_10_ >= 0.0){
-				$block = $this->worldObj->getBlock($blockpos);
+					if ($d0 * $p_179692_8_ + $d1 * $p_179692_10_ >= 0.0){
+						$block = $this->worldObj->getBlock($blockpos);
 
-				if (!$block->isTransparent()){
-					return false;
+						if (!$block->isTransparent()){
+							return false;
+						}
+					}
 				}
 			}
-		}*/
+		}
 
 		return true;
 	}

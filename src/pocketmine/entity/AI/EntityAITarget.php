@@ -20,6 +20,7 @@
 
 namespace pocketmine\entity\AI;
 
+use pocketmine\entity\Attribute;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
@@ -62,13 +63,13 @@ abstract class EntityAITarget extends EntityAIBase{
 					}
 				}*/
 
-				return !($entitylivingbase instanceof Player);
+				return true;//!($entitylivingbase instanceof Player);
 			//}
 		}
 	}
 
 	protected function getTargetDistance() : float{
-		return 16.0;
+		return $this->taskOwner->getAttributeMap()->getAttribute(Attribute::FOLLOW_RANGE)->getValue();
 	}
 
 	public function startExecuting(){

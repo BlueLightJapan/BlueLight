@@ -20,7 +20,7 @@
 
 namespace pocketmine\entity\AI;
 
-use pocketmien\entity\Human;
+use pocketmine\entity\Attribute;
 use pocketmine\math\Vector3;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -35,9 +35,9 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 	public $entityPathEntity;
 	public $classTarget;
 	private $delayCounter;
-	private $targetX;
-	private $targetY;
-	private $targetZ;
+	private $targetX = 0;
+	private $targetY = 0;
+	private $targetZ = 0;
 
 	public function __construct($creature, string $targetClass, float $speedIn, bool $useLongMemory){
 		$this->classTarget = $targetClass;
@@ -55,7 +55,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 			return false;
 		}else if (!$entitylivingbase->isAlive()){
 			return false;
-		}else if ($this->classTarget != null && !($this->classTarget instanceof Human)){
+		}else if ($this->classTarget != null && $this->classTarget != get_class($entitylivingbase)){
 			return false;
 		}else{
 			$this->entityPathEntity = $this->attacker->getNavigator()->getPathToEntityLiving($entitylivingbase);
@@ -79,6 +79,9 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 
 	public function updateTask(){
 		$entitylivingbase = $this->attacker->getAttackTarget();
+		if($entitylivingbase == null){
+			return;
+		}
 		$this->attacker->getLookHelper()->setLookPositionWithEntity($entitylivingbase, 30.0, 30.0);
 		$d0 = $this->attacker->distanceSquared(new Vector3($entitylivingbase->x, $entitylivingbase->getBoundingBox()->minY, $entitylivingbase->z));
 		$d1 = $this->getReachableDistance($entitylivingbase);
@@ -106,7 +109,8 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 		if ($d0 <= $d1 && $this->attackTick <= 0){
 			$this->attackTick = 20;
 
-			$entitylivingbase->attack(2, new EntityDamageByEntityEvent($this, $this->attcker, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 2));
+			$ev = new EntityDamageByEntityEvent($this->attacker, $entitylivingbase, EntityDamageEvent::CAUSE_ENTITY_ATTACK, $this->attacker->getAttributeMap()->getAttribute(Attribute::ATTACK_DAMAGE)->getValue());
+			$entitylivingbase->attack($ev->getFinalDamage(), $ev);
 		}
 	}
 

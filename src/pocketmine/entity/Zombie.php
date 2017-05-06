@@ -50,7 +50,7 @@ class Zombie extends Monster{
 	public function initEntity(){
 		$this->getNavigator()->setBreakDoors(true);
 		$this->tasks->addTask(0, new EntityAISwimming($this));
-		$this->tasks->addTask(2, new EntityAIAttackOnCollide($this, "Player", 1.0, false));//TODO 
+		$this->tasks->addTask(2, new EntityAIAttackOnCollide($this, "pocketmine\Player", 1.0, false));
 		$this->tasks->addTask(5, new EntityAIMoveTowardsRestriction($this, 1.0));
 		$this->tasks->addTask(7, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(8, new EntityAIWatchClosest($this, "pocketmine\Player", 8.0));
@@ -63,6 +63,7 @@ class Zombie extends Monster{
 
 	protected function addAttributes(){
 		parent::addAttributes();
+		$this->getAttributeMap()->getAttribute(Attribute::ATTACK_DAMAGE)->setValue(3.0);
 		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 

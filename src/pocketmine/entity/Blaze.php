@@ -29,6 +29,7 @@ use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAINearestAttackableTarget;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item as ItemItem;
@@ -49,7 +50,7 @@ class Blaze extends Monster{
 		$this->tasks->addTask(7, new EntityAIWander($this, 1.0));
 		$this->tasks->addTask(8, new EntityAIWatchClosest($this, "pocketmine\Player", 8.0));
 		$this->tasks->addTask(8, new EntityAILookIdle($this));
-		//$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, ""));
+		//$this->targetTasks->addTask(1, new EntityAIHurtByTarget($this, true, []));
 		$this->targetTasks->addTask(2, new EntityAINearestAttackableTarget($this, "pocketmine\Player", true));
 		$this->setMaxHealth(20);
 		parent::initEntity();
@@ -58,12 +59,14 @@ class Blaze extends Monster{
 	protected function addAttributes(){
 		parent::addAttributes();
 		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
+		$this->getAttributeMap()->getAttribute(Attribute::FOLLOW_RANGE)->setValue(48.0);
+		$this->getAttributeMap()->getAttribute(Attribute::ATTACK_DAMAGE)->setValue(6.0);
 	}
 
 	public function getName() : string{
 		return "Blaze";
 	}
-	
+
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
@@ -81,6 +84,9 @@ class Blaze extends Monster{
 		parent::spawnTo($player);
 	}
 
+	public function fall($fallDistance){
+	}
+
 	public function onUpdate($currentTick) {
 		parent::onUpdate($currentTick);
 		if (!$this->onGround && $this->motionY < 0.0){
@@ -91,7 +97,8 @@ class Blaze extends Monster{
 
 	public function updateAITasks(){
 		if ($this->isInsideOfWater()){
-			//1.0Damage
+			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_DROWNING, 1.0);
+			$this->attack($ev->getFinalDamage(), $ev);
 		}
 
 		--$this->heightOffsetUpdateTime;
@@ -113,7 +120,7 @@ class Blaze extends Monster{
 	public function getDrops(){
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent and $cause->getDamager() instanceof Player){
-			$lootingL = $cause->getDamager()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING);
+			$lootingL = $cause->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING);
 			$drops = array(ItemItem::get(ItemItem::BLAZE_ROD, 0, mt_rand(0, 2 + $lootingL)));
 			return $drops;
 		}

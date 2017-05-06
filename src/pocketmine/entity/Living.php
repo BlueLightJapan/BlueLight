@@ -65,6 +65,8 @@ abstract class Living extends Entity implements Damageable{
 	private $attackTarget;
 	private $entityLivingToAttack;
 	private $revengeTimer = -1;
+	private $recentlyHit = 0;
+	private $attackingPlayer = null;
 
 	protected function initEntity(){
 		parent::initEntity();
@@ -151,6 +153,23 @@ abstract class Living extends Entity implements Damageable{
 			$deltaX = $this->x - $e->x;
 			$deltaZ = $this->z - $e->z;
 			$this->knockBack($e, $damage, $deltaX, $deltaZ, $source->getKnockBack());
+
+			if ($e != null){
+				if ($e instanceof Living){
+					$this->setRevengeTarget($e);
+				}
+
+				if ($e instanceof Player){
+					$this->recentlyHit = 100;
+					$this->attackingPlayer = $e;
+				}else if ($e instanceof Wolf){
+
+					//if ($e->isTamed()){
+					//	$this->recentlyHit = 100;
+					//	$this->attackingPlayer = null;
+					//}
+				}
+			}
 		}
 
 		$pk = new EntityEventPacket();
@@ -208,9 +227,12 @@ abstract class Living extends Entity implements Damageable{
 			$this->updateEntityActionState();
 			$this->moveStrafing *= 0.98;
 			$this->moveForward *= 0.98;
-			//$this->moveStrafing  = 0.001;
-			//$this->moveForward = 0.05;
 			$this->moveEntityWithHeading($this->moveStrafing, $this->moveForward);
+			if ($this->recentlyHit > 0){
+				--$this->recentlyHit;
+			}else{
+				$this->attackingPlayer = null;
+			}
 		}
 
 		if($this->isAlive()){
@@ -291,7 +313,7 @@ abstract class Living extends Entity implements Damageable{
 				$f4 = 0.91;
 
 				if ($this->onGround){
-					$f4 = 0.91;
+					$f4 = 0.6;
 				}
 
 				$f = 0.16277136 / ($f4 * $f4 * $f4);
@@ -306,16 +328,32 @@ abstract class Living extends Entity implements Damageable{
 				$f4 = 0.91;
 
 				if ($this->onGround){
-					$f4 = 0.91;
+					$f4 = 0.6;
+				}
+
+				if ($this->isOnLadder()){
+					$f6 = 0.15;
+					$this->motionX = $this->clamp($this->motionX, -$f6, $f6);
+					$this->motionZ = $this->clamp($this->motionZ, -$f6, $f6);
+					$this->fallDistance = 0.0;
+
+					if ($this->motionY < -0.15){
+						$this->motionY = -0.15;
+					}
+
+					$flag = $this->isSneaking() && $this instanceof Player;
+
+					if ($flag && $this->motionY < 0.0){
+						$this->motionY = 0.0;
+					}
 				}
 
 				$this->move($this->motionX, $this->motionY, $this->motionZ);
 
-				//if ($this->y > 0.0){
-				//	$this->motionY = -0.1;
-				//}else{
-				//	$this->motionY = 0.0;
-				//}
+				if ($this->isCollidedHorizontally && $this->isOnLadder()){
+					$this->motionY = 0.2;
+				}
+
 				$this->motionY -= 0.08;
 
 				$this->motionY *= 0.9800000190734863;
@@ -475,6 +513,21 @@ abstract class Living extends Entity implements Damageable{
 		$this->isJumping = $jumping;
 	}
 
+	public function getMaxFallHeight() : int{
+		if ($this->getAttackTarget() == null){
+			return 3;
+		}else{
+			$i = $this->getHealth() - $this->getMaxHealth() * 0.33;
+			$i = $i - (3 - 1) * 4;
+
+			if ($i < 0){
+				$i = 0;
+			}
+
+			return $i + 3;
+		}
+	}
+
 	public function getVerticalFaceSpeed(){
 		return 40;
 	}
@@ -531,5 +584,9 @@ abstract class Living extends Entity implements Damageable{
 
 	public function getJumpHelper(){
 		return $this->jumpHelper;
+	}
+
+	public function clamp($num, $min, $max){
+		return $num < $min ? $min : ($num > $max ? $max : $num);
 	}
 }

@@ -21,7 +21,6 @@
 namespace pocketmine\entity\AI;
 
 use pocketmine\entity\Entity;
-use pocketmine\entity\Human;
 
 class EntityAINearestAttackableTarget extends EntityAITarget{
 

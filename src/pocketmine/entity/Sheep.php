@@ -29,6 +29,7 @@ use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAIPanic;
 use pocketmine\entity\AI\EntityAIMate;
 use pocketmine\entity\AI\EntityAITempt;
+use pocketmine\entity\AI\EntityAIFollowParent;
 use pocketmine\block\Wool;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;

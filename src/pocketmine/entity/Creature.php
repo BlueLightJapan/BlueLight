@@ -28,15 +28,15 @@ abstract class Creature extends Living{
 	private $homePosition;
 	private $maximumHomeDistance = 99999999;
 
-	public function getBlockPathWeight($pos){
+	public function getBlockPathWeight($pos) : float{
 		return 0.0;
 	}
 
-	public function isWithinHomeDistanceCurrentPosition(){
+	public function isWithinHomeDistanceCurrentPosition() : bool{
 		return $this->isWithinHomeDistanceFromPosition($this);
 	}
 
-	public function isWithinHomeDistanceFromPosition($pos){
+	public function isWithinHomeDistanceFromPosition($pos) : bool{
 		return $this->maximumHomeDistance == -1.0 ? true : $this->homePosition->distanceSquared($pos) < ($this->maximumHomeDistance * $this->maximumHomeDistance);
 	}
 
@@ -50,7 +50,7 @@ abstract class Creature extends Living{
 		return $this->homePosition;
 	}
 
-	public function getMaximumHomeDistance(){
+	public function getMaximumHomeDistance() : float{
 		return $this->maximumHomeDistance;
 	}
 
@@ -58,7 +58,7 @@ abstract class Creature extends Living{
 		$this->maximumHomeDistance = -1.0;
 	}
 
-	public function hasHome(){
+	public function hasHome() : bool{
 		return $this->maximumHomeDistance != -1.0;
 	}
 
