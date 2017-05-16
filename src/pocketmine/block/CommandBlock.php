@@ -31,7 +31,7 @@ class CommandBlock extends Solid{
 		$this->meta = $meta;
 	}
   
-	public function canBeActivated() : bool {
+	public function canBeActivated() : boolean {
 		return true;
 	}
   
