@@ -1454,6 +1454,7 @@ class Server{
 				"KeepInventory" => false,
 				"TitleTick" => false,
 				"SteveKick" => false,
+				"GolemSpawn" => false,
 				"HungerHealth" => 10,
 				"HungerTimer" => 80,
 				"RideableEntity" => false,
