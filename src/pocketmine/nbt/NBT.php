@@ -392,6 +392,13 @@ class NBT{
 
 					$value = $part;
 				}
+			}else{
+ 			      $type = self::TAG_String;
+ 			}
+ 		}
+ 
+ 		return $value;
+ 	}
 
 	public function get($len){
 		if($len < 0){
