@@ -251,6 +251,7 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::GRASS_PATH] = GrassPath::class;
 
+			self::$list[self::END_ROD] = EndRod::class;
 			self::$list[self::PODZOL] = Podzol::class;
 			self::$list[self::BEETROOT_BLOCK] = Beetroot::class;
 			self::$list[self::STONECUTTER] = Stonecutter::class;
