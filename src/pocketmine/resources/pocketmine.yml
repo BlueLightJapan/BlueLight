@@ -160,7 +160,7 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: bluelig.ht/crash
+ host: bluelig.ht
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
