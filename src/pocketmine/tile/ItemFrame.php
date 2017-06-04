@@ -31,8 +31,6 @@ use pocketmine\nbt\tag\StringTag;
 
 class ItemFrame extends Spawnable{
 
-	public $map_uuid = -1;
-
 	public function __construct(Level $level, CompoundTag $nbt){
 		if(!isset($nbt->ItemRotation)){
 			$nbt->ItemRotation = new ByteTag("ItemRotation", 0);
@@ -84,16 +82,6 @@ class ItemFrame extends Spawnable{
 		$this->onChanged();
 	}
 
-	public function SetMapID(string $mapid){
-		$this->map_uuid = $mapid;
-		$this->namedtag->Map_UUID = new StringTag("map_uuid", $mapid);
-		$this->onChanged();
-	}
-
-	public function getMapID() : string{
-		return $this->map_uuid;
-	}
-
 	public function getSpawnCompound(){
 		$tag = new CompoundTag("", [
 			new StringTag("id", Tile::ITEM_FRAME),
@@ -105,13 +93,7 @@ class ItemFrame extends Spawnable{
 		]);
 		if($this->hasItem()){
 			$tag->Item = $this->namedtag->Item;
-			if($this->getItem()->getId() === Item::FILLED_MAP){
-				if(isset($this->namedtag->Map_UUID)){
-					$tag->Map_UUID = $this->namedtag->Map_UUID;
-				}
-			}
 		}
-
 		return $tag;
 	}
 

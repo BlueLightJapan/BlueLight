@@ -26,7 +26,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class HelpCommand extends VanillaCommand{
 
@@ -38,8 +37,6 @@ class HelpCommand extends VanillaCommand{
 			["?"]
 		);
 		$this->setPermission("pocketmine.command.help");
-		$this->commandParameters["default"] = [new CommandParameter("page", CommandParameter::ARG_TYPE_INT, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

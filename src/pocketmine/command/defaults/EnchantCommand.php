@@ -25,7 +25,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class EnchantCommand extends VanillaCommand{
 
@@ -36,8 +35,6 @@ class EnchantCommand extends VanillaCommand{
 			"%commands.enchant.usage"
 		);
 		$this->setPermission("pocketmine.command.enchant");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

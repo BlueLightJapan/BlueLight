@@ -43,12 +43,6 @@ abstract class Tile extends Position{
 	const MOB_SPAWNER = "MobSpawner";
 	const SIGN = "Sign";
 	const SKULL = "Skull";
-	const DISPENSER = "Dispenser";
-	const DROPPER = "Dropper";
-	const CAULDRON = "Cauldron";
-	const HOPPER = "Hopper";
-	const BEACON = "Beacon";
-	const ENDER_CHEST = "EnderChest";
 
 	public static $tileCount = 1;
 
@@ -71,7 +65,6 @@ abstract class Tile extends Position{
 	public $tickTimer;
 
 	public static function init(){
-		self::registerTile(Beacon::class);
 		self::registerTile(Chest::class);
 		self::registerTile(EnchantTable::class);
 		self::registerTile(FlowerPot::class);
@@ -79,10 +72,6 @@ abstract class Tile extends Position{
 		self::registerTile(ItemFrame::class);
 		self::registerTile(Sign::class);
 		self::registerTile(Skull::class);
-		self::registerTile(Cauldron::class);
-		self::registerTile(Hopper::class);
-		self::registerTile(EnderChest::class);
-
 	}
 
 	/**
@@ -159,6 +148,17 @@ abstract class Tile extends Position{
 		$this->namedtag->z = new IntTag("z", $this->z);
 	}
 
+	public function getCleanedNBT(){
+		$this->saveNBT();
+		$tag = clone $this->namedtag;
+		unset($tag->x, $tag->y, $tag->z, $tag->id);
+		if($tag->getCount() > 0){
+			return $tag;
+		}else{
+			return null;
+		}
+	}
+
 	/**
 	 * @return \pocketmine\block\Block
 	 */
@@ -170,7 +170,7 @@ abstract class Tile extends Position{
 		return false;
 	}
 
-	public final function scheduleUpdate(){
+	final public function scheduleUpdate(){
 		$this->level->updateTiles[$this->id] = $this;
 	}
 
@@ -190,6 +190,7 @@ abstract class Tile extends Position{
 				$level->removeTile($this);
 				$this->setLevel(null);
 			}
+
 			$this->namedtag = null;
 		}
 	}

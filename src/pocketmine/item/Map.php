@@ -21,7 +21,7 @@
 
 namespace pocketmine\item;
 
-use pocketmine\network\protocol\ClientboundMapItemDataPacket;
+use pocketmine\network\mcpe\protocol\ClientboundMapItemDataPacket;
 use pocketmine\Server;
 use pocketmine\utils\Color;
 
