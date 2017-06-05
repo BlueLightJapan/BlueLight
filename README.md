@@ -1,6 +1,6 @@
 ﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-# BlueLight for 1.11.0(Re-create)
+# BlueLight for 1.1.0(Re-create)
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ### Build Status(Stable) [![Build Status](http://jenkins.haniokasai.com/job/BlueLight-PMMP/badge/icon)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/)<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/"> ![Build Status](https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/)[![Gitter](https://badges.gitter.im/bluelight-pm/bluelight-pm.svg)](https://gitter.im/bluelight-pm/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=pr-badge)
