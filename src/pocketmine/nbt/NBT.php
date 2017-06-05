@@ -70,6 +70,42 @@ class NBT{
 	private $offset;
 	public $endianness;
 	private $data;
+	
+		/**
+	 * @param int $type
+	 *
+	 * @return Tag
+	 */
+	public static function createTag(int $type){
+		switch($type){
+			case self::TAG_End:
+				return new EndTag();
+			case self::TAG_Byte:
+				return new ByteTag();
+			case self::TAG_Short:
+				return new ShortTag();
+			case self::TAG_Int:
+				return new IntTag();
+			case self::TAG_Long:
+				return new LongTag();
+			case self::TAG_Float:
+				return new FloatTag();
+			case self::TAG_Double:
+				return new DoubleTag();
+			case self::TAG_ByteArray:
+				return new ByteArrayTag();
+			case self::TAG_String:
+				return new StringTag();
+			case self::TAG_List:
+				return new ListTag();
+			case self::TAG_Compound:
+				return new CompoundTag();
+			case self::TAG_IntArray:
+				return new IntArrayTag();
+			default:
+				throw new \InvalidArgumentException("Unknown NBT tag type $type");
+		}
+	}
 
 	public static function matchList(ListTag $tag1, ListTag $tag2){
 		if($tag1->getName() !== $tag2->getName() or $tag1->getCount() !== $tag2->getCount()){
@@ -357,34 +393,12 @@ class NBT{
 					$value = $part;
 				}
 			}else{
-				$type = self::TAG_String;
-			}
-		}
-
-		return $value;
-	}
-
-	private static function readKey($data, &$offset){
-		$key = "";
-
-		$len = strlen($data);
-		for(; $offset < $len; ++$offset){
-			$c = $data{$offset};
-
-			if($c === ":"){
-				++$offset;
-				break;
-			}elseif($c !== " " and $c !== "\r" and $c !== "\n" and $c !== "\t" and $c !== "\""){
-				$key .= $c;
-			}
-		}
-
-		if($key === ""){
-			throw new \Exception("Syntax error: invalid empty key at offset $offset");
-		}
-
-		return $key;
-	}
+ 			      $type = self::TAG_String;
+ 			}
+ 		}
+ 
+ 		return $value;
+ 	}
 
 	public function get($len){
 		if($len < 0){
@@ -427,11 +441,6 @@ class NBT{
 		$this->read(zlib_decode($buffer));
 	}
 
-	public function readNetworkCompressed($buffer, $compression = ZLIB_ENCODING_GZIP){
-		$this->read(zlib_decode($buffer), false, true);
-	}
-
-
 	/**
 	 * @param bool $network
 	 *
@@ -463,71 +472,19 @@ class NBT{
 		return false;
 	}
 
-	public function writeNetworkCompressed($compression = ZLIB_ENCODING_GZIP, $level = 7){
-		if(($write = $this->write(true)) !== false){
-			return zlib_encode($write, $compression, $level);
-		}
-
-		return false;
-	}
-
 	public function readTag(bool $network = false){
 		if($this->feof()){
-			$tagType = -1; //prevent crashes for empty tags
-		}else{
-			$tagType = $this->getByte();
+		     return new EndTag();
 		}
-		switch($tagType){
-			case NBT::TAG_Byte:
-				$tag = new ByteTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Short:
-				$tag = new ShortTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Int:
-				$tag = new IntTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Long:
-				$tag = new LongTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Float:
-				$tag = new FloatTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Double:
-				$tag = new DoubleTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_ByteArray:
-				$tag = new ByteArrayTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_String:
-				$tag = new StringTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_List:
-				$tag = new ListTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_Compound:
-				$tag = new CompoundTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
-			case NBT::TAG_IntArray:
-				$tag = new IntArrayTag($this->getString($network));
-				$tag->read($this, $network);
-				break;
+		$tagType = $this->getByte();
+ 		$tag = self::createTag($tagType);
+ 
+ 		if($tag instanceof NamedTag){
+ 			$tag->setName($this->getString($network));
+ 			$tag->read($this, $network);
 
-			case NBT::TAG_End: //No named tag
-			default:
-				$tag = new EndTag;
-				break;
 		}
+		
 		return $tag;
 	}
 
