@@ -259,6 +259,9 @@ class Server{
 	public $lightningTime = 200;
 	public $lightningFire = false;
 	public $foodEnabled = false;
+ 
+        public $netherEnabled = false;
+	public $netherName = "nether";
 	public $expEnabled = false;
 	public $hungerHealth = 10;
 	public $hungerTimer = 80;
