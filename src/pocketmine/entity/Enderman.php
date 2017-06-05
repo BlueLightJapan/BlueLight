@@ -31,13 +31,13 @@ use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAINearestAttackableTarget;
 use pocketmine\entity\AI\EntityAIEndermanFindPlayer;
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\block\Block;
 
 class Enderman extends Monster{

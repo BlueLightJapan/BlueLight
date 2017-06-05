@@ -21,7 +21,7 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\entity\AI\EntityAISwimming;
 use pocketmine\entity\AI\EntityAIMate;
 use pocketmine\entity\AI\EntityAIWatchClosest;

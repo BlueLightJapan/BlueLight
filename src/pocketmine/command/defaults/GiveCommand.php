@@ -25,11 +25,10 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\item\Item;
-use pocketmine\nbt\NBT;
+use pocketmine\nbt\JsonNBTParser;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class GiveCommand extends VanillaCommand{
 
@@ -40,8 +39,6 @@ class GiveCommand extends VanillaCommand{
 			"%pocketmine.command.give.usage"
 		);
 		$this->setPermission("pocketmine.command.give");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -68,7 +65,7 @@ class GiveCommand extends VanillaCommand{
 			$tags = $exception = null;
 			$data = implode(" ", array_slice($args, 3));
 			try{
-				$tags = NBT::parseJSON($data);
+				$tags = JsonNBTParser::parseJSON($data);
 			}catch(\Throwable $ex){
 				$exception = $ex;
 			}

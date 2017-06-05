@@ -73,12 +73,9 @@ namespace pocketmine {
 	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
-	const VERSION = "2.0dev";
-	const API_VERSION = "3.0.0";
+	const VERSION = "1.6.2dev";
+	const API_VERSION = "3.0.0-ALPHA5";
 	const CODENAME = "BlueLight";
-	const MINECRAFT_VERSION = "v1.0.9 alpha";
-	const MINECRAFT_VERSION_NETWORK = "1.0.9";
-	const BLUELIGHT_VERSION = "2.0.0";
 
 	/*
 	 * Startup code. Do not look at it, it may harm you.
@@ -86,6 +83,12 @@ namespace pocketmine {
 	 * This is the only non-class based file on this project.
 	 * Enjoy it as much as I did writing it. I don't want to do it again.
 	 */
+
+	if(!extension_loaded("phar")){
+		echo "[CRITICAL] Unable to find the Phar extension." . PHP_EOL;
+		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;
+		exit(1);
+	}
 
 	if(\Phar::running(true) !== ""){
 		@define('pocketmine\PATH', \Phar::running(true) . "/");
@@ -131,8 +134,14 @@ namespace pocketmine {
 
 	set_time_limit(0); //Who set it to 30 seconds?!?!
 
-	gc_enable();
 	error_reporting(-1);
+
+	set_error_handler(function($severity, $message, $file, $line){
+		if((error_reporting() & $severity)){
+			throw new \ErrorException($message, 0, $severity, $file, $line);
+		}
+	});
+
 	ini_set("allow_url_fopen", 1);
 	ini_set("display_errors", 1);
 	ini_set("display_startup_errors", 1);
@@ -231,7 +240,6 @@ namespace pocketmine {
 				}
 
 				return parse_offset($offset);
-				break;
 			case 'linux':
 				// Ubuntu / Debian.
 				if(file_exists('/etc/timezone')){
@@ -258,7 +266,6 @@ namespace pocketmine {
 				}
 
 				return parse_offset($offset);
-				break;
 			case 'mac':
 				if(is_link('/etc/localtime')){
 					$filename = readlink('/etc/localtime');
@@ -269,10 +276,8 @@ namespace pocketmine {
 				}
 
 				return false;
-				break;
 			default:
 				return false;
-				break;
 		}
 	}
 
@@ -360,7 +365,7 @@ namespace pocketmine {
 		return -1;
 	}
 
-	function getTrace($start = 1, $trace = null){
+	function getTrace($start = 0, $trace = null){
 		if($trace === null){
 			if(function_exists("xdebug_get_function_stack")){
 				$trace = array_reverse(xdebug_get_function_stack());
@@ -381,7 +386,7 @@ namespace pocketmine {
 					$args = $trace[$i]["params"];
 				}
 				foreach($args as $name => $value){
-					$params .= (is_object($value) ? get_class($value) . " " . (method_exists($value, "__toString") ? $value->__toString() : "object") : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value)))) . ", ";
+					$params .= (is_object($value) ? get_class($value) . " object" : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value)))) . ", ";
 				}
 			}
 			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . (isset($trace[$i]["line"]) ? $trace[$i]["line"] : "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable(substr($params, 0, -2)) . ")";
@@ -398,11 +403,6 @@ namespace pocketmine {
 
 	if(php_sapi_name() !== "cli"){
 		$logger->critical("You must run PocketMine-MP using the CLI.");
-		++$errors;
-	}
-
-	if(!extension_loaded("sockets")){
-		$logger->critical("Unable to find the Socket extension.");
 		++$errors;
 	}
 
@@ -434,19 +434,21 @@ namespace pocketmine {
 		");
 	}
 
-	if(!extension_loaded("curl")){
-		$logger->critical("Unable to find the cURL extension.");
-		++$errors;
-	}
+	$extensions = [
+		"curl" => "cURL",
+		"json" => "JSON",
+		"mbstring" => "Multibyte String",
+		"yaml" => "YAML",
+		"sockets" => "Sockets",
+		"zip" => "Zip",
+		"zlib" => "Zlib"
+	];
 
-	if(!extension_loaded("yaml")){
-		$logger->critical("Unable to find the YAML extension.");
-		++$errors;
-	}
-
-	if(!extension_loaded("zlib")){
-		$logger->critical("Unable to find the Zlib extension.");
-		++$errors;
+	foreach($extensions as $ext => $name){
+		if(!extension_loaded($ext)){
+			$logger->critical("Unable to find the $name ($ext) extension.");
+			++$errors;
+		}
 	}
 
 	if($errors > 0){
@@ -486,11 +488,6 @@ namespace pocketmine {
 		}
 	}
 
-
-	if(\Phar::running(true) === ""){
-		$logger->warning("Non-packaged PocketMine-MP installation detected, do not use on production.");
-	}
-
 	ThreadManager::init();
 	new Server($autoloader, $logger, \pocketmine\PATH, \pocketmine\DATA, \pocketmine\PLUGIN_PATH);
 
@@ -498,6 +495,7 @@ namespace pocketmine {
 
 	$killer = new ServerKiller(8);
 	$killer->start();
+	usleep(10000); //Fixes ServerKiller not being able to start on single-core machines
 
 	$erroredThreads = 0;
 	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){

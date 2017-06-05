@@ -49,6 +49,16 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 		return $count;
 	}
 
+	public function setValue($value){
+		if(is_array($value)){
+			foreach($value as $name => $tag){
+				if($tag instanceof NamedTag){
+					$this->{$name} = $tag;
+				}
+			}
+		}
+	}
+
 	public function offsetExists($offset){
 		return isset($this->{$offset}) and $this->{$offset} instanceof Tag;
 	}
@@ -110,5 +120,13 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 			}
 		}
 		return $str . "}";
+	}
+
+	public function __clone(){
+		foreach($this as $key => $tag){
+			if($tag instanceof Tag){
+				$this->{$key} = clone $tag;
+			}
+		}
 	}
 }

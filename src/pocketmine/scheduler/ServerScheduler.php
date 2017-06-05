@@ -277,7 +277,6 @@ class ServerScheduler{
 			}elseif(!$task->getOwner()->isEnabled()){
 				throw new PluginException("Plugin '" . $task->getOwner()->getName() . "' attempted to register a task while disabled");
 			}
-
 		}elseif($task instanceof CallbackTask and Server::getInstance()->getProperty("settings.deprecated-verbose", true)){
 			$callable = $task->getCallable();
 			if(is_array($callable)){

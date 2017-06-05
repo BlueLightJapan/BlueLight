@@ -24,7 +24,7 @@ namespace pocketmine\level\weather;
 use pocketmine\event\level\WeatherChangeEvent;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class Weather{
@@ -37,8 +37,8 @@ class Weather{
 
 	private $level;
 	private $weatherNow = 0;
-	private $strength1;
-	private $strength2;
+	private $strength1 = 30000;
+	private $strength2 = 30000;
 	private $duration;
 	private $canCalculate = true;
 

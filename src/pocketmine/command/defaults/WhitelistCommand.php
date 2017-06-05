@@ -25,7 +25,6 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class WhitelistCommand extends VanillaCommand{
 
@@ -36,8 +35,6 @@ class WhitelistCommand extends VanillaCommand{
 			"%commands.whitelist.usage"
 		);
 		$this->setPermission("pocketmine.command.whitelist.reload;pocketmine.command.whitelist.enable;pocketmine.command.whitelist.disable;pocketmine.command.whitelist.list;pocketmine.command.whitelist.add;pocketmine.command.whitelist.remove");
-		//$this->commandParameters["default"] = [new CommandParameter("recipient", CommandParameter::ARG_TYPE_PLAYER, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

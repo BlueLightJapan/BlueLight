@@ -22,9 +22,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\Player;
-use pocketmine\network\protocol\UpdateAttributesPacket;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\MobArmorEquipmentPacket;
+use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\MobArmorEquipmentPacket;
 use pocketmine\math\Vector3;
 use pocketmine\item\Item as ItemItem;
 
@@ -106,14 +106,16 @@ class Pig extends Animal implements Rideable{
 		if($block->isTransparent()) return true;
 		else return false;
 	}
+	/*
 	public function jump($power){
 		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
 		$this->updateMovement();
 	}
+	*/
 	public function getRidePosition(){
 		return [0, 1, 0];
 	}
 
 	public function createChild($ageable){
 	}
-}//Written by kametan0730MC
+}

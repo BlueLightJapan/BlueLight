@@ -31,8 +31,4 @@ class PoweredRail extends Rail{
 	public function getName(){
 		return "Powered Rail";
 	}
-
-	public function isPowered(){
-		return true;//TODO
-	}
 }

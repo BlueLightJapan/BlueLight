@@ -21,7 +21,7 @@ use pocketmine\Player;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
-use pocketmine\network\protocol\EntityEventPacket;
+use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\event\entity\EntityDrinkPotionEvent;
 
 class EnchantingBottle extends Item{

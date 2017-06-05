@@ -23,7 +23,7 @@ namespace pocketmine\entity;
 
 use pocketmine\Player;
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 
 class Husk extends Monster{
 	const NETWORK_ID = 47;

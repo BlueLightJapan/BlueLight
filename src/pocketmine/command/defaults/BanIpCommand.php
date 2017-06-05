@@ -25,7 +25,6 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
-use pocketmine\command\data\CommandParameter;
 
 class BanIpCommand extends VanillaCommand{
 
@@ -36,7 +35,6 @@ class BanIpCommand extends VanillaCommand{
 			"%commands.banip.usage"
 		);
 		$this->setPermission("pocketmine.command.ban.ip");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
