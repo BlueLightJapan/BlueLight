@@ -3690,45 +3690,39 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->type = SetTitlePacket::TYPE_SET_SUBTITLE;
 			$pk->text = $subtitle;
 			$pk->fadeInTime = $fadein;
-			$pk->stayTime = $duration;
-			$pk->fadeOutTime = $fadeout;
-			$this->dataPacket($pk);
-		}
-		$pk = new SetTitlePacket();
-		$pk->type = SetTitlePacket::TYPE_SET_TITLE;
-		$pk->text = $title;
-		$pk->fadeInTime = $fadein;
-		$pk->stayTime = $duration;
-		$pk->fadeOutTime = $fadeout;
-		$this->dataPacket($pk);
-	}
-
-	public function sendSubTitle($subtitle, $fadein = 20, $duration = 5, $fadeout = 20){
-		$pk = new SetTitlePacket();
-		$pk->type = SetTitlePacket::TYPE_SET_TITLE;
-		$pk->text = "";
-		$pk->fadeInTime = $fadein;
-		$pk->stayTime = $duration;
-		$pk->fadeOutTime = $fadeout;
-		$this->dataPacket($pk);
-		$pk = new SetTitlePacket();
-		$pk->type = SetTitlePacket::TYPE_SET_SUBTITLE;
-		$pk->text = $subtitle;
-		$pk->fadeInTime = $fadein;
-		$pk->stayTime = $duration;
-		$pk->fadeOutTime = $fadeout;
-		$this->dataPacket($pk);
-	}
-
-	public function removeTitle(){
-		$pk = new SetTitlePacket();
-		$pk->type = SetTitlePacket::TYPE_CLEAR_TITLE;
-		$pk->text = "";
-		$pk->fadeInTime = 0;
-		$pk->stayTime = 0;
-		$pk->fadeOutTime = 0;
-		$this->dataPacket($pk);
-	}
+        /**
+         * Send a title text or/and with/without a sub title text to a player
+         *
+         * @param $title
+         * @param string $subtitle
+         * @return bool
+         */
+ 	public function sendTitle($title, $subtitle = ""){
+ 		$pk = new SetTitlePacket();
+ 		$pk->type = SetTitlePacket::TYPE_TITLE;
+         	$pk->title = $title;
+ 		$this->dataPacket($pk);
+ 
+ 		if($subtitle !== ""){
+ 			$pk = new SetTitlePacket();
+ 			$pk->type = SetTitlePacket::TYPE_SUB_TITLE;
+ 			$pk->title = $subtitle;
+ 			$this->dataPacket($pk);
+ 		}
+ 	}
+ 
+ 	/**
+ 	 * Send an action bar text to a player
+ 	 *
+ 	 * @param $title
+ 	 * @return bool
+ 	 */
+ 	public function sendActionBar($title){
+ 		$pk = new SetTitlePacket();
+ 		$pk->type = SetTitlePacket::TYPE_ACTION_BAR;
+ 		$pk->title = $title;
+ 		$this->dataPacket($pk);
+ 	}
 
 	/**
 	 * Note for plugin developers: use kick() with the isAdmin
