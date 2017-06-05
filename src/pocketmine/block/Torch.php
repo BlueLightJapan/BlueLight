@@ -34,7 +34,7 @@ class Torch extends Flowable{
 	}
 
 	public function getLightLevel(){
-		return 14;
+		return 15;
 	}
 
 	public function getName(){

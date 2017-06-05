@@ -57,6 +57,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class ParticleCommand extends VanillaCommand{
 

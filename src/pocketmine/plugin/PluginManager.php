@@ -147,13 +147,6 @@ class PluginManager{
 			if(preg_match($loader->getPluginFilters(), basename($path)) > 0){
 				$description = $loader->getPluginDescription($path);
 				if($description instanceof PluginDescription){
-					try{
-						$description->checkRequiredExtensions();
-					}catch(PluginException $ex){
-						$this->server->getLogger()->error($ex->getMessage());
-						return null;
-					}
-
 					if(($plugin = $loader->loadPlugin($path)) instanceof Plugin){
 						$this->plugins[$plugin->getDescription()->getName()] = $plugin;
 
@@ -222,28 +215,14 @@ class PluginManager{
 							foreach($description->getCompatibleApis() as $version){
 								//Format: majorVersion.minorVersion.patch (3.0.0)
 								//    or: majorVersion.minorVersion.patch-devBuild (3.0.0-alpha1)
-								if($version !== $this->server->getApiVersion()){
-									$pluginApi = array_pad(explode("-", $version), 2, ""); //0 = version, 1 = suffix (optional)
-									$serverApi = array_pad(explode("-", $this->server->getApiVersion()), 2, "");
-
-									if(strtoupper($pluginApi[1]) !== strtoupper($serverApi[1])){ //Different release phase (alpha vs. beta) or phase build (alpha.1 vs alpha.2)
-										continue;
-									}
-
-									$pluginNumbers = array_map("intval", explode(".", $pluginApi[0]));
-									$serverNumbers = array_map("intval", explode(".", $serverApi[0]));
-
-									if($pluginNumbers[0] !== $serverNumbers[0]){ //Completely different API version
-										continue;
-									}
-
-									if($pluginNumbers[1] > $serverNumbers[1]){ //If the plugin requires new API features, being backwards compatible
-										continue;
-									}
-								}
 
 								$compatible = true;
 								break;
+							}
+
+							if($compatible === false){
+								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.incompatibleAPI"]));
+								continue;
 							}
 
 							$plugins[$name] = $file;
@@ -756,15 +735,8 @@ class PluginManager{
 		if($class->isAbstract()){
 			throw new PluginException($event . " is an abstract Event");
 		}
-
-		if(!$class->hasProperty("handlerList") or ($property = $class->getProperty("handlerList"))->getDeclaringClass()->getName() !== $event){
-			throw new PluginException($event . " does not have a valid handler list");
-		}
-		if(!$property->isStatic()){
-			throw new PluginException($event . " handlerList property is not static");
-		}
-		if(!$property->isPublic()){
-			throw new PluginException($event . " handlerList property is not public");
+		if($class->getProperty("handlerList")->getDeclaringClass()->getName() !== $event){
+			throw new PluginException($event . " does not have a handler list");
 		}
 
 		if(!$plugin->isEnabled()){

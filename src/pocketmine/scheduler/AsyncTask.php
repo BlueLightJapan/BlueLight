@@ -139,7 +139,7 @@ abstract class AsyncTask extends Collectable{
 	 */
 	public function getFromThreadStore($identifier){
 		global $store;
-		return ($this->isGarbage() or !isset($store[$identifier])) ? null : $store[$identifier];
+		return $this->isGarbage() ? null : $store[$identifier];
 	}
 
 	/**
@@ -161,7 +161,7 @@ abstract class AsyncTask extends Collectable{
 	 *
 	 * @return void
 	 */
-	abstract public function onRun();
+	public abstract function onRun();
 
 	/**
 	 * Actions to execute when completed (on main thread)
@@ -261,8 +261,7 @@ abstract class AsyncTask extends Collectable{
 				$this->{$p} = null;
 			}
 		}
-
-		$this->setGarbage();
 	}
+
 }
 

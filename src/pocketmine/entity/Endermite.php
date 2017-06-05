@@ -19,7 +19,7 @@
 */
 
 namespace pocketmine\entity;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Endermite extends Monster{

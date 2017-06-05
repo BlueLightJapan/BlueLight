@@ -25,7 +25,7 @@ use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\math\AxisAlignedBB;
 
-class Farmland extends Transparent{
+class Farmland extends Solid{
 
 	protected $id = self::FARMLAND;
 

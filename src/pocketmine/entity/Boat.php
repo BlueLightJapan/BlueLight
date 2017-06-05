@@ -21,11 +21,11 @@
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\ByteTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\mcpe\protocol\EntityEventPacket;
+use pocketmine\network\protocol\EntityEventPacket;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;

@@ -35,9 +35,15 @@ class Vector3{
 	public $z;
 
 	public function __construct($x = 0, $y = 0, $z = 0){
-		$this->x = $x;
-		$this->y = $y;
-		$this->z = $z;
+		if($x instanceof Vector3){
+			$this->x = $x->x;
+			$this->y = $x->y;
+			$this->z = $x->z;
+		}else{
+			$this->x = $x;
+			$this->y = $y;
+			$this->z = $z;
+		}
 	}
 
 	public function getX(){
@@ -250,7 +256,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($x, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
 		}
 	}
 
@@ -277,7 +283,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($this->x + $xDiff * $f, $y, $this->z + $zDiff * $f);
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
 		}
 	}
 
@@ -304,7 +310,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $z);
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
 		}
 	}
 

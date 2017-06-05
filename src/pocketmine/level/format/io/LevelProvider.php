@@ -26,7 +26,6 @@ namespace pocketmine\level\format\io;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
-use pocketmine\scheduler\AsyncTask;
 
 interface LevelProvider{
 
@@ -167,9 +166,9 @@ interface LevelProvider{
 	 * @param int $x
 	 * @param int $z
 	 *
-	 * @return AsyncTask
+	 * @return \pocketmine\scheduler\AsyncTask|null
 	 */
-	public function requestChunkTask(int $x, int $z) : AsyncTask;
+	public function requestChunkTask(int $x, int $z);
 
 	/**
 	 * @return string

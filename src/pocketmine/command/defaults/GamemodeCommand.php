@@ -27,6 +27,7 @@ use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use pocketmine\command\data\CommandParameter;
 
 class GamemodeCommand extends VanillaCommand{
 
@@ -34,9 +35,12 @@ class GamemodeCommand extends VanillaCommand{
 		parent::__construct(
 			$name,
 			"%pocketmine.command.gamemode.description",
-			"%commands.gamemode.usage"
+			"%commands.gamemode.usage",
+			["gm"]
 		);
 		$this->setPermission("pocketmine.command.gamemode");
+		//$this->commandParameters["default"] = [new CommandParameter("gamemode", CommandParameter::ARG_TYPE_INT, false)];
+
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

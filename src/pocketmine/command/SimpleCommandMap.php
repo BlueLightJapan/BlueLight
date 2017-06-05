@@ -58,10 +58,12 @@ use pocketmine\command\defaults\TellCommand;
 use pocketmine\command\defaults\TimeCommand;
 use pocketmine\command\defaults\TimingsCommand;
 use pocketmine\command\defaults\TitleCommand;
-use pocketmine\command\defaults\TransferServerCommand;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\defaults\VersionCommand;
 use pocketmine\command\defaults\WhitelistCommand;
+use pocketmine\command\defaults\WeatherCommand;
+use pocketmine\command\defaults\TransferCommand;
+use pocketmine\command\defaults\XpCommand;
 use pocketmine\command\defaults\MakePluginCommand;
 use pocketmine\command\defaults\ExtractPluginCommand;
 use pocketmine\event\TranslationContainer;
@@ -120,19 +122,21 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new TimingsCommand("timings"));
 		$this->register("pocketmine", new TitleCommand("title"));
 		$this->register("pocketmine", new ReloadCommand("reload"));
-		$this->register("pocketmine", new TransferServerCommand("transferserver"));
+		$this->register("pocketmine", new WeatherCommand("weather"));
+		$this->register("pocketmine", new TransferCommand("transfer"));
+		$this->register("pocketmine", new XpCommand("xp"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
 		}
+
 		if($this->server->devtools){
 			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
 			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
 		}
 	}
-
 
 	public function registerAll($fallbackPrefix, array $commands){
 		foreach($commands as $command){
@@ -144,7 +148,7 @@ class SimpleCommandMap implements CommandMap{
 		if($label === null){
 			$label = $command->getName();
 		}
-		$label = trim($label);
+		$label = strtolower(trim($label));
 		$fallbackPrefix = strtolower(trim($fallbackPrefix));
 
 		$registered = $this->registerAlias($command, false, $fallbackPrefix, $label);
@@ -308,6 +312,4 @@ class SimpleCommandMap implements CommandMap{
 
 		}
 	}
-
-
 }

@@ -29,7 +29,7 @@ use pocketmine\entity\AI\EntityAIPanic;
 use pocketmine\entity\AI\EntityAIMate;
 use pocketmine\entity\AI\EntityAITempt;
 use pocketmine\entity\AI\EntityAIFollowParent;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 

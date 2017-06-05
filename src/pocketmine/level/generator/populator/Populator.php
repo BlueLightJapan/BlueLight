@@ -28,5 +28,5 @@ use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 
 abstract class Populator{
-	abstract public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random);
+	public abstract function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random);
 }

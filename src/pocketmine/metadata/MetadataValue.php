@@ -43,11 +43,11 @@ abstract class MetadataValue{
 	 *
 	 * @return mixed
 	 */
-	abstract public function value();
+	public abstract function value();
 
 	/**
 	 * Invalidates this metadata item, forcing it to recompute when next
 	 * accessed.
 	 */
-	abstract public function invalidate();
+	public abstract function invalidate();
 }

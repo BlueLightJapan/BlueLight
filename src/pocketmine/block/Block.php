@@ -54,8 +54,6 @@ class Block extends Position implements BlockIds, Metadatable{
 	public static $hardness = null;
 	/** @var \SplFixedArray */
 	public static $transparent = null;
-	/** @var \SplFixedArray */
-	public static $diffusesSkyLight = null;
 
 	protected $id;
 	protected $meta = 0;
@@ -72,7 +70,6 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$solid = new \SplFixedArray(256);
 			self::$hardness = new \SplFixedArray(256);
 			self::$transparent = new \SplFixedArray(256);
-			self::$diffusesSkyLight = new \SplFixedArray(256);
 			self::$list[self::AIR] = Air::class;
 			self::$list[self::STONE] = Stone::class;
 			self::$list[self::GRASS] = Grass::class;
@@ -135,6 +132,11 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::BURNING_FURNACE] = BurningFurnace::class;
 			self::$list[self::SIGN_POST] = SignPost::class;
 			self::$list[self::WOOD_DOOR_BLOCK] = WoodDoor::class;
+			self::$list[self::SPRUCE_DOOR_BLOCK] = SpruceDoor::class;
+			self::$list[self::BIRCH_DOOR_BLOCK] = BirchDoor::class;
+			self::$list[self::JUNGLE_DOOR_BLOCK] = JungleDoor::class;
+			self::$list[self::ACACIA_DOOR_BLOCK] = AcaciaDoor::class;
+			self::$list[self::DARK_OAK_DOOR_BLOCK] = DarkOakDoor::class;
 			self::$list[self::LADDER] = Ladder::class;
 			self::$list[self::RAIL] = Rail::class;
 
@@ -188,18 +190,22 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::ENCHANTING_TABLE] = EnchantingTable::class;
 			self::$list[self::BREWING_STAND_BLOCK] = BrewingStand::class;
+			self::$list[self::END_PORTAL] = EndPortal::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
 			self::$list[self::END_STONE] = EndStone::class;
+			self::$list[self::END_STONE_BRICKS] = EndStoneBricks::class;
 			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
 			self::$list[self::LIT_REDSTONE_LAMP] = LitRedstoneLamp::class;
 			self::$list[self::SANDSTONE_STAIRS] = SandstoneStairs::class;
 			self::$list[self::EMERALD_ORE] = EmeraldOre::class;
+			self::$list[self::ENDER_CHEST] = EnderChest::class;
 			self::$list[self::TRIPWIRE_HOOK] = TripwireHook::class;
 			self::$list[self::TRIPWIRE] = Tripwire::class;
 			self::$list[self::EMERALD_BLOCK] = Emerald::class;
 			self::$list[self::SPRUCE_WOOD_STAIRS] = SpruceWoodStairs::class;
 			self::$list[self::BIRCH_WOOD_STAIRS] = BirchWoodStairs::class;
 			self::$list[self::JUNGLE_WOOD_STAIRS] = JungleWoodStairs::class;
+			self::$list[self::BEACON] = Beacon::class;
 			self::$list[self::STONE_WALL] = StoneWall::class;
 			self::$list[self::FLOWER_POT_BLOCK] = FlowerPot::class;
 			self::$list[self::CARROT_BLOCK] = Carrot::class;
@@ -214,6 +220,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			self::$list[self::DAYLIGHT_SENSOR] = DaylightSensor::class;
 			self::$list[self::REDSTONE_BLOCK] = Redstone::class;
 
+			self::$list[self::COMMAND_BLOCK] = CommandBlock::class;
 			self::$list[self::QUARTZ_BLOCK] = Quartz::class;
 			self::$list[self::QUARTZ_STAIRS] = QuartzStairs::class;
 			self::$list[self::DOUBLE_WOOD_SLAB] = DoubleWoodSlab::class;
@@ -244,11 +251,18 @@ class Block extends Position implements BlockIds, Metadatable{
 
 			self::$list[self::GRASS_PATH] = GrassPath::class;
 
+			self::$list[self::END_ROD] = EndRod::class;
 			self::$list[self::PODZOL] = Podzol::class;
 			self::$list[self::BEETROOT_BLOCK] = Beetroot::class;
 			self::$list[self::STONECUTTER] = Stonecutter::class;
 			self::$list[self::GLOWING_OBSIDIAN] = GlowingObsidian::class;
 
+			self::$list[self::HOPPER_BLOCK] = Hopper::class;
+		        self::$list[self::DRAGON_EGG] = DragonEgg::class;
+			self::$list[self::CHORUS_FLOWER] = ChorusFlower::class;
+ 			self::$list[self::CHORUS_PLANT] = ChorusPlant::class;
+			self::$list[self::INVISIBLE_BEDROCK] = InvisibleBedrock::class;
+			
 			foreach(self::$list as $id => $class){
 				if($class !== null){
 					/** @var Block $block */
@@ -257,20 +271,31 @@ class Block extends Position implements BlockIds, Metadatable{
 					for($data = 0; $data < 16; ++$data){
 						self::$fullList[($id << 4) | $data] = new $class($data);
 					}
-				}else{
-					$block = new UnknownBlock($id);
 
+					self::$solid[$id] = $block->isSolid();
+					self::$transparent[$id] = $block->isTransparent();
+					self::$hardness[$id] = $block->getHardness();
+					self::$light[$id] = $block->getLightLevel();
+
+					if($block->isSolid()){
+						if($block->isTransparent()){
+							if($block instanceof Liquid or $block instanceof Ice){
+								self::$lightFilter[$id] = 2;
+							}else{
+								self::$lightFilter[$id] = 1;
+							}
+						}else{
+							self::$lightFilter[$id] = 15;
+						}
+					}else{
+						self::$lightFilter[$id] = 1;
+					}
+				}else{
+					self::$lightFilter[$id] = 1;
 					for($data = 0; $data < 16; ++$data){
 						self::$fullList[($id << 4) | $data] = new UnknownBlock($id, $data);
 					}
 				}
-
-				self::$solid[$id] = $block->isSolid();
-				self::$transparent[$id] = $block->isTransparent();
-				self::$hardness[$id] = $block->getHardness();
-				self::$light[$id] = $block->getLightLevel();
-				self::$lightFilter[$id] = $block->getLightFilter() + 1;
-				self::$diffusesSkyLight[$id] = $block->diffusesSkyLight();
 			}
 		}
 	}
@@ -412,29 +437,6 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	/**
-	 * Returns the amount of light this block will filter out when light passes through this block.
-	 * This value is used in light spread calculation.
-	 *
-	 * @return int 0-15
-	 */
-	public function getLightFilter() : int{
-		return 15;
-	}
-
-	/**
-	 * Returns whether this block will diffuse sky light passing through it vertically.
-	 * Diffusion means that full-strength sky light passing through this block will not be reduced, but will start being filtered below the block.
-	 * Examples of this behaviour include leaves and cobwebs.
-	 *
-	 * Light-diffusing blocks are included by the heightmap.
-	 *
-	 * @return bool
-	 */
-	public function diffusesSkyLight() : bool{
-		return false;
-	}
-
-	/**
 	 * AKA: Block->isPlaceable
 	 *
 	 * @return bool
@@ -457,6 +459,9 @@ class Block extends Position implements BlockIds, Metadatable{
 		return false;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isSolid(){
 		return true;
 	}
@@ -484,14 +489,6 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	public function canPassThrough(){
-		return false;
-	}
-
-	/**
-	 * Returns whether entities can climb up this block.
-	 * @return bool
-	 */
-	public function canClimb() : bool{
 		return false;
 	}
 

@@ -46,22 +46,12 @@ class Item implements ItemIds, \JsonSerializable{
 	private static $cachedParser = null;
 
 	private static function parseCompoundTag(string $tag) : CompoundTag{
-		if(strlen($tag) === 0){
-			throw new \InvalidArgumentException("No NBT data found in supplied string");
-		}
-
 		if(self::$cachedParser === null){
 			self::$cachedParser = new NBT(NBT::LITTLE_ENDIAN);
 		}
 
 		self::$cachedParser->read($tag);
-		$data = self::$cachedParser->getData();
-
-		if(!($data instanceof CompoundTag)){
-			throw new \InvalidArgumentException("Invalid item NBT string given, it could not be deserialized");
-		}
-
-		return $data;
+		return self::$cachedParser->getData();
 	}
 
 	private static function writeCompoundTag(CompoundTag $tag) : string{
@@ -75,19 +65,12 @@ class Item implements ItemIds, \JsonSerializable{
 
 	/** @var \SplFixedArray */
 	public static $list = null;
-	/** @var Block|null */
 	protected $block;
-	/** @var int */
 	protected $id;
-	/** @var int */
 	protected $meta;
-	/** @var string */
 	private $tags = "";
-	/** @var CompoundTag|null */
 	private $cachedNBT = null;
-	/** @var int */
 	public $count;
-	/** @var string */
 	protected $name;
 
 	public function canBeActivated(){
@@ -166,6 +149,11 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::GOLDEN_APPLE] = GoldenApple::class;
 			self::$list[self::SIGN] = Sign::class;
 			self::$list[self::WOODEN_DOOR] = WoodenDoor::class;
+			self::$list[self::SPRUCE_DOOR] = SpruceDoor::class;
+			self::$list[self::BIRCH_DOOR] = BirchDoor::class;
+			self::$list[self::JUNGLE_DOOR] = JungleDoor::class;
+			self::$list[self::ACACIA_DOOR] = AcaciaDoor::class;
+			self::$list[self::DARK_OAK_DOOR] = DarkOakDoor::class;
 			self::$list[self::BUCKET] = Bucket::class;
 			self::$list[self::MINECART] = Minecart::class;
 			self::$list[self::IRON_DOOR] = IronDoor::class;
@@ -192,6 +180,8 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::CAKE] = Cake::class;
 			self::$list[self::BED] = Bed::class;
 			self::$list[self::COOKIE] = Cookie::class;
+			self::$list[self::FILLED_MAP] = FilledMap::class;
+			self::$list[self::EMPTY_MAP] = EmptyMap::class;
 			self::$list[self::SHEARS] = Shears::class;
 			self::$list[self::MELON] = Melon::class;
 			self::$list[self::PUMPKIN_SEEDS] = PumpkinSeeds::class;
@@ -224,25 +214,34 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::QUARTZ] = Quartz::class;
 			self::$list[self::QUARTZ] = NetherQuartz::class;
 			self::$list[self::COOKED_RABBIT] = CookedRabbit::class;
-			// self::$list[self::CAMERA] = Camera::class;
+			self::$list[self::CAMERA] = Camera::class;
 			self::$list[self::BEETROOT] = Beetroot::class;
 			self::$list[self::BEETROOT_SEEDS] = BeetrootSeeds::class;
 			self::$list[self::BEETROOT_SOUP] = BeetrootSoup::class;
-			self::$list[self::PRISMARINE_CRYSTALS] = PrismarineCrystals::class;
 			self::$list[self::PRISMARINE_SHARD] = PrismarineShard::class;
+			self::$list[self::PRISMARINE_CRYSTALS] = PrismarineCrystals::class;
 			self::$list[self::NETHER_STAR] = NetherStar::class;
 			self::$list[self::ENCHANTED_GOLDEN_APPLE] = GoldenAppleEnchanted::class;
+			self::$list[self::ENDER_PEARL] = EnderPearl::class;
+			self::$list[self::EYE_OF_ENDER] = EyeOfEnder::class;
+			self::$list[self::DRAGON_BREATH] = DragonBreath::class;
+ 			self::$list[self::POPPED_CHORUS_FRUIT] = PoppedChorusFruit::class; 
+                        self::$list[self::CHORUS_FRUIT] = ChorusFruit::class;
+			self::$list[self::ELYTRA] = Elytra::class;
+			self::$list[self::SHULKER_SHELL] = ShulkerShell::class;
+			self::$list[self::ENCHANTING_BOTTLE] = EnchantingBottle::class;
+			self::$list[self::HOPPER] = Hopper::class;
 
 			for($i = 0; $i < 256; ++$i){
 				if(Block::$list[$i] !== null){
 					self::$list[$i] = Block::$list[$i];
 				}
 			}
+
 		}
 
 		self::initCreativeItems();
 	}
-
 	private static $creative = [];
 
 	private static function initCreativeItems(){
@@ -525,6 +524,20 @@ class Item implements ItemIds, \JsonSerializable{
 		return null;
 	}
 
+	public function getEnchantmentLevel(int $id){
+		if(!$this->hasEnchantments()){
+			return null;
+		}
+
+		foreach($this->getNamedTag()->ench as $entry){
+			if($entry["id"] === $id){
+				return $entry["lvl"];
+			}
+		}
+
+		return 0;
+	}
+
 	/**
 	 * @param Enchantment $ench
 	 */
@@ -668,35 +681,6 @@ class Item implements ItemIds, \JsonSerializable{
 		}
 
 		return $this;
-	}
-
-	public function getLore() : array{
-		$tag = $this->getNamedTagEntry("display");
-		if($tag instanceof CompoundTag and isset($tag->Lore) and $tag->Lore instanceof ListTag){
-			$lines = [];
-			foreach($tag->Lore->getValue() as $line){
-				$lines[] = $line->getValue();
-			}
-
-			return $lines;
-		}
-
-		return [];
-	}
-
-	public function setLore(array $lines){
-		$tag = $this->getNamedTag() ?? new CompoundTag("", []);
-		if(!isset($tag->display)){
-			$tag->display = new CompoundTag("display", []);
-		}
-		$tag->display->Lore = new ListTag("Lore");
-		$tag->display->Lore->setTagType(NBT::TAG_String);
-		$count = 0;
-		foreach($lines as $line){
-			$tag->display->Lore[$count++] = new StringTag("", $line);
-		}
-
-		$this->setNamedTag($tag);
 	}
 
 	/**
@@ -945,7 +929,7 @@ class Item implements ItemIds, \JsonSerializable{
 	 *
 	 * @return bool
 	 */
-	final public function equals(Item $item, bool $checkDamage = true, bool $checkCompound = true) : bool{
+	public final function equals(Item $item, bool $checkDamage = true, bool $checkCompound = true) : bool{
 		if($this->id === $item->getId() and ($checkDamage === false or $this->getDamage() === $item->getDamage())){
 			if($checkCompound){
 				if($item->getCompoundTag() === $this->getCompoundTag()){
@@ -971,7 +955,7 @@ class Item implements ItemIds, \JsonSerializable{
 	 *
 	 * @return bool
 	 */
-	final public function deepEquals(Item $item, bool $checkDamage = true, bool $checkCompound = true) : bool{
+	public final function deepEquals(Item $item, bool $checkDamage = true, bool $checkCompound = true) : bool{
 		return $this->equals($item, $checkDamage, $checkCompound);
 	}
 
@@ -1059,5 +1043,4 @@ class Item implements ItemIds, \JsonSerializable{
 
 		$this->cachedNBT = null;
 	}
-
 }

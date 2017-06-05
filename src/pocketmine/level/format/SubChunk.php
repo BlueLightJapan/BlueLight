@@ -47,11 +47,8 @@ class SubChunk{
 	}
 
 	public function isEmpty() : bool{
-		return (
-			substr_count($this->ids, "\x00") === 4096 and
-			substr_count($this->skyLight, "\xff") === 2048 and
-			substr_count($this->blockLight, "\x00") === 2048
-		);
+		assert(strlen($this->ids) === 4096, "Wrong length of ID array, expecting 4096 bytes, got " . strlen($this->ids));
+		return substr_count($this->ids, "\x00") === 4096;
 	}
 
 	public function getBlockId(int $x, int $y, int $z) : int{
@@ -159,11 +156,9 @@ class SubChunk{
 	}
 
 	public function getHighestBlockAt(int $x, int $z) : int{
-		$low = ($x << 8) | ($z << 4);
-		$i = $low | 0x0f;
-		for(; $i >= $low; --$i){
-			if($this->ids{$i} !== "\x00"){
-				return $i & 0x0f;
+		for($y = 15; $y >= 0; --$y){
+			if($this->ids{($x << 8) | ($z << 4) | $y} !== "\x00"){
+				return $y;
 			}
 		}
 

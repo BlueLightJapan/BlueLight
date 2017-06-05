@@ -28,7 +28,7 @@ use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\Player;
 
-class Ladder extends Transparent{
+class Ladder extends Flowable{
 
 	protected $id = self::LADDER;
 
@@ -50,10 +50,6 @@ class Ladder extends Transparent{
 
 	public function getHardness(){
 		return 0.4;
-	}
-
-	public function canClimb() : bool{
-		return true;
 	}
 
 	public function onEntityCollide(Entity $entity){

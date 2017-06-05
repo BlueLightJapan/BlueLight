@@ -27,7 +27,7 @@ use pocketmine\entity\AI\EntityAIHurtByTarget;
 use pocketmine\entity\AI\EntityAILookIdle;
 use pocketmine\entity\AI\EntityAIWander;
 use pocketmine\entity\AI\EntityAINearestAttackableTarget;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;

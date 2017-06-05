@@ -34,7 +34,7 @@ abstract class Tag extends \stdClass{
 		return $this->value;
 	}
 
-	abstract public function getType();
+	public abstract function getType();
 
 	public function setValue($value){
 		$this->value = $value;

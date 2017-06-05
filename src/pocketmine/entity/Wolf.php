@@ -20,7 +20,7 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 

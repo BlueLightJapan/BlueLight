@@ -23,7 +23,7 @@ namespace pocketmine\entity;
 
 
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\mcpe\protocol\AddPaintingPacket;
+use pocketmine\network\protocol\AddPaintingPacket;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\Player;
 use pocketmine\level\particle\DestroyBlockParticle;

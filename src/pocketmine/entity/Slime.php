@@ -26,7 +26,7 @@ use pocketmine\entity\AI\EntityAISlimeFloat;
 use pocketmine\entity\AI\EntityAISlimeAttack;
 use pocketmine\entity\AI\EntityAISlimeFaceRandom;
 use pocketmine\entity\AI\EntityAISlimeHop;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;

@@ -26,10 +26,10 @@ use pocketmine\event\entity\EntityArmorChangeEvent;
 use pocketmine\event\entity\EntityInventoryChangeEvent;
 use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\item\Item;
-use pocketmine\network\mcpe\protocol\ContainerSetContentPacket;
-use pocketmine\network\mcpe\protocol\ContainerSetSlotPacket;
-use pocketmine\network\mcpe\protocol\MobArmorEquipmentPacket;
-use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
+use pocketmine\network\protocol\ContainerSetContentPacket;
+use pocketmine\network\protocol\ContainerSetSlotPacket;
+use pocketmine\network\protocol\MobArmorEquipmentPacket;
+use pocketmine\network\protocol\MobEquipmentPacket;
 use pocketmine\Player;
 use pocketmine\Server;
 
@@ -64,22 +64,14 @@ class PlayerInventory extends BaseInventory{
 	 */
 	public function equipItem(int $hotbarSlot, $inventorySlot = null) : bool{
 		if($inventorySlot === null){
-			$inventorySlot = $this->getHotbarSlotIndex($hotbarSlot);
+			$inventorySlot = $this->getHotbarSlotIndex($this->getHeldItemIndex());
 		}
-
 		if($hotbarSlot < 0 or $hotbarSlot >= $this->getHotbarSize() or $inventorySlot < -1 or $inventorySlot >= $this->getSize()){
 			$this->sendContents($this->getHolder());
 			return false;
 		}
 
-		if($inventorySlot === -1){
-			$item = Item::get(Item::AIR, 0, 0);
-		}else{
-			$item = $this->getItem($inventorySlot);
-		}
-
-		$this->getHolder()->getLevel()->getServer()->getPluginManager()->callEvent($ev = new PlayerItemHeldEvent($this->getHolder(), $item, $inventorySlot, $hotbarSlot));
-
+		$this->getHolder()->getLevel()->getServer()->getPluginManager()->callEvent($ev = new PlayerItemHeldEvent($this->getHolder(), $this->getItem($inventorySlot), $inventorySlot, $hotbarSlot));
 		if($ev->isCancelled()){
 			$this->sendContents($this->getHolder());
 			return false;
@@ -111,36 +103,16 @@ class PlayerInventory extends BaseInventory{
 	 * @param int $inventorySlot
 	 */
 	public function setHotbarSlotIndex($hotbarSlot, $inventorySlot){
-		if($hotbarSlot < 0 or $hotbarSlot >= $this->getHotbarSize()){
-			throw new \InvalidArgumentException("Hotbar slot index \"$hotbarSlot\" is out of range");
-		}elseif($inventorySlot < -1 or $inventorySlot >= $this->getSize()){
-			throw new \InvalidArgumentException("Inventory slot index \"$inventorySlot\" is out of range");
-		}
-
-		if($inventorySlot !== -1 and ($alreadyEquippedIndex = array_search($inventorySlot, $this->hotbar)) !== false){
-			/* Swap the slots
-			 * This assumes that the equipped slot can only be equipped in one other slot
-			 * it will not account for ancient bugs where the same slot ended up linked to several hotbar slots.
-			 * Such bugs will require a hotbar reset to default.
-			 */
-			$this->hotbar[$alreadyEquippedIndex] = $this->hotbar[$hotbarSlot];
-		}
-
-		$this->hotbar[$hotbarSlot] = $inventorySlot;
-	}
-
-	/**
-	 * Returns the item in the slot linked to the specified hotbar slot, or Air if the slot is not linked to any hotbar slot.
-	 * @param int $hotbarSlotIndex
-	 *
-	 * @return Item
-	 */
-	public function getHotbarSlotItem(int $hotbarSlotIndex) : Item{
-		$inventorySlot = $this->getHotbarSlotIndex($hotbarSlotIndex);
-		if($inventorySlot !== -1){
-			return $this->getItem($inventorySlot);
-		}else{
-			return Item::get(Item::AIR, 0, 0);
+		if($hotbarSlot >= 0 and $hotbarSlot < $this->getHotbarSize() and $inventorySlot >= -1 and $inventorySlot < $this->getSize()){
+			if($inventorySlot !== -1 and ($alreadyEquippedIndex = array_search($inventorySlot, $this->hotbar)) !== false){
+				/* Swap the slots
+				 * This assumes that the equipped slot can only be equipped in one other slot
+				 * it will not account for ancient bugs where the same slot ended up linked to several hotbar slots.
+				 * Such bugs will require a hotbar reset to default.
+				 */
+				$this->hotbar[$alreadyEquippedIndex] = $this->hotbar[$hotbarSlot];
+			}
+			$this->hotbar[$hotbarSlot] = $inventorySlot;
 		}
 	}
 
@@ -179,8 +151,6 @@ class PlayerInventory extends BaseInventory{
 			}
 
 			$this->sendHeldItem($this->getHolder()->getViewers());
-		}else{
-			throw new \InvalidArgumentException("Hotbar slot index \"$index\" is out of range");
 		}
 	}
 
@@ -190,7 +160,12 @@ class PlayerInventory extends BaseInventory{
 	 * @return Item
 	 */
 	public function getItemInHand(){
-		return $this->getHotbarSlotItem($this->itemInHandIndex);
+		$item = $this->getItem($this->getHeldItemSlot());
+		if($item instanceof Item){
+			return $item;
+		}else{
+			return Item::get(Item::AIR, 0, 0);
+		}
 	}
 
 	/**
@@ -239,13 +214,16 @@ class PlayerInventory extends BaseInventory{
 
 		if(!is_array($target)){
 			$target->dataPacket($pk);
-			if($this->getHeldItemSlot() !== -1 and $target === $this->getHolder()){
+			if($target === $this->getHolder()){
 				$this->sendSlot($this->getHeldItemSlot(), $target);
 			}
 		}else{
 			$this->getHolder()->getLevel()->getServer()->broadcastPacket($target, $pk);
-			if($this->getHeldItemSlot() !== -1 and in_array($this->getHolder(), $target)){
-				$this->sendSlot($this->getHeldItemSlot(), $this->getHolder());
+			foreach($target as $player){
+				if($player === $this->getHolder()){
+					$this->sendSlot($this->getHeldItemSlot(), $player);
+					break;
+				}
 			}
 		}
 	}
@@ -423,7 +401,6 @@ class PlayerInventory extends BaseInventory{
 				$pk2 = new ContainerSetContentPacket();
 				$pk2->windowid = ContainerSetContentPacket::SPECIAL_ARMOR;
 				$pk2->slots = $armor;
-				$pk2->targetEid = $player->getId();
 				$player->dataPacket($pk2);
 			}else{
 				$player->dataPacket($pk);
@@ -513,7 +490,6 @@ class PlayerInventory extends BaseInventory{
 				continue;
 			}
 			$pk->windowid = $id;
-			$pk->targetEid = $player->getId(); //TODO: check if this is correct
 			$player->dataPacket(clone $pk);
 		}
 	}
@@ -521,13 +497,12 @@ class PlayerInventory extends BaseInventory{
 	public function sendCreativeContents(){
 		$pk = new ContainerSetContentPacket();
 		$pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
-		if($this->getHolder()->getGamemode() === Player::CREATIVE){
-			foreach(Item::getCreativeItems() as $i => $item){
-				$pk->slots[$i] = clone $item;
-			}
+		$player = $this->getHolder();
+		if($player->getGamemode() === Player::CREATIVE){
+			$creativeitems = $player->getCreativeItems();
+			$pk->slots = array_merge(Item::getCreativeItems(), $creativeitems);
 		}
-		$pk->targetEid = $this->getHolder()->getId();
-		$this->getHolder()->dataPacket($pk);
+		$player->dataPacket($pk);
 	}
 
 	/**

@@ -22,8 +22,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\level\Level;
+use pocketmine\level\particle\CriticalParticle;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Arrow extends Projectile{
@@ -38,9 +39,12 @@ class Arrow extends Projectile{
 
 	protected $damage = 2;
 
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null, bool $critical = false){
+	protected $isCritical;
+
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null, $critical = false){
+		$this->isCritical = (bool) $critical;
 		parent::__construct($level, $nbt, $shootingEntity);
-		$this->setCritical($critical);
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_CRITICAL, $critical);
 	}
 
 	public function isCritical() : bool{
@@ -86,7 +90,7 @@ class Arrow extends Projectile{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = Arrow::NETWORK_ID;
-		$pk->entityRuntimeId = $this->getId();
+		$pk->eid = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

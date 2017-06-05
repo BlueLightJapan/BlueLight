@@ -56,7 +56,7 @@ class ItemFrame extends Flowable{
 				new FloatTag("ItemDropChance", 1.0),
 				new ByteTag("ItemRotation", 0)
 			]);
-			$tile = Tile::createTile(Tile::ITEM_FRAME, $this->getLevel(), $nbt);
+			$tile = Tile::createTile(Tile::ITEM_FRAME, $this->level, $nbt);
 		}
 
 		if($tile->hasItem()){
@@ -67,6 +67,9 @@ class ItemFrame extends Flowable{
 				$frameItem->setCount(1);
 				$item->setCount($item->getCount() - 1);
 				$tile->setItem($frameItem);
+				if($item->getId() === Item::FILLED_MAP){
+					$tile->SetMapID($item->getMapId());
+				}
 				if($player instanceof Player and $player->isSurvival()){
 					$player->getInventory()->setItemInHand($item->getCount() <= 0 ? Item::get(Item::AIR) : $item);
 				}
@@ -133,7 +136,7 @@ class ItemFrame extends Flowable{
 			}
 		}
 
-		Tile::createTile(Tile::ITEM_FRAME, $this->getLevel(), $nbt);
+		Tile::createTile(Tile::ITEM_FRAME, $this->level, $nbt);
 
 		return true;
 

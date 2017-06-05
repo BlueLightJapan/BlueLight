@@ -40,10 +40,6 @@ class Ice extends Transparent{
 		return 0.5;
 	}
 
-	public function getLightFilter() : int{
-		return 2;
-	}
-
 	public function getToolType(){
 		return Tool::TYPE_PICKAXE;
 	}

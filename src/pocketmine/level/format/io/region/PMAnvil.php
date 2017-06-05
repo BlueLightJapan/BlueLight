@@ -104,7 +104,7 @@ class PMAnvil extends Anvil{
 	public function nbtDeserialize(string $data){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
 		try{
-			$nbt->readCompressed($data);
+			$nbt->readCompressed($data, ZLIB_ENCODING_DEFLATE);
 
 			$chunk = $nbt->getData();
 
@@ -149,9 +149,5 @@ class PMAnvil extends Anvil{
 
 	public static function getProviderName() : string{
 		return "pmanvil";
-	}
-
-	public static function getPcWorldFormatVersion() : int{
-		return -1; //Not a PC format, only PocketMine-MP
 	}
 }
