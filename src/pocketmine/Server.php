@@ -1553,7 +1553,7 @@ class Server{
 			$this->hungerTimer = $this->getBlueLightConfigInt("HungerTimer", 80);
 			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
 			$this->keepInventory = $this->getProperty("KeepInventory", false);
-			$this->titletick = $this->getProperty("TitleTick", true);
+			$this->titletick = $this->getProperty("TitleTick", false);
 			$this->stevekick = $this->getProperty("SteveKick", false);
 			$this->golemspawn = $this->getProperty("GolemSpawn", false);
 			$this->rideableentity = $this->getProperty("RideableEntity", false);
@@ -2462,21 +2462,23 @@ class Server{
 	}
 
 	private function titleTick(){
-		$d = Utils::getRealMemoryUsage();
 
-		$u = Utils::getMemoryUsage(true);
-		$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
+		if($this->titletick){
+			$d = Utils::getRealMemoryUsage();
+			$u = Utils::getMemoryUsage(true);
+			$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
 
-		echo "\x1b]0;" . $this->getName() . " " .
-			$this->getPocketMineVersion() .
-			" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
-			" | Memory " . $usage .
-			" | U " . round($this->network->getUpload() / 1024, 2) .
-			" D " . round($this->network->getDownload() / 1024, 2) .
-			" kB/s | TPS " . $this->getTicksPerSecondAverage() .
-			" | Load " . $this->getTickUsageAverage() . "%\x07";
+			echo "\x1b]0;" . $this->getName() . " " .
+				$this->getPocketMineVersion() .
+				" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
+				" | Memory " . $usage .
+				" | U " . round($this->network->getUpload() / 1024, 2) .
+				" D " . round($this->network->getDownload() / 1024, 2) .
+				" kB/s | TPS " . $this->getTicksPerSecondAverage() .
+				" | Load " . $this->getTickUsageAverage() . "%\x07";
 
-		$this->network->resetStatistics();
+			$this->network->resetStatistics();
+		}
 	}
 
 	/**
