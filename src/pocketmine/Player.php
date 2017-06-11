@@ -3493,10 +3493,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @param int    $stay Duration in ticks to stay on screen for
 	 * @param int    $fadeOut Duration in ticks for fade-out.
 	 */
-	public function addTitle(string $title, string $subtitle = "", int $fadeIn = -1, int $stay = -1, int $fadeOut = -1){
+	public function sendTitle(string $title, string $subtitle = "", int $fadeIn = 20, int $stay = 5, int $fadeOut = 20){
 		$this->setTitleDuration($fadeIn, $stay, $fadeOut);
 		if($subtitle !== ""){
-			$this->addSubTitle($subtitle);
+			$this->sendSubTitle($subtitle);
 		}
 		$this->sendTitleText($title, SetTitlePacket::TYPE_SET_TITLE);
 	}
@@ -3506,7 +3506,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @param string $subtitle
 	 */
-	public function addSubTitle(string $subtitle){
+	public function sendSubTitle(string $subtitle){
 		$this->sendTitleText($subtitle, SetTitlePacket::TYPE_SET_SUBTITLE);
 	}
 
@@ -3522,7 +3522,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * Removes the title from the client's screen.
 	 */
-	public function removeTitles(){
+	public function removeTitle(){
 		$pk = new SetTitlePacket();
 		$pk->type = SetTitlePacket::TYPE_CLEAR_TITLE;
 		$this->dataPacket($pk);
