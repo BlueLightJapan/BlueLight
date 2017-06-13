@@ -3,7 +3,7 @@
 # BlueLight for 1.11.0(Abandoned)
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
-# This project was discarded(Only pull request will be merged.)
+# This project was discarded(Only pull request will be merged.) (And @caspervanneck wil revive it)
 
 # プロジェクトは終了しました（プルリクエストは受け付けます）
 
