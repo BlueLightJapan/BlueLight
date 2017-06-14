@@ -7,8 +7,6 @@ settings:
  #Three-letter language code for server-side localization
  #Check your language code on https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
  language: "eng"
- #Check your timezone code on http://php.net/manual/en/timezones.php
- timezone: "Asia/Singapore"
  #Whether to send all strings translated to server locale or let the device handle them
  force-language: false
  shutdown-message: "Server closed"
@@ -85,6 +83,12 @@ network:
  #Experimental, only for Windows. Tries to use UPnP to automatically port forward
  upnp-forwarding: false
 
+developer:
+  incompatible-plugins:
+    load: true
+  folder-plugin-loader: true
+  devtools-commands: true #TODO
+
 debug:
  #To enable assertion execution, set zend.assertions in your php.ini to 1
  assertions:
@@ -156,11 +160,11 @@ spawn-limits:
 
 auto-report:
  #Send crash reports for processing
- enabled: true
+ enabled: false
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: bluelig.ht
+ host: crash.pocketmine.net
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking

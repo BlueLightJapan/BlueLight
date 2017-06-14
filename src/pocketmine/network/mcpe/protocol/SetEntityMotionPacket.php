@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
@@ -29,19 +31,19 @@ use pocketmine\network\mcpe\NetworkSession;
 class SetEntityMotionPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::SET_ENTITY_MOTION_PACKET;
 
-	public $eid;
+	public $entityRuntimeId;
 	public $motionX;
 	public $motionY;
 	public $motionZ;
 
 	public function decode(){
-		$this->eid = $this->getEntityRuntimeId();
+		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->getVector3f($this->motionX, $this->motionY, $this->motionZ);
 	}
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityRuntimeId($this->eid);
+		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putVector3f($this->motionX, $this->motionY, $this->motionZ);
 	}
 

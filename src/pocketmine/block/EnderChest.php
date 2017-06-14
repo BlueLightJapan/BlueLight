@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -45,7 +47,7 @@ class EnderChest extends Transparent{
 		return true;
 	}
 
-	public function getHardness() : float{
+	public function getHardness(){
 		return 22.5;
 	}
 
@@ -99,6 +101,7 @@ class EnderChest extends Transparent{
 
 	public function onBreak(Item $item){
 		$this->getLevel()->setBlock($this, new Air(), true, true);
+
 		return true;
 	}
 
@@ -117,10 +120,6 @@ class EnderChest extends Transparent{
 					new IntTag("z", $this->z)
 				]);
  				Tile::createTile("EnderChest", $this->getLevel(), $nbt);
-			}
-
-			if($player->isCreative()){
-				return true;
 			}
 
 			$player->getEnderChestInventory()->openAt($this);

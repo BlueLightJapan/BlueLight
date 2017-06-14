@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
@@ -396,7 +398,7 @@ class Effect{
 		}
 		if($entity instanceof Player){
 			$pk = new MobEffectPacket();
-			$pk->eid = $entity->getId();
+			$pk->entityRuntimeId = $entity->getId();
 			$pk->effectId = $this->getId();
 			$pk->amplifier = $this->getAmplifier();
 			$pk->particles = $this->isVisible();
@@ -468,7 +470,7 @@ class Effect{
 		}
 		if($entity instanceof Player){
 			$pk = new MobEffectPacket();
-			$pk->eid = $entity->getId();
+			$pk->entityRuntimeId = $entity->getId();
 			$pk->eventId = MobEffectPacket::EVENT_REMOVE;
 			$pk->effectId = $this->getId();
 
