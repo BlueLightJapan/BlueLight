@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
@@ -34,7 +36,7 @@ class MovePlayerPacket extends DataPacket{
 	const MODE_TELEPORT = 2;
 	const MODE_PITCH = 3; //facepalm Mojang
 
-	public $eid;
+	public $entityRuntimeId;
 	public $x;
 	public $y;
 	public $z;
@@ -48,7 +50,7 @@ class MovePlayerPacket extends DataPacket{
 	public $int2 = 0;
 
 	public function decode(){
-		$this->eid = $this->getEntityRuntimeId();
+		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->getVector3f($this->x, $this->y, $this->z);
 		$this->pitch = $this->getLFloat();
 		$this->yaw = $this->getLFloat();
@@ -64,7 +66,7 @@ class MovePlayerPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityRuntimeId($this->eid);
+		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putVector3f($this->x, $this->y, $this->z);
 		$this->putLFloat($this->pitch);
 		$this->putLFloat($this->yaw);

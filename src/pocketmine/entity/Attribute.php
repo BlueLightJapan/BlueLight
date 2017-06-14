@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\entity;
 
 class Attribute{
@@ -106,7 +108,7 @@ class Attribute{
 		return null;
 	}
 
-	public function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
+	private function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
 		$this->id = (int) $id;
 		$this->name = (string) $name;
 		$this->minValue = (float) $minValue;

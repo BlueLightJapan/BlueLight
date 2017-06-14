@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command;
 
 use pocketmine\command\defaults\BanCommand;
@@ -36,7 +38,7 @@ use pocketmine\command\defaults\GiveCommand;
 use pocketmine\command\defaults\HelpCommand;
 use pocketmine\command\defaults\KickCommand;
 use pocketmine\command\defaults\KillCommand;
-use pocketmine\command\defaults\ListCommand;
+//use pocketmine\command\defaults\ListCommand; 
 use pocketmine\command\defaults\MeCommand;
 use pocketmine\command\defaults\OpCommand;
 use pocketmine\command\defaults\PardonCommand;
@@ -62,8 +64,6 @@ use pocketmine\command\defaults\TransferServerCommand;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\defaults\VersionCommand;
 use pocketmine\command\defaults\WhitelistCommand;
-use pocketmine\command\defaults\MakePluginCommand;
-use pocketmine\command\defaults\ExtractPluginCommand;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
@@ -98,7 +98,7 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("pocketmine", new PardonIpCommand("pardon-ip"));
 		$this->register("pocketmine", new SayCommand("say"));
 		$this->register("pocketmine", new MeCommand("me"));
-		$this->register("pocketmine", new ListCommand("list"));
+		//$this->register("pocketmine", new ListCommand("list"));
 		$this->register("pocketmine", new DifficultyCommand("difficulty"));
 		$this->register("pocketmine", new KickCommand("kick"));
 		$this->register("pocketmine", new OpCommand("op"));
@@ -126,10 +126,6 @@ class SimpleCommandMap implements CommandMap{
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
-		}
-		if($this->server->devtools){
-			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
-			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
 		}
 	}
 

@@ -19,8 +19,12 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\item\enchantment;
 
+
+use pocketmine\Server;
 
 class Enchantment{
 
@@ -103,12 +107,31 @@ class Enchantment{
 		return new Enchantment(self::TYPE_INVALID, "unknown", 0, 0, 0);
 	}
 
+    public static function registerEnchantment($id, $name, $rarity, $activationType, $slot) {
+        if (isset(self::$enchantments[$id])) {
+            Server::getInstance()->getLogger()->debug("Unable to register enchantment with id $id.");
+            return new Enchantment(self::TYPE_INVALID, "unknown", 0, 0, 0);
+        }
+        self::$enchantments[$id] = new Enchantment($id, $name, $rarity, $activationType, $slot);
+        return new Enchantment($id, $name, $rarity, $activationType, $slot);
+    }
+
+    /**
+     * @deprecated Use {@link Enchantment#getEnchantmentByName} instead, as this will be removed in the future.
+     */
 	public static function getEffectByName($name){
 		if(defined(Enchantment::class . "::TYPE_" . strtoupper($name))){
 			return self::getEnchantment(constant(Enchantment::class . "::TYPE_" . strtoupper($name)));
 		}
 		return null;
 	}
+
+    public static function getEnchantmentByName($name){
+        if(defined(Enchantment::class . "::TYPE_" . strtoupper($name))){
+            return self::getEnchantment(constant(Enchantment::class . "::TYPE_" . strtoupper($name)));
+        }
+        return null;
+    }
 
 	private $id;
 	private $level = 1;

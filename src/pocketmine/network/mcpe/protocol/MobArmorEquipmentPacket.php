@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
@@ -30,12 +32,12 @@ use pocketmine\network\mcpe\NetworkSession;
 class MobArmorEquipmentPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::MOB_ARMOR_EQUIPMENT_PACKET;
 
-	public $eid;
+	public $entityRuntimeId;
 	/** @var Item[] */
 	public $slots = [];
 
 	public function decode(){
-		$this->eid = $this->getEntityRuntimeId();
+		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->slots[0] = $this->getSlot();
 		$this->slots[1] = $this->getSlot();
 		$this->slots[2] = $this->getSlot();
@@ -44,7 +46,7 @@ class MobArmorEquipmentPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityRuntimeId($this->eid);
+		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putSlot($this->slots[0]);
 		$this->putSlot($this->slots[1]);
 		$this->putSlot($this->slots[2]);

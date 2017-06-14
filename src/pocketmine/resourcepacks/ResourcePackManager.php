@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 
 namespace pocketmine\resourcepacks;
 
@@ -55,6 +57,7 @@ class ResourcePackManager{
 		$this->path = $path;
 
 		if(!file_exists($this->path)){
+			$this->server->getLogger()->debug("Resource packs path $path does not exist, creating directory");
 			mkdir($this->path);
 		}elseif(!is_dir($this->path)){
 			throw new \InvalidArgumentException("Resource packs path $path exists and is not a directory");

@@ -177,7 +177,7 @@ class Vine extends Transparent{
 	public function getDrops(Item $item){
 		if($item->isShears()){
 			return [
-				Item::get($this->getId(), 0, 1)
+				[$this->id, 0, 1],
 			];
 		}else{
 			return [];
