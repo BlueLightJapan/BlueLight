@@ -1,6 +1,6 @@
 ﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-# BlueLight for 1.11.0(Abandoned)
+# BlueLight for 1.1.0(Abandoned)
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 
@@ -51,7 +51,7 @@ HP : http://bluelight.cf<br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
 <br>
 <br>
-## サーバーの負荷を調べることができます！
+## サーバーの負荷を調べることができまべす！
 http://blog.haniokasai.com/2017/04/minecraft-pcbukkitpepocketminenukkittim.html
  
 ##Pharを楽して作ったり、crashdumpやvardumpが解析できます！
