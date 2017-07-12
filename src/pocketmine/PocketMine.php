@@ -81,7 +81,7 @@ namespace pocketmine {
 	const VERSION = "2.1dev-1";
 	const API_VERSION = "3.0.0";
 	const CODENAME = "From PrismLight";
-	const BLUELIGHT_VERSION = "2.1.0";
+	const BLUELIGHT_VERSION = "2.1.1";
 
 	/*
 	 * Startup code. Do not look at it, it may harm you.

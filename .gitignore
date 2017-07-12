@@ -6,8 +6,7 @@ timings/*
 *.log
 *.txt
 *.phar
-bluelight.properties
-server.properties
+*.properties
 /pocketmine.yml
 memoryDump_*/*
 resource_packs/

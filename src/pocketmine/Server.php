@@ -1527,9 +1527,8 @@ class Server{
                                |___/
 
   Faster and more advanced while maintaining backwards compatibility.
-  §8GitHub: §7https://github.com/BlueLightJapan/PrismLight
+  §8GitHub: §7https://github.com/BlueLightJapan/BlueLight
 ");
-// TODO: URLをリポジトリ移動時に変更
 
 			$this->logger->info("Loading pocketmine.yml...");
 			if(!file_exists($this->dataPath . "pocketmine.yml")){
