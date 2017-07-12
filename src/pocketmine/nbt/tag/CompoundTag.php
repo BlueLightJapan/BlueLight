@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\nbt\tag;
 
 use pocketmine\nbt\NBT;
@@ -28,14 +30,13 @@ use pocketmine\nbt\NBT;
 class CompoundTag extends NamedTag implements \ArrayAccess{
 
 	/**
+	 * CompoundTag constructor.
+	 *
 	 * @param string     $name
 	 * @param NamedTag[] $value
 	 */
-	public function __construct($name = "", $value = []){
-		$this->__name = $name;
-		foreach($value as $tag){
-			$this->{$tag->getName()} = $tag;
-		}
+	public function __construct(string $name = "", array $value = []){
+		parent::__construct($name, $value);
 	}
 
 	public function getCount(){
@@ -47,6 +48,25 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 		}
 
 		return $count;
+	}
+
+	/**
+	 * @param NamedTag[] $value
+	 *
+	 * @throws \TypeError
+	 */
+	public function setValue($value){
+		if(is_array($value)){
+			foreach($value as $name => $tag){
+				if($tag instanceof NamedTag){
+					$this->{$tag->getName()} = $tag;
+				}else{
+					throw new \TypeError("CompoundTag members must be NamedTags, got " . gettype($tag) . " in given array");
+				}
+			}
+		}else{
+			throw new \TypeError("CompoundTag value must be NamedTag[], " . gettype($value) . " given");
+		}
 	}
 
 	public function offsetExists($offset){
@@ -110,5 +130,13 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 			}
 		}
 		return $str . "}";
+	}
+
+	public function __clone(){
+		foreach($this as $key => $tag){
+			if($tag instanceof Tag){
+				$this->{$key} = clone $tag;
+			}
+		}
 	}
 }

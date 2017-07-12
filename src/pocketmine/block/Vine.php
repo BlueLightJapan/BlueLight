@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\entity\Entity;
@@ -26,9 +28,14 @@ use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Vine extends Transparent{
+	const FLAG_SOUTH = 0x01;
+	const FLAG_WEST = 0x02;
+	const FLAG_NORTH = 0x04;
+	const FLAG_EAST = 0x08;
 
 	protected $id = self::VINE;
 
@@ -56,6 +63,10 @@ class Vine extends Transparent{
 		return true;
 	}
 
+	public function canClimb() : bool{
+		return true;
+	}
+
 	public function onEntityCollide(Entity $entity){
 		$entity->resetFallDistance();
 	}
@@ -71,7 +82,7 @@ class Vine extends Transparent{
 
 		$flag = $this->meta > 0;
 
-		if(($this->meta & 0x02) > 0){
+		if(($this->meta & self::FLAG_WEST) > 0){
 			$f4 = max($f4, 0.0625);
 			$f1 = 0;
 			$f2 = 0;
@@ -81,7 +92,7 @@ class Vine extends Transparent{
 			$flag = true;
 		}
 
-		if(($this->meta & 0x08) > 0){
+		if(($this->meta & self::FLAG_EAST) > 0){
 			$f1 = min($f1, 0.9375);
 			$f4 = 1;
 			$f2 = 0;
@@ -91,7 +102,7 @@ class Vine extends Transparent{
 			$flag = true;
 		}
 
-		if(($this->meta & 0x01) > 0){
+		if(($this->meta & self::FLAG_SOUTH) > 0){
 			$f3 = min($f3, 0.9375);
 			$f6 = 1;
 			$f1 = 0;
@@ -101,7 +112,7 @@ class Vine extends Transparent{
 			$flag = true;
 		}
 
-		if(!$flag and $this->getSide(1)->isSolid()){
+		if(!$flag and $this->getSide(Vector3::SIDE_UP)->isSolid()){
 			$f2 = min($f2, 0.9375);
 			$f5 = 1;
 			$f1 = 0;
@@ -122,14 +133,13 @@ class Vine extends Transparent{
 
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		if(!$target->isTransparent() and $target->isSolid()){
+		//TODO: multiple sides
+		if($target->isSolid()){
 			$faces = [
-				0 => 0,
-				1 => 0,
-				2 => 1,
-				3 => 4,
-				4 => 8,
-				5 => 2,
+				2 => self::FLAG_SOUTH,
+				3 => self::FLAG_NORTH,
+				4 => self::FLAG_EAST,
+				5 => self::FLAG_WEST,
 			];
 			if(isset($faces[$face])){
 				$this->meta = $faces[$face];
@@ -144,11 +154,21 @@ class Vine extends Transparent{
 
 	public function onUpdate($type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
-			/*if($this->getSide(0)->getId() === self::AIR){ //Replace with common break method
-				Server::getInstance()->api->entity->drop($this, Item::get(LADDER, 0, 1));
-				$this->getLevel()->setBlock($this, new Air(), true, true);
+			$sides = [
+				1 => 3,
+				2 => 4,
+				4 => 2,
+				8 => 5
+			];
+
+			if(!isset($sides[$this->meta])){
+				return false; //TODO: remove this once placing on multiple sides is supported (these are bitflags, not actual meta values
+			}
+
+			if(!$this->getSide($sides[$this->meta])->isSolid()){ //Replace with common break method
+				$this->level->useBreakOn($this);
 				return Level::BLOCK_UPDATE_NORMAL;
-			}*/
+			}
 		}
 
 		return false;

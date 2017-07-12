@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -119,8 +121,6 @@ class BurningFurnace extends Solid{
 					return true;
 				}
 			}
-
-			if($player->isCreative()) return true;
 
 			$player->addWindow($furnace->getInventory());
 		}

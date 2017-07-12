@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\event\block\LeavesDecayEvent;
@@ -58,6 +60,10 @@ class Leaves extends Transparent{
 			self::JUNGLE => "Jungle Leaves",
 		];
 		return $names[$this->meta & 0x03];
+	}
+
+	public function diffusesSkyLight() : bool{
+		return true;
 	}
 
 	private function findLog(Block $pos, array $visited, $distance, &$check, $fromSide = null){

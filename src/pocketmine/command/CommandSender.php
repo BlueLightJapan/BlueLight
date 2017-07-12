@@ -19,19 +19,23 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command;
 
+use pocketmine\event\TextContainer;
 use pocketmine\permission\Permissible;
+use pocketmine\Server;
 
 interface CommandSender extends Permissible{
 
 	/**
-	 * @param string $message
+	 * @param TextContainer|string $message
 	 */
 	public function sendMessage($message);
 
 	/**
-	 * @return \pocketmine\Server
+	 * @return Server
 	 */
 	public function getServer();
 

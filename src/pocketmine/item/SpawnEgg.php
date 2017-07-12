@@ -3,7 +3,6 @@
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
- *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
@@ -19,6 +18,8 @@
  *
  *
 */
+
+declare(strict_types=1);
 
 namespace pocketmine\item;
 
@@ -42,19 +43,18 @@ class SpawnEgg extends Item{
 	}
 
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
-
 		$nbt = new CompoundTag("", [
-			"Pos" => new ListTag("Pos", [
+			new ListTag("Pos", [
 				new DoubleTag("", $block->getX() + 0.5),
 				new DoubleTag("", $block->getY()),
 				new DoubleTag("", $block->getZ() + 0.5)
 			]),
-			"Motion" => new ListTag("Motion", [
+			new ListTag("Motion", [
 				new DoubleTag("", 0),
 				new DoubleTag("", 0),
 				new DoubleTag("", 0)
 			]),
-			"Rotation" => new ListTag("Rotation", [
+			new ListTag("Rotation", [
 				new FloatTag("", lcg_value() * 360),
 				new FloatTag("", 0)
 			]),

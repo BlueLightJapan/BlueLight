@@ -19,10 +19,13 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator;
 
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
+use pocketmine\level\light\ChunkLightPopulator;
 use pocketmine\level\SimpleChunkManager;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -48,14 +51,8 @@ class PopulationTask extends AsyncTask{
 		$this->levelId = $level->getId();
 		$this->chunk = $chunk->fastSerialize();
 
-		for($i = 0; $i < 9; ++$i){
-			if($i === 4){
-				continue;
-			}
-			$xx = -1 + $i % 3;
-			$zz = -1 + (int) ($i / 3);
-			$ck = $level->getChunk($chunk->getX() + $xx, $chunk->getZ() + $zz, false);
-			$this->{"chunk$i"} = $ck !== null ? $ck->fastSerialize() : null;
+		foreach($level->getAdjacentChunks($chunk->getX(), $chunk->getZ()) as $i => $c){
+			$this->{"chunk$i"} = $c !== null ? $c->fastSerialize() : null;
 		}
 	}
 
@@ -114,9 +111,13 @@ class PopulationTask extends AsyncTask{
 
 		$chunk = $manager->getChunk($chunk->getX(), $chunk->getZ());
 		$chunk->recalculateHeightMap();
-		$chunk->populateSkyLight();
+
+		$lightPopulator = new ChunkLightPopulator($manager, $chunk->getX(), $chunk->getZ());
+		$lightPopulator->populate();
+
 		$chunk->setLightPopulated();
 		$chunk->setPopulated();
+
 		$this->chunk = $chunk->fastSerialize();
 
 		$manager->setChunk($chunk->getX(), $chunk->getZ(), null);

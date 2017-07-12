@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\metadata;
 
 use pocketmine\plugin\Plugin;
@@ -43,11 +45,11 @@ abstract class MetadataValue{
 	 *
 	 * @return mixed
 	 */
-	public abstract function value();
+	abstract public function value();
 
 	/**
 	 * Invalidates this metadata item, forcing it to recompute when next
 	 * accessed.
 	 */
-	public abstract function invalidate();
+	abstract public function invalidate();
 }

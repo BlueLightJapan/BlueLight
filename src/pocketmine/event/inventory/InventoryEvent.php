@@ -14,16 +14,19 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 /**
  * Inventory related events
  */
 namespace pocketmine\event\inventory;
 
+use pocketmine\entity\Human;
 use pocketmine\event\Event;
 use pocketmine\inventory\Inventory;
 
@@ -39,14 +42,14 @@ abstract class InventoryEvent extends Event{
 	/**
 	 * @return Inventory
 	 */
-	public function getInventory(){
+	public function getInventory() : Inventory{
 		return $this->inventory;
 	}
 
 	/**
-	 * @return \pocketmine\entity\Human[]
+	 * @return Human[]
 	 */
-	public function getViewers(){
+	public function getViewers() : array{
 		return $this->inventory->getViewers();
 	}
 }

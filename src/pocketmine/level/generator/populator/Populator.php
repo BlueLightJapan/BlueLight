@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * All the Object populator classes
  */
@@ -28,5 +30,5 @@ use pocketmine\level\ChunkManager;
 use pocketmine\utils\Random;
 
 abstract class Populator{
-	public abstract function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random);
+	abstract public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random);
 }

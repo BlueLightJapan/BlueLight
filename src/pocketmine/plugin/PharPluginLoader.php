@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\plugin;
 
 use pocketmine\event\plugin\PluginDisableEvent;
@@ -45,7 +47,7 @@ class PharPluginLoader implements PluginLoader{
 	 *
 	 * @param string $file
 	 *
-	 * @return Plugin
+	 * @return Plugin|null
 	 *
 	 * @throws \Exception
 	 */
@@ -78,7 +80,7 @@ class PharPluginLoader implements PluginLoader{
 	 *
 	 * @param string $file
 	 *
-	 * @return PluginDescription
+	 * @return PluginDescription|null
 	 */
 	public function getPluginDescription($file){
 		$phar = new \Phar($file);

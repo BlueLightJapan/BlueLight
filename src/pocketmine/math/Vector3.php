@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\math;
 
 class Vector3{
@@ -35,15 +37,9 @@ class Vector3{
 	public $z;
 
 	public function __construct($x = 0, $y = 0, $z = 0){
-		if($x instanceof Vector3){
-			$this->x = $x->x;
-			$this->y = $x->y;
-			$this->z = $x->z;
-		}else{
-			$this->x = $x;
-			$this->y = $y;
-			$this->z = $z;
-		}
+		$this->x = $x;
+		$this->y = $y;
+		$this->z = $z;
 	}
 
 	public function getX(){
@@ -164,6 +160,15 @@ class Vector3{
 	}
 
 	/**
+	 * Return a Vector3 instance
+	 * 
+	 * @return Vector3
+	 */
+	public function asVector3() : Vector3{
+		return new Vector3($this->x, $this->y, $this->z);
+	}
+
+	/**
 	 * Returns the Vector3 side number opposite the specified one
 	 *
 	 * @param int $side 0-5 one of the Vector3::SIDE_* constants
@@ -240,7 +245,7 @@ class Vector3{
 	 * @param Vector3 $v
 	 * @param float   $x
 	 *
-	 * @return Vector3
+	 * @return Vector3|null
 	 */
 	public function getIntermediateWithXValue(Vector3 $v, $x){
 		$xDiff = $v->x - $this->x;
@@ -256,7 +261,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+			return new Vector3($x, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
 		}
 	}
 
@@ -267,7 +272,7 @@ class Vector3{
 	 * @param Vector3 $v
 	 * @param float   $y
 	 *
-	 * @return Vector3
+	 * @return Vector3|null
 	 */
 	public function getIntermediateWithYValue(Vector3 $v, $y){
 		$xDiff = $v->x - $this->x;
@@ -283,7 +288,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+			return new Vector3($this->x + $xDiff * $f, $y, $this->z + $zDiff * $f);
 		}
 	}
 
@@ -294,7 +299,7 @@ class Vector3{
 	 * @param Vector3 $v
 	 * @param float   $z
 	 *
-	 * @return Vector3
+	 * @return Vector3|null
 	 */
 	public function getIntermediateWithZValue(Vector3 $v, $z){
 		$xDiff = $v->x - $this->x;
@@ -310,7 +315,7 @@ class Vector3{
 		if($f < 0 or $f > 1){
 			return null;
 		}else{
-			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $this->z + $zDiff * $f);
+			return new Vector3($this->x + $xDiff * $f, $this->y + $yDiff * $f, $z);
 		}
 	}
 

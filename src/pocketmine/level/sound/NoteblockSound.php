@@ -15,8 +15,10 @@
  * (at your option) any later version.
  *
  * @author BlueLightJapan Team
- * 
+ *
 */
+
+declare(strict_types=1);
 
 namespace pocketmine\level\sound;
 

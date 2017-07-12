@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\nbt\tag;
 
 use pocketmine\nbt\NBT;
@@ -26,6 +28,16 @@ use pocketmine\nbt\NBT;
 #include <rules/NBT.h>
 
 class LongTag extends NamedTag{
+
+	/**
+	 * LongTag constructor.
+	 *
+	 * @param string $name
+	 * @param int    $value
+	 */
+	public function __construct(string $name = "", int $value = 0){
+		parent::__construct($name, $value);
+	}
 
 	public function getType(){
 		return NBT::TAG_Long;

@@ -19,12 +19,12 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format\io\region;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\io\ChunkException;
+use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
 use pocketmine\nbt\NBT;
@@ -46,8 +46,8 @@ class Anvil extends McRegion{
 		$nbt->V = new ByteTag("V", 1);
 		$nbt->LastUpdate = new LongTag("LastUpdate", 0); //TODO
 		$nbt->InhabitedTime = new LongTag("InhabitedTime", 0); //TODO
-		$nbt->TerrainPopulated = new ByteTag("TerrainPopulated", $chunk->isPopulated());
-		$nbt->LightPopulated = new ByteTag("LightPopulated", $chunk->isLightPopulated());
+		$nbt->TerrainPopulated = new ByteTag("TerrainPopulated", $chunk->isPopulated() ? 1 : 0);
+		$nbt->LightPopulated = new ByteTag("LightPopulated", $chunk->isLightPopulated() ? 1 : 0);
 
 		$nbt->Sections = new ListTag("Sections", []);
 		$nbt->Sections->setTagType(NBT::TAG_Compound);
@@ -56,12 +56,12 @@ class Anvil extends McRegion{
 			if($subChunk->isEmpty()){
 				continue;
 			}
-			$nbt->Sections[++$subChunks] = new CompoundTag(null, [
-				"Y"          => new ByteTag("Y", $y),
-				"Blocks"     => new ByteArrayTag("Blocks", ChunkUtils::reorderByteArray($subChunk->getBlockIdArray())), //Generic in-memory chunks are currently always XZY
-				"Data"       => new ByteArrayTag("Data", ChunkUtils::reorderNibbleArray($subChunk->getBlockDataArray())),
-				"SkyLight"   => new ByteArrayTag("SkyLight", ChunkUtils::reorderNibbleArray($subChunk->getSkyLightArray(), "\xff")),
-				"BlockLight" => new ByteArrayTag("BlockLight", ChunkUtils::reorderNibbleArray($subChunk->getBlockLightArray()))
+			$nbt->Sections[++$subChunks] = new CompoundTag("", [
+				new ByteTag("Y", $y),
+				new ByteArrayTag("Blocks", ChunkUtils::reorderByteArray($subChunk->getBlockIdArray())), //Generic in-memory chunks are currently always XZY
+				new ByteArrayTag("Data", ChunkUtils::reorderNibbleArray($subChunk->getBlockDataArray())),
+				new ByteArrayTag("SkyLight", ChunkUtils::reorderNibbleArray($subChunk->getBlockSkyLightArray(), "\xff")),
+				new ByteArrayTag("BlockLight", ChunkUtils::reorderNibbleArray($subChunk->getBlockLightArray()))
 			]);
 		}
 
@@ -93,7 +93,7 @@ class Anvil extends McRegion{
 
 		$writer = new NBT(NBT::BIG_ENDIAN);
 		$nbt->setName("Level");
-		$writer->setData(new CompoundTag("", ["Level" => $nbt]));
+		$writer->setData(new CompoundTag("", [$nbt]));
 
 		return $writer->writeCompressed(ZLIB_ENCODING_DEFLATE, RegionLoader::$COMPRESSION_LEVEL);
 	}
@@ -101,7 +101,7 @@ class Anvil extends McRegion{
 	public function nbtDeserialize(string $data){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
 		try{
-			$nbt->readCompressed($data, ZLIB_ENCODING_DEFLATE);
+			$nbt->readCompressed($data);
 
 			$chunk = $nbt->getData();
 
@@ -154,6 +154,10 @@ class Anvil extends McRegion{
 
 	public static function getProviderName() : string{
 		return "anvil";
+	}
+
+	public static function getPcWorldFormatVersion() : int{
+		return 19133; //anvil
 	}
 
 	public function getWorldHeight() : int{

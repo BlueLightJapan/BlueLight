@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -30,12 +32,19 @@ class PlayerToggleSneakEvent extends PlayerEvent implements Cancellable{
 	/** @var bool */
 	protected $isSneaking;
 
-	public function __construct(Player $player, $isSneaking){
+	/**
+	 * @param Player $player
+	 * @param bool   $isSneaking
+	 */
+	public function __construct(Player $player, bool $isSneaking){
 		$this->player = $player;
-		$this->isSneaking = (bool) $isSneaking;
+		$this->isSneaking = $isSneaking;
 	}
 
-	public function isSneaking(){
+	/**
+	 * @return bool
+	 */
+	public function isSneaking() : bool{
 		return $this->isSneaking;
 	}
 

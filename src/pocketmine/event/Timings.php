@@ -19,10 +19,12 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\event;
 
 use pocketmine\entity\Entity;
-use pocketmine\network\protocol\DataPacket;
+use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\Player;
 use pocketmine\plugin\PluginManager;
 use pocketmine\scheduler\PluginTask;
@@ -39,6 +41,8 @@ abstract class Timings{
 	public static $memoryManagerTimer;
 	/** @var TimingsHandler */
 	public static $garbageCollectorTimer;
+	/** @var TimingsHandler */
+	public static $titleTickTimer;
 	/** @var TimingsHandler */
 	public static $playerListTimer;
 	/** @var TimingsHandler */
@@ -127,6 +131,7 @@ abstract class Timings{
 		self::$serverTickTimer = new TimingsHandler("** Full Server Tick", self::$fullTickTimer);
 		self::$memoryManagerTimer = new TimingsHandler("Memory Manager");
 		self::$garbageCollectorTimer = new TimingsHandler("Garbage Collector", self::$memoryManagerTimer);
+		self::$titleTickTimer = new TimingsHandler("Console Title Tick");
 		self::$playerListTimer = new TimingsHandler("Player List");
 		self::$playerNetworkTimer = new TimingsHandler("Player Network Send");
 		self::$playerNetworkReceiveTimer = new TimingsHandler("Player Network Receive");
@@ -167,11 +172,11 @@ abstract class Timings{
 
 	/**
 	 * @param TaskHandler $task
-	 * @param             $period
+	 * @param int         $period
 	 *
 	 * @return TimingsHandler
 	 */
-	public static function getPluginTaskTimings(TaskHandler $task, $period){
+	public static function getPluginTaskTimings(TaskHandler $task, int $period){
 		$ftask = $task->getTask();
 		if($ftask instanceof PluginTask and $ftask->getOwner() !== null){
 			$plugin = $ftask->getOwner()->getDescription()->getFullName();

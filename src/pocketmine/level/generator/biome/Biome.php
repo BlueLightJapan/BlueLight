@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator\biome;
 
 use pocketmine\block\Block;
@@ -137,7 +139,7 @@ abstract class Biome{
 		return $this->id;
 	}
 
-	public abstract function getName();
+	abstract public function getName();
 
 	public function getMinElevation(){
 		return $this->minElevation;

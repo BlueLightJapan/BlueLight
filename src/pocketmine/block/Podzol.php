@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Tool;
@@ -27,8 +29,8 @@ class Podzol extends Solid{
 
 	protected $id = self::PODZOL;
 
-	public function __construct(){
-
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
 	public function getToolType(){

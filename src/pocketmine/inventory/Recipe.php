@@ -19,14 +19,17 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
+use pocketmine\item\Item;
 use pocketmine\utils\UUID;
 
 interface Recipe{
 
 	/**
-	 * @return \pocketmine\item\Item
+	 * @return Item
 	 */
 	public function getResult();
 

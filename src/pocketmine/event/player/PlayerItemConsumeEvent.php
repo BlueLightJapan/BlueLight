@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -46,7 +48,7 @@ class PlayerItemConsumeEvent extends PlayerEvent implements Cancellable{
 	/**
 	 * @return Item
 	 */
-	public function getItem(){
+	public function getItem() : Item{
 		return clone $this->item;
 	}
 

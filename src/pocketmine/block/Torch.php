@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -34,7 +36,7 @@ class Torch extends Flowable{
 	}
 
 	public function getLightLevel(){
-		return 15;
+		return 14;
 	}
 
 	public function getName(){

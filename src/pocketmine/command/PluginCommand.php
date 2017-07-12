@@ -19,9 +19,11 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command;
 
-use pocketmine\event\TranslationContainer;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\plugin\Plugin;
 
 class PluginCommand extends Command implements PluginIdentifiableCommand{
@@ -56,7 +58,7 @@ class PluginCommand extends Command implements PluginIdentifiableCommand{
 		$success = $this->executor->onCommand($sender, $this, $commandLabel, $args);
 
 		if(!$success and $this->usageMessage !== ""){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
+			throw new InvalidCommandSyntaxException();
 		}
 
 		return $success;
@@ -70,7 +72,7 @@ class PluginCommand extends Command implements PluginIdentifiableCommand{
 	 * @param CommandExecutor $executor
 	 */
 	public function setExecutor(CommandExecutor $executor){
-		$this->executor = ($executor != null) ? $executor : $this->owningPlugin;
+		$this->executor = $executor;
 	}
 
 	/**

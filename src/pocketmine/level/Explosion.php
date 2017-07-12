@@ -19,9 +19,12 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level;
 
 use pocketmine\block\Block;
+use pocketmine\block\TNT;
 use pocketmine\entity\Entity;
 use pocketmine\event\block\BlockUpdateEvent;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
@@ -33,13 +36,8 @@ use pocketmine\level\particle\HugeExplodeSeedParticle;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Math;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\network\protocol\ExplodePacket;
-use pocketmine\utils\Random;
+use pocketmine\network\mcpe\protocol\ExplodePacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
 class Explosion{
 
@@ -91,7 +89,7 @@ class Explosion{
 							$vBlock->x = $pointerX >= $x ? $x : $x - 1;
 							$vBlock->y = $pointerY >= $y ? $y : $y - 1;
 							$vBlock->z = $pointerZ >= $z ? $z : $z - 1;
-							if($vBlock->y < 0 or $vBlock->y >= Level::Y_MAX){
+							if(!$this->level->isInWorld($vBlock->x, $vBlock->y, $vBlock->z)){
 								break;
 							}
 							$block = $this->level->getBlock($vBlock);
@@ -171,26 +169,8 @@ class Explosion{
 		$air = Item::get(Item::AIR);
 
 		foreach($this->affectedBlocks as $block){
-			if($block->getId() === Block::TNT){
-				$mot = (new Random())->nextSignedFloat() * M_PI * 2;
-				$tnt = Entity::createEntity("PrimedTNT", $this->level, new CompoundTag("", [
-					"Pos" => new ListTag("Pos", [
-						new DoubleTag("", $block->x + 0.5),
-						new DoubleTag("", $block->y),
-						new DoubleTag("", $block->z + 0.5)
-					]),
-					"Motion" => new ListTag("Motion", [
-						new DoubleTag("", -sin($mot) * 0.02),
-						new DoubleTag("", 0.2),
-						new DoubleTag("", -cos($mot) * 0.02)
-					]),
-					"Rotation" => new ListTag("Rotation", [
-						new FloatTag("", 0),
-						new FloatTag("", 0)
-					]),
-					"Fuse" => new ByteTag("Fuse", mt_rand(10, 30))
-				]));
-				$tnt->spawnToAll();
+			if($block instanceof TNT){
+				$block->ignite(mt_rand(10, 30));
 			}elseif(mt_rand(0, 100) < $yield){
 				foreach($block->getDrops($air) as $drop){
 					$this->level->dropItem($block->add(0.5, 0.5, 0.5), Item::get(...$drop));
@@ -201,7 +181,7 @@ class Explosion{
 
 			$pos = new Vector3($block->x, $block->y, $block->z);
 
-			for($side = 0; $side < 5; $side++){
+			for($side = 0; $side <= 5; $side++){
 				$sideBlock = $pos->getSide($side);
 				if(!isset($this->affectedBlocks[$index = Level::blockHash($sideBlock->x, $sideBlock->y, $sideBlock->z)]) and !isset($updateBlocks[$index])){
 					$this->level->getServer()->getPluginManager()->callEvent($ev = new BlockUpdateEvent($this->level->getBlock($sideBlock)));
@@ -223,6 +203,7 @@ class Explosion{
 		$this->level->addChunkPacket($source->x >> 4, $source->z >> 4, $pk);
 
 		$this->level->addParticle(new HugeExplodeSeedParticle($source));
+		$this->level->broadcastLevelSoundEvent($source, LevelSoundEventPacket::SOUND_EXPLODE);
 
 		return true;
 	}

@@ -19,15 +19,17 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class KillCommand extends VanillaCommand{
 
@@ -39,8 +41,6 @@ class KillCommand extends VanillaCommand{
 			["suicide"]
 		);
 		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -49,9 +49,7 @@ class KillCommand extends VanillaCommand{
 		}
 
 		if(count($args) >= 2){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return false;
+			throw new InvalidCommandSyntaxException();
 		}
 
 		if(count($args) === 1){
@@ -98,9 +96,7 @@ class KillCommand extends VanillaCommand{
 			$sender->setHealth(0);
 			$sender->sendMessage(new TranslationContainer("commands.kill.successful", [$sender->getName()]));
 		}else{
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return false;
+			throw new InvalidCommandSyntaxException();
 		}
 
 		return true;

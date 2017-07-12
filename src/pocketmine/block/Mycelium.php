@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\event\block\BlockSpreadEvent;
@@ -32,8 +34,8 @@ class Mycelium extends Solid{
 
 	protected $id = self::MYCELIUM;
 
-	public function __construct(){
-
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
 	public function getName(){

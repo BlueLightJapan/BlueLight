@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -42,7 +44,13 @@ class PlayerChatEvent extends PlayerEvent implements Cancellable{
 	 */
 	protected $recipients = [];
 
-	public function __construct(Player $player, $message, $format = "chat.type.text", array $recipients = null){
+	/**
+	 * @param Player   $player
+	 * @param string   $message
+	 * @param string   $format
+	 * @param Player[] $recipients
+	 */
+	public function __construct(Player $player, string $message, string $format = "chat.type.text", array $recipients = null){
 		$this->player = $player;
 		$this->message = $message;
 
@@ -55,11 +63,17 @@ class PlayerChatEvent extends PlayerEvent implements Cancellable{
 		}
 	}
 
-	public function getMessage(){
+	/**
+	 * @return string
+	 */
+	public function getMessage() : string{
 		return $this->message;
 	}
 
-	public function setMessage($message){
+	/**
+	 * @param string $message
+	 */
+	public function setMessage(string $message){
 		$this->message = $message;
 	}
 
@@ -72,18 +86,30 @@ class PlayerChatEvent extends PlayerEvent implements Cancellable{
 		$this->player = $player;
 	}
 
-	public function getFormat(){
+	/**
+	 * @return string
+	 */
+	public function getFormat() : string{
 		return $this->format;
 	}
 
-	public function setFormat($format){
+	/**
+	 * @param string $format
+	 */
+	public function setFormat(string $format){
 		$this->format = $format;
 	}
 
-	public function getRecipients(){
+	/**
+	 * @return Player[]
+	 */
+	public function getRecipients() : array{
 		return $this->recipients;
 	}
 
+	/**
+	 * @param Player[] $recipients
+	 */
 	public function setRecipients(array $recipients){
 		$this->recipients = $recipients;
 	}

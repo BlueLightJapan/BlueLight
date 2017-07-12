@@ -19,14 +19,15 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Effect;
-use pocketmine\entity\InstantEffect;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class EffectCommand extends VanillaCommand{
 
@@ -37,8 +38,6 @@ class EffectCommand extends VanillaCommand{
 			"%commands.effect.usage"
 		);
 		$this->setPermission("pocketmine.command.effect");
-		//$this->commandParameters["default"] = [new CommandParameter("player", CommandParameter::ARG_TYPE_TARGET, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -47,9 +46,7 @@ class EffectCommand extends VanillaCommand{
 		}
 
 		if(count($args) < 2){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return true;
+			throw new InvalidCommandSyntaxException();
 		}
 
 		$player = $sender->getServer()->getPlayer($args[0]);
@@ -79,16 +76,12 @@ class EffectCommand extends VanillaCommand{
 			return true;
 		}
 
-		$duration = 300;
 		$amplification = 0;
 
 		if(count($args) >= 3){
-			$duration = (int) $args[2];
-			if(!($effect instanceof InstantEffect)){
-				$duration *= 20;
-			}
-		}elseif($effect instanceof InstantEffect){
-			$duration = 1;
+			$duration = ((int) $args[2]) * 20; //ticks
+		}else{
+			$duration = $effect->getDefaultDuration();
 		}
 
 		if(count($args) >= 4){

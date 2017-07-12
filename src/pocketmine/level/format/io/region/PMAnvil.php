@@ -19,12 +19,12 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format\io\region;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\io\ChunkException;
+use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\SubChunk;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\{
@@ -49,8 +49,8 @@ class PMAnvil extends Anvil{
 		$nbt->V = new ByteTag("V", 1);
 		$nbt->LastUpdate = new LongTag("LastUpdate", 0); //TODO
 		$nbt->InhabitedTime = new LongTag("InhabitedTime", 0); //TODO
-		$nbt->TerrainPopulated = new ByteTag("TerrainPopulated", $chunk->isPopulated());
-		$nbt->LightPopulated = new ByteTag("LightPopulated", $chunk->isLightPopulated());
+		$nbt->TerrainPopulated = new ByteTag("TerrainPopulated", $chunk->isPopulated() ? 1 : 0);
+		$nbt->LightPopulated = new ByteTag("LightPopulated", $chunk->isLightPopulated() ? 1 : 0);
 
 		$nbt->Sections = new ListTag("Sections", []);
 		$nbt->Sections->setTagType(NBT::TAG_Compound);
@@ -59,12 +59,12 @@ class PMAnvil extends Anvil{
 			if($subChunk->isEmpty()){
 				continue;
 			}
-			$nbt->Sections[++$subChunks] = new CompoundTag(null, [
-				"Y"          => new ByteTag("Y", $y),
-				"Blocks"     => new ByteArrayTag("Blocks",     $subChunk->getBlockIdArray()),
-				"Data"       => new ByteArrayTag("Data",       $subChunk->getBlockDataArray()),
-				"SkyLight"   => new ByteArrayTag("SkyLight",   $subChunk->getSkyLightArray()),
-				"BlockLight" => new ByteArrayTag("BlockLight", $subChunk->getBlockLightArray())
+			$nbt->Sections[++$subChunks] = new CompoundTag("", [
+				new ByteTag("Y", $y),
+				new ByteArrayTag("Blocks",     $subChunk->getBlockIdArray()),
+				new ByteArrayTag("Data",       $subChunk->getBlockDataArray()),
+				new ByteArrayTag("SkyLight",   $subChunk->getBlockSkyLightArray()),
+				new ByteArrayTag("BlockLight", $subChunk->getBlockLightArray())
 			]);
 		}
 
@@ -96,7 +96,7 @@ class PMAnvil extends Anvil{
 
 		$writer = new NBT(NBT::BIG_ENDIAN);
 		$nbt->setName("Level");
-		$writer->setData(new CompoundTag("", ["Level" => $nbt]));
+		$writer->setData(new CompoundTag("", [$nbt]));
 
 		return $writer->writeCompressed(ZLIB_ENCODING_DEFLATE, RegionLoader::$COMPRESSION_LEVEL);
 	}
@@ -104,7 +104,7 @@ class PMAnvil extends Anvil{
 	public function nbtDeserialize(string $data){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
 		try{
-			$nbt->readCompressed($data, ZLIB_ENCODING_DEFLATE);
+			$nbt->readCompressed($data);
 
 			$chunk = $nbt->getData();
 
@@ -149,5 +149,9 @@ class PMAnvil extends Anvil{
 
 	public static function getProviderName() : string{
 		return "pmanvil";
+	}
+
+	public static function getPcWorldFormatVersion() : int{
+		return -1; //Not a PC format, only PocketMine-MP
 	}
 }

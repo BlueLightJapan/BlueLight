@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 class RedstoneTorch extends Torch{
@@ -31,5 +33,9 @@ class RedstoneTorch extends Torch{
 
 	public function getName(){
 		return "Redstone Torch";
+	}
+
+	public function getLightLevel(){
+		return 7;
 	}
 }

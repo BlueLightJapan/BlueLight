@@ -19,13 +19,15 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\math\AxisAlignedBB;
 
-class Farmland extends Solid{
+class Farmland extends Transparent{
 
 	protected $id = self::FARMLAND;
 

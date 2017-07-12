@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 class PoweredRail extends Rail{
@@ -30,9 +32,5 @@ class PoweredRail extends Rail{
 
 	public function getName(){
 		return "Powered Rail";
-	}
-
-	public function isPowered(){
-		return true;//TODO
 	}
 }

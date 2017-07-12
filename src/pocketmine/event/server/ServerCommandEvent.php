@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\server;
 
@@ -45,7 +47,7 @@ class ServerCommandEvent extends ServerEvent implements Cancellable{
 	 * @param CommandSender $sender
 	 * @param string        $command
 	 */
-	public function __construct(CommandSender $sender, $command){
+	public function __construct(CommandSender $sender, string $command){
 		$this->sender = $sender;
 		$this->command = $command;
 	}
@@ -53,21 +55,21 @@ class ServerCommandEvent extends ServerEvent implements Cancellable{
 	/**
 	 * @return CommandSender
 	 */
-	public function getSender(){
+	public function getSender() : CommandSender{
 		return $this->sender;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getCommand(){
+	public function getCommand() : string{
 		return $this->command;
 	}
 
 	/**
 	 * @param string $command
 	 */
-	public function setCommand($command){
+	public function setCommand(string $command){
 		$this->command = $command;
 	}
 

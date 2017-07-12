@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 class DaylightSensor extends Transparent{
@@ -31,5 +33,9 @@ class DaylightSensor extends Transparent{
 
 	public function getName(){
 		return "Daylight Sensor";
+	}
+
+	public function getHardness(){
+		return 0.2;
 	}
 }

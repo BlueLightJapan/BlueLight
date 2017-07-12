@@ -19,15 +19,17 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class TeleportCommand extends VanillaCommand{
 
@@ -38,8 +40,6 @@ class TeleportCommand extends VanillaCommand{
 			"%commands.tp.usage"
 		);
 		$this->setPermission("pocketmine.command.teleport");
-		//$this->commandParameters["default"] = [new CommandParameter("destination", CommandParameter::ARG_TYPE_BLOCK_POS, false)];
-
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -51,9 +51,7 @@ class TeleportCommand extends VanillaCommand{
 			return strlen($arg) > 0;
 		});
 		if(count($args) < 1 or count($args) > 6){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return true;
+			throw new InvalidCommandSyntaxException();
 		}
 
 		$target = null;
@@ -112,8 +110,8 @@ class TeleportCommand extends VanillaCommand{
 			$pitch = $target->getPitch();
 
 			if(count($args) === 6 or (count($args) === 5 and $pos === 3)){
-				$yaw = $args[$pos++];
-				$pitch = $args[$pos++];
+				$yaw = (float) $args[$pos++];
+				$pitch = (float) $args[$pos++];
 			}
 
 			$target->teleport(new Vector3($x, $y, $z), $yaw, $pitch);
@@ -122,8 +120,6 @@ class TeleportCommand extends VanillaCommand{
 			return true;
 		}
 
-		$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-		return true;
+		throw new InvalidCommandSyntaxException();
 	}
 }

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\permission;
 
 use pocketmine\utils\MainLogger;
@@ -102,9 +104,9 @@ class BanEntry{
 	/**
 	 * @param string $str
 	 *
-	 * @return BanEntry
+	 * @return BanEntry|null
 	 */
-	public static function fromString($str){
+	public static function fromString(string $str){
 		if(strlen($str) < 2){
 			return null;
 		}else{

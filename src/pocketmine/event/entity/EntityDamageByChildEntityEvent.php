@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  *
  *  ____            _        _   __  __ _                  __  __ ____
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
@@ -14,19 +14,24 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\entity;
 
 use pocketmine\entity\Entity;
 
+/**
+ * Called when an entity takes damage from an entity sourced from another entity, for example being hit by a snowball thrown by a Player.
+ */
 class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent{
 
-	/** @var Entity */
-	private $childEntity;
+	/** @var int */
+	private $childEntityEid;
 
 
 	/**
@@ -37,15 +42,17 @@ class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent{
 	 * @param int|int[] $damage
 	 */
 	public function __construct(Entity $damager, Entity $childEntity, Entity $entity, $cause, $damage){
-		$this->childEntity = $childEntity;
+		$this->childEntityEid = $childEntity->getId();
 		parent::__construct($damager, $entity, $cause, $damage);
 	}
 
 	/**
-	 * @return Entity
+	 * Returns the entity which caused the damage, or null if the entity has been killed or closed.
+	 *
+	 * @return Entity|null
 	 */
 	public function getChild(){
-		return $this->childEntity;
+		return $this->getEntity()->getLevel()->getServer()->findEntity($this->childEntityEid, $this->getEntity()->getLevel());
 	}
 
 

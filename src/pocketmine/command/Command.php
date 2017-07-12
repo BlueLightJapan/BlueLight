@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * Command handling related classes
  */
@@ -49,11 +51,6 @@ abstract class Command{
 	/**
 	 * @var string[]
 	 */
-	private $aliases = [];
-
-	/**
-	 * @var string[]
-	 */
 	private $activeAliases = [];
 
 	/** @var CommandMap */
@@ -79,11 +76,11 @@ abstract class Command{
 	 */
 	public function __construct($name, $description = "", $usageMessage = null, array $aliases = []){
 		$this->commandData = self::generateDefaultData();
-		$this->name = $this->nextLabel = $this->label = $name;
+		$this->name = $name;
+		$this->setLabel($name);
 		$this->setDescription($description);
 		$this->usageMessage = $usageMessage === null ? "/" . $name : $usageMessage;
 		$this->setAliases($aliases);
-		$this->timings = new TimingsHandler("** Command: " . $name);
 	}
 
 	/**
@@ -132,7 +129,7 @@ abstract class Command{
 	 *
 	 * @return mixed
 	 */
-	public abstract function execute(CommandSender $sender, $commandLabel, array $args);
+	abstract public function execute(CommandSender $sender, $commandLabel, array $args);
 
 	/**
 	 * @return string
@@ -142,7 +139,7 @@ abstract class Command{
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getPermission(){
 		return $this->commandData["pocketminePermission"] ?? null;
@@ -208,6 +205,9 @@ abstract class Command{
 	public function setLabel($name){
 		$this->nextLabel = $name;
 		if(!$this->isRegistered()){
+			if($this->timings instanceof TimingsHandler){
+				$this->timings->remove();
+			}
 			$this->timings = new TimingsHandler("** Command: " . $name);
 			$this->label = $name;
 

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\tile;
 
 use pocketmine\block\Block;
@@ -35,7 +37,7 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\network\protocol\ContainerSetDataPacket;
+use pocketmine\network\mcpe\protocol\ContainerSetDataPacket;
 
 class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 	/** @var FurnaceInventory */
@@ -70,15 +72,15 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 		}
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return isset($this->namedtag->CustomName) ? $this->namedtag->CustomName->getValue() : "Furnace";
 	}
 
-	public function hasName(){
+	public function hasName() : bool{
 		return isset($this->namedtag->CustomName);
 	}
 
-	public function setName($str){
+	public function setName(string $str){
 		if($str === ""){
 			unset($this->namedtag->CustomName);
 			return;
@@ -92,6 +94,7 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 			foreach($this->getInventory()->getViewers() as $player){
 				$player->removeWindow($this->getInventory());
 			}
+
 			$this->inventory = null;
 
 			parent::close();
@@ -225,11 +228,11 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 		}
 
 		if($this->namedtag["BurnTime"] > 0){
-			$this->namedtag->BurnTime = new ShortTag("BurnTime", $this->namedtag["BurnTime"] - 1);
-			$this->namedtag->BurnTicks = new ShortTag("BurnTicks", ceil(($this->namedtag["BurnTime"] / $this->namedtag["MaxTime"] * 200)));
+			$this->namedtag->BurnTime = new ShortTag("BurnTime", ((int) $this->namedtag["BurnTime"]) - 1);
+			$this->namedtag->BurnTicks = new ShortTag("BurnTicks", (int) ceil(($this->namedtag["BurnTime"] / $this->namedtag["MaxTime"] * 200)));
 
 			if($smelt instanceof FurnaceRecipe and $canSmelt){
-				$this->namedtag->CookTime = new ShortTag("CookTime", $this->namedtag["CookTime"] + 1);
+				$this->namedtag->CookTime = new ShortTag("CookTime", (int) ($this->namedtag["CookTime"]) + 1);
 				if($this->namedtag["CookTime"] >= 200){ //10 seconds
 					$product = Item::get($smelt->getResult()->getId(), $smelt->getResult()->getDamage(), $product->getCount() + 1);
 
@@ -244,7 +247,7 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 						$this->inventory->setSmelting($raw);
 					}
 
-					$this->namedtag->CookTime = new ShortTag("CookTime", $this->namedtag["CookTime"] - 200);
+					$this->namedtag->CookTime = new ShortTag("CookTime", ((int) $this->namedtag["CookTime"]) - 200);
 				}
 			}elseif($this->namedtag["BurnTime"] <= 0){
 				$this->namedtag->BurnTime = new ShortTag("BurnTime", 0);
@@ -269,7 +272,7 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 				$pk = new ContainerSetDataPacket();
 				$pk->windowid = $windowId;
 				$pk->property = 0; //Smelting
-				$pk->value = floor($this->namedtag["CookTime"]);
+				$pk->value = $this->namedtag["CookTime"];
 				$player->dataPacket($pk);
 
 				$pk = new ContainerSetDataPacket();
@@ -294,8 +297,8 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 			new IntTag("x", (int) $this->x),
 			new IntTag("y", (int) $this->y),
 			new IntTag("z", (int) $this->z),
-			new ShortTag("BurnTime", $this->namedtag["BurnTime"]),
-			new ShortTag("CookTime", $this->namedtag["CookTime"])
+			new ShortTag("BurnTime", (int) $this->namedtag["BurnTime"]),
+			new ShortTag("CookTime", (int) $this->namedtag["CookTime"])
 		]);
 
 		if($this->hasName()){

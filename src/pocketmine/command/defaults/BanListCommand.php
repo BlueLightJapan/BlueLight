@@ -19,11 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
-use pocketmine\command\data\CommandParameter;
+use pocketmine\permission\BanEntry;
 
 class BanListCommand extends VanillaCommand{
 
@@ -48,20 +51,17 @@ class BanListCommand extends VanillaCommand{
 			}elseif($args[0] === "players"){
 				$list = $sender->getServer()->getNameBans();
 			}else{
-				$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-				return false;
+				throw new InvalidCommandSyntaxException();
 			}
 		}else{
 			$list = $sender->getServer()->getNameBans();
 			$args[0] = "players";
 		}
 
-		$message = "";
 		$list = $list->getEntries();
-		foreach($list as $entry){
-			$message .= $entry->getName() . ", ";
-		}
+		$message = implode(", ", array_map(function(BanEntry $entry){
+			return $entry->getName();
+		}, $list));
 
 		if($args[0] === "ips"){
 			$sender->sendMessage(new TranslationContainer("commands.banlist.ips", [count($list)]));
@@ -69,7 +69,7 @@ class BanListCommand extends VanillaCommand{
 			$sender->sendMessage(new TranslationContainer("commands.banlist.players", [count($list)]));
 		}
 
-		$sender->sendMessage(substr($message, 0, -2));
+		$sender->sendMessage($message);
 
 		return true;
 	}

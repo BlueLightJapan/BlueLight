@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -27,8 +29,4 @@ use pocketmine\Player;
 
 class PlayerBucketFillEvent extends PlayerBucketEvent{
 	public static $handlerList = null;
-
-	public function __construct(Player $who, Block $blockClicked, $blockFace, Item $bucket, Item $itemInHand){
-		parent::__construct($who, $blockClicked, $blockFace, $bucket, $itemInHand);
-	}
 }

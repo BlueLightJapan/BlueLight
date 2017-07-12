@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\server;
 
@@ -33,7 +35,7 @@ class RemoteServerCommandEvent extends ServerCommandEvent{
 	 * @param CommandSender $sender
 	 * @param string        $command
 	 */
-	public function __construct(CommandSender $sender, $command){
+	public function __construct(CommandSender $sender, string $command){
 		parent::__construct($sender, $command);
 	}
 
