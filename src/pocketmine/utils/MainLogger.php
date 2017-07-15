@@ -201,7 +201,7 @@ class MainLogger extends \AttachableThreadedLogger{
 			$threadName = (new \ReflectionClass($thread))->getShortName() . "Thread";
 		}
 
-		$message = TextFormat::toANSI(TextFormat::BLUE . date("H:i:s", $now) . "│" . TextFormat::RESET . $color . $threadName . $prefix = (empty($threadName)? $prefix : "/".$prefix) . ">>" . " " . $message . TextFormat::RESET);
+		$message = TextFormat::toANSI(TextFormat::BLUE . date("H:i:s", $now) . " │ " . TextFormat::RESET . $color . $threadName . $prefix = (empty($threadName)? $prefix : "/".$prefix) . ">>" . " " . $message . TextFormat::RESET);
 		$cleanMessage = TextFormat::clean($message);
 
 		if(!Terminal::hasFormattingCodes()){
