@@ -32,6 +32,7 @@ use pocketmine\command\defaults\DifficultyCommand;
 use pocketmine\command\defaults\DumpMemoryCommand;
 use pocketmine\command\defaults\EffectCommand;
 use pocketmine\command\defaults\EnchantCommand;
+use pocketmine\command\defaults\ExtractPluginCommand;
 use pocketmine\command\defaults\GamemodeCommand;
 use pocketmine\command\defaults\GarbageCollectorCommand;
 use pocketmine\command\defaults\GiveCommand;
@@ -39,6 +40,8 @@ use pocketmine\command\defaults\HelpCommand;
 use pocketmine\command\defaults\KickCommand;
 use pocketmine\command\defaults\KillCommand;
 use pocketmine\command\defaults\ListCommand;
+use pocketmine\command\defaults\MakePluginCommand;
+use pocketmine\command\defaults\MakeServerCommand;
 use pocketmine\command\defaults\MeCommand;
 use pocketmine\command\defaults\OpCommand;
 use pocketmine\command\defaults\PardonCommand;
@@ -127,6 +130,12 @@ class SimpleCommandMap implements CommandMap{
 			$this->register("pocketmine", new StatusCommand("status"));
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
+		}
+
+		if($this->server->getBlueLightProperty("BDevTools")){
+			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
+			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
+			$this->register("pocketmine", new MakeServerCommand("makeserver"));
 		}
 	}
 

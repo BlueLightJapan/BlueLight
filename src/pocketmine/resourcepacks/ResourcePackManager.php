@@ -27,6 +27,7 @@ namespace pocketmine\resourcepacks;
 
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 class ResourcePackManager{
 
@@ -106,7 +107,11 @@ class ResourcePackManager{
 			}
 		}
 
-		$this->server->getLogger()->debug("Successfully loaded " . count($this->resourcePacks) . " resource packs");
+		$resourcePacksCount = count($this->resourcePacks);
+
+		if ($resourcePacksCount !== 0) {
+			$this->server->getLogger()->info(TextFormat::GREEN . "Successfully loaded " . $resourcePacksCount . " resource packs");
+		}
 	}
 
 	/**

@@ -90,6 +90,7 @@ use pocketmine\network\rcon\RCON;
 use pocketmine\network\upnp\UPnP;
 use pocketmine\permission\BanList;
 use pocketmine\permission\DefaultPermissions;
+use pocketmine\plugin\FolderPluginLoader;
 use pocketmine\plugin\PharPluginLoader;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginLoadOrder;
@@ -264,6 +265,11 @@ class Server{
 
 	/** @var Level */
 	private $levelDefault = null;
+
+	/** @var blueLightProperty */
+	private $blueLightProperty;
+
+	private $blueLightPropertyCache = [];
 
 	/**
 	 * @return string
@@ -1183,32 +1189,17 @@ class Server{
 	 *
 	 * @return mixed
 	 */
-	public function getProperty(string $variable, $defaultValue = null){
-		if(!array_key_exists($variable, $this->propertyCache)){
-			if($this->bluelightconfig->exists($variable)){
-				return $this->getBlueLightProperty($variable,$defaultValue);
-			}
+	public function getBlueLightProperty($variable, $defaultValue = true){
+		if(!array_key_exists($variable, $this->blueLightPropertyCache)){
 			$v = getopt("", ["$variable::"]);
 			if(isset($v[$variable])){
-				$this->propertyCache[$variable] = $v[$variable];
+				$this->blueLightPropertyCache[$variable] = $v[$variable];
 			}else{
-				$this->propertyCache[$variable] = $this->config->getNested($variable);
+				$this->blueLightPropertyCache[$variable] = $this->blueLightProperty->getNested($variable);
 			}
 		}
 
-		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
-	}
-
-	/**
-	 * @link BlueLightFunction dev/2.1~
-	 * @param string $variable
-	 * @param mixed  $defaultValue
-	 *
-	 * @return mixed
-	 */
-	private function getBlueLightProperty($variable,$defaultValue = true){
-		$v =  $this->bluelightconfig->get($variable);
-		return $v == null ? false : true;
+		return $this->blueLightPropertyCache[$variable] === null ? $defaultValue : $this->blueLightPropertyCache[$variable];
 	}
 
 	/**
@@ -1218,13 +1209,12 @@ class Server{
 	 *
 	 * @return string
 	 */
-	public function getBlueLightConfigString(string $variable, string $defaultValue = "") : string{
+	public function getBlueLightPropertyString(string $variable, string $defaultValue = "") : string{
 		$v = getopt("", ["$variable::"]);
 		if(isset($v[$variable])){
 			return (string) $v[$variable];
 		}
-
-		return $this->bluelightconfig->exists($variable) ? (string) $this->bluelightconfig->get($variable) : $defaultValue;
+		return $this->blueLightProperty->exists($variable) ? (string) $this->blueLightProperty->get($variable) : $defaultValue;
 	}
 
 	/**
@@ -1232,8 +1222,8 @@ class Server{
 	 * @param string $variable
 	 * @param string $value
 	 */
-	public function setBlueLightConfigString(string $variable, string $value){
-		$this->bluelightconfig->set($variable, $value);
+	public function setBlueLightPropertyString(string $variable, string $value){
+		$this->blueLightProperty->set($variable, $value);
 	}
 
 	/**
@@ -1243,13 +1233,13 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public function getBlueLightConfigInt($variable, $defaultValue = 0){
+	public function getBlueLightPropertyInt($variable, $defaultValue = 0){
 		$v = getopt("", ["$variable::"]);
 		if(isset($v[$variable])){
 			return (int) $v[$variable];
 		}
 
-		return $this->bluelightconfig->exists($variable) ? (int) $this->bluelightconfig->get($variable) : (int) $defaultValue;
+		return $this->blueLightProperty->exists($variable) ? (int) $this->blueLightProperty->get($variable) : (int) $defaultValue;
 	}
 
 	/**
@@ -1257,8 +1247,26 @@ class Server{
 	 * @param string $variable
 	 * @param int    $value
 	 */
-	public function setBlueLightConfigInt($variable, $value){
-		$this->bluelightconfig->set($variable, (int) $value);
+	public function setBlueLightPropertyInt($variable, $value){
+		$this->blueLightProperty->set($variable, (int) $value);
+	}
+
+	/**
+	 * @param string $variable
+	 * @param mixed  $defaultValue
+	 *
+	 * @return mixed
+	 */
+	public function getProperty(string $variable, $defaultValue = null){
+		if(!array_key_exists($variable, $this->propertyCache)){
+			$v = getopt("", ["$variable::"]);
+			if(isset($v[$variable])){
+				$this->propertyCache[$variable] = $v[$variable];
+			}else{
+				$this->propertyCache[$variable] = $this->config->getNested($variable);
+			}
+		}
+		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
 	}
 
 	/**
@@ -1542,10 +1550,9 @@ class Server{
 
 			$this->logger->info("Loading bluelight.properties...");
 
-			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES, [
+			$this->blueLightProperty = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES, [
 				"CustomConfigVersion" => 1,
-				"DevTools" => true,
-				"CrashDump" => true,
+				"BDevTools" => true,
 				"FoodEnabled" => true,
 				"ExpEnabled" => false,
 				"WeatherEnabled" => false,
@@ -1566,6 +1573,14 @@ class Server{
 				"MapEnabled" => false,
 				"EntityAIEnabled" => false,
 			]);
+
+			$this->blueLightPropertyCache = $this->blueLightProperty->getAll();
+
+			if($this->getBlueLightProperty("BDevTools")){
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
+				}
+			}
 
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
@@ -1593,6 +1608,8 @@ class Server{
 				"auto-save" => true,
 				"view-distance" => 8
 			]);
+
+			$this->propertyCache = $this->properties->getAll();
 
 			$this->forceLanguage = $this->getProperty("settings.force-language", false);
 			$this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
@@ -1738,6 +1755,10 @@ class Server{
 			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
 			$this->pluginManager->registerInterface(PharPluginLoader::class);
 			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
+			if($this->getBlueLightProperty("BDevTools")){
+				$this->logger->info(TextFormat::BLUE . "BDevTools" . TextFormat::GREEN . " has been enabled.");
+				$this->pluginManager->registerInterface(FolderPluginLoader::class);
+			}
 
 			register_shutdown_function([$this, "crashDump"]);
 
