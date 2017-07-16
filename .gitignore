@@ -3,10 +3,12 @@ worlds/*
 plugins/*
 bin/*
 timings/*
+
 *.log
 *.txt
 *.phar
 *.properties
+
 /pocketmine.yml
 memoryDump_*/*
 resource_packs/

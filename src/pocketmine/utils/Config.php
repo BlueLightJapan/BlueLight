@@ -33,13 +33,13 @@ use pocketmine\Server;
 class Config{
 	const DETECT = -1; //Detect by file extension
 	const PROPERTIES = 0; // .properties
-	const CNF = Config::PROPERTIES; // .cnf
+	const CNF = self::PROPERTIES; // .cnf
 	const JSON = 1; // .js, .json
 	const YAML = 2; // .yml, .yaml
 	//const EXPORT = 3; // .export, .xport
 	const SERIALIZED = 4; // .sl
 	const ENUM = 5; // .txt, .list, .enum
-	const ENUMERATION = Config::ENUM;
+	const ENUMERATION = self::ENUM;
 
 	/** @var array */
 	private $config = [];
@@ -51,26 +51,26 @@ class Config{
 	/** @var bool */
 	private $correct = false;
 	/** @var int */
-	private $type = Config::DETECT;
+	private $type = self::DETECT;
 	/** @var int */
-	private $jsonOptions = JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING;
+	private $jsonOptions = JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
 
 	public static $formats = [
-		"properties" => Config::PROPERTIES,
-		"cnf" => Config::CNF,
-		"conf" => Config::CNF,
-		"config" => Config::CNF,
-		"json" => Config::JSON,
-		"js" => Config::JSON,
-		"yml" => Config::YAML,
-		"yaml" => Config::YAML,
-		//"export" => Config::EXPORT,
-		//"xport" => Config::EXPORT,
-		"sl" => Config::SERIALIZED,
-		"serialize" => Config::SERIALIZED,
-		"txt" => Config::ENUM,
-		"list" => Config::ENUM,
-		"enum" => Config::ENUM,
+		"properties" => self::PROPERTIES,
+		"cnf" => self::CNF,
+		"conf" => self::CNF,
+		"config" => self::CNF,
+		"json" => self::JSON,
+		"js" => self::JSON,
+		"yml" => self::YAML,
+		"yaml" => self::YAML,
+		//"export" => self::EXPORT,
+		//"xport" => self::EXPORT,
+		"sl" => self::SERIALIZED,
+		"serialize" => self::SERIALIZED,
+		"txt" => self::ENUM,
+		"list" => self::ENUM,
+		"enum" => self::ENUM,
 	];
 
 	/**
@@ -79,7 +79,7 @@ class Config{
 	 * @param array  $default  Array with the default values that will be written to the file if it did not exist
 	 * @param null   &$correct Sets correct to true if everything has been loaded correctly
 	 */
-	public function __construct($file, $type = Config::DETECT, $default = [], &$correct = null){
+	public function __construct($file, $type = self::DETECT, $default = [], &$correct = null){
 		$this->load($file, $type, $default);
 		$correct = $this->correct;
 	}
@@ -110,16 +110,16 @@ class Config{
 	 *
 	 * @return bool
 	 */
-	public function load(string $file, int $type = Config::DETECT, array $default = []){
+	public function load(string $file, int $type = self::DETECT, array $default = []){
 		$this->correct = true;
 		$this->file = $file;
 
 		$this->type = $type;
-		if($this->type === Config::DETECT){
+		if($this->type === self::DETECT){
 			$extension = explode(".", basename($this->file));
 			$extension = strtolower(trim(array_pop($extension)));
-			if(isset(Config::$formats[$extension])){
-				$this->type = Config::$formats[$extension];
+			if(isset(self::$formats[$extension])){
+				$this->type = self::$formats[$extension];
 			}else{
 				$this->correct = false;
 			}
@@ -132,21 +132,21 @@ class Config{
 			if($this->correct === true){
 				$content = file_get_contents($this->file);
 				switch($this->type){
-					case Config::PROPERTIES:
-					case Config::CNF:
+					case self::PROPERTIES:
+					case self::CNF:
 						$this->parseProperties($content);
 						break;
-					case Config::JSON:
+					case self::JSON:
 						$this->config = json_decode($content, true);
 						break;
-					case Config::YAML:
+					case self::YAML:
 						$content = self::fixYAMLIndexes($content);
 						$this->config = yaml_parse($content);
 						break;
-					case Config::SERIALIZED:
+					case self::SERIALIZED:
 						$this->config = unserialize($content);
 						break;
-					case Config::ENUM:
+					case self::ENUM:
 						$this->parseList($content);
 						break;
 					default:
@@ -185,20 +185,20 @@ class Config{
 			try{
 				$content = null;
 				switch($this->type){
-					case Config::PROPERTIES:
-					case Config::CNF:
+					case self::PROPERTIES:
+					case self::CNF:
 						$content = $this->writeProperties();
 						break;
-					case Config::JSON:
+					case self::JSON:
 						$content = json_encode($this->config, $this->jsonOptions);
 						break;
-					case Config::YAML:
+					case self::YAML:
 						$content = yaml_emit($this->config, YAML_UTF8_ENCODING);
 						break;
-					case Config::SERIALIZED:
+					case self::SERIALIZED:
 						$content = serialize($this->config);
 						break;
-					case Config::ENUM:
+					case self::ENUM:
 						$content = implode("\r\n", array_keys($this->config));
 						break;
 					default:
@@ -233,7 +233,7 @@ class Config{
 	 * @see json_encode
 	 */
 	public function setJsonOptions(int $options) : Config{
-		if($this->type !== Config::JSON){
+		if($this->type !== self::JSON){
 			throw new \RuntimeException("Attempt to set JSON options for non-JSON config");
 		}
 		$this->jsonOptions = $options;
@@ -249,7 +249,7 @@ class Config{
 	 * @see json_encode
 	 */
 	public function enableJsonOption(int $option) : Config{
-		if($this->type !== Config::JSON){
+		if($this->type !== self::JSON){
 			throw new \RuntimeException("Attempt to enable JSON option for non-JSON config");
 		}
 		$this->jsonOptions |= $option;
@@ -265,7 +265,7 @@ class Config{
 	 * @see json_encode
 	 */
 	public function disableJsonOption(int $option) : Config{
-		if($this->type !== Config::JSON){
+		if($this->type !== self::JSON){
 			throw new \RuntimeException("Attempt to disable JSON option for non-JSON config");
 		}
 		$this->jsonOptions &= ~$option;
@@ -280,7 +280,7 @@ class Config{
 	 * @see json_encode
 	 */
 	public function getJsonOptions() : int{
-		if($this->type !== Config::JSON){
+		if($this->type !== self::JSON){
 			throw new \RuntimeException("Attempt to get JSON options for non-JSON config");
 		}
 		return $this->jsonOptions;
