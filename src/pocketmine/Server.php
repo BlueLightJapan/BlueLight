@@ -161,7 +161,7 @@ class Server{
 	private $currentUse = 0;
 
 	/** @var bool */
-	private $doTitleTick = true;
+	private $doTitleTick = false;
 
 	private $sendUsageTicker = 0;
 
@@ -1606,7 +1606,7 @@ class Server{
 			$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
 			$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
 
-			$this->doTitleTick = (bool) $this->getProperty("console.title-tick", true);
+			$this->doTitleTick = (bool) $this->getProperty("console.title-tick", false);
 
 			$this->scheduler = new ServerScheduler();
 
