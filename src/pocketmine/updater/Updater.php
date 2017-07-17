@@ -42,9 +42,9 @@ namespace pocketmine\updater{
 	
 	if(!file_exists("temp")) mkdir("temp");
 	echo "\x1b[mDownload BlueLight-".$branch." now...\n";
-	$data = file_get_contents("https://github.com/BlueLightJapan/BlueLight/archive/".$branch.".zip");
-	$result = @file_put_contents("temp/BlueLight.zip",$data);
-	if($result){
+	$data = @file_get_contents("https://github.com/BlueLightJapan/BlueLight/archive/".$branch.".zip");
+	if($data){
+		$result = file_put_contents("temp/BlueLight.zip",$data);
 		echo "\x1b[38;5;83mDownload Success!\n";
 	}else{
 		echo "\x1b[38;5;124mDownload Failed\n";
@@ -62,13 +62,10 @@ namespace pocketmine\updater{
 		exit(1);
 	}
 	
-	if(!file_exists("src")){
-		unlink("PocketMine-MP.phar");
-	}else{
-		dirrm("src");
-	}
+	if(file_exists("PocketMine-MP.phar")) unlink("PocketMine-MP.phar");
+	if(file_exists("src")) dirrm("src");
 	
-	dircopy("temp/BlueLight-".$branch."/src","./src");
+	dircopy("temp/BlueLight-".$branch."/src","src");
 	dirrm("temp");
 	echo "\x1b[38;5;83mCompleted BlueLight Update!\n\x1b[m";
 	
