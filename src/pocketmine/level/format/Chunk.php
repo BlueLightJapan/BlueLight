@@ -22,13 +22,12 @@
 /**
  * Implementation of MCPE-style chunks with subchunks with XZY ordering.
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format;
 
 use pocketmine\block\Block;
 use pocketmine\entity\Entity;
-use pocketmine\level\format\io\ChunkException;
 use pocketmine\level\Level;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -54,7 +53,7 @@ class Chunk{
 
 	protected $height = Chunk::MAX_SUBCHUNKS;
 
-	/** @var SubChunk[] */
+	/** @var SubChunkInterface[] */
 	protected $subChunks = [];
 
 	/** @var EmptySubChunk */
@@ -67,12 +66,13 @@ class Chunk{
 	/** @var Entity[] */
 	protected $entities = [];
 
-	/** @var int[256] */
+	/** @var int[] */
 	protected $heightMap = [];
 
 	/** @var string */
 	protected $biomeIds;
 
+	/** @var int[] */
 	protected $extraData = [];
 
 	/** @var CompoundTag[] */
@@ -82,15 +82,16 @@ class Chunk{
 	protected $NBTentities = [];
 
 	/**
-	 * @param int           $chunkX
-	 * @param int           $chunkZ
-	 * @param SubChunk[]    $subChunks
-	 * @param CompoundTag[] $entities
-	 * @param CompoundTag[] $tiles
-	 * @param string        $biomeIds
-	 * @param int[]         $heightMap
+	 * @param int                 $chunkX
+	 * @param int                 $chunkZ
+	 * @param SubChunkInterface[] $subChunks
+	 * @param CompoundTag[]       $entities
+	 * @param CompoundTag[]       $tiles
+	 * @param string              $biomeIds
+	 * @param int[]               $heightMap
+	 * @param int[]               $extraData
 	 */
-	public function __construct(int $chunkX, int $chunkZ, array $subChunks = [], array $entities = [], array $tiles = [], string $biomeIds = "", array $heightMap = []){
+	public function __construct(int $chunkX, int $chunkZ, array $subChunks = [], array $entities = [], array $tiles = [], string $biomeIds = "", array $heightMap = [], array $extraData = []){
 		$this->x = $chunkX;
 		$this->z = $chunkZ;
 
@@ -119,16 +120,18 @@ class Chunk{
 			$this->heightMap = $heightMap;
 		}else{
 			assert(count($heightMap) === 0, "Wrong HeightMap value count, expected 256, got " . count($heightMap));
-			$val = ($this->height * 16) - 1;
+			$val = ($this->height * 16);
 			$this->heightMap = array_fill(0, 256, $val);
 		}
 
 		if(strlen($biomeIds) === 256){
 			$this->biomeIds = $biomeIds;
 		}else{
-			assert(strlen($biomeIds) === 0, "Wrong BiomeIds value count, expected 256, got " . strlen($biomeIds));
+			assert($biomeIds === "", "Wrong BiomeIds value count, expected 256, got " . strlen($biomeIds));
 			$this->biomeIds = str_repeat("\x00", 256);
 		}
+
+		$this->extraData = $extraData;
 
 		$this->NBTtiles = $tiles;
 		$this->NBTentities = $entities;
@@ -307,8 +310,19 @@ class Chunk{
 	 * @param int $level 0-15
 	 */
 	public function setBlockSkyLight(int $x, int $y, int $z, int $level){
-		if($this->getSubChunk($y >> 4)->setBlockSkyLight($x, $y & 0x0f, $z, $level)){
+		if($this->getSubChunk($y >> 4, true)->setBlockSkyLight($x, $y & 0x0f, $z, $level)){
 			$this->hasChanged = true;
+		}
+	}
+
+	/**
+	 * @param int $level
+	 */
+	public function setAllBlockSkyLight(int $level){
+		$char = chr(($level & 0x0f) | ($level << 4));
+		$data = str_repeat($char, 2048);
+		for($y = $this->getHighestSubChunkIndex(); $y >= 0; --$y){
+			$this->getSubChunk($y, true)->setBlockSkyLightArray($data);
 		}
 	}
 
@@ -334,8 +348,19 @@ class Chunk{
 	 * @param int $level 0-15
 	 */
 	public function setBlockLight(int $x, int $y, int $z, int $level){
-		if($this->getSubChunk($y >> 4)->setBlockLight($x, $y & 0x0f, $z, $level)){
+		if($this->getSubChunk($y >> 4, true)->setBlockLight($x, $y & 0x0f, $z, $level)){
 			$this->hasChanged = true;
+		}
+	}
+
+	/**
+	 * @param int $level
+	 */
+	public function setAllBlockLight(int $level){
+		$char = chr(($level & 0x0f) | ($level << 4));
+		$data = str_repeat($char, 2048);
+		for($y = $this->getHighestSubChunkIndex(); $y >= 0; --$y){
+			$this->getSubChunk($y, true)->setBlockLightArray($data);
 		}
 	}
 
@@ -344,22 +369,13 @@ class Chunk{
 	 *
 	 * @param int  $x 0-15
 	 * @param int  $z 0-15
-	 * @param bool $useHeightMap whether to use pre-calculated heightmap values or not
 	 *
-	 * @return int
+	 * @return int 0-255, or -1 if there are no blocks in the column
 	 */
-	public function getHighestBlockAt(int $x, int $z, bool $useHeightMap = true) : int{
-		if($useHeightMap){
-			$height = $this->getHeightMap($x, $z);
-
-			if($height !== 0 and $height !== 255){
-				return $height;
-			}
-		}
-
+	public function getHighestBlockAt(int $x, int $z) : int{
 		$index = $this->getHighestSubChunkIndex();
-		if($index < 0){
-			return 0;
+		if($index === -1){
+			return -1;
 		}
 
 		$height = $index << 4;
@@ -367,12 +383,15 @@ class Chunk{
 		for($y = $index; $y >= 0; --$y){
 			$height = $this->getSubChunk($y)->getHighestBlockAt($x, $z) | ($y << 4);
 			if($height !== -1){
-				break;
+				return $height;
 			}
 		}
 
-		$this->setHeightMap($x, $z, $height);
-		return $height;
+		return -1;
+	}
+
+	public function getMaxY() : int{
+		return ($this->getHighestSubChunkIndex() << 4) | 0x0f;
 	}
 
 	/**
@@ -403,36 +422,60 @@ class Chunk{
 	public function recalculateHeightMap(){
 		for($z = 0; $z < 16; ++$z){
 			for($x = 0; $x < 16; ++$x){
-				$this->setHeightMap($x, $z, $this->getHighestBlockAt($x, $z, false));
+				$this->recalculateHeightMapColumn($x, $z);
 			}
 		}
 	}
 
 	/**
-	 * Performs basic sky light population on the chunk.
+	 * Recalculates the heightmap for the block column at the specified X/Z chunk coordinates
 	 *
-	 * TODO: rewrite this, use block light filters and diffusion, actual proper sky light population
+	 * @param int $x 0-15
+	 * @param int $z 0-15
+	 *
+	 * @return int New calculated heightmap value (0-256 inclusive)
+	 */
+	public function recalculateHeightMapColumn(int $x, int $z) : int{
+		$max = $this->getHighestBlockAt($x, $z);
+		for($y = $max; $y >= 0; --$y){
+			if(Block::$lightFilter[$id = $this->getBlockId($x, $y, $z)] > 1 or Block::$diffusesSkyLight[$id]){
+				break;
+			}
+		}
+
+		$this->setHeightMap($x, $z, $y + 1);
+		return $y + 1;
+	}
+
+	/**
+	 * Performs basic sky light population on the chunk.
+	 * This does not cater for adjacent sky light, this performs direct sky light population only. This may cause some strange visual artifacts
+	 * if the chunk is light-populated after being terrain-populated.
+	 *
+	 * TODO: fast adjacent light spread
 	 */
 	public function populateSkyLight(){
+		$maxY = $this->getMaxY();
+
+		$this->setAllBlockSkyLight(0);
+
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){
 				$heightMap = $this->getHeightMap($x, $z);
 
-				$y = ($this->getHighestSubChunkIndex() + 1) << 4;
-
-				//TODO: replace a section of the array with a string in one call to improve performance
-
-				for(; $y > $heightMap; --$y){
+				for($y = $maxY; $y >= $heightMap; --$y){
 					$this->setBlockSkyLight($x, $y, $z, 15);
 				}
 
-				for(; $y > 0 and $this->getBlockId($x, $y, $z) === Block::AIR; --$y){
-					$this->setBlockSkyLight($x, $y, $z, 15);
-				}
-				$this->setHeightMap($x, $z, $y);
-
-				for(; $y > 0; --$y){
-					$this->setBlockSkyLight($x, $y, $z, 0);
+				$light = 15;
+				for(; $y >= 0; --$y){
+					if($light > 0){
+						$light -= Block::$lightFilter[$this->getBlockId($x, $y, $z)];
+						if($light <= 0){
+							break;
+						}
+					}
+					$this->setBlockSkyLight($x, $y, $z, $light);
 				}
 			}
 		}
@@ -502,7 +545,7 @@ class Chunk{
 	public function getBlockSkyLightColumn(int $x, int $z) : string{
 		$result = "";
 		foreach($this->subChunks as $subChunk){
-			$result .= $subChunk->getSkyLightColumn($x, $z);
+			$result .= $subChunk->getBlockSkyLightColumn($x, $z);
 		}
 		return $result;
 	}
@@ -568,6 +611,9 @@ class Chunk{
 	 * @param Entity $entity
 	 */
 	public function addEntity(Entity $entity){
+		if($entity->closed){
+			throw new \InvalidArgumentException("Attempted to add a garbage closed Entity to a chunk");
+		}
 		$this->entities[$entity->getId()] = $entity;
 		if(!($entity instanceof Player) and $this->isInit){
 			$this->hasChanged = true;
@@ -588,6 +634,9 @@ class Chunk{
 	 * @param Tile $tile
 	 */
 	public function addTile(Tile $tile){
+		if($tile->closed){
+			throw new \InvalidArgumentException("Attempted to add a garbage closed Tile to a chunk");
+		}
 		$this->tiles[$tile->getId()] = $tile;
 		if(isset($this->tileList[$index = (($tile->x & 0x0f) << 12) | (($tile->z & 0x0f) << 8) | ($tile->y & 0xff)]) and $this->tileList[$index] !== $tile){
 			$this->tileList[$index]->close();
@@ -691,9 +740,14 @@ class Chunk{
 							continue; //Fixes entities allocated in wrong chunks.
 						}
 
-						if(($entity = Entity::createEntity($nbt["id"], $level, $nbt)) instanceof Entity){
-							$entity->spawnToAll();
-						}else{
+						try{
+							$entity = Entity::createEntity($nbt["id"], $level, $nbt);
+							if(!($entity instanceof Entity)){
+								$changed = true;
+								continue;
+							}
+						}catch(\Throwable $t){
+							$level->getServer()->getLogger()->logException($t);
 							$changed = true;
 							continue;
 						}
@@ -774,9 +828,9 @@ class Chunk{
 	 * @param int  $y
 	 * @param bool $generateNew Whether to create a new, modifiable subchunk if there is not one in place
 	 *
-	 * @return SubChunk|EmptySubChunk
+	 * @return SubChunkInterface
 	 */
-	public function getSubChunk(int $y, bool $generateNew = false) : SubChunk{
+	public function getSubChunk(int $y, bool $generateNew = false) : SubChunkInterface{
 		if($y < 0 or $y >= $this->height){
 			return $this->emptySubChunk;
 		}elseif($generateNew and $this->subChunks[$y] instanceof EmptySubChunk){
@@ -788,13 +842,14 @@ class Chunk{
 
 	/**
 	 * Sets a subchunk in the chunk index
-	 * @param int           $y
-	 * @param SubChunk|null $subChunk
-	 * @param bool          $allowEmpty Whether to check if the chunk is empty, and if so replace it with an empty stub
+	 *
+	 * @param int                    $y
+	 * @param SubChunkInterface|null $subChunk
+	 * @param bool                   $allowEmpty Whether to check if the chunk is empty, and if so replace it with an empty stub
 	 *
 	 * @return bool
 	 */
-	public function setSubChunk(int $y, SubChunk $subChunk = null, bool $allowEmpty = false) : bool{
+	public function setSubChunk(int $y, SubChunkInterface $subChunk = null, bool $allowEmpty = false) : bool{
 		if($y < 0 or $y >= $this->height){
 			return false;
 		}
@@ -920,9 +975,9 @@ class Chunk{
 		}
 		$stream->putByte($count);
 		$stream->put($subChunks);
-		$stream->put(pack("C*", ...$this->heightMap) .
+		$stream->put(pack("v*", ...$this->heightMap) .
 			$this->biomeIds .
-			chr(($this->lightPopulated ? 1 << 2 : 0) | ($this->terrainPopulated ? 1 << 1 : 0) | ($this->terrainGenerated ? 1 : 0)));
+			chr(($this->lightPopulated ? 4 : 0) | ($this->terrainPopulated ? 2 : 0) | ($this->terrainGenerated ? 1 : 0)));
 		return $stream->getBuffer();
 	}
 
@@ -933,7 +988,7 @@ class Chunk{
 	 *
 	 * @return Chunk
 	 */
-	public static function fastDeserialize(string $data){
+	public static function fastDeserialize(string $data) : Chunk{
 		$stream = new BinaryStream();
 		$stream->setBuffer($data);
 		$data = null;
@@ -944,7 +999,7 @@ class Chunk{
 		for($y = 0; $y < $count; ++$y){
 			$subChunks[$stream->getByte()] = SubChunk::fastDeserialize($stream->get(10240));
 		}
-		$heightMap = array_values(unpack("C*", $stream->get(256)));
+		$heightMap = array_values(unpack("v*", $stream->get(512)));
 		$biomeIds = $stream->get(256);
 
 		$chunk = new Chunk($x, $z, $subChunks, [], [], $biomeIds, $heightMap);

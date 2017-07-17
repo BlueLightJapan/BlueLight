@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
 use pocketmine\item\Item;
@@ -39,21 +41,21 @@ class FurnaceInventory extends ContainerInventory{
 	/**
 	 * @return Item
 	 */
-	public function getResult(){
+	public function getResult() : Item{
 		return $this->getItem(2);
 	}
 
 	/**
 	 * @return Item
 	 */
-	public function getFuel(){
+	public function getFuel() : Item{
 		return $this->getItem(1);
 	}
 
 	/**
 	 * @return Item
 	 */
-	public function getSmelting(){
+	public function getSmelting() : Item{
 		return $this->getItem(0);
 	}
 
@@ -62,7 +64,7 @@ class FurnaceInventory extends ContainerInventory{
 	 *
 	 * @return bool
 	 */
-	public function setResult(Item $item){
+	public function setResult(Item $item) : bool{
 		return $this->setItem(2, $item);
 	}
 
@@ -71,7 +73,7 @@ class FurnaceInventory extends ContainerInventory{
 	 *
 	 * @return bool
 	 */
-	public function setFuel(Item $item){
+	public function setFuel(Item $item) : bool{
 		return $this->setItem(1, $item);
 	}
 
@@ -80,7 +82,7 @@ class FurnaceInventory extends ContainerInventory{
 	 *
 	 * @return bool
 	 */
-	public function setSmelting(Item $item){
+	public function setSmelting(Item $item) : bool{
 		return $this->setItem(0, $item);
 	}
 

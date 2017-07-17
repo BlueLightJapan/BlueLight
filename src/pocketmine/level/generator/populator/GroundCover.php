@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator\populator;
 
 use pocketmine\block\Block;
@@ -28,7 +30,7 @@ use pocketmine\utils\Random;
 
 class GroundCover extends Populator{
 
-	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random){
+	public function populate(ChunkManager $level, int $chunkX, int $chunkZ, Random $random){
 		$chunk = $level->getChunk($chunkX, $chunkZ);
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){

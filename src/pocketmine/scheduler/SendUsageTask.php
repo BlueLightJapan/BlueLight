@@ -19,9 +19,11 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\scheduler;
 
-use pocketmine\network\protocol\Info;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
 use pocketmine\utils\UUID;
@@ -36,13 +38,18 @@ class SendUsageTask extends AsyncTask{
 	public $endpoint;
 	public $data;
 
-	public function __construct(Server $server, $type, $playerList = []){
+	/**
+	 * @param Server $server
+	 * @param int    $type
+	 * @param array  $playerList
+	 */
+	public function __construct(Server $server, int $type, array $playerList = []){
 		$endpoint = "http://" . $server->getProperty("anonymous-statistics.host", "stats.pocketmine.net") . "/";
 
 		$data = [];
 		$data["uniqueServerId"] = $server->getServerUniqueId()->toString();
 		$data["uniqueMachineId"] = Utils::getMachineUniqueId()->toString();
-		$data["uniqueRequestId"] = UUID::fromData($server->getServerUniqueId(), microtime(true))->toString();
+		$data["uniqueRequestId"] = UUID::fromData($server->getServerUniqueId()->toString(), microtime(false))->toString();
 
 		switch($type){
 			case self::TYPE_OPEN:
@@ -58,7 +65,7 @@ class SendUsageTask extends AsyncTask{
 					"build" => $version->getBuild(),
 					"api" => $server->getApiVersion(),
 					"minecraftVersion" => $server->getVersion(),
-					"protocol" => Info::CURRENT_PROTOCOL
+					"protocol" => ProtocolInfo::CURRENT_PROTOCOL
 				];
 
 				$data["system"] = [

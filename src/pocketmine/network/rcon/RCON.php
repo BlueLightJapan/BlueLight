@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * Implementation of the Source RCON Protocol to allow remote console commands
  * Source: https://developer.valvesoftware.com/wiki/Source_RCON_Protocol
@@ -39,29 +41,28 @@ class RCON{
 	private $workers = [];
 	private $clientsPerThread;
 
-	public function __construct(Server $server, $password, $port = 19132, $interface = "0.0.0.0", $threads = 1, $clientsPerThread = 50){
+	public function __construct(Server $server, string $password, int $port = 19132, string $interface = "0.0.0.0", int $threads = 1, int $clientsPerThread = 50){
 		$this->server = $server;
-		$this->workers = [];
-		$this->password = (string) $password;
+		$this->password = $password;
 		$this->server->getLogger()->info("Starting remote control listener");
 		if($this->password === ""){
-			$this->server->getLogger()->critical("RCON can't be started: Empty password");
-
-			return;
+			throw new \InvalidArgumentException("Empty password");
 		}
+
 		$this->threads = (int) max(1, $threads);
 		$this->clientsPerThread = (int) max(1, $clientsPerThread);
 		$this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		if($this->socket === false or !socket_bind($this->socket, $interface, (int) $port) or !socket_listen($this->socket)){
-			$this->server->getLogger()->critical("RCON can't be started: " . socket_strerror(socket_last_error()));
-			$this->threads = 0;
-			return;
+
+		if($this->socket === false or !@socket_bind($this->socket, $interface, $port) or !@socket_listen($this->socket)){
+			throw new \RuntimeException(trim(socket_strerror(socket_last_error())));
 		}
+
 		socket_set_block($this->socket);
 
 		for($n = 0; $n < $this->threads; ++$n){
 			$this->workers[$n] = new RCONInstance($this->socket, $this->password, $this->clientsPerThread);
 		}
+
 		socket_getsockname($this->socket, $addr, $port);
 		$this->server->getLogger()->info("RCON running on $addr:$port");
 	}

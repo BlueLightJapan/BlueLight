@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -29,8 +31,8 @@ class GrassPath extends Transparent{
 
 	protected $id = self::GRASS_PATH;
 
-	public function __construct(){
-
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
 	public function getName(){
@@ -47,7 +49,7 @@ class GrassPath extends Transparent{
 			$this->y,
 			$this->z,
 			$this->x + 1,
-			$this->y + 0.9375,
+			$this->y + 1, //TODO: this should be 0.9375, but MCPE currently treats them as a full block (https://bugs.mojang.com/browse/MCPE-12109)
 			$this->z + 1
 		);
 	}

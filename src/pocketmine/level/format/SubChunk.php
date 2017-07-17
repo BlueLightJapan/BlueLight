@@ -19,18 +19,18 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\level\format;
 
-class SubChunk{
+class SubChunk implements SubChunkInterface{
 
 	protected $ids;
 	protected $data;
 	protected $blockLight;
 	protected $skyLight;
 
-	private static function assignData(&$target, $data, $length, $value = "\x00"){
+	private static function assignData(&$target, string $data, int $length, string $value = "\x00"){
 		if(strlen($data) !== $length){
 			assert($data === "", "Invalid non-zero length given, expected $length, got " . strlen($data));
 			$target = str_repeat($value, $length);
@@ -46,9 +46,14 @@ class SubChunk{
 		self::assignData($this->blockLight, $blockLight, 2048);
 	}
 
-	public function isEmpty() : bool{
-		assert(strlen($this->ids) === 4096, "Wrong length of ID array, expecting 4096 bytes, got " . strlen($this->ids));
-		return substr_count($this->ids, "\x00") === 4096;
+	public function isEmpty(bool $checkLight = true) : bool{
+		return (
+			substr_count($this->ids, "\x00") === 4096 and
+			(!$checkLight or (
+				substr_count($this->skyLight, "\xff") === 2048 and
+				substr_count($this->blockLight, "\x00") === 2048
+			))
+		);
 	}
 
 	public function getBlockId(int $x, int $y, int $z) : int{
@@ -156,9 +161,11 @@ class SubChunk{
 	}
 
 	public function getHighestBlockAt(int $x, int $z) : int{
-		for($y = 15; $y >= 0; --$y){
-			if($this->ids{($x << 8) | ($z << 4) | $y} !== "\x00"){
-				return $y;
+		$low = ($x << 8) | ($z << 4);
+		$i = $low | 0x0f;
+		for(; $i >= $low; --$i){
+			if($this->ids{$i} !== "\x00"){
+				return $i & 0x0f;
 			}
 		}
 
@@ -166,19 +173,19 @@ class SubChunk{
 	}
 
 	public function getBlockIdColumn(int $x, int $z) : string{
-		return substr($this->ids, (($x << 8) | ($z << 4)), 16);
+		return substr($this->ids, ($x << 8) | ($z << 4), 16);
 	}
 
 	public function getBlockDataColumn(int $x, int $z) : string{
-		return substr($this->data, (($x << 7) | ($z << 3)), 8);
+		return substr($this->data, ($x << 7) | ($z << 3), 8);
 	}
 
 	public function getBlockLightColumn(int $x, int $z) : string{
-		return substr($this->blockLight, (($x << 7) | ($z << 3)), 8);
+		return substr($this->blockLight, ($x << 7) | ($z << 3), 8);
 	}
 
-	public function getSkyLightColumn(int $x, int $z) : string{
-		return substr($this->skyLight, (($x << 7) | ($z << 3)), 8);
+	public function getBlockSkyLightColumn(int $x, int $z) : string{
+		return substr($this->skyLight, ($x << 7) | ($z << 3), 8);
 	}
 
 	public function getBlockIdArray() : string{
@@ -191,14 +198,24 @@ class SubChunk{
 		return $this->data;
 	}
 
-	public function getSkyLightArray() : string{
+	public function getBlockSkyLightArray() : string{
 		assert(strlen($this->skyLight) === 2048, "Wrong length of skylight array, expecting 2048 bytes, got " . strlen($this->skyLight));
 		return $this->skyLight;
+	}
+
+	public function setBlockSkyLightArray(string $data){
+		assert(strlen($data) === 2048, "Wrong length of skylight array, expecting 2048 bytes, got " . strlen($data));
+		$this->skyLight = $data;
 	}
 
 	public function getBlockLightArray() : string{
 		assert(strlen($this->blockLight) === 2048, "Wrong length of light array, expecting 2048 bytes, got " . strlen($this->blockLight));
 		return $this->blockLight;
+	}
+
+	public function setBlockLightArray(string $data){
+		assert(strlen($data) === 2048, "Wrong length of light array, expecting 2048 bytes, got " . strlen($data));
+		$this->blockLight = $data;
 	}
 
 	public function networkSerialize() : string{

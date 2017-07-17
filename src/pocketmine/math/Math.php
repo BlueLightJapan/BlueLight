@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * Math related classes, like matrices, bounding boxes and vector
  */
@@ -27,12 +29,12 @@ namespace pocketmine\math;
 
 abstract class Math{
 
-	public static function floorFloat($n){
+	public static function floorFloat($n) : int{
 		$i = (int) $n;
 		return $n >= $i ? $i : $i - 1;
 	}
 
-	public static function ceilFloat($n){
+	public static function ceilFloat($n) : int{
 		$i = (int) ($n + 1);
 		return $n >= $i ? $i : $i - 1;
 	}

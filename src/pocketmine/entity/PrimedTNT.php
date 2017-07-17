@@ -19,13 +19,16 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\ExplosionPrimeEvent;
 use pocketmine\level\Explosion;
 use pocketmine\nbt\tag\ByteTag;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class PrimedTNT extends Entity implements Explosive{
@@ -34,6 +37,8 @@ class PrimedTNT extends Entity implements Explosive{
 	public $width = 0.98;
 	public $length = 0.98;
 	public $height = 0.98;
+
+	protected $baseOffset = 0.49;
 
 	protected $gravity = 0.04;
 	protected $drag = 0.02;
@@ -60,6 +65,8 @@ class PrimedTNT extends Entity implements Explosive{
 
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IGNITED, true);
 		$this->setDataProperty(self::DATA_FUSE_LENGTH, self::DATA_TYPE_INT, $this->fuse);
+
+		$this->level->broadcastLevelEvent($this, LevelEventPacket::EVENT_SOUND_IGNITE);
 	}
 
 
@@ -141,7 +148,7 @@ class PrimedTNT extends Entity implements Explosive{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = PrimedTNT::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

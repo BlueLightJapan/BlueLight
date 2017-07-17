@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\scheduler;
 
 use pocketmine\event\Timings;
@@ -41,9 +43,9 @@ class AsyncPool{
 	/** @var int[] */
 	private $workerUsage = [];
 
-	public function __construct(Server $server, $size){
+	public function __construct(Server $server, int $size){
 		$this->server = $server;
-		$this->size = (int) $size;
+		$this->size = $size;
 
 		for($i = 0; $i < $this->size; ++$i){
 			$this->workerUsage[$i] = 0;
@@ -53,12 +55,11 @@ class AsyncPool{
 		}
 	}
 
-	public function getSize(){
+	public function getSize() : int{
 		return $this->size;
 	}
 
-	public function increaseSize($newSize){
-		$newSize = (int) $newSize;
+	public function increaseSize(int $newSize){
 		if($newSize > $this->size){
 			for($i = $this->size; $i < $newSize; ++$i){
 				$this->workerUsage[$i] = 0;
@@ -70,12 +71,11 @@ class AsyncPool{
 		}
 	}
 
-	public function submitTaskToWorker(AsyncTask $task, $worker){
+	public function submitTaskToWorker(AsyncTask $task, int $worker){
 		if(isset($this->tasks[$task->getTaskId()]) or $task->isGarbage()){
 			return;
 		}
 
-		$worker = (int) $worker;
 		if($worker < 0 or $worker >= $this->size){
 			throw new \InvalidArgumentException("Invalid worker $worker");
 		}
@@ -104,7 +104,7 @@ class AsyncPool{
 		$this->submitTaskToWorker($task, $selectedWorker);
 	}
 
-	private function removeTask(AsyncTask $task, $force = false){
+	private function removeTask(AsyncTask $task, bool $force = false){
 		if(isset($this->taskWorkers[$task->getTaskId()])){
 			if(!$force and ($task->isRunning() or !$task->isGarbage())){
 				return;
@@ -136,6 +136,14 @@ class AsyncPool{
 
 		$this->taskWorkers = [];
 		$this->tasks = [];
+
+		$this->collectWorkers();
+	}
+
+	private function collectWorkers(){
+		foreach($this->workers as $worker){
+			$worker->collect();
+		}
 	}
 
 	public function collectTasks(){
@@ -157,6 +165,8 @@ class AsyncPool{
 				$this->removeTask($task, true);
 			}
 		}
+
+		$this->collectWorkers();
 
 		Timings::$schedulerAsyncTimer->stopTiming();
 	}

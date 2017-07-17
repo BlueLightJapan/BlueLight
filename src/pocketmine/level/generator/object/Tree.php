@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator\object;
 
 use pocketmine\block\Block;
@@ -42,7 +44,7 @@ abstract class Tree{
 	public $leafBlock = Block::LEAVES;
 	public $treeHeight = 7;
 
-	public static function growTree(ChunkManager $level, $x, $y, $z, Random $random, $type = 0){
+	public static function growTree(ChunkManager $level, int $x, int $y, int $z, Random $random, int $type = 0){
 		switch($type){
 			case Sapling::SPRUCE:
 				$tree = new SpruceTree();
@@ -73,10 +75,10 @@ abstract class Tree{
 	}
 
 
-	public function canPlaceObject(ChunkManager $level, $x, $y, $z, Random $random){
+	public function canPlaceObject(ChunkManager $level, int $x, int $y, int $z, Random $random) : bool{
 		$radiusToCheck = 0;
 		for($yy = 0; $yy < $this->treeHeight + 3; ++$yy){
-			if($yy == 1 or $yy === $this->treeHeight){
+			if($yy === 1 or $yy === $this->treeHeight){
 				++$radiusToCheck;
 			}
 			for($xx = -$radiusToCheck; $xx < ($radiusToCheck + 1); ++$xx){
@@ -91,7 +93,7 @@ abstract class Tree{
 		return true;
 	}
 
-	public function placeObject(ChunkManager $level, $x, $y, $z, Random $random){
+	public function placeObject(ChunkManager $level, int $x, int $y, int $z, Random $random){
 
 		$this->placeTrunk($level, $x, $y, $z, $random, $this->treeHeight - 1);
 
@@ -114,7 +116,7 @@ abstract class Tree{
 		}
 	}
 
-	protected function placeTrunk(ChunkManager $level, $x, $y, $z, Random $random, $trunkHeight){
+	protected function placeTrunk(ChunkManager $level, int $x, int $y, int $z, Random $random, int $trunkHeight){
 		// The base dirt block
 		$level->setBlockIdAt($x, $y - 1, $z, Block::DIRT);
 

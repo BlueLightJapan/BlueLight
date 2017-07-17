@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -44,10 +46,10 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable{
 	 * @param Item   $bucket
 	 * @param Item   $itemInHand
 	 */
-	public function __construct(Player $who, Block $blockClicked, $blockFace, Item $bucket, Item $itemInHand){
+	public function __construct(Player $who, Block $blockClicked, int $blockFace, Item $bucket, Item $itemInHand){
 		$this->player = $who;
 		$this->blockClicked = $blockClicked;
-		$this->blockFace = (int) $blockFace;
+		$this->blockFace = $blockFace;
 		$this->item = $itemInHand;
 		$this->bucket = $bucket;
 	}
@@ -57,7 +59,7 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable{
 	 *
 	 * @return Item
 	 */
-	public function getBucket(){
+	public function getBucket() : Item{
 		return $this->bucket;
 	}
 
@@ -66,7 +68,7 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable{
 	 *
 	 * @return Item
 	 */
-	public function getItem(){
+	public function getItem() : Item{
 		return $this->item;
 	}
 
@@ -80,14 +82,14 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable{
 	/**
 	 * @return Block
 	 */
-	public function getBlockClicked(){
+	public function getBlockClicked() : Block{
 		return $this->blockClicked;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getBlockFace(){
+	public function getBlockFace() : int{
 		return $this->blockFace;
 	}
 }

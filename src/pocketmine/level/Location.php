@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level;
 
 use pocketmine\math\Vector3;
@@ -53,8 +55,17 @@ class Location extends Position{
 	 *
 	 * @return Location
 	 */
-	public static function fromObject(Vector3 $pos, Level $level = null, $yaw = 0.0, $pitch = 0.0){
+	public static function fromObject(Vector3 $pos, Level $level = null, $yaw = 0.0, $pitch = 0.0) : Location{
 		return new Location($pos->x, $pos->y, $pos->z, $yaw, $pitch, $level ?? (($pos instanceof Position) ? $pos->level : null));
+	}
+
+	/**
+	 * Return a Location instance
+	 * 
+	 * @return Location
+	 */
+	public function asLocation() : Location{
+		return new Location($this->x, $this->y, $this->z, $this->yaw, $this->pitch, $this->level);
 	}
 
 	public function getYaw(){
@@ -67,5 +78,12 @@ class Location extends Position{
 
 	public function __toString(){
 		return "Location (level=" . ($this->isValid() ? $this->getLevel()->getName() : "null") . ", x=$this->x, y=$this->y, z=$this->z, yaw=$this->yaw, pitch=$this->pitch)";
+	}
+
+	public function equals(Vector3 $v) : bool{
+		if($v instanceof Location){
+			return parent::equals($v) and $v->yaw == $this->yaw and $v->pitch == $this->pitch;
+		}
+		return parent::equals($v);
 	}
 }

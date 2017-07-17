@@ -19,7 +19,7 @@
  *
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace pocketmine\command;
 
@@ -40,7 +40,7 @@ class CommandReader extends Thread{
 		$this->buffer = new \Threaded;
 		$opts = getopt("", ["disable-readline"]);
 
-		if((extension_loaded("readline") and !isset($opts["disable-readline"]) and !$this->isPipe(STDIN))){
+		if(extension_loaded("readline") and !isset($opts["disable-readline"]) and !$this->isPipe(STDIN)){
 			$this->type = self::TYPE_READLINE;
 		}
 
@@ -160,7 +160,7 @@ class CommandReader extends Thread{
 	 */
 	public function getLine(){
 		if($this->buffer->count() !== 0){
-			return $this->buffer->shift();
+			return (string) $this->buffer->shift();
 		}
 
 		return null;
@@ -180,7 +180,7 @@ class CommandReader extends Thread{
 
 	}
 
-	public function getThreadName(){
+	public function getThreadName() : string{
 		return "Console";
 	}
 }

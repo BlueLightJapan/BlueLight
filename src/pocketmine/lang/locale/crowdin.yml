@@ -3,4 +3,4 @@ files:
     translation: /%three_letters_code%.ini
     languages_mapping:
       three_letters_code:
-        zh-CN: zho-cn
+        zh-CN: chs

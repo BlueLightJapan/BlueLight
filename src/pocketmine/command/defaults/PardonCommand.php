@@ -19,12 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
-use pocketmine\command\data\CommandParameter;
 
 class PardonCommand extends VanillaCommand{
 
@@ -35,19 +37,15 @@ class PardonCommand extends VanillaCommand{
 			"%commands.unban.usage"
 		);
 		$this->setPermission("pocketmine.command.unban.player");
-		//$this->commandParameters["default"] = [new CommandParameter("name", CommandParameter::ARG_TYPE_STRING, false)];
-
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args){
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
 		if(!$this->testPermission($sender)){
 			return true;
 		}
 
 		if(count($args) !== 1){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
-
-			return false;
+			throw new InvalidCommandSyntaxException();
 		}
 
 		$sender->getServer()->getNameBans()->remove($args[0]);

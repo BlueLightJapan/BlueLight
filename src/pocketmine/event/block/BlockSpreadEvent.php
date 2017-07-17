@@ -14,17 +14,18 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\block;
 
 use pocketmine\block\Block;
-use pocketmine\event\Cancellable;
 
-class BlockSpreadEvent extends BlockFormEvent implements Cancellable{
+class BlockSpreadEvent extends BlockFormEvent{
 	public static $handlerList = null;
 
 	/** @var Block */

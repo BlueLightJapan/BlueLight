@@ -19,11 +19,13 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
 use pocketmine\event\Timings;
 use pocketmine\item\Item;
-use pocketmine\network\protocol\CraftingDataPacket;
+use pocketmine\network\mcpe\protocol\CraftingDataPacket;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\MainLogger;
@@ -110,7 +112,6 @@ class CraftingManager{
 		}
 
 		$pk->encode();
-		$pk->isEncoded = true;
 
 		$this->craftingDataCache = $pk;
 		Timings::$craftingDataCacheRebuildTimer->stopTiming();
@@ -149,7 +150,7 @@ class CraftingManager{
 
 	/**
 	 * @param UUID $id
-	 * @return Recipe
+	 * @return Recipe|null
 	 */
 	public function getRecipe(UUID $id){
 		$index = $id->toBinary();
@@ -159,21 +160,21 @@ class CraftingManager{
 	/**
 	 * @return Recipe[]
 	 */
-	public function getRecipes(){
+	public function getRecipes() : array{
 		return $this->recipes;
 	}
 
 	/**
 	 * @return FurnaceRecipe[]
 	 */
-	public function getFurnaceRecipes(){
+	public function getFurnaceRecipes() : array{
 		return $this->furnaceRecipes;
 	}
 
 	/**
 	 * @param Item $input
 	 *
-	 * @return FurnaceRecipe
+	 * @return FurnaceRecipe|null
 	 */
 	public function matchFurnaceRecipe(Item $input){
 		if(isset($this->furnaceRecipes[$input->getId() . ":" . $input->getDamage()])){
@@ -237,7 +238,7 @@ class CraftingManager{
 	 * @param ShapelessRecipe $recipe
 	 * @return bool
 	 */
-	public function matchRecipe(ShapelessRecipe $recipe){
+	public function matchRecipe(ShapelessRecipe $recipe) : bool{
 		if(!isset($this->recipeLookup[$idx = $recipe->getResult()->getId() . ":" . $recipe->getResult()->getDamage()])){
 			return false;
 		}
@@ -254,12 +255,12 @@ class CraftingManager{
 		}
 
 		$hasRecipe = null;
-		foreach($this->recipeLookup[$idx] as $recipe){
-			if($recipe instanceof ShapelessRecipe){
-				if($recipe->getIngredientCount() !== count($ingredients)){
+		foreach($this->recipeLookup[$idx] as $possibleRecipe){
+			if($possibleRecipe instanceof ShapelessRecipe){
+				if($possibleRecipe->getIngredientCount() !== count($ingredients)){
 					continue;
 				}
-				$checkInput = $recipe->getIngredientList();
+				$checkInput = $possibleRecipe->getIngredientList();
 				foreach($ingredients as $item){
 					$amount = $item->getCount();
 					foreach($checkInput as $k => $checkItem){
@@ -278,7 +279,7 @@ class CraftingManager{
 				}
 
 				if(count($checkInput) === 0){
-					$hasRecipe = $recipe;
+					$hasRecipe = $possibleRecipe;
 					break;
 				}
 			}
@@ -295,7 +296,7 @@ class CraftingManager{
 	 * @param Recipe $recipe
 	 */
 	public function registerRecipe(Recipe $recipe){
-		$recipe->setId(UUID::fromData(++self::$RECIPE_COUNT, $recipe->getResult()->getId(), $recipe->getResult()->getDamage(), $recipe->getResult()->getCount(), $recipe->getResult()->getCompoundTag()));
+		$recipe->setId(UUID::fromData((string) ++self::$RECIPE_COUNT, (string) $recipe->getResult()->getId(), (string) $recipe->getResult()->getDamage(), (string) $recipe->getResult()->getCount(), $recipe->getResult()->getCompoundTag()));
 
 		if($recipe instanceof ShapedRecipe){
 			$this->registerShapedRecipe($recipe);

@@ -19,12 +19,13 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Player;
-use pocketmine\command\data\CommandParameter;
 
 class ListCommand extends VanillaCommand{
 
@@ -37,23 +38,19 @@ class ListCommand extends VanillaCommand{
 		$this->setPermission("pocketmine.command.list");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args){
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
 		if(!$this->testPermission($sender)){
 			return true;
 		}
 
-		$online = "";
-		$onlineCount = 0;
+		$playerNames = array_map(function(Player $player){
+			return $player->getName();
+		}, array_filter($sender->getServer()->getOnlinePlayers(), function(Player $player) use ($sender){
+			return $player->isOnline() and (!($sender instanceof Player) or $sender->canSee($player));
+		}));
 
-		foreach($sender->getServer()->getOnlinePlayers() as $player){
-			if($player->isOnline() and (!($sender instanceof Player) or $sender->canSee($player))){
-				$online .= $player->getDisplayName() . ", ";
-				++$onlineCount;
-			}
-		}
-
-		$sender->sendMessage(new TranslationContainer("commands.players.list", [$onlineCount, $sender->getServer()->getMaxPlayers()]));
-		$sender->sendMessage(substr($online, 0, -2));
+		$sender->sendMessage(new TranslationContainer("commands.players.list", [count($playerNames), $sender->getServer()->getMaxPlayers()]));
+		$sender->sendMessage(implode(", ", $playerNames));
 
 		return true;
 	}

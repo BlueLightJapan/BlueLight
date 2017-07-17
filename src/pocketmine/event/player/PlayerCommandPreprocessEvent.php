@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -51,14 +53,14 @@ class PlayerCommandPreprocessEvent extends PlayerEvent implements Cancellable{
 	/**
 	 * @return string
 	 */
-	public function getMessage(){
+	public function getMessage() : string{
 		return $this->message;
 	}
 
 	/**
 	 * @param string $message
 	 */
-	public function setMessage($message){
+	public function setMessage(string $message){
 		$this->message = $message;
 	}
 

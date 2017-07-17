@@ -19,9 +19,11 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
-use pocketmine\network\protocol\types\InventoryNetworkIds;
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
 
 /**
  * Saves all the information regarding default inventory sizes and types
@@ -54,7 +56,7 @@ class InventoryType{
 	/**
 	 * @param $index
 	 *
-	 * @return InventoryType
+	 * @return InventoryType|null
 	 */
 	public static function get($index){
 		return static::$default[$index] ?? null;
@@ -67,20 +69,18 @@ class InventoryType{
 
 		//TODO: move network stuff out of here
 		//TODO: move inventory data to json
-		static::$default[static::CHEST] = new InventoryType(27, "Chest", 0);
-		static::$default[static::DOUBLE_CHEST] = new InventoryType(27 + 27, "Double Chest", 0);
-		static::$default[static::PLAYER] = new InventoryType(36 + 4, "Player", 0); //36 CONTAINER, 4 ARMOR
-		static::$default[static::FURNACE] = new InventoryType(3, "Furnace", 2);
-		static::$default[static::CRAFTING] = new InventoryType(5, "Crafting", 1); //4 CRAFTING slots, 1 RESULT
-		static::$default[static::WORKBENCH] = new InventoryType(10, "Crafting", 1); //9 CRAFTING slots, 1 RESULT
-		static::$default[static::ENCHANT_TABLE] = new InventoryType(2, "Enchant", 3); //1 INPUT/OUTPUT, 1 LAPIS
-		static::$default[static::BREWING_STAND] = new InventoryType(4, "Brewing", 4); //1 INPUT, 3 POTION
-		static::$default[static::ANVIL] = new InventoryType(3, "Anvil", 5); //2 INPUT, 1 OUTPUT
-		static::$default[static::DISPENSER] = new InventoryType(9, "Dispenser", 6); //9 CONTAINER
-		static::$default[static::DROPPER] = new InventoryType(9, "Dropper", 7); //9 CONTAINER
-		static::$default[static::HOPPER] = new InventoryType(5, "Hopper", 8); //5 CONTAINER
-		static::$default[static::ENDER_CHEST] = new InventoryType(27, "Ender Chest", 0);
-		static::$default[static::BEACON] = new InventoryType(0, "Beacon", 13);
+		static::$default = [
+			static::CHEST =>         new InventoryType(27, "Chest", WindowTypes::CONTAINER),
+			static::DOUBLE_CHEST =>  new InventoryType(27 + 27, "Double Chest", WindowTypes::CONTAINER),
+			static::PLAYER =>        new InventoryType(36 + 4, "Player", WindowTypes::INVENTORY), //36 CONTAINER, 4 ARMOR
+			static::CRAFTING =>      new InventoryType(5, "Crafting", WindowTypes::INVENTORY), //yes, the use of INVENTORY is intended! 4 CRAFTING slots, 1 RESULT
+			static::WORKBENCH =>     new InventoryType(10, "Crafting", WindowTypes::WORKBENCH), //9 CRAFTING slots, 1 RESULT
+			static::FURNACE =>       new InventoryType(3, "Furnace", WindowTypes::FURNACE), //2 INPUT, 1 OUTPUT
+			static::ENCHANT_TABLE => new InventoryType(2, "Enchant", WindowTypes::ENCHANTMENT), //1 INPUT/OUTPUT, 1 LAPIS
+			static::BREWING_STAND => new InventoryType(4, "Brewing", WindowTypes::BREWING_STAND), //1 INPUT, 3 POTION
+			static::ANVIL =>         new InventoryType(3, "Anvil", WindowTypes::ANVIL), //2 INPUT, 1 OUTP
+			static::ENDER_CHEST =>   new InventoryType(27, "Ender Chest", 0) //27INPUT
+		];
 	}
 
 	/**
@@ -97,21 +97,21 @@ class InventoryType{
 	/**
 	 * @return int
 	 */
-	public function getDefaultSize(){
+	public function getDefaultSize() : int{
 		return $this->size;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getDefaultTitle(){
+	public function getDefaultTitle() : string{
 		return $this->title;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getNetworkType(){
+	public function getNetworkType() : int{
 		return $this->typeId;
 	}
 }

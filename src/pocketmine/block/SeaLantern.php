@@ -13,11 +13,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author Pocketmine Team
+ * @author PocketMine Team
  * @link http://www.pocketmine.net/
  *
  *
 */
+
+declare(strict_types=1);
 
 namespace pocketmine\block;
 

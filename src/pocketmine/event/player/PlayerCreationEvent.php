@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\player;
 
@@ -47,13 +49,13 @@ class PlayerCreationEvent extends Event{
 
 	/**
 	 * @param SourceInterface $interface
-	 * @param                 Player::class   $baseClass
-	 * @param                 Player::class   $playerClass
+	 * @param Player::class   $baseClass
+	 * @param Player::class   $playerClass
 	 * @param mixed           $clientId
 	 * @param string          $address
 	 * @param int             $port
 	 */
-	public function __construct(SourceInterface $interface, $baseClass, $playerClass, $clientId, $address, $port){
+	public function __construct(SourceInterface $interface, $baseClass, $playerClass, $clientId, string $address, int $port){
 		$this->interface = $interface;
 		$this->clientId = $clientId;
 		$this->address = $address;
@@ -75,21 +77,21 @@ class PlayerCreationEvent extends Event{
 	/**
 	 * @return SourceInterface
 	 */
-	public function getInterface(){
+	public function getInterface() : SourceInterface{
 		return $this->interface;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getAddress(){
+	public function getAddress() : string{
 		return $this->address;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPort(){
+	public function getPort() : int{
 		return $this->port;
 	}
 

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\entity\Entity;
@@ -29,8 +31,8 @@ class Cobweb extends Flowable{
 
 	protected $id = self::COBWEB;
 
-	public function __construct(){
-
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
 	public function hasEntityCollision(){
@@ -56,5 +58,9 @@ class Cobweb extends Flowable{
 	public function getDrops(Item $item){
 		//TODO: correct drops
 		return [];
+	}
+
+	public function diffusesSkyLight() : bool{
+		return true;
 	}
 }

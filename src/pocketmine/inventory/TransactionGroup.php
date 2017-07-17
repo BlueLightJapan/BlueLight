@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
 interface TransactionGroup{
@@ -26,36 +28,36 @@ interface TransactionGroup{
 	/**
 	 * @return float
 	 */
-	function getCreationTime();
+	public function getCreationTime() : float;
 
 	/**
 	 * @return Transaction[]
 	 */
-	function getTransactions();
+	public function getTransactions() : array;
 
 	/**
 	 * @return Inventory[]
 	 */
-	function getInventories();
+	public function getInventories() : array;
 
 	/**
 	 * @param Transaction $transaction
 	 */
-	function addTransaction(Transaction $transaction);
+	public function addTransaction(Transaction $transaction);
 
 	/**
 	 * @return bool
 	 */
-	function canExecute();
+	public function canExecute() : bool;
 
 	/**
 	 * @return bool
 	 */
-	function execute();
+	public function execute() : bool;
 
 	/**
 	 * @return bool
 	 */
-	function hasExecuted();
+	public function hasExecuted() : bool;
 
 }

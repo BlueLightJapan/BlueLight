@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\entity;
 
 class Attribute{
@@ -35,7 +37,6 @@ class Attribute{
 	const ATTACK_DAMAGE = 8;
 	const EXPERIENCE_LEVEL = 9;
 	const EXPERIENCE = 10;
-	const LUCK = 11;
 
 	private $id;
 	protected $minValue;
@@ -52,8 +53,8 @@ class Attribute{
 
 	public static function init(){
 		self::addAttribute(self::ABSORPTION, "minecraft:absorption", 0.00, 340282346638528859811704183484516925440.00, 0.00);
-		self::addAttribute(self::SATURATION, "minecraft:player.saturation", 0.00, 20.00, 5.00);
-		self::addAttribute(self::EXHAUSTION, "minecraft:player.exhaustion", 0.00, 5.00, 0.41);
+		self::addAttribute(self::SATURATION, "minecraft:player.saturation", 0.00, 20.00, 20.00);
+		self::addAttribute(self::EXHAUSTION, "minecraft:player.exhaustion", 0.00, 5.00, 0.0);
 		self::addAttribute(self::KNOCKBACK_RESISTANCE, "minecraft:knockback_resistance", 0.00, 1.00, 0.00);
 		self::addAttribute(self::HEALTH, "minecraft:health", 0.00, 20.00, 20.00);
 		self::addAttribute(self::MOVEMENT_SPEED, "minecraft:movement", 0.00, 340282346638528859811704183484516925440.00, 0.10);
@@ -62,7 +63,8 @@ class Attribute{
 		self::addAttribute(self::ATTACK_DAMAGE, "minecraft:attack_damage", 0.00, 340282346638528859811704183484516925440.00, 1.00, false);
 		self::addAttribute(self::EXPERIENCE_LEVEL, "minecraft:player.level", 0.00, 24791.00, 0.00);
 		self::addAttribute(self::EXPERIENCE, "minecraft:player.experience", 0.00, 1.00, 0.00);
-		self::addAttribute(self::LUCK, "minecraft:luck", -1024, 1024, 0.00);
+		//TODO: minecraft:luck (for fishing?)
+		//TODO: minecraft:fall_damage
 	}
 
 	/**
@@ -74,30 +76,32 @@ class Attribute{
 	 * @param bool   $shouldSend
 	 *
 	 * @return Attribute
+	 *
+	 * @throws \InvalidArgumentException
 	 */
-	public static function addAttribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
+	public static function addAttribute(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true) : Attribute{
 		if($minValue > $maxValue or $defaultValue > $maxValue or $defaultValue < $minValue){
 			throw new \InvalidArgumentException("Invalid ranges: min value: $minValue, max value: $maxValue, $defaultValue: $defaultValue");
 		}
 
-		return self::$attributes[(int) $id] = new Attribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend);
+		return self::$attributes[$id] = new Attribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend);
 	}
 
 	/**
-	 * @param $id
+	 * @param int $id
 	 *
-	 * @return null|Attribute
+	 * @return Attribute|null
 	 */
-	public static function getAttribute($id){
+	public static function getAttribute(int $id){
 		return isset(self::$attributes[$id]) ? clone self::$attributes[$id] : null;
 	}
 
 	/**
-	 * @param $name
+	 * @param string $name
 	 *
-	 * @return null|Attribute
+	 * @return Attribute|null
 	 */
-	public static function getAttributeByName($name){
+	public static function getAttributeByName(string $name){
 		foreach(self::$attributes as $a){
 			if($a->getName() === $name){
 				return clone $a;
@@ -107,22 +111,22 @@ class Attribute{
 		return null;
 	}
 
-	public function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = true){
-		$this->id = (int) $id;
-		$this->name = (string) $name;
-		$this->minValue = (float) $minValue;
-		$this->maxValue = (float) $maxValue;
-		$this->defaultValue = (float) $defaultValue;
-		$this->shouldSend = (bool) $shouldSend;
+	private function __construct(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true){
+		$this->id = $id;
+		$this->name = $name;
+		$this->minValue = $minValue;
+		$this->maxValue = $maxValue;
+		$this->defaultValue = $defaultValue;
+		$this->shouldSend = $shouldSend;
 
 		$this->currentValue = $this->defaultValue;
 	}
 
-	public function getMinValue(){
+	public function getMinValue() : float{
 		return $this->minValue;
 	}
 
-	public function setMinValue($minValue){
+	public function setMinValue(float $minValue){
 		if($minValue > $this->getMaxValue()){
 			throw new \InvalidArgumentException("Value $minValue is bigger than the maxValue!");
 		}
@@ -134,11 +138,11 @@ class Attribute{
 		return $this;
 	}
 
-	public function getMaxValue(){
+	public function getMaxValue() : float{
 		return $this->maxValue;
 	}
 
-	public function setMaxValue($maxValue){
+	public function setMaxValue(float $maxValue){
 		if($maxValue < $this->getMinValue()){
 			throw new \InvalidArgumentException("Value $maxValue is bigger than the minValue!");
 		}
@@ -150,11 +154,11 @@ class Attribute{
 		return $this;
 	}
 
-	public function getDefaultValue(){
+	public function getDefaultValue() : float{
 		return $this->defaultValue;
 	}
 
-	public function setDefaultValue($defaultValue){
+	public function setDefaultValue(float $defaultValue){
 		if($defaultValue > $this->getMaxValue() or $defaultValue < $this->getMinValue()){
 			throw new \InvalidArgumentException("Value $defaultValue exceeds the range!");
 		}
@@ -166,11 +170,22 @@ class Attribute{
 		return $this;
 	}
 
-	public function getValue(){
+	public function resetToDefault(){
+		$this->setValue($this->getDefaultValue());
+	}
+
+	public function getValue() : float{
 		return $this->currentValue;
 	}
 
-	public function setValue($value, $fit = true, bool $shouldSend = false){
+	/**
+	 * @param float $value
+	 * @param bool  $fit
+	 * @param bool  $forceSend
+	 *
+	 * @return $this
+	 */
+	public function setValue(float $value, bool $fit = false, bool $forceSend = false){
 		if($value > $this->getMaxValue() or $value < $this->getMinValue()){
 			if(!$fit){
 				throw new \InvalidArgumentException("Value $value exceeds the range!");
@@ -181,23 +196,22 @@ class Attribute{
 		if($this->currentValue != $value){
 			$this->desynchronized = true;
 			$this->currentValue = $value;
-		}
-
-		if($shouldSend){
+		}elseif($forceSend){
 			$this->desynchronized = true;
 		}
+
 		return $this;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return $this->name;
 	}
 
-	public function getId(){
+	public function getId() : int{
 		return $this->id;
 	}
 
-	public function isSyncable(){
+	public function isSyncable() : bool{
 		return $this->shouldSend;
 	}
 

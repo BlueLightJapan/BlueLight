@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level;
 
 use pocketmine\block\Block;
@@ -43,14 +45,14 @@ interface ChunkLoader{
 	 *
 	 * @return int
 	 */
-	public function getLoaderId();
+	public function getLoaderId() : int;
 
 	/**
 	 * Returns if the chunk loader is currently active
 	 *
 	 * @return bool
 	 */
-	public function isLoaderActive();
+	public function isLoaderActive() : bool;
 
 	/**
 	 * @return Position

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\scheduler;
 
 use pocketmine\plugin\Plugin;
@@ -41,7 +43,7 @@ abstract class PluginTask extends Task{
 	/**
 	 * @return Plugin
 	 */
-	public final function getOwner(){
+	final public function getOwner() : Plugin{
 		return $this->owner;
 	}
 

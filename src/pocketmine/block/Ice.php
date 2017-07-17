@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -28,8 +30,8 @@ class Ice extends Transparent{
 
 	protected $id = self::ICE;
 
-	public function __construct(){
-
+	public function __construct($meta = 0){
+		$this->meta = $meta;
 	}
 
 	public function getName(){
@@ -38,6 +40,10 @@ class Ice extends Transparent{
 
 	public function getHardness(){
 		return 0.5;
+	}
+
+	public function getLightFilter() : int{
+		return 2;
 	}
 
 	public function getToolType(){

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
 /**
@@ -54,7 +56,7 @@ class CraftingInventory extends BaseInventory{
 		return $this->resultInventory;
 	}
 
-	public function getSize(){
+	public function getSize() : int{
 		return $this->getResultInventory()->getSize() + parent::getSize();
 	}
 }

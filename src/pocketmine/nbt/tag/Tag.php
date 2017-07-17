@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * All the NBT Tags
  */
@@ -34,7 +36,7 @@ abstract class Tag extends \stdClass{
 		return $this->value;
 	}
 
-	public abstract function getType();
+	abstract public function getType();
 
 	public function setValue($value){
 		$this->value = $value;

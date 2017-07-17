@@ -19,13 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\TranslationContainer;
 use pocketmine\utils\TextFormat;
-use pocketmine\command\data\CommandParameter;
 
 class ReloadCommand extends VanillaCommand{
 
@@ -38,7 +39,7 @@ class ReloadCommand extends VanillaCommand{
 		$this->setPermission("pocketmine.command.reload");
 	}
 
-	public function execute(CommandSender $sender, $currentAlias, array $args){
+	public function execute(CommandSender $sender, string $commandLabel, array $args){
 		if(!$this->testPermission($sender)){
 			return true;
 		}

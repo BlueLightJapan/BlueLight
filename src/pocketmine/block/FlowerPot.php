@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
@@ -85,7 +87,7 @@ class FlowerPot extends Flowable{
 			}
 		}
 
-		Tile::createTile(Tile::FLOWER_POT, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		Tile::createTile(Tile::FLOWER_POT, $this->getLevel(), $nbt);
 		return true;
 	}
 

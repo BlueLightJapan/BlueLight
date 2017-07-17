@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\scheduler;
 
 /**
@@ -30,16 +32,16 @@ abstract class Task{
 	private $taskHandler = null;
 
 	/**
-	 * @return TaskHandler
+	 * @return TaskHandler|null
 	 */
-	public final function getHandler(){
+	final public function getHandler(){
 		return $this->taskHandler;
 	}
 
 	/**
 	 * @return int
 	 */
-	public final function getTaskId(){
+	final public function getTaskId() : int{
 		if($this->taskHandler !== null){
 			return $this->taskHandler->getTaskId();
 		}
@@ -48,9 +50,9 @@ abstract class Task{
 	}
 
 	/**
-	 * @param TaskHandler $taskHandler
+	 * @param TaskHandler|null $taskHandler
 	 */
-	public final function setHandler($taskHandler){
+	final public function setHandler(TaskHandler $taskHandler = null){
 		if($this->taskHandler === null or $taskHandler === null){
 			$this->taskHandler = $taskHandler;
 		}
@@ -59,11 +61,11 @@ abstract class Task{
 	/**
 	 * Actions to execute when run
 	 *
-	 * @param $currentTick
+	 * @param int $currentTick
 	 *
 	 * @return void
 	 */
-	public abstract function onRun($currentTick);
+	abstract public function onRun($currentTick);
 
 	/**
 	 * Actions to execute if the Task is cancelled

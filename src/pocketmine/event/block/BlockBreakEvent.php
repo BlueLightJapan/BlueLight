@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @link http://www.pocketmine.net/
  *
  *
- */
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\event\block;
 
@@ -29,10 +31,10 @@ use pocketmine\Player;
 class BlockBreakEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;
 
-	/** @var \pocketmine\Player */
+	/** @var Player */
 	protected $player;
 
-	/** @var \pocketmine\item\Item */
+	/** @var Item */
 	protected $item;
 
 	/** @var bool */

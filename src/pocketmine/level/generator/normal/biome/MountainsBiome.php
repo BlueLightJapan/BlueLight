@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator\normal\biome;
 
 use pocketmine\level\generator\populator\TallGrass;
@@ -46,7 +48,7 @@ class MountainsBiome extends GrassyBiome{
 		$this->rainfall = 0.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Mountains";
 	}
 }

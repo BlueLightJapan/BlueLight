@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\tile;
 
 use pocketmine\event\block\SignChangeEvent;
@@ -72,7 +74,7 @@ class Sign extends Spawnable{
 		];
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound() : CompoundTag{
 		return new CompoundTag("", [
 			new StringTag("id", Tile::SIGN),
 			$this->namedtag->Text1,

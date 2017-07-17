@@ -19,11 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine;
 
-use pocketmine\network\protocol\Info;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoadOrder;
+use pocketmine\plugin\PluginManager;
 use pocketmine\utils\Utils;
 use pocketmine\utils\VersionString;
 use raklib\RakLib;
@@ -35,7 +38,9 @@ class CrashDump{
 	private $fp;
 	private $time;
 	private $data = [];
-	private $encodedData = null;
+	/** @var string */
+	private $encodedData = "";
+	/** @var string */
 	private $path;
 
 	public function __construct(Server $server){
@@ -61,7 +66,7 @@ class CrashDump{
 		$this->encodeData();
 	}
 
-	public function getPath(){
+	public function getPath() : string{
 		return $this->path;
 	}
 
@@ -69,7 +74,7 @@ class CrashDump{
 		return $this->encodedData;
 	}
 
-	public function getData(){
+	public function getData() : array{
 		return $this->data;
 	}
 
@@ -86,7 +91,7 @@ class CrashDump{
 	}
 
 	private function pluginsData(){
-		if(class_exists("pocketmine\\plugin\\PluginManager", false)){
+		if($this->server->getPluginManager() instanceof PluginManager){
 			$this->addLine();
 			$this->addLine("Loaded plugins:");
 			$this->data["plugins"] = [];
@@ -159,7 +164,7 @@ class CrashDump{
 				E_STRICT => "E_STRICT",
 				E_RECOVERABLE_ERROR => "E_RECOVERABLE_ERROR",
 				E_DEPRECATED => "E_DEPRECATED",
-				E_USER_DEPRECATED => "E_USER_DEPRECATED",
+				E_USER_DEPRECATED => "E_USER_DEPRECATED"
 			];
 			$error["fullFile"] = $error["file"];
 			$error["file"] = cleanPath($error["file"]);
@@ -224,9 +229,10 @@ class CrashDump{
 	private function generalData(){
 		$version = new VersionString();
 		$this->data["general"] = [];
+		$this->data["general"]["name"] = $this->server->getName();
 		$this->data["general"]["version"] = $version->get(false);
 		$this->data["general"]["build"] = $version->getBuild();
-		$this->data["general"]["protocol"] = Info::CURRENT_PROTOCOL;
+		$this->data["general"]["protocol"] = ProtocolInfo::CURRENT_PROTOCOL;
 		$this->data["general"]["api"] = \pocketmine\API_VERSION;
 		$this->data["general"]["git"] = \pocketmine\GIT_COMMIT;
 		$this->data["general"]["raklib"] = RakLib::VERSION;
@@ -235,7 +241,7 @@ class CrashDump{
 		$this->data["general"]["zend"] = zend_version();
 		$this->data["general"]["php_os"] = PHP_OS;
 		$this->data["general"]["os"] = Utils::getOS();
-		$this->addLine("PocketMine-MP version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . Info::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
+		$this->addLine($this->server->getName() . " version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . ProtocolInfo::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
 		$this->addLine("Git commit: " . GIT_COMMIT);
 		$this->addLine("uname -a: " . php_uname("a"));
 		$this->addLine("PHP Version: " . phpversion());

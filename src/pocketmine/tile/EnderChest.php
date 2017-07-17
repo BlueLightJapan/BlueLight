@@ -34,11 +34,11 @@ class EnderChest extends Spawnable implements Nameable{
 		return isset($this->namedtag->CustomName) ? $this->namedtag->CustomName->getValue() : "Ender Chest";
 	}
 
-	public function hasName(){
+	public function hasName() : bool{
 		return isset($this->namedtag->CustomName);
 	}
 
-	public function setName($str){
+	public function setName(string $str){
 		if($str === ""){
 			unset($this->namedtag->CustomName);
 			return;
@@ -47,7 +47,7 @@ class EnderChest extends Spawnable implements Nameable{
 		$this->namedtag->CustomName = new StringTag("CustomName", $str);
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound() : CompoundTag{
 		$enderchest = new CompoundTag("", [
 			new StringTag("id", Tile::ENDER_CHEST),
 			new IntTag("x", (int) $this->x),

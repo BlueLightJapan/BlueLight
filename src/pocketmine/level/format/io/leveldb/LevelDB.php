@@ -19,22 +19,28 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\format\io\leveldb;
 
+use pocketmine\entity\Entity;
 use pocketmine\level\format\Chunk;
-use pocketmine\level\format\SubChunk;
 use pocketmine\level\format\io\BaseLevelProvider;
 use pocketmine\level\format\io\ChunkUtils;
-use pocketmine\level\generator\Generator;
+use pocketmine\level\format\io\exception\UnsupportedChunkFormatException;
+use pocketmine\level\format\SubChunk;
 use pocketmine\level\generator\Flat;
+use pocketmine\level\generator\Generator;
 use pocketmine\level\Level;
 use pocketmine\level\LevelException;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\{
 	ByteTag, CompoundTag, FloatTag, IntTag, LongTag, StringTag
 };
-use pocketmine\network\protocol\Info as ProtocolInfo;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\tile\Tile;
 use pocketmine\utils\Binary;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\MainLogger;
 
 class LevelDB extends BaseLevelProvider{
@@ -49,6 +55,11 @@ class LevelDB extends BaseLevelProvider{
 	const TAG_PENDING_TICK = "3";
 	const TAG_BLOCK_EXTRA_DATA = "4";
 	const TAG_BIOME_STATE = "5";
+	const TAG_STATE_FINALISATION = "6";
+
+	const FINALISATION_NEEDS_INSTATICKING = 0;
+	const FINALISATION_NEEDS_POPULATION = 1;
+	const FINALISATION_DONE = 2;
 
 	const TAG_VERSION = "v";
 
@@ -59,6 +70,8 @@ class LevelDB extends BaseLevelProvider{
 	const GENERATOR_FLAT = 2;
 
 	const CURRENT_STORAGE_VERSION = 5; //Current MCPE level format version
+	const CURRENT_LEVEL_CHUNK_VERSION = 4;
+	const CURRENT_LEVEL_SUBCHUNK_VERSION = 0;
 
 	/** @var Chunk[] */
 	protected $chunks = [];
@@ -93,7 +106,7 @@ class LevelDB extends BaseLevelProvider{
 			if(isset($this->levelData->Generator)){
 				switch((int) $this->levelData->Generator->getValue()){ //Detect correct generator from MCPE data
 					case self::GENERATOR_FLAT:
-						$this->levelData->generatorName = new StringTag("generatorName", Generator::getGenerator("FLAT"));
+						$this->levelData->generatorName = new StringTag("generatorName", (string) Generator::getGenerator("FLAT"));
 						if(($layers = $this->db->get(self::ENTRY_FLAT_WORLD_LAYERS)) !== false){ //Detect existing custom flat layers
 							$layers = trim($layers, "[]");
 						}else{
@@ -103,7 +116,7 @@ class LevelDB extends BaseLevelProvider{
 						break;
 					case self::GENERATOR_INFINITE:
 						//TODO: add a null generator which does not generate missing chunks (to allow importing back to MCPE and generating more normal terrain without PocketMine messing things up)
-						$this->levelData->generatorName = new StringTag("generatorName", Generator::getGenerator("DEFAULT"));
+						$this->levelData->generatorName = new StringTag("generatorName", (string) Generator::getGenerator("DEFAULT"));
 						$this->levelData->generatorOptions = new StringTag("generatorOptions", "");
 						break;
 					case self::GENERATOR_LIMITED:
@@ -112,7 +125,7 @@ class LevelDB extends BaseLevelProvider{
 						throw new LevelException("Unknown LevelDB world format type, this level cannot be loaded");
 				}
 			}else{
-				$this->levelData->generatorName = new StringTag("generatorName", Generator::getGenerator("DEFAULT"));
+				$this->levelData->generatorName = new StringTag("generatorName", (string) Generator::getGenerator("DEFAULT"));
 			}
 		}
 
@@ -133,7 +146,7 @@ class LevelDB extends BaseLevelProvider{
 		return file_exists($path . "/level.dat") and is_dir($path . "/db/");
 	}
 
-	public static function generate(string $path, string $name, $seed, string $generator, array $options = []){
+	public static function generate(string $path, string $name, int $seed, string $generator, array $options = []){
 		if(!file_exists($path)){
 			mkdir($path, 0777, true);
 		}
@@ -153,39 +166,39 @@ class LevelDB extends BaseLevelProvider{
 
 		$levelData = new CompoundTag("", [
 			//Vanilla fields
-			"DayCycleStopTime" => new IntTag("DayCycleStopTime", -1),
-			"Difficulty" => new IntTag("Difficulty", 2),
-			"ForceGameType" => new ByteTag("ForceGameType", 0),
-			"GameType" => new IntTag("GameType", 0),
-			"Generator" => new IntTag("Generator", $generatorType),
-			"LastPlayed" => new LongTag("LastPlayed", time()),
-			"LevelName" => new StringTag("LevelName", $name),
-			"NetworkVersion" => new IntTag("NetworkVersion", ProtocolInfo::CURRENT_PROTOCOL),
-			//"Platform" => new IntTag("Platform", 2), //TODO: find out what the possible values are for
-			"RandomSeed" => new LongTag("RandomSeed", $seed),
-			"SpawnX" => new IntTag("SpawnX", 0),
-			"SpawnY" => new IntTag("SpawnY", 32767),
-			"SpawnZ" => new IntTag("SpawnZ", 0),
-			"StorageVersion" => new IntTag("StorageVersion", self::CURRENT_STORAGE_VERSION),
-			"Time" => new LongTag("Time", 0),
-			"eduLevel" => new ByteTag("eduLevel", 0),
-			"falldamage" => new ByteTag("falldamage", 1),
-			"firedamage" => new ByteTag("firedamage", 1),
-			"hasBeenLoadedInCreative" => new ByteTag("hasBeenLoadedInCreative", 1), //badly named, this actually determines whether achievements can be earned in this world...
-			"immutableWorld" => new ByteTag("immutableWorld", 0),
-			"lightningLevel" => new FloatTag("lightningLevel", 0.0),
-			"lightningTime" => new IntTag("lightningTime", 0),
-			"pvp" => new ByteTag("pvp", 1),
-			"rainLevel" => new FloatTag("rainLevel", 0.0),
-			"rainTime" => new IntTag("rainTime", 0),
-			"spawnMobs" => new ByteTag("spawnMobs", 1),
-			"texturePacksRequired" => new ByteTag("texturePacksRequired", 0), //TODO
+			new IntTag("DayCycleStopTime", -1),
+			new IntTag("Difficulty", 2),
+			new ByteTag("ForceGameType", 0),
+			new IntTag("GameType", 0),
+			new IntTag("Generator", $generatorType),
+			new LongTag("LastPlayed", time()),
+			new StringTag("LevelName", $name),
+			new IntTag("NetworkVersion", ProtocolInfo::CURRENT_PROTOCOL),
+			//new IntTag("Platform", 2), //TODO: find out what the possible values are for
+			new LongTag("RandomSeed", $seed),
+			new IntTag("SpawnX", 0),
+			new IntTag("SpawnY", 32767),
+			new IntTag("SpawnZ", 0),
+			new IntTag("StorageVersion", self::CURRENT_STORAGE_VERSION),
+			new LongTag("Time", 0),
+			new ByteTag("eduLevel", 0),
+			new ByteTag("falldamage", 1),
+			new ByteTag("firedamage", 1),
+			new ByteTag("hasBeenLoadedInCreative", 1), //badly named, this actually determines whether achievements can be earned in this world...
+			new ByteTag("immutableWorld", 0),
+			new FloatTag("lightningLevel", 0.0),
+			new IntTag("lightningTime", 0),
+			new ByteTag("pvp", 1),
+			new FloatTag("rainLevel", 0.0),
+			new IntTag("rainTime", 0),
+			new ByteTag("spawnMobs", 1),
+			new ByteTag("texturePacksRequired", 0), //TODO
 
 			//Additional PocketMine-MP fields
-			"GameRules" => new CompoundTag("GameRules", []),
-			"hardcore" => new ByteTag("hardcore", 0),
-			"generatorName" => new StringTag("generatorName", Generator::getGeneratorName($generator)),
-			"generatorOptions" => new StringTag("generatorOptions", $options["preset"] ?? "")
+			new CompoundTag("GameRules", []),
+			new ByteTag("hardcore", 0),
+			new StringTag("generatorName", Generator::getGeneratorName($generator)),
+			new StringTag("generatorOptions", $options["preset"] ?? "")
 		]);
 
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
@@ -215,6 +228,9 @@ class LevelDB extends BaseLevelProvider{
 	}
 
 	public function saveLevelData(){
+		$this->levelData->NetworkVersion = new IntTag("NetworkVersion", ProtocolInfo::CURRENT_PROTOCOL);
+		$this->levelData->StorageVersion = new IntTag("StorageVersion", self::CURRENT_STORAGE_VERSION);
+
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
 		$nbt->setData($this->levelData);
 		$buffer = $nbt->write();
@@ -229,7 +245,7 @@ class LevelDB extends BaseLevelProvider{
 	}
 
 	public function getGenerator() : string{
-		return $this->levelData["generatorName"];
+		return (string) $this->levelData["generatorName"];
 	}
 
 	public function getGeneratorOptions() : array{
@@ -285,78 +301,94 @@ class LevelDB extends BaseLevelProvider{
 		}
 
 		try{
+			/** @var SubChunk[] $subChunks */
 			$subChunks = [];
-			$heightMap = [];
-			$biomeIds = "";
 
-			for($y = Chunk::MAX_SUBCHUNKS - 1; $y >= 0; --$y){
-				if($this->db->get($index . self::TAG_SUBCHUNK_PREFIX . chr($y)) !== false){ //Found subchunk data!
+			/** @var bool $lightPopulated */
+			$lightPopulated = true;
+
+			$chunkVersion = ord($this->db->get($index . self::TAG_VERSION));
+
+			$binaryStream = new BinaryStream();
+
+			switch($chunkVersion){
+				case 4: //MCPE 1.1
+					//TODO: check beds
+				case 3: //MCPE 1.0
+					for($y = 0; $y < Chunk::MAX_SUBCHUNKS; ++$y){
+						if(($data = $this->db->get($index . self::TAG_SUBCHUNK_PREFIX . chr($y))) === false){
+							continue;
+						}
+
+						$binaryStream->setBuffer($data, 0);
+						$subChunkVersion = $binaryStream->getByte();
+
+						switch($subChunkVersion){
+							case 0:
+								$blocks = $binaryStream->get(4096);
+								$blockData = $binaryStream->get(2048);
+								if($chunkVersion < 4){
+									$blockSkyLight = $binaryStream->get(2048);
+									$blockLight = $binaryStream->get(2048);
+								}else{
+									//Mojang didn't bother changing the subchunk version when they stopped saving sky light -_-
+									$blockSkyLight = "";
+									$blockLight = "";
+									$lightPopulated = false;
+								}
+
+								$subChunks[$y] = new SubChunk($blocks, $blockData, $blockSkyLight, $blockLight);
+								break;
+							default:
+								throw new UnsupportedChunkFormatException("don't know how to decode LevelDB subchunk format version $subChunkVersion");
+						}
+					}
+
+					$binaryStream->setBuffer($this->db->get($index . self::TAG_DATA_2D), 0);
+
+					$heightMap = array_values(unpack("v*", $binaryStream->get(512)));
+					$biomeIds = $binaryStream->get(256);
 					break;
-				}
-			}
+				case 2: // < MCPE 1.0
+					$binaryStream->setBuffer($this->db->get($index . self::TAG_LEGACY_TERRAIN));
+					$fullIds = $binaryStream->get(32768);
+					$fullData = $binaryStream->get(16384);
+					$fullSkyLight = $binaryStream->get(16384);
+					$fullBlockLight = $binaryStream->get(16384);
 
-			if($y <= 0 and ($legacyTerrain = $this->db->get($index . self::TAG_LEGACY_TERRAIN)) !== false){ //didn't find any subchunk data but found old (pre-1.0) data
-				$offset = 0;
-				$fullIds = substr($legacyTerrain, $offset, 32768);
-				$offset += 32768;
-				$fullData = substr($legacyTerrain, $offset, 16384);
-				$offset += 16384;
-				$fullSkyLight = substr($legacyTerrain, $offset, 16384);
-				$offset += 16384;
-				$fullBlockLight = substr($legacyTerrain, $offset, 16384);
-				$offset += 16384;
+					for($yy = 0; $yy < 8; ++$yy){
+						$subOffset = ($yy << 4);
+						$ids = "";
+						for($i = 0; $i < 256; ++$i){
+							$ids .= substr($fullIds, $subOffset, 16);
+							$subOffset += 128;
+						}
+						$data = "";
+						$subOffset = ($yy << 3);
+						for($i = 0; $i < 256; ++$i){
+							$data .= substr($fullData, $subOffset, 8);
+							$subOffset += 64;
+						}
+						$skyLight = "";
+						$subOffset = ($yy << 3);
+						for($i = 0; $i < 256; ++$i){
+							$skyLight .= substr($fullSkyLight, $subOffset, 8);
+							$subOffset += 64;
+						}
+						$blockLight = "";
+						$subOffset = ($yy << 3);
+						for($i = 0; $i < 256; ++$i){
+							$blockLight .= substr($fullBlockLight, $subOffset, 8);
+							$subOffset += 64;
+						}
+						$subChunks[$yy] = new SubChunk($ids, $data, $skyLight, $blockLight);
+					}
 
-				for($yy = 0; $yy < 8; ++$yy){
-					$subOffset = ($yy << 4);
-					$ids = "";
-					for($i = 0; $i < 256; ++$i){
-						$ids .= substr($fullIds, $subOffset, 16);
-						$subOffset += 128;
-					}
-					$data = "";
-					$subOffset = ($yy << 3);
-					for($i = 0; $i < 256; ++$i){
-						$data .= substr($fullData, $subOffset, 8);
-						$subOffset += 64;
-					}
-					$skyLight = "";
-					$subOffset = ($yy << 3);
-					for($i = 0; $i < 256; ++$i){
-						$skyLight .= substr($fullSkyLight, $subOffset, 8);
-						$subOffset += 64;
-					}
-					$blockLight = "";
-					$subOffset = ($yy << 3);
-					for($i = 0; $i < 256; ++$i){
-						$blockLight .= substr($fullBlockLight, $subOffset, 8);
-						$subOffset += 64;
-					}
-					$subChunks[$yy] = new SubChunk($ids, $data, $skyLight, $blockLight);
-				}
-
-				$heightMap = array_values(unpack("C*", substr($legacyTerrain, $offset, 256)));
-				$offset += 256;
-				$biomeIds = ChunkUtils::convertBiomeColors(array_values(unpack("N*", substr($legacyTerrain, $offset, 1024))));
-				$offset += 1024;
-			}else{
-				for(; $y >= 0; --$y){ //If one subchunk exists, all subchunks below it are also guaranteed to exist.
-					$offset = 1; //Skip subchunk version byte
-					$subChunkData = $this->db->get($index . self::TAG_SUBCHUNK_PREFIX . chr($y));
-					$subChunks[$y] = new SubChunk(
-						substr($subChunkData, $offset,         4096), //block ids
-						substr($subChunkData, $offset += 4096, 2048), //block meta
-						substr($subChunkData, $offset += 2048, 2048), //sky light
-						substr($subChunkData, $offset += 2048, 2048) //block light
-					);
-				}
-
-				if(($data2dLegacy = $this->db->get($index . self::TAG_DATA_2D_LEGACY)) !== false){ //Found old data, convert it to new format
-					$heightMap = array_values(unpack("C*", substr($data2dLegacy, 0, 256)));
-					$biomeIds = ChunkUtils::convertBiomeColors(array_values(unpack("N*", substr($data2dLegacy, 256, 1024))));
-				}elseif(($data2d = $this->db->get($index . self::TAG_DATA_2D)) !== false){
-					$heightMap = array_values(unpack("v*", substr($data2d, 0, 512)));
-					$biomeIds = substr($data2d, 512, 256);
-				}
+					$heightMap = array_values(unpack("C*", $binaryStream->get(256)));
+					$biomeIds = ChunkUtils::convertBiomeColors(array_values(unpack("N*", $binaryStream->get(1024))));
+					break;
+				default:
+					throw new UnsupportedChunkFormatException("don't know how to decode chunk format version $chunkVersion");
 			}
 
 			$nbt = new NBT(NBT::LITTLE_ENDIAN);
@@ -370,6 +402,12 @@ class LevelDB extends BaseLevelProvider{
 				}
 			}
 
+			foreach($entities as $entityNBT){
+				if($entityNBT->id instanceof IntTag){
+					$entityNBT["id"] &= 0xff;
+				}
+			}
+
 			$tiles = [];
 			if(($tileData = $this->db->get($index . self::TAG_BLOCK_ENTITY)) !== false and strlen($tileData) > 0){
 				$nbt->read($tileData, true);
@@ -379,17 +417,16 @@ class LevelDB extends BaseLevelProvider{
 				}
 			}
 
-			/*
 			$extraData = [];
-			if(($extraRawData = $this->db->get($index . self::TAG_EXTRA_DATA)) !== false){
-				$stream = new BinaryStream($extraRawData);
-				$count = $stream->getLInt(); //TODO: check if the extra data is BE or LE
+			if(($extraRawData = $this->db->get($index . self::TAG_BLOCK_EXTRA_DATA)) !== false and strlen($extraRawData) > 0){
+				$binaryStream->setBuffer($extraRawData, 0);
+				$count = $binaryStream->getLInt();
 				for($i = 0; $i < $count; ++$i){
-					$key = $stream->getInt();
-					$value = $stream->getShort(false);
+					$key = $binaryStream->getLInt();
+					$value = $binaryStream->getLShort();
 					$extraData[$key] = $value;
 				}
-			}*/ //TODO
+			}
 
 			$chunk = new Chunk(
 				$chunkX,
@@ -398,22 +435,24 @@ class LevelDB extends BaseLevelProvider{
 				$entities,
 				$tiles,
 				$biomeIds,
-				$heightMap
+				$heightMap,
+				$extraData
 			);
 
 			//TODO: tile ticks, biome states (?)
 
-			/*
-			$flags = $this->db->get($index . self::ENTRY_FLAGS);
-			if($flags === false){
-				$flags = "\x03";
-			}*/
-			// TODO: check this, add flags (?)
 			$chunk->setGenerated(true);
 			$chunk->setPopulated(true);
-			$chunk->setLightPopulated(true);
+			$chunk->setLightPopulated($lightPopulated);
 
 			return $chunk;
+		}catch(UnsupportedChunkFormatException $e){
+			//TODO: set chunks read-only so the version on disk doesn't get overwritten
+
+			$logger = MainLogger::getLogger();
+			$logger->error("Failed to decode LevelDB chunk: " . $e->getMessage());
+
+			return null;
 		}catch(\Throwable $t){
 			$logger = MainLogger::getLogger();
 			$logger->error("LevelDB chunk decode error");
@@ -426,28 +465,52 @@ class LevelDB extends BaseLevelProvider{
 
 	private function writeChunk(Chunk $chunk){
 		$index = LevelDB::chunkIndex($chunk->getX(), $chunk->getZ());
-		$this->db->put($index . self::TAG_VERSION, chr(self::CURRENT_STORAGE_VERSION));
-		$highestIndex = $chunk->getHighestSubChunkIndex();
-		$subChunks = $chunk->getSubChunks();
-		for($y = $highestIndex; $y >= 0; --$y){ //Subchunks behave like a stack
+		$this->db->put($index . self::TAG_VERSION, chr(self::CURRENT_LEVEL_CHUNK_VERSION));
 
-			$this->db->put($index . self::TAG_SUBCHUNK_PREFIX . chr($y),
-						   "\x00" . //Subchunk version byte
-						   $subChunks[$y]->getBlockIdArray() .
-						   $subChunks[$y]->getBlockDataArray() .
-						   $subChunks[$y]->getSkyLightArray() .
-						   $subChunks[$y]->getBlockLightArray()
-			);
+		$subChunks = $chunk->getSubChunks();
+		foreach($subChunks as $y => $subChunk){
+			$key = $index . self::TAG_SUBCHUNK_PREFIX . chr($y);
+			if($subChunk->isEmpty(false)){ //MCPE doesn't save light anymore as of 1.1
+				$this->db->delete($key);
+			}else{
+				$this->db->put($key,
+					chr(self::CURRENT_LEVEL_SUBCHUNK_VERSION) .
+					$subChunks[$y]->getBlockIdArray() .
+					$subChunks[$y]->getBlockDataArray()
+				);
+			}
 		}
 
 		$this->db->put($index . self::TAG_DATA_2D, pack("v*", ...$chunk->getHeightMapArray()) . $chunk->getBiomeIdArray());
 
+		$extraData = $chunk->getBlockExtraDataArray();
+		if(count($extraData) > 0){
+			$stream = new BinaryStream();
+			$stream->putLInt(count($extraData));
+			foreach($extraData as $key => $value){
+				$stream->putLInt($key);
+				$stream->putLShort($value);
+			}
+
+			$this->db->put($index . self::TAG_BLOCK_EXTRA_DATA, $stream->getBuffer());
+		}else{
+			$this->db->delete($index . self::TAG_BLOCK_EXTRA_DATA);
+		}
+
+		//TODO: use this properly
+		$this->db->put($index . self::TAG_STATE_FINALISATION, chr(self::FINALISATION_DONE));
+
 		$this->writeTags($chunk->getTiles(), $index . self::TAG_BLOCK_ENTITY);
 		$this->writeTags($chunk->getEntities(), $index . self::TAG_ENTITY);
 
-		//TODO: clean up old data
+		$this->db->delete($index . self::TAG_DATA_2D_LEGACY);
+		$this->db->delete($index . self::TAG_LEGACY_TERRAIN);
 	}
 
+	/**
+	 * @param Entity[]|Tile[] $targets
+	 * @param string          $index
+	 */
 	private function writeTags(array $targets, string $index){
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
 		$out = [];
@@ -512,7 +575,7 @@ class LevelDB extends BaseLevelProvider{
 	/**
 	 * @return \LevelDB
 	 */
-	public function getDatabase(){
+	public function getDatabase() : \LevelDB{
 		return $this->db;
 	}
 

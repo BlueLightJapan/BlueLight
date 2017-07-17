@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\generator\populator;
 
 use pocketmine\block\Block;
@@ -39,7 +41,7 @@ class TallGrass extends Populator{
 		$this->baseAmount = $amount;
 	}
 
-	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random){
+	public function populate(ChunkManager $level, int $chunkX, int $chunkZ, Random $random){
 		$this->level = $level;
 		$amount = $random->nextRange(0, $this->randomAmount + 1) + $this->baseAmount;
 		for($i = 0; $i < $amount; ++$i){

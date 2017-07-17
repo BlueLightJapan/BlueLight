@@ -19,12 +19,16 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * All the Tile classes and related classes
  */
 namespace pocketmine\tile;
 
+use pocketmine\block\Block;
 use pocketmine\event\Timings;
+use pocketmine\event\TimingsHandler;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -37,18 +41,13 @@ abstract class Tile extends Position{
 	const BREWING_STAND = "BrewingStand";
 	const CHEST = "Chest";
 	const ENCHANT_TABLE = "EnchantTable";
+	const ENDER_CHEST = "EnderChest";
 	const FLOWER_POT = "FlowerPot";
 	const FURNACE = "Furnace";
 	const ITEM_FRAME = "ItemFrame";
 	const MOB_SPAWNER = "MobSpawner";
 	const SIGN = "Sign";
 	const SKULL = "Skull";
-	const DISPENSER = "Dispenser";
-	const DROPPER = "Dropper";
-	const CAULDRON = "Cauldron";
-	const HOPPER = "Hopper";
-	const BEACON = "Beacon";
-	const ENDER_CHEST = "EnderChest";
 
 	public static $tileCount = 1;
 
@@ -67,22 +66,18 @@ abstract class Tile extends Position{
 	protected $server;
 	protected $timings;
 
-	/** @var \pocketmine\event\TimingsHandler */
+	/** @var TimingsHandler */
 	public $tickTimer;
 
 	public static function init(){
-		self::registerTile(Beacon::class);
 		self::registerTile(Chest::class);
 		self::registerTile(EnchantTable::class);
+		self::registerTile(EnderChest::class);
 		self::registerTile(FlowerPot::class);
 		self::registerTile(Furnace::class);
 		self::registerTile(ItemFrame::class);
 		self::registerTile(Sign::class);
 		self::registerTile(Skull::class);
-		self::registerTile(Cauldron::class);
-		self::registerTile(Hopper::class);
-		self::registerTile(EnderChest::class);
-
 	}
 
 	/**
@@ -91,7 +86,7 @@ abstract class Tile extends Position{
 	 * @param CompoundTag $nbt
 	 * @param             $args
 	 *
-	 * @return Tile
+	 * @return Tile|null
 	 */
 	public static function createTile($type, Level $level, CompoundTag $nbt, ...$args){
 		if(isset(self::$knownTiles[$type])){
@@ -107,7 +102,7 @@ abstract class Tile extends Position{
 	 *
 	 * @return bool
 	 */
-	public static function registerTile($className){
+	public static function registerTile($className) : bool{
 		$class = new \ReflectionClass($className);
 		if(is_a($className, Tile::class, true) and !$class->isAbstract()){
 			self::$knownTiles[$class->getShortName()] = $className;
@@ -123,7 +118,7 @@ abstract class Tile extends Position{
 	 *
 	 * @return string
 	 */
-	public function getSaveId(){
+	public function getSaveId() : string{
 		return self::$shortNames[static::class];
 	}
 
@@ -159,18 +154,32 @@ abstract class Tile extends Position{
 		$this->namedtag->z = new IntTag("z", $this->z);
 	}
 
+	public function getCleanedNBT(){
+		$this->saveNBT();
+		$tag = clone $this->namedtag;
+		unset($tag->x, $tag->y, $tag->z, $tag->id);
+		if($tag->getCount() > 0){
+			return $tag;
+		}else{
+			return null;
+		}
+	}
+
 	/**
-	 * @return \pocketmine\block\Block
+	 * @return Block
 	 */
-	public function getBlock(){
+	public function getBlock() : Block{
 		return $this->level->getBlock($this);
 	}
 
-	public function onUpdate(){
+	/**
+	 * @return bool
+	 */
+	public function onUpdate() : bool{
 		return false;
 	}
 
-	public final function scheduleUpdate(){
+	final public function scheduleUpdate(){
 		$this->level->updateTiles[$this->id] = $this;
 	}
 
@@ -190,6 +199,7 @@ abstract class Tile extends Position{
 				$level->removeTile($this);
 				$this->setLevel(null);
 			}
+
 			$this->namedtag = null;
 		}
 	}

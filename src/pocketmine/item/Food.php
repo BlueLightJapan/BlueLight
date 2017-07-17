@@ -19,12 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\item;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\event\entity\EntityEatItemEvent;
-use pocketmine\network\protocol\EntityEventPacket;
+use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\Player;
 
 abstract class Food extends Item implements FoodSource{
@@ -52,7 +54,7 @@ abstract class Food extends Item implements FoodSource{
 
 	public function onConsume(Entity $human){
 		$pk = new EntityEventPacket();
-		$pk->eid = $human->getId();
+		$pk->entityRuntimeId = $human->getId();
 		$pk->event = EntityEventPacket::USE_ITEM;
 		if($human instanceof Player){
 			$human->dataPacket($pk);

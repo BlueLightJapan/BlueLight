@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * Handles the creation of virtual inventories or mapped to an InventoryHolder
  */
@@ -30,37 +32,48 @@ use pocketmine\Player;
 interface Inventory{
 	const MAX_STACK = 64;
 
-	public function getSize();
+	/**
+	 * @return int
+	 */
+	public function getSize() : int;
 
-	public function getMaxStackSize();
+	/**
+	 * @return int
+	 */
+	public function getMaxStackSize() : int;
 
 	/**
 	 * @param int $size
 	 */
-	public function setMaxStackSize($size);
+	public function setMaxStackSize(int $size);
 
-	public function getName();
+	/**
+	 * @return string
+	 */
+	public function getName() : string;
 
-	public function getTitle();
+	/**
+	 * @return string
+	 */
+	public function getTitle() : string;
 
 	/**
 	 * @param int $index
 	 *
 	 * @return Item
 	 */
-	public function getItem($index);
+	public function getItem(int $index) : Item;
 
 	/**
 	 * Puts an Item in a slot.
 	 * If a plugin refuses the update or $index is invalid, it'll return false
-	 * If a source Player is specified, it won't send a Inventory update to it
 	 *
 	 * @param int  $index
 	 * @param Item $item
 	 *
 	 * @return bool
 	 */
-	public function setItem($index, Item $item);
+	public function setItem(int $index, Item $item) : bool;
 
 	/**
 	 * Stores the given Items in the inventory. This will try to fill
@@ -68,11 +81,11 @@ interface Inventory{
 	 *
 	 * Returns the Items that did not fit.
 	 *
-	 * @param Item ...$slots
+	 * @param Item[] ...$slots
 	 *
 	 * @return Item[]
 	 */
-	public function addItem(...$slots);
+	public function addItem(Item ...$slots) : array;
 
 	/**
 	 * Checks if a given Item can be added to the inventory
@@ -81,22 +94,22 @@ interface Inventory{
 	 *
 	 * @return bool
 	 */
-	public function canAddItem(Item $item);
+	public function canAddItem(Item $item) : bool;
 
 	/**
 	 * Removes the given Item from the inventory.
 	 * It will return the Items that couldn't be removed.
 	 *
-	 * @param Item ...$slots
+	 * @param Item[] ...$slots
 	 *
 	 * @return Item[]
 	 */
-	public function removeItem(...$slots);
+	public function removeItem(Item ...$slots) : array;
 
 	/**
 	 * @return Item[]
 	 */
-	public function getContents();
+	public function getContents() : array;
 
 	/**
 	 * @param Item[] $items
@@ -122,7 +135,7 @@ interface Inventory{
 	 *
 	 * @return bool
 	 */
-	public function contains(Item $item);
+	public function contains(Item $item) : bool;
 
 	/**
 	 * Will return all the Items that has the same id and metadata (if not null).
@@ -132,7 +145,7 @@ interface Inventory{
 	 *
 	 * @return Item[]
 	 */
-	public function all(Item $item);
+	public function all(Item $item) : array;
 
 	/**
 	 * Will return the first slot has the same id and metadata (if not null) as the Item.
@@ -142,14 +155,14 @@ interface Inventory{
 	 *
 	 * @return int
 	 */
-	public function first(Item $item);
+	public function first(Item $item) : int;
 
 	/**
 	 * Returns the first empty slot, or -1 if not found
 	 *
 	 * @return int
 	 */
-	public function firstEmpty();
+	public function firstEmpty() : int;
 
 	/**
 	 * Will remove all the Items that has the same id and metadata (if not null)
@@ -165,7 +178,7 @@ interface Inventory{
 	 *
 	 * @return bool
 	 */
-	public function clear($index);
+	public function clear(int $index) : bool;
 
 	/**
 	 * Clears all the slots
@@ -178,12 +191,12 @@ interface Inventory{
 	 *
 	 * @return Player[]
 	 */
-	public function getViewers();
+	public function getViewers() : array;
 
 	/**
 	 * @return InventoryType
 	 */
-	public function getType();
+	public function getType() : InventoryType;
 
 	/**
 	 * @return InventoryHolder
@@ -202,7 +215,7 @@ interface Inventory{
 	 *
 	 * @return bool
 	 */
-	public function open(Player $who);
+	public function open(Player $who) : bool;
 
 	public function close(Player $who);
 

@@ -19,10 +19,12 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\level\particle;
 
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\DataPacket;
+use pocketmine\network\mcpe\protocol\DataPacket;
 
 abstract class Particle extends Vector3{
 

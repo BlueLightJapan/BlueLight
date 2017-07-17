@@ -24,7 +24,7 @@ namespace pocketmine\level\weather;
 use pocketmine\event\level\WeatherChangeEvent;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class Weather{
@@ -55,6 +55,7 @@ class Weather{
 		$this->duration = $duration;
 		$this->lastUpdate = $level->getServer()->getTick();
 		$this->temporalVector = new Vector3(0, 0, 0);
+		$this->setWeather(0, 0);
 	}
 
 	public function canCalculate() : bool{
