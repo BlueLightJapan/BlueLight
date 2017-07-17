@@ -159,7 +159,7 @@ auto-report:
  send-settings: true
  send-phpinfo: false
  use-https: true
- host: crash.pmmp.io
+ host: crash.bluelig.ht
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
