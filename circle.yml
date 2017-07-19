@@ -2,9 +2,8 @@ machine:
 php:
     version: 7.1.0
 test:
-  override:
-    - php --version
   post:
+    - php --version
     - git submodule sync
     - git submodule update --init
     - rm -rf plugins
