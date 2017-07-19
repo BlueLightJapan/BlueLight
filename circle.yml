@@ -1,4 +1,9 @@
+machine:
+php:
+    version: 7.1.0
 test:
+  override:
+    - php --version
   post:
     - git submodule sync
     - git submodule update --init
