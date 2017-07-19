@@ -11,5 +11,5 @@ test:
     - wget -O PHP7.tar.gz https://dl.bintray.com/pocketmine/PocketMine/PHP_7.0.6_x86-64_Linux.tar.gz --no-check-certificate
     - tar -xf PHP7.tar.gz
     - git clone https://github.com/BlueLightJapan/PocketMine-DevTools
-    - ./bin/php7/php -dphar.readonly=0 PocketMine-DevTools/src/DevTools/ConsoleScript.php --make ../src --relative ../ --entry src/pocketmine/PocketMine.php --out BlueLight-PHP7.phar
+    - ../bin/php7/php -dphar.readonly=0 PocketMine-DevTools/src/DevTools/ConsoleScript.php --make ../src --relative ../ --entry src/pocketmine/PocketMine.php --out BlueLight-PHP7.phar
     - cp *.phar $CIRCLE_ARTIFACTS
