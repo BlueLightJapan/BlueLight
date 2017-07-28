@@ -2208,6 +2208,13 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$this->close("", "disconnectionScreen.invalidName");
 			return true;
 		}
+		
+		if($this->getServer()->getProperty("SteveKick", false)){
+			if($this->iusername === "steve"){
+				$this->close("", "disconnectionScreen.invalidName");
+				break;
+			}
+		}
 
 		if(!Player::isValidSkin($packet->skin)){
 			$this->close("", "disconnectionScreen.invalidSkin");
