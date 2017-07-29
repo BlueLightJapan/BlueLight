@@ -136,42 +136,42 @@ class PluginDescription{
 	/**
 	 * @return string
 	 */
-	public function getFullName() : string{
+	public function getFullName(){
 		return $this->name . " v" . $this->version;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getCompatibleApis() : array{
+	public function getCompatibleApis(){
 		return $this->api;
 	}
 
 	/**
 	 * @return string[]
 	 */
-	public function getAuthors() : array{
+	public function getAuthors(){
 		return $this->authors;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getPrefix() : string{
+	public function getPrefix(){
 		return $this->prefix;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getCommands() : array{
+	public function getCommands(){
 		return $this->commands;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getRequiredExtensions() : array{
+	public function getRequiredExtensions(){
 		return $this->extensions;
 	}
 
@@ -215,70 +215,70 @@ class PluginDescription{
 	/**
 	 * @return array
 	 */
-	public function getDepend() : array{
+	public function getDepend(){
 		return $this->depend;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getDescription() : string{
+	public function getDescription(){
 		return $this->description;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getLoadBefore() : array{
+	public function getLoadBefore(){
 		return $this->loadBefore;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getMain() : string{
+	public function getMain(){
 		return $this->main;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getName() : string{
+	public function getName(){
 		return $this->name;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getOrder() : int{
+	public function getOrder(){
 		return $this->order;
 	}
 
 	/**
 	 * @return Permission[]
 	 */
-	public function getPermissions() : array{
+	public function getPermissions(){
 		return $this->permissions;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getSoftDepend() : array{
+	public function getSoftDepend(){
 		return $this->softDepend;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getVersion() : string{
+	public function getVersion(){
 		return $this->version;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getWebsite() : string{
+	public function getWebsite(){
 		return $this->website;
 	}
 }
