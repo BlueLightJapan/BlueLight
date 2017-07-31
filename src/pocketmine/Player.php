@@ -36,6 +36,7 @@ use pocketmine\entity\Human;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
+use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -2212,7 +2213,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		if($this->getServer()->getProperty("SteveKick", false)){
 			if($this->iusername === "steve"){
 				$this->close("", "disconnectionScreen.invalidName");
-				break;
 			}
 		}
 
