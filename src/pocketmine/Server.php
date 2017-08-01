@@ -1547,6 +1547,13 @@ class Server{
 			$this->mapEnabled = $this->getProperty("MapEnabled", false);
 			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", false);
 
+			if($this->devtoolsEnabled){
+				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
+					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
+				}
+			}
+
+
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 				"motd" => "Minecraft: PE Server",
