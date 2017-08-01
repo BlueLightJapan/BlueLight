@@ -161,7 +161,7 @@ class Server{
 	private $currentUse = 0;
 
 	/** @var bool */
-	private $doTitleTick = false;
+	//private $doTitleTick = false;
 
 	private $sendUsageTicker = 0;
 
@@ -277,7 +277,7 @@ class Server{
 	public $devtoolsEnabled = true;
 	public $crashdump = true;
 	public $destroyblockparticle = true;
-	public $titletick = false;
+	public $titletick = true;
 	public $golemspawn = false;
 	public $keepInventory = false;
 	public $rideableentity = false;
@@ -1515,7 +1515,7 @@ class Server{
 				"AllowSplashPotion" => false,
 				"DestroyBlockParticle" => true,
 				"KeepInventory" => false,
-				"TitleTick" => false,
+				"TitleTick" => true,
 				"SteveKick" => false,
 				"GolemSpawn" => false,
 				"HungerHealth" => 10,
@@ -1613,7 +1613,7 @@ class Server{
 			$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
 			$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
 
-			$this->doTitleTick = (bool) $this->getProperty("console.title-tick", false);
+			//$this->doTitleTick = (bool) $this->getProperty("console.title-tick", false);
 
 			$this->scheduler = new ServerScheduler();
 
@@ -2512,7 +2512,8 @@ class Server{
 		$u = Utils::getMemoryUsage(true);
 		$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
 
-		echo "\x1b]0;" . $this->getName() . " " .
+		//echo "\x1b]0;" . $this->getName() . " " .
+		echo "\x1b]0;" . "PocketMine-MP-DerivVer-BlueLight " .
 			$this->getPocketMineVersion() .
 			" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
 			" | Memory " . $usage .
@@ -2584,9 +2585,13 @@ class Server{
 		}
 
 		if(($this->tickCounter & 0b1111) === 0){
-			if($this->doTitleTick and Terminal::hasFormattingCodes()){
+			if($this->titletick and Terminal::hasFormattingCodes()){
 				$this->titleTick();
-			}
+			}//else{
+//		Timings::$titleTickTimer->startTiming();
+//				echo "\x1b]0;" . "PocketMine-MP-DerivVer-BlueLight " . $this->getPocketMineVersion();
+//		Timings::$titleTickTimer->stopTiming();
+//			}
 			$this->currentTPS = 20;
 			$this->currentUse = 0;
 
