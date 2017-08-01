@@ -128,6 +128,11 @@ class SimpleCommandMap implements CommandMap{
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
 		}
+
+		if($this->server->devtoolsEnabled){
+			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
+			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
+		}
 	}
 
 
