@@ -3557,8 +3557,12 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	 *
 	 * @param string $subtitle
 	 */
-	public function addSubTitle(string $subtitle){
+	public function sendSubTitle(string $subtitle){
 		$this->sendTitleText($subtitle, SetTitlePacket::TYPE_SET_SUBTITLE);
+	}
+
+	public function addSubTitle(string $subtitle){
+		$this->sendSubTitle($subtitle);
 	}
 
 	/**
@@ -3573,16 +3577,14 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	/**
 	 * Removes the title from the client's screen.
 	 */
-	public function removeTitles(){
+	public function removeTitle(){
 		$pk = new SetTitlePacket();
 		$pk->type = SetTitlePacket::TYPE_CLEAR_TITLE;
 		$this->dataPacket($pk);
 	}
 
-	public function removeTitle(){
-		$pk = new SetTitlePacket();
-		$pk->type = SetTitlePacket::TYPE_CLEAR_TITLE;
-		$this->dataPacket($pk);
+	public function removeTitles(){
+		$this->removeTitle();
 	}
 
 	/**
