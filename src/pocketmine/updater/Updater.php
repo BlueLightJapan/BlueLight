@@ -20,44 +20,57 @@
  
 namespace pocketmine\updater{
 	
-	//echo "\x1b]0;BlueLight-Updater\x07";
+	echo "\x1b]0;BlueLight-Updater\x07";
 
-	echo getLogo()."\n";
-	echo "\x1b[mLoading branches...\n";
+	echo getLogo() . PHP_EOL;
+	echo "\x1b[mLoading branches..." . PHP_EOL;
 	
 	$branches = json_decode(getURL("https://api.github.com/repos/BlueLightJapan/BlueLight/branches"), true);
+	
 	echo "\x1b[mBranch Name: ";
+	
 	$array = [];
+	$count = count($branches);
+	
 	foreach($branches as $b){
+		$count--;
 		$array[] = $b["name"];
-		echo "\x1b[38;5;83m".$b["name"].", ";
-	}
-	do{
-		echo "\n\x1b[mSelect Branch: \x1b[38;5;87m";
-		$branch = trim(fgets(STDIN));
-		if($temp = !in_array($branch, $array)){
-			echo "\x1b[38;5;124mThe branch is not found.";
+		if($count == 0){
+			echo "\x1b[38;5;83m".$b["name"] . PHP_EOL;
+		}else{
+			echo "\x1b[38;5;83m".$b["name"].", ";
 		}
-	}while($temp);
+	}
+	
+	do{
+		echo "\x1b[mSelect Branch: \x1b[38;5;87m";
+		$branch = trim(fgets(STDIN));
+		if($tmp = !in_array($branch, $array)){
+			echo "\x1b[38;5;124mThe branch is not found." . PHP_EOL;
+		}
+	}while($tmp);
 	
 	if(!file_exists("temp")) mkdir("temp");
-	echo "\x1b[mDownload BlueLight-".$branch." now...\n";
+	
+	echo "\x1b[mDownload BlueLight-".$branch." now..." . PHP_EOL;
+	
 	$data = @file_get_contents("https://github.com/BlueLightJapan/BlueLight/archive/".$branch.".zip");
 	if($data){
 		$result = file_put_contents("temp/BlueLight.zip",$data);
-		echo "\x1b[38;5;83mDownload Success!\n";
+		echo "\x1b[38;5;83mDownload Success!" . PHP_EOL;
 	}else{
-		echo "\x1b[38;5;124mDownload Failed\n";
+		echo "\x1b[38;5;124mDownload Failed." . PHP_EOL;
 		dirrm("temp");
 		exit(1);
 	}
-	echo "\x1b[mExtract Zip File...\n";
+	
+	echo "\x1b[mExtract Zip File..." . PHP_EOL;
 	$zip = extractZip("temp/BlueLight.zip");
 
 	if($zip){
-		echo "\x1b[38;5;83mUnZip Success!\n";
+		echo "\x1b[38;5;83mUnZip Success!" . PHP_EOL;
 	}else{
-		echo "\x1b[38;5;124mUnZip Failed\n";
+		echo "\x1b[38;5;124mUnZip Failed" . PHP_EOL;
 		dirrm("temp");
 		exit(1);
 	}
@@ -67,12 +80,12 @@ namespace pocketmine\updater{
 	
 	dircopy("temp/BlueLight-".$branch."/src","src");
 	dirrm("temp");
-	echo "\x1b[38;5;83mCompleted BlueLight Update!\n\x1b[m";
+	echo "\x1b[38;5;83mCompleted BlueLight Update!\x1b[m" . PHP_EOL;
 	
 	exit(1);
 
 
-	 function getLogo(){
+	function getLogo(){
 		$logo = "\x1b[38;5;87m				 ____  _            _      _       _     _
 				|  _ \| |          | |    (_)     | |   | |
 				| |_) | |_   _  ___| |     _  __ _| |__ | |_

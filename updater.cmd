@@ -9,16 +9,12 @@ if exist bin\php\php.exe (
 	set PHP_BINARY=php
 )
 
-if exist PocketMine-MP.phar (
-	set UPDATER=PocketMine-MP.phar
+if exist src\pocketmine\updater\Updater.php (
+	set UPDATER=src\pocketmine\updater\Updater.php
 ) else (
-	if exist src\pocketmine\updater\Updater.php (
-		set UPDATER=src\pocketmine\updater\Updater.php
-	) else (
-		echo "Couldn't find a valid BlueLight Updater"
-		pause
-		exit 1
-	)
+	echo "Couldn't find a valid BlueLight Updater"
+	pause
+	exit 1
 )
 
 REM if exist bin\php\php_wxwidgets.dll (

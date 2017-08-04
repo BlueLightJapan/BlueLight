@@ -33,12 +33,6 @@ fi
 if [ "$UPDATER" == "" ]; then
 	if [ -f ./src/pocketmine/updater/Updater.php ]; then
 		UPDATER="./src/pocketmine/updater/Updater.php"
-	elif [ -f ./BlueLight-PHP7.phar ]; then
-		UPDATER="./BlueLight-PHP7.phar"
-	elif [ -f ./BlueLight*.phar ]; then
-	    UPDATER="./BlueLight*.phar"
-	elif [ -f ./PocketMine-MP.phar ]; then
-		UPDATER="./PocketMine-MP.phar"
 	else
 		echo "Couldn't find a valid BlueLight Updater"
 		exit 1
