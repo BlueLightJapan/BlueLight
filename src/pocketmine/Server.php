@@ -101,6 +101,7 @@ use pocketmine\scheduler\FileWriteTask;
 use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
 use pocketmine\tile\Tile;
+use pocketmine\updater\AutoUpdater;
 use pocketmine\utils\Binary;
 use pocketmine\utils\Config;
 use pocketmine\utils\MainLogger;
@@ -145,6 +146,9 @@ class Server{
 
 	private $profilingTickRate = 20;
 
+	/** @var AutoUpdater */
+	private $updater = null;
+
 	/** @var ServerScheduler */
 	private $scheduler = null;
 
@@ -161,7 +165,7 @@ class Server{
 	private $currentUse = 0;
 
 	/** @var bool */
-	//private $doTitleTick = false;
+	private $doTitleTick = false;
 
 	private $sendUsageTicker = 0;
 
@@ -264,29 +268,17 @@ class Server{
 	private $levelDefault = null;
 
 	/** BlueLight Config */
-	public $weatherEnabled = false;
+	public $cleanEntity;//ok
+	public $crashdump;
+	public $devtoolsEnabled;
+	public $keepInventory = false;
+	public $mapEnabled = false;
+	public $weatherEnabled = true;
  	public $weatherRandomDurationMin = 6000;
  	public $weatherRandomDurationMax = 12000;
 	public $lightningTime = 200;
 	public $lightningFire = false;
-	public $foodEnabled = false;
-	public $expEnabled = false;
-	public $hungerHealth = 10;
-	public $hungerTimer = 80;
-	public $allowSplashPotion = false;
-	public $devtoolsEnabled = true;
-	public $crashdump = true;
-	public $destroyblockparticle = true;
-	public $titletick = true;
-	public $golemspawn = false;
-	public $keepInventory = false;
-	public $rideableentity = false;
-	public $enchantingTableEnabled = true;
-	public $cleanEntity = false;
-	public $countBookshelf = false;
-	public $mapEnabled = false;
-	public $entityAIEnabled = false;
-
+	public $limitedCreative = true;
 	/**
 	 * @return string
 	 */
@@ -623,6 +615,13 @@ class Server{
 	 */
 	public function getLevelMetadata(){
 		return $this->levelMetadata;
+	}
+
+	/**
+	 * @return AutoUpdater
+	 */
+	public function getUpdater(){
+		return $this->updater;
 	}
 
 	/**
@@ -1144,15 +1143,6 @@ class Server{
 		return true;
 	}
 
-	public function getExpectedExperience($level){
-		if(isset($this->expCache[$level])) return $this->expCache[$level];
-		$levelSquared = $level ** 2;
-		if($level < 16) $this->expCache[$level] = $levelSquared + 6 * $level;
-		elseif($level < 31) $this->expCache[$level] = 2.5 * $levelSquared - 40.5 * $level + 360;
-		else $this->expCache[$level] = 4.5 * $levelSquared - 162.5 * $level + 2220;
-		return $this->expCache[$level];
-	}
-
 	/**
 	 * Searches all levels for the entity with the specified ID.
 	 * Useful for tracking entities across multiple worlds without needing strong references.
@@ -1184,45 +1174,8 @@ class Server{
 	 *
 	 * @return mixed
 	 */
-	private function getBlueLightProperty($variable,$defaultValue = true){
-		$v =  $this->bluelightconfig->get($variable);
-		return $v == null ? false : true;
-	}
-
-	/**
-	 * @param string $variable
-	 * @param int    $defaultValue
-	 *
-	 * @return int
-	 */
-	public function getBlueLightConfigInt($variable, $defaultValue = 0){
-		$v = getopt("", ["$variable::"]);
-		if(isset($v[$variable])){
-			return (int) $v[$variable];
-		}
-
-		return $this->bluelightconfig->exists($variable) ? (int) $this->bluelightconfig->get($variable) : (int) $defaultValue;
-	}
-
-	/**
-	 * @param string $variable
-	 * @param int    $value
-	 */
-	public function setBlueLightConfigInt($variable, $value){
-		$this->bluelightconfig->set($variable, (int) $value);
-	}
-
-	/**
-	 * @param string $variable
-	 * @param mixed  $defaultValue
-	 *
-	 * @return mixed
-	 */
-	public function getProperty($variable, $defaultValue = null){
+	public function getProperty(string $variable, $defaultValue = null){
 		if(!array_key_exists($variable, $this->propertyCache)){
-			if($this->bluelightconfig->exists($variable)){
-				return $this->getBlueLightProperty($variable,$defaultValue);
-			}
 			$v = getopt("", ["$variable::"]);
 			if(isset($v[$variable])){
 				$this->propertyCache[$variable] = $v[$variable];
@@ -1231,7 +1184,7 @@ class Server{
 			}
 		}
 
-		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
+		return $this->propertyCache[$variable] ?? $defaultValue;
 	}
 
 	/**
@@ -1255,6 +1208,29 @@ class Server{
 	 */
 	public function setConfigString(string $variable, string $value){
 		$this->properties->set($variable, $value);
+	}
+
+	/**
+	 * @param string $variable
+	 * @param int    $defaultValue
+	 *
+	 * @return int
+	 */
+	public function getBlueLightConfigInt($variable, $defaultValue = 0){
+		$v = getopt("", ["$variable::"]);
+		if(isset($v[$variable])){
+			return (int) $v[$variable];
+		}
+
+		return $this->bluelightconfig->exists($variable) ? (int) $this->bluelightconfig->get($variable) : (int) $defaultValue;
+	}
+
+	/**
+	 * @param string $variable
+	 * @param int    $value
+	 */
+	public function setBlueLightConfigInt($variable, $value){
+		$this->bluelightconfig->set($variable, (int) $value);
 	}
 
 	/**
@@ -1499,54 +1475,36 @@ class Server{
 			}
 			$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
 
-			$this->logger->info("Loading bluelight properties...");
-
 			$this->bluelightconfig = new Config($this->dataPath . "bluelight.properties", Config::PROPERTIES, [
-				"CustomConfigVersion" => 1,
-				"DevToolsEnabled" => true,
+				"CleanEntity" => false,
 				"CrashDump" => true,
-				"FoodEnabled" => true,
-				"ExpEnabled" => false,
-				"WeatherEnabled" => false,
+				"DevTools" => true,
+				"KeepInventory" => false,
+				"MapEnabled" => false,
+				"WeatherEnabled" => true,
 				"WeatherRandomDurationMin" => 6000,
 				"WeatherRandomDurationMan" => 12000,
 				"LightningTime" => 6000,
 				"LightningFire" => false,
-				"AllowSplashPotion" => false,
-				"DestroyBlockParticle" => true,
-				"KeepInventory" => false,
-				"TitleTick" => true,
-				"SteveKick" => false,
-				"GolemSpawn" => false,
-				"HungerHealth" => 10,
-				"HungerTimer" => 80,
-				"RideableEntity" => false,
-				"CleanEntity" => false,
-				"MapEnabled" => false,
-				"EntityAIEnabled" => false,
+				"LimitedCreative" => true,
 			]);
 
-			$this->devtoolsEnabled = $this->getProperty("DevToolsEnabled", true);
+			$this->cleanEntity = $this->getProperty("CleanEntity", false);
 			$this->crashdump = $this->getProperty("CrashDump", true);
-			$this->foodEnabled = $this->getProperty("foodEnabled", true);
-			$this->allowSplashPotion = $this->getProperty("allowSplashPotion", true);
-			$this->expEnabled = $this->getProperty("expEnabled", true);
-			$this->weatherEnabled = $this->getProperty("weatherEnabled", false);
+			$this->devtoolsEnabled = $this->getProperty("DevTools", true);
+			$this->keepInventory = $this->getProperty("KeepInventory", false);
+			$this->mapEnabled = $this->getProperty("MapEnabled", false);
+			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
 			$this->weatherRandomDurationMin = $this->getBlueLightConfigInt("weatherRandomDurationMin", 6000);
 			$this->weatherRandomDurationMax = $this->getBlueLightConfigInt("weatherRandomDurationMax", 12000);
 			$this->lightningTime = $this->getProperty("LightningTime", 200);
 			$this->lightningFire = $this->getProperty("LightningFire", false);
-			$this->hungerHealth = $this->getBlueLightConfigInt("HungerHealth", 10);
-			$this->hungerTimer = $this->getBlueLightConfigInt("HungerTimer", 80);
-			$this->destroyblockparticle = $this->getProperty("DestroyBlockParticle", true);
-			$this->keepInventory = $this->getProperty("KeepInventory", false);
-			$this->titletick = $this->getProperty("TitleTick", true);
-			$this->golemspawn = $this->getProperty("GolemSpawn", false);
-			$this->rideableentity = $this->getProperty("RideableEntity", false);
-			$this->cleanEntity = $this->getProperty("CleanEntity", false);
-			$this->mapEnabled = $this->getProperty("MapEnabled", false);
-			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", false);
-
+			$this->limitedCreative = $this->getProperty("LimitedCreative", true);
+			if($this->crashdump){
+				if(!file_exists($dataPath . "crashdumps/")){
+					mkdir($dataPath . "crashdumps/", 0777);
+				}
+			}
 			if($this->devtoolsEnabled){
 				if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools")){
 					@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "BDevTools");
@@ -1613,7 +1571,7 @@ class Server{
 			$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
 			$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
 
-			//$this->doTitleTick = (bool) $this->getProperty("console.title-tick", false);
+			$this->doTitleTick = (bool) $this->getProperty("console.title-tick", false);
 
 			$this->scheduler = new ServerScheduler();
 
@@ -1725,6 +1683,8 @@ class Server{
 			$this->network->registerInterface(new RakLibInterface($this));
 
 			$this->pluginManager->loadPlugins($this->pluginPath);
+
+			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "update.pmmp.io"));
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
@@ -1934,7 +1894,6 @@ class Server{
 	 */
 	public function broadcastPacket(array $players, DataPacket $packet){
 		$packet->encode();
-		$packet->isEncoded = true;
 		$this->batchPackets($players, [$packet], false);
 	}
 
@@ -2133,6 +2092,19 @@ class Server{
 				$this->pluginManager->disablePlugins();
 			}
 
+			if($this->cleanEntity){
+				foreach($this->getLevels() as $level){
+					$i = 0;
+					foreach($level->getEntities() as $entity){
+						if(!$entity instanceof Human){
+							$entity->close();
+							$i++;
+						}
+					}
+					$this->getLogger()->debug("Closed ".$i." entities in ".$level->getName()."");
+				}
+			}
+
 			foreach($this->players as $player){
 				$player->close($player->getLeaveMessage(), $this->getProperty("settings.shutdown-message", "Server closed"));
 			}
@@ -2303,7 +2275,7 @@ class Server{
 				}
 
 				if($report){
-					$url = ($this->getProperty("auto-report.use-https", true) ? "https" : "http") . "://" . $this->getProperty("auto-report.host", "crash.pmmp.io") . "/submit/api";
+					$url = ($this->getProperty("auto-report.use-https", true) ? "https" : "http") . "://" . $this->getProperty("auto-report.host", "bluelig.ht/report") . "/submit/api";
 					$reply = Utils::postURL($url, [
 						"report" => "yes",
 						"name" => $this->getName() . " " . $this->getPocketMineVersion(),
@@ -2512,8 +2484,7 @@ class Server{
 		$u = Utils::getMemoryUsage(true);
 		$usage = sprintf("%g/%g/%g/%g MB @ %d threads", round(($u[0] / 1024) / 1024, 2), round(($d[0] / 1024) / 1024, 2), round(($u[1] / 1024) / 1024, 2), round(($u[2] / 1024) / 1024, 2), Utils::getThreadCount());
 
-		//echo "\x1b]0;" . $this->getName() . " " .
-		echo "\x1b]0;" . "PocketMine-MP-DerivVer-BlueLight " .
+		echo "\x1b]0;" . $this->getName() . " " .
 			$this->getPocketMineVersion() .
 			" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
 			" | Memory " . $usage .
@@ -2585,13 +2556,9 @@ class Server{
 		}
 
 		if(($this->tickCounter & 0b1111) === 0){
-			if($this->titletick and Terminal::hasFormattingCodes()){
+			if($this->doTitleTick and Terminal::hasFormattingCodes()){
 				$this->titleTick();
-			}//else{
-//		Timings::$titleTickTimer->startTiming();
-//				echo "\x1b]0;" . "PocketMine-MP-DerivVer-BlueLight " . $this->getPocketMineVersion();
-//		Timings::$titleTickTimer->stopTiming();
-//			}
+			}
 			$this->currentTPS = 20;
 			$this->currentUse = 0;
 

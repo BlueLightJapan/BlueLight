@@ -45,7 +45,6 @@ class MobArmorEquipmentPacket extends DataPacket{
 	}
 
 	public function encodePayload(){
-		if(isset($this->eid)) $this->entityRuntimeId = $this->eid;
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putSlot($this->slots[0]);
 		$this->putSlot($this->slots[1]);

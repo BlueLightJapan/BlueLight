@@ -28,7 +28,7 @@ use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\network\protocol\BlockEventPacket;
+use pocketmine\network\mcpe\protocol\BlockEventPacket;
 use pocketmine\Player;
 
 class EnderChestInventory extends ContainerInventory{

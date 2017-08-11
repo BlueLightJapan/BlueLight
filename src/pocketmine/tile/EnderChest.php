@@ -46,19 +46,9 @@ class EnderChest extends Spawnable implements Nameable{
 
 		$this->namedtag->CustomName = new StringTag("CustomName", $str);
 	}
-
-	public function getSpawnCompound() : CompoundTag{
-		$enderchest = new CompoundTag("", [
-			new StringTag("id", Tile::ENDER_CHEST),
-			new IntTag("x", (int) $this->x),
-			new IntTag("y", (int) $this->y),
-			new IntTag("z", (int) $this->z)
-		]);
-
+	public function addAdditionalSpawnData(CompoundTag $nbt){
 		if($this->hasName()){
-			$enderchest->CustomName = $this->namedtag->CustomName;
+			$nbt->CustomName = $this->namedtag->CustomName;
 		}
-
-		return $enderchest;
 	}
 }

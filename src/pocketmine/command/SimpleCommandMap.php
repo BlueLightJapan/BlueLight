@@ -66,6 +66,8 @@ use pocketmine\command\defaults\VersionCommand;
 use pocketmine\command\defaults\WhitelistCommand;
 use pocketmine\command\defaults\ExtractPluginCommand;
 use pocketmine\command\defaults\MakePluginCommand;
+use pocketmine\command\defaults\MakeServerCommand;
+use pocketmine\command\defaults\WeatherCommand;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
 use pocketmine\Server;
@@ -130,10 +132,14 @@ class SimpleCommandMap implements CommandMap{
 			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
 			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
 		}
-
+		if($this->server->weatherEnabled){
+			$this->register("pocketmine", new WeatherCommand("weather"));
+		}
 		if($this->server->devtoolsEnabled){
 			$this->register("pocketmine", new ExtractPluginCommand("extractplugin"));
 			$this->register("pocketmine", new MakePluginCommand("makeplugin"));
+			//$this->register("pocketmine", new MakeServerCommand("makeserver"));
+
 		}
 	}
 
@@ -243,7 +249,7 @@ class SimpleCommandMap implements CommandMap{
 		try{
 			$target->execute($sender, $sentCommandLabel, $args);
 		}catch(InvalidCommandSyntaxException $e){
-			$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$target->getUsage()]));
+			$sender->sendMessage($this->server->getLanguage()->translateString("commands.generic.usage", [$target->getUsage()]));
 		}catch(\Throwable $e){
 			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.exception"));
 			$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.command.exception", [$commandLine, (string) $target, $e->getMessage()]));

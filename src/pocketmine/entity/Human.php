@@ -27,8 +27,8 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerExperienceChangeEvent;
-use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\InventoryHolder;
+use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\Level;
@@ -75,7 +75,6 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 
 	protected $totalXp = 0;
 	protected $xpSeed;
-	protected $xpCooldown = 0;
 
 	protected $baseOffset = 1.62;
 
@@ -105,7 +104,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	/**
 	 * @return string
 	 */
-	public function getRawUniqueId(){
+	public function getRawUniqueId() : string{
 		return $this->rawUUID;
 	}
 
@@ -249,21 +248,8 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return (int) $this->attributeMap->getAttribute(Attribute::EXPERIENCE_LEVEL)->getValue();
 	}
 
-	public function setXpLevel(int $level) : bool{
-		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, $level, $this->getXpProgress()));
-		if(!$ev->isCancelled()){
-			$this->attributeMap->getAttribute(Attribute::EXPERIENCE_LEVEL)->setValue($ev->getExpLevel());
-			return true;
-		}
-		return false;
-	}
-
-	public function addXpLevel(int $level) : bool{
-		return $this->setXpLevel($this->getXpLevel() + $level);
-	}
-
-	public function takeXpLevel(int $level) : bool{
-		return $this->setXpLevel($this->getXpLevel() - $level);
+	public function setXpLevel(int $level){
+		$this->attributeMap->getAttribute(Attribute::EXPERIENCE_LEVEL)->setValue($level);
 	}
 
 	public function getXpProgress() : float{
@@ -278,6 +264,15 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->totalXp;
 	}
 
+	public function getRemainderXp() : int{
+		return $this->getTotalXp() - self::getTotalXpForLevel($this->getXpLevel());
+	}
+
+	public function recalculateXpProgress() : float{
+		$this->setXpProgress($progress = $this->getRemainderXp() / self::getTotalXpForLevel($this->getXpLevel()));
+		return $progress;
+	}
+
 	public static function getTotalXpForLevel(int $level) : int{
 		if($level <= 16){
 			return $level ** 2 + $level * 6;
@@ -285,161 +280,6 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			return $level ** 2 * 2.5 - 40.5 * $level + 360;
 		}
 		return $level ** 2 * 4.5 - 162.5 * $level + 2220;
-	}
-	/**
-	 * Changes the total exp of a player
-	 *
-	 * @param int $xp
-	 * @param bool $syncLevel This will reset the level to be in sync with the total. Usually you don't want to do this,
-	 *                        because it'll mess up use of xp in anvils and enchanting tables.
-	 *
-	 * @return bool
-	 */
-	public function setTotalXp(int $xp, bool $syncLevel = false) : bool{
-		$xp &= 0x7fffffff;
-		if($xp === $this->totalXp){
-			return false;
-		}
-		if(!$syncLevel){
-			$level = $this->getXpLevel();
-			$diff = $xp - $this->totalXp + $this->getFilledXp();
-			if($diff > 0){ //adding xp
-				while($diff > ($v = self::getLevelXpRequirement($level))){
-					$diff -= $v;
-					if(++$level >= 21863){
-						$diff = $v; //fill exp bar
-						break;
-					}
-				}
-			}else{ //taking xp
-				while($diff < ($v = self::getLevelXpRequirement($level - 1))){
-					$diff += $v;
-					if(--$level <= 0){
-						$diff = 0;
-						break;
-					}
-				}
-			}
-			$progress = ($diff / $v);
-		}else{
-			$values = self::getLevelFromXp($xp);
-			$level = $values[0];
-			$progress = $values[1];
-		}
-
-		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, $level, $progress));
-		if(!$ev->isCancelled()){
-			$this->totalXp = $xp;
-			$this->setXpLevel($ev->getExpLevel());
-			$this->setXpProgress($ev->getProgress());
-			return true;
-		}
-		return false;
-	}
-
-	public function addXp(int $xp, bool $syncLevel = false) : bool{
-		return $this->setTotalXp($this->totalXp + $xp, $syncLevel);
-	}
-
-	public function takeXp(int $xp, bool $syncLevel = false) : bool{
-		return $this->setTotalXp($this->totalXp - $xp, $syncLevel);
-	}
-
-	public function getRemainderXp() : int{
-		return self::getLevelXpRequirement($this->getXpLevel()) - $this->getFilledXp();
-	}
-
-	public function getFilledXp() : int{
-		return self::getLevelXpRequirement($this->getXpLevel()) * $this->getXpProgress();
-	}
-
-	public function recalculateXpProgress() : float{
-		$this->setXpProgress($progress = $this->getRemainderXp() / self::getLevelXpRequirement($this->getXpLevel()));
-		return $progress;
-	}
-
-	public function getXpSeed() : int{
-		//TODO: use this for randomizing enchantments in enchanting tables
-		return $this->xpSeed;
-	}
-
-	public function resetXpCooldown(){
-		$this->xpCooldown = microtime(true);
-	}
-
-	public function canPickupXp() : bool{
-		return microtime(true) - $this->xpCooldown > 0.5;
-	}
-
-	/**
-	 * Returns the total amount of exp required to reach the specified level.
-	 *
-	 * @param int $level
-	 *
-	 * @return int
-	 */
-	public static function getTotalXpRequirement(int $level) : int{
-		if($level <= 16){
-			return ($level ** 2) + (6 * $level);
-		}elseif($level <= 31){
-			return (2.5 * ($level ** 2)) - (40.5 * $level) + 360;
-		}elseif($level <= 21863){
-			return (4.5 * ($level ** 2)) - (162.5 * $level) + 2220;
-		}
-		return PHP_INT_MAX; //prevent float returns for invalid levels on 32-bit systems
-	}
-
-	/**
-	 * Returns the amount of exp required to complete the specified level.
-	 *
-	 * @param int $level
-	 *
-	 * @return int
-	 */
-	public static function getLevelXpRequirement(int $level) : int{
-		if($level <= 16){
-			return (2 * $level) + 7;
-		}elseif($level <= 31){
-			return (5 * $level) - 38;
-		}elseif($level <= 21863){
-			return (9 * $level) - 158;
-		}
-		return PHP_INT_MAX;
-	}
-
-	/**
-	 * Converts a quantity of exp into a level and a progress percentage
-	 *
-	 * @param int $xp
-	 *
-	 * @return int[]
-	 */
-	public static function getLevelFromXp(int $xp) : array{
-		$xp &= 0x7fffffff;
-
-		/** These values are correct up to and including level 16 */
-		$a = 1;
-		$b = 6;
-		$c = -$xp;
-		if($xp > self::getTotalXpRequirement(16)){
-			/** Modify the coefficients to fit the relevant equation */
-			if($xp <= self::getTotalXpRequirement(31)){
-				/** Levels 16-31 */
-				$a = 2.5;
-				$b = -40.5;
-				$c += 360;
-			}else{
-				/** Level 32+ */
-				$a = 4.5;
-				$b = -162.5;
-				$c += 2220;
-			}
-		}
-
-		$answer = max(Math::solveQuadratic($a, $b, $c)); //Use largest result value
-		$level = floor($answer);
-		$progress = $answer - $level;
-		return [$level, $progress];
 	}
 
 	public function getInventory(){
@@ -657,6 +497,15 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			}
 
 			$this->namedtag->SelectedInventorySlot = new IntTag("SelectedInventorySlot", $this->inventory->getHeldItemIndex());
+		}
+
+		$this->namedtag->EnderChestInventory = new ListTag("EnderChestInventory", []);
+		if($this->enderChestInventory !== null){
+			for($slot = 0; $slot < $this->enderChestInventory->getSize(); $slot++){
+				if(($item = $this->enderChestInventory->getItem($slot)) instanceof ItemItem){
+					$this->namedtag->EnderChestInventory[$slot] = $item->nbtSerialize($slot);
+				}
+			}
 		}
 
 		if(strlen($this->getSkinData()) > 0){

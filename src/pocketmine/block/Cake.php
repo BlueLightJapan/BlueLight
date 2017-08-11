@@ -29,6 +29,7 @@ use pocketmine\item\FoodSource;
 use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Cake extends Transparent implements FoodSource{
@@ -37,10 +38,6 @@ class Cake extends Transparent implements FoodSource{
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
-	}
-
-	public function canBeActivated(){
-		return true;
 	}
 
 	public function getHardness(){
@@ -66,7 +63,7 @@ class Cake extends Transparent implements FoodSource{
 	}
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		$down = $this->getSide(0);
+		$down = $this->getSide(Vector3::SIDE_DOWN);
 		if($down->getId() !== self::AIR){
 			$this->getLevel()->setBlock($block, $this, true, true);
 
@@ -78,7 +75,7 @@ class Cake extends Transparent implements FoodSource{
 
 	public function onUpdate($type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
-			if($this->getSide(0)->getId() === self::AIR){ //Replace with common break method
+			if($this->getSide(Vector3::SIDE_DOWN)->getId() === self::AIR){ //Replace with common break method
 				$this->getLevel()->setBlock($this, new Air(), true);
 
 				return Level::BLOCK_UPDATE_NORMAL;

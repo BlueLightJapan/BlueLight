@@ -50,6 +50,7 @@ class AddPaintingPacket extends DataPacket{
 	}
 
 	public function encodePayload(){
+		if(isset($this->eid)) $this->entityRuntimeId = $this->eid;
 		$this->putEntityUniqueId($this->entityUniqueId ?? $this->entityRuntimeId);
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putBlockPosition($this->x, $this->y, $this->z);

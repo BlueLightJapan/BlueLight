@@ -253,6 +253,11 @@ class PluginManager{
 								break;
 							}
 
+							if($compatible === false){
+								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.incompatibleAPI"]));
+								continue;
+							}
+
 							$plugins[$name] = $file;
 
 							$softDependencies[$name] = (array) $description->getSoftDepend();

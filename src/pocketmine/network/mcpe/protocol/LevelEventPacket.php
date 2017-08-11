@@ -108,7 +108,7 @@ class LevelEventPacket extends DataPacket{
 	public $x = 0; //Weather effects don't have coordinates
 	public $y = 0;
 	public $z = 0;
-	public $data = 1;
+	public $data;
 
 	public function decodePayload(){
 		$this->evid = $this->getVarInt();

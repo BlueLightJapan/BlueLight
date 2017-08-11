@@ -55,7 +55,6 @@ class Weather{
 		$this->duration = $duration;
 		$this->lastUpdate = $level->getServer()->getTick();
 		$this->temporalVector = new Vector3(0, 0, 0);
-		$this->setWeather(0, 0);
 	}
 
 	public function canCalculate() : bool{
