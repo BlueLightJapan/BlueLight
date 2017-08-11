@@ -239,7 +239,7 @@ class PluginManager{
 
 									$pluginNumbers = array_map("intval", explode(".", $pluginApi[0]));
 									$serverNumbers = array_map("intval", explode(".", $serverApi[0]));
-
+									
 									if($pluginNumbers[0] !== $serverNumbers[0]){ //Completely different API version
 										continue;
 									}
@@ -252,11 +252,11 @@ class PluginManager{
 								$compatible = true;
 								break;
 							}
-
+							/*
 							if($compatible === false){
 								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.incompatibleAPI"]));
 								continue;
-							}
+							}*/
 
 							$plugins[$name] = $file;
 

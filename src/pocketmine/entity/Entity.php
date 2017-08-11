@@ -320,7 +320,10 @@ abstract class Entity extends Location implements Metadatable{
 
 	public $lastYaw;
 	public $lastPitch;
-    public $headYaw = 0;
+	public $lastHeadYaw;
+	public $headYaw = 0;
+	public $prevRenderYawOffset = 0;
+	public $renderYawOffset = 0;
 
 	/** @var AxisAlignedBB */
 	public $boundingBox;
@@ -382,6 +385,8 @@ abstract class Entity extends Location implements Metadatable{
 	protected $timings;
 	protected $isPlayer = false;
 
+	/** @var Entity */
+	public $ridingEntity;
 
 	public function __construct(Level $level, CompoundTag $nbt){
 		$this->timings = Timings::getEntityTimings($this);
@@ -467,9 +472,9 @@ abstract class Entity extends Location implements Metadatable{
 		$this->initEntity();
 		$this->lastUpdate = $this->server->getTick();
 		$this->server->getPluginManager()->callEvent(new EntitySpawnEvent($this));
-        if($this instanceof Creture){
-            $this->homePosition = new Vector3();
-        }
+		//if($this instanceof Creture){
+		//	$this->homePosition = new Vector3();
+		//}
 		$this->scheduleUpdate();
 
 	}
@@ -813,7 +818,8 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->namedtag->Rotation = new ListTag("Rotation", [
 			new FloatTag("", $this->yaw),
-			new FloatTag("", $this->pitch)
+			new FloatTag("", $this->pitch),
+			new FloatTag("", $this->headYaw)
 		]);
 
 		$this->namedtag->FallDistance = new FloatTag("FallDistance", $this->fallDistance);
@@ -1163,10 +1169,72 @@ abstract class Entity extends Location implements Metadatable{
 			}
 		}
 
+		if($this->server->entityAIEnabled){
+			$this->prevRenderYawOffset = $this->renderYawOffset;
+ 			$d0 = $this->x - $this->lastX;
+			$d1 = $this->z - $this->lastZ;
+			$f = $d0 * $d0 + $d1 * $d1;
+			$f1 = $this->renderYawOffset;
+			$f2 = 0.0;
+			$f3 = 0.0;
+
+			if ($f > 0.0025000002){
+				$f3 = 1.0;
+				$f2 = sqrt($f) * 3.0;
+				$f1 = atan2($d1, $d0) * 180.0 / M_PI - 90.0;
+			}
+
+			if (!$this->onGround){
+				$f3 = 0.0;
+			}
+
+			//$this->onGroundSpeedFactor += ($f3 - $this->onGroundSpeedFactor) * 0.3;
+			$f2 = $this->func_110146_f($f1, $f2);
+		}
 		$this->age += $tickDiff;
 		$this->ticksLived += $tickDiff;
 
 		return $hasUpdate;
+	}
+	protected function func_110146_f(float $p_110146_1_, float $p_110146_2_) : float{
+		$f = self::wrapAngleTo180($p_110146_1_ - $this->renderYawOffset);
+		$this->renderYawOffset += $f * 0.3;
+		$f1 = self::wrapAngleTo180($this->yaw - $this->renderYawOffset);
+		$flag = $f1 < -90.0 || $f1 >= 90.0;
+
+		if ($f1 < -75.0){
+			$f1 = -75.0;
+		}
+
+		if ($f1 >= 75.0){
+			$f1 = 75.0;
+		}
+
+		$this->renderYawOffset = $this->yaw - $f1;
+
+		if ($f1 * $f1 > 2500.0){
+			$this->renderYawOffset += $f1 * 0.2;
+		}
+
+		if ($flag){
+			$p_110146_2_ *= -1.0;
+		}
+
+		return $p_110146_2_;
+	}
+
+	public function wrapAngleTo180(float $value) : float{
+		$value = $value % 360;
+
+		if ($value >= 180.0){
+			$value -= 360;
+		}
+
+		if ($value < -180.0){
+			$value += 360;
+		}
+
+		return $value;
 	}
 
 	protected function doOnFireTick(int $tickDiff = 1) : bool{
@@ -1201,7 +1269,7 @@ abstract class Entity extends Location implements Metadatable{
 
 	protected function updateMovement(){
 		$diffPosition = ($this->x - $this->lastX) ** 2 + ($this->y - $this->lastY) ** 2 + ($this->z - $this->lastZ) ** 2;
-		$diffRotation = ($this->yaw - $this->lastYaw) ** 2 + ($this->pitch - $this->lastPitch) ** 2;
+		$diffRotation = ($this->yaw - $this->lastYaw) ** 2 + ($this->pitch - $this->lastPitch) ** 2 + ($this->headYaw - $this->lastHeadYaw) ** 2;
 
 		$diffMotion = ($this->motionX - $this->lastMotionX) ** 2 + ($this->motionY - $this->lastMotionY) ** 2 + ($this->motionZ - $this->lastMotionZ) ** 2;
 
@@ -1212,6 +1280,7 @@ abstract class Entity extends Location implements Metadatable{
 
 			$this->lastYaw = $this->yaw;
 			$this->lastPitch = $this->pitch;
+			$this->lastHeadYaw = $this->headYaw;
 
 			$this->level->addEntityMovement($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->x, $this->y /*+ $this->baseOffset*/, $this->z, $this->yaw, $this->pitch, $this->headYaw);
 		}
@@ -1223,6 +1292,30 @@ abstract class Entity extends Location implements Metadatable{
 
 			$this->level->addEntityMotion($this->chunk->getX(), $this->chunk->getZ(), $this->id, $this->motionX, $this->motionY, $this->motionZ);
 		}
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	public function getLook(float $partialTicks){
+		if ($partialTicks == 1.0){
+			return $this->getVectorForRotation($this->pitch, $this->yaw);
+		}else{
+			$f = $this->lastPitch + ($this->pitch - $this->lastPitch) * $partialTicks;
+			$f1 = $this->lastYaw + ($this->yaw - $this->lastYaw) * $partialTicks;
+			return $this->getVectorForRotation($f, $f1);
+		}
+	}
+
+	/**
+	 * @return Vector3
+	 */
+	protected function getVectorForRotation(float $pitch, float $yaw){
+		$f = cos(-$yaw * 0.017453292 - M_PI);
+		$f1 = sin(-$yaw * 0.017453292 - M_PI);
+		$f2 = -cos(-$pitch * 0.017453292);
+		$f3 = sin(-$pitch * 0.017453292);
+		return new Vector3($f1 * $f2, $f3, $f * $f2);
 	}
 
 	/**
@@ -1274,6 +1367,25 @@ abstract class Entity extends Location implements Metadatable{
 		Timings::$timerEntityBaseTick->stopTiming();
 
 		$this->updateMovement();
+
+		if($this->server->entityAIEnabled){
+
+			while ($this->renderYawOffset - $this->prevRenderYawOffset < -180.0){
+				$this->prevRenderYawOffset -= 360.0;
+			}
+
+			while ($this->renderYawOffset - $this->prevRenderYawOffset >= 180.0){
+				$this->prevRenderYawOffset += 360.0;
+			}
+
+			$bb = clone $this->getBoundingBox();
+			$list = $this->getLevel()->getCollidingEntities($bb->expand(0.20000000298023224, 0.0, 0.20000000298023224), $this);
+
+			foreach($list as $entity){
+				$this->applyEntityCollision($entity);
+			}
+
+		}
 
 		$this->timings->stopTiming();
 
@@ -1388,7 +1500,41 @@ abstract class Entity extends Location implements Metadatable{
 	public function onCollideWithPlayer(Human $entityPlayer){
 
 	}
+	public function applyEntityCollision($entityIn){
+		if ($entityIn->ridingEntity != $this){
+			$d0 = $entityIn->x - $this->x;
+			$d1 = $entityIn->z - $this->z;
+			$d2 = abs(max($d0, $d1));
 
+			if ($d2 >= 0.009999999776482582){
+				$d2 = sqrt($d2);
+				$d0 = $d0 / $d2;
+				$d1 = $d1 / $d2;
+				$d3 = 1.0 / $d2;
+
+				if ($d3 > 1.0){
+					$d3 = 1.0;
+				}
+
+				$d0 = $d0 * $d3;
+				$d1 = $d1 * $d3;
+				$d0 = $d0 * 0.05000000074505806;
+				$d1 = $d1 * 0.05000000074505806;
+				$d0 = $d0 * (1.0 - 0);//$this->entityCollisionReduction);
+				$d1 = $d1 * (1.0 - 0);//$this->entityCollisionReduction);
+
+				//if ($this->ridingEntity == null){
+					$this->motionX -= $d0;
+					$this->motionZ -= $d1;
+				//}
+
+				//if ($entityIn->ridingEntity == null){
+					$this->motionX += $d0;
+					$this->motionZ += $d1;
+				//}
+			}
+		}
+	}
 	protected function switchLevel(Level $targetLevel){
 		if($this->closed){
 			return false;
@@ -1422,6 +1568,14 @@ abstract class Entity extends Location implements Metadatable{
 		return new Location($this->x, $this->y, $this->z, $this->yaw, $this->pitch, $this->level);
 	}
 
+	public function isOnLadder(){
+		$i = floor($this->x);
+		$j = floor($this->getBoundingBox()->minY);
+		$k = floor($this->z);
+		$block = $this->level->getBlock(new Vector3($i, $j, $k))->getId();
+		return ($block == Block::LADDER || $block == Block::VINE) && (!($this instanceof Player) || !$this->isSpectator());
+	}
+
 	public function isInsideOfWater(){
 		$block = $this->level->getBlock($this->temporalVector->setComponents(Math::floorFloat($this->x), Math::floorFloat($y = ($this->y + $this->getEyeHeight())), Math::floorFloat($this->z)));
 
@@ -1451,6 +1605,37 @@ abstract class Entity extends Location implements Metadatable{
 			return true;
 		}
 		return false;
+	}
+
+	public function faceEntity($entityIn, float $p_70625_2_, float $p_70625_3_){
+		$d0 = $entityIn->x - $this->x;
+		$d2 = $entityIn->z - $this->z;
+
+		if ($entityIn instanceof Living){
+			$d1 = $entityIn->y + $entityIn->getEyeHeight() - ($this->y + $this->getEyeHeight());
+		}else{
+			$d1 = ($entityIn->getBoundingBox()->minY + $entityIn->getBoundingBox()->maxY) / 2.0 - ($this->y + $this->getEyeHeight());
+		}
+
+		$d3 = sqrt($d0 * $d0 + $d2 * $d2);
+		$f = (atan2($d2, $d0) * 180.0 / M_PI) - 90.0;
+		$f1 = (-(atan2($d1, $d3) * 180.0 / M_PI));
+		$this->pitch = $this->updateRotation($this->pitch, $f1, $p_70625_3_);
+		$this->yaw = $this->updateRotation($this->yaw, $f, $p_70625_2_);
+	}
+
+	private function updateRotation(float $p_70663_1_, float $p_70663_2_, float $p_70663_3_) : float{
+		$f = $this->wrapAngleTo180($p_70663_2_ - $p_70663_1_);
+
+		if ($f > $p_70663_3_){
+			$f = $p_70663_3_;
+		}
+
+		if ($f < -$p_70663_3_){
+			$f = -$p_70663_3_;
+		}
+
+		return $p_70663_1_ + $f;
 	}
 
 	public function fastMove($dx, $dy, $dz){
