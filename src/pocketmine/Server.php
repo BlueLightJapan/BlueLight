@@ -280,7 +280,6 @@ class Server{
 	public $lightningFire = false;
 	public $limitedCreative = true;
     public $entityAIEnabled = false;
-	/**
 	 * @return string
 	 */
 	public function getName() : string{
