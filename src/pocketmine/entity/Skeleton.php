@@ -34,6 +34,7 @@ use pocketmine\entity\AI\EntityAINearestAttackableTarget;
 use pocketmine\entity\AI\EntityAIRestrictSun;
 use pocketmine\entity\AI\EntityAIFleeSun;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\Player;
 use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
 use pocketmine\item\Item as InHandItem;
@@ -108,8 +109,13 @@ class Skeleton extends Monster implements ProjectileSource{
 	}
 
 	public function setAttackTarget($entitylivingbaseIn){
+		$pk = new EntityEventPacket();
+		$pk->entityRuntimeId = $this->getId();
+		$pk->event = EntityEventPacket::USE_ITEM;
+		$this->getLevel()->getServer()->broadcastPacket($this->getLevel()->getPlayers(), $pk);
+		//echo "setAttackTarget";
 		parent::setAttackTarget($entitylivingbaseIn);
-		//TODO \‚¦‚é
+
 	}
 
 	public function attackEntityWithRangedAttack($target, float $p_82196_2_){
@@ -129,7 +135,10 @@ class Skeleton extends Monster implements ProjectileSource{
 			$f2 = ($d3 * 0.20000000298023224);
 			$result = $this->getThrowableHeading($d0, $d1 + $f2, $d2, 1.6, 10);
 		//}
-
+			$pk = new EntityEventPacket();
+			$pk->entityRuntimeId = $this->getId();
+			$pk->event = EntityEventPacket::USE_ITEM;
+			$this->getLevel()->getServer()->broadcastPacket($this->getLevel()->getPlayers(), $pk);
 		$nbt = new CompoundTag("", [
 			"Pos" => new ListTag("Pos", [
 				new DoubleTag("", $posX),

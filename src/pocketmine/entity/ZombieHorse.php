@@ -68,7 +68,7 @@ class ZombieHorse extends Monster implements Rideable{
 
 		$pk = new UpdateAttributesPacket();
 		$pk->entries = $entry;
-		$pk->entityId = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$player->dataPacket($pk);
 
 	}
