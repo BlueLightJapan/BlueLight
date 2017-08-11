@@ -768,7 +768,7 @@ abstract class Living extends Entity implements Damageable{
         $this->isJumping = $jumping;
     }
 
-    public function getMaxFallHeight() : int{
+    public function getMaxFallHeight() : float{
         if ($this->getAttackTarget() == null){
             return 3;
         }else{
