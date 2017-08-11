@@ -24,6 +24,11 @@ declare(strict_types=1);
 namespace pocketmine\entity;
 
 use pocketmine\block\Block;
+use pocketmine\entity\AI\EntityAITasks;
+use pocketmine\entity\AI\EntityLookHelper;
+use pocketmine\entity\AI\EntityMoveHelper;
+use pocketmine\entity\AI\EntityJumpHelper;
+use pocketmine\entity\AI\pathfinding\PathNavigateGround;
 use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -51,6 +56,22 @@ abstract class Living extends Entity implements Damageable{
 	protected $attackTime = 0;
 
 	protected $invisible = false;
+
+	protected $navigator;
+	public $tasks;
+	public $targetTasks;
+	protected $lookHelper;
+	protected $moveHelper;
+	protected $jumpHelper;
+	protected $isJumping = false;
+	public $jumpMovementFactor = 0.02;
+	private $jumpTicks = 0;
+	public $moveForward = 0.0;
+	public $moveStrafing = 0.0;
+	public $landMovementFactor;
+	private $attackTarget;
+	private $entityLivingToAttack;
+	private $revengeTimer = -1;
 
 	protected $jumpVelocity = 0.42;
 
@@ -419,8 +440,20 @@ abstract class Living extends Entity implements Damageable{
 	public function entityBaseTick($tickDiff = 1){
 		Timings::$timerLivingEntityBaseTick->startTiming();
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_BREATHING, !$this->isInsideOfWater());
+        if ($this->jumpTicks > 0){
+            --$this->jumpTicks;
+        }
 
 		$hasUpdate = parent::entityBaseTick($tickDiff);
+
+        if($this->server->entityAIEnabed && !($this instanceof Human)){
+            $this->updateEntityActionState();
+            $this->moveStrafing *= 0.98;
+            $this->moveForward *= 0.98;
+            //$this->moveStrafing  = 0.01;
+            //$this->moveForward = 0.05;
+            $this->moveEntityWithHeading($this->moveStrafing, $this->moveForward);
+        }
 
 		$this->doEffectsTick($tickDiff);
 
@@ -460,6 +493,30 @@ abstract class Living extends Entity implements Damageable{
 					$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 400);
 				}
 			}
+
+            if($this->server->entityAIEnabed){
+                if ($this->isJumping){
+                    if ($this->isInsideOfWater()){
+                        $this->updateAITick();
+                    }else if ($this->isInsideOfLava()){
+                        $this->handleJumpLava();
+                    }else if ($this->onGround && $this->jumpTicks == 0){
+                        $this->doJump();
+                        $this->jumpTicks = 10;
+                    }
+ 			    }else{
+                    $this->jumpTicks = 0;
+                }
+ 		    }
+		}
+        if($this->server->entityAIEnabed && !($this instanceof Human)){
+            if ($this->entityLivingToAttack != null){
+                if (!$this->entityLivingToAttack->isAlive()){
+                    $this->setRevengeTarget(null);
+                }else if ($this->server->getTick() - $this->revengeTimer > 100){
+                    $this->setRevengeTarget(null);
+                }
+ 		    }
 		}
 
 		if($this->attackTime > 0){
@@ -470,6 +527,70 @@ abstract class Living extends Entity implements Damageable{
 
 		return $hasUpdate;
 	}
+    public function moveEntityWithHeading($strafe, $forward){
+	    if (!$this->isInsideOfWater() || $this instanceof Player && $this->isFlying()){
+            if (!$this->isInsideOfLava() || $this instanceof Player && $this->isFlying()){
+                $f4 = 0.91;
+                if ($this->onGround){
+                    $f4 = 0.91;
+                }
+ 			    $f = 0.16277136 / ($f4 * $f4 * $f4);
+
+ 			    if ($this->onGround){
+ 			        $f5 = $this->getAIMoveSpeed() * $f;
+                }else{
+ 			        $f5 = $this->jumpMovementFactor;
+                }
+
+ 				$this->moveFlying($strafe, $forward, $f5);
+ 			    $f4 = 0.91;
+ 			    if ($this->onGround){
+                    $f4 = 0.91;
+                }
+
+ 				$this->move($this->motionX, $this->motionY, $this->motionZ);
+
+ 	            if ($this->y > 0.0){
+                    $this->motionY = -0.1;
+                }else{
+                    $this->motionY = 0.0;
+                }
+ 			    $this->motionY *= 0.9800000190734863;
+ 				$this->motionX *= $f4;
+ 				$this->motionZ *= $f4;
+ 		    }else{
+                $d1 = $this->y;
+                $this->moveFlying($strafe, $forward, 0.02);
+                $this->move($this->motionX, $this->motionY, $this->motionZ);
+                $this->motionX *= 0.5;
+                $this->motionY *= 0.5;
+                $this->motionZ *= 0.5;
+                $this->motionY -= 0.02;
+            }
+    	}else{
+            $d0 = $this->y;
+            $f1 = 0.8;
+            $f2 = 0.02;
+            $f3 = 0;//水中移動のえんちゃんとレベ
+            if ($f3 > 3.0){
+                $f3 = 3.0;
+            }
+    		if (!$this->onGround){
+                $f3 *= 0.5;
+            }
+    		if ($f3 > 0.0){
+                $f1 += (0.54600006 - $f1) * $f3 / 3.0;
+                $f2 += ($this->getAIMoveSpeed() * 1.0 - $f2) * $f3 / 3.0;
+            }
+
+    		$this->moveFlying($strafe, $forward, $f2);
+ 			$this->move($this->motionX, $this->motionY, $this->motionZ);
+ 			$this->motionX *= $f1;
+ 			$this->motionY *= 0.800000011920929;
+ 			$this->motionZ *= $f1;
+ 			$this->motionY -= 0.02;
+ 		}
+ 	}
 
 	protected function doEffectsTick(int $tickDiff = 1){
 		if(count($this->effects) > 0){
@@ -562,4 +683,121 @@ abstract class Living extends Entity implements Damageable{
 
 		return null;
 	}
+    public function updateEntityActionState(){
+        $this->targetTasks->onUpdateTasks();
+        $this->tasks->onUpdateTasks();
+        $this->navigator->onUpdateNavigation();
+        $this->updateAITasks();
+        $this->moveHelper->onUpdateMoveHelper();
+        $this->lookHelper->onUpdateLook();
+        $this->jumpHelper->doJump();
+        $this->updateMovement();
+        return true;
+    }
+
+    public function updateAITasks(){
+    }
+
+    public function updateAITick(){
+        $this->motionY += 0.03999999910593033;
+    }
+    protected function getJumpUpwardsMotion(){
+        return 0.42;
+    }
+
+    protected function handleJumpLava(){
+        $this->motionY += 0.03999999910593033;
+    }
+
+    protected function doJump(){
+        $this->motionY = $this->getJumpUpwardsMotion();
+
+        //if (this.isPotionActive(Potion.jump)){
+        //	this.motionY += (double)((float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F);
+        //}
+
+        if ($this->isSprinting()){
+            $f = $this->yaw * 0.017453292;
+            $this->motionX -= sin($f) * 0.2;
+            $this->motionZ += cos($f) * 0.2;
+        }
+    }
+
+    public function setJumping($jumping){
+        $this->isJumping = $jumping;
+    }
+
+    public function getMaxFallHeight() : int{
+        if ($this->getAttackTarget() == null){
+            return 3;
+        }else{
+            $i = $this->getHealth() - $this->getMaxHealth() * 0.33;
+            $i = $i - (3 - 1) * 4;
+
+            if ($i < 0){
+                $i = 0;
+            }
+
+            return $i + 3;
+        }
+    }
+
+    public function getVerticalFaceSpeed(){
+        return 40;
+    }
+
+    public function setMoveForward($forward){
+        $this->moveForward = $forward;
+    }
+
+    public function getAIMoveSpeed(){
+        return $this->landMovementFactor;
+    }
+
+    public function setAIMoveSpeed($speedIn){
+        $this->landMovementFactor = $speedIn;
+        $this->setMoveForward($speedIn);
+    }
+
+    protected function getNewNavigator($worldIn){
+        return new PathNavigateGround($this, $worldIn);
+    }
+
+    public function getNavigator(){
+        return $this->navigator;
+    }
+
+    public function getAITarget(){
+        return $this->entityLivingToAttack;
+    }
+
+    public function getRevengeTimer(){
+        return $this->revengeTimer;
+    }
+
+    public function setRevengeTarget($livingBase){
+        $this->entityLivingToAttack = $livingBase;
+        $this->revengeTimer = $this->server->getTick();
+    }
+
+    public function getAttackTarget(){
+        return $this->attackTarget;
+    }
+
+    public function setAttackTarget($entitylivingbaseIn){
+        $this->attackTarget = $entitylivingbaseIn;
+    }
+
+    public function getMoveHelper(){
+        return $this->moveHelper;
+    }
+
+    public function getLookHelper(){
+        return $this->lookHelper;
+    }
+
+    public function getJumpHelper(){
+        return $this->jumpHelper;
+    }
+
 }

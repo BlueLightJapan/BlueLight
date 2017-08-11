@@ -51,6 +51,7 @@ use pocketmine\block\Wheat;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\entity\Living;
 use pocketmine\entity\Lightning;
 use pocketmine\entity\XPOrb;
 use pocketmine\entity\Item as DroppedItem;

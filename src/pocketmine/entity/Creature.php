@@ -19,11 +19,47 @@
  *
 */
 
-declare(strict_types=1);
-
 namespace pocketmine\entity;
 
+use pocketmine\math\Vector3;
 
 abstract class Creature extends Living{
+
+	private $homePosition;
+	private $maximumHomeDistance = 99999999;
+
+	public function getBlockPathWeight($pos) : float{
+		return 0.0;
+	}
+
+	public function isWithinHomeDistanceCurrentPosition() : bool{
+		return $this->isWithinHomeDistanceFromPosition($this);
+	}
+
+	public function isWithinHomeDistanceFromPosition($pos) : bool{
+		return $this->maximumHomeDistance == -1.0 ? true : $this->homePosition->distanceSquared($pos) < ($this->maximumHomeDistance * $this->maximumHomeDistance);
+	}
+
+	public function setHomePosAndDistance($pos, $distance){
+		$this->homePosition = $pos;
+		$this->maximumHomeDistance = $distance;
+	}
+
+	public function getHomePosition(){
+		if(!($this->homePosition instanceof Vector3)) $this->homePosition = new Vector3($this->x, $this->y, $this->z);
+		return $this->homePosition;
+	}
+
+	public function getMaximumHomeDistance() : float{
+		return $this->maximumHomeDistance;
+	}
+
+	public function detachHome(){
+		$this->maximumHomeDistance = -1.0;
+	}
+
+	public function hasHome() : bool{
+		return $this->maximumHomeDistance != -1.0;
+	}
 
 }
