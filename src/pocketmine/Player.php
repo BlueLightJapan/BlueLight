@@ -29,12 +29,14 @@ use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Arrow;
+use pocketmine\entity\Boat;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
+use pocketmine\entity\Rideable;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -65,6 +67,7 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
+use pocketmine\event\player\PlayerToggleGlideEvent;
 use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSprintEvent;
@@ -308,7 +311,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public $weatherData = [0, 0, 0];
 
 	/** @var LinkedEntity */
-	public $linkedentity = null;
+	public $linkedEntity = null;
 	public $isLinked = false;
 
 	/** @var FishingHook */
@@ -2186,6 +2189,18 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$this->newPosition = $newPos;
 		}
 
+		if($this->isLinked){
+			if($this->server->rideableEntity){
+				$entity = $this->linkedEntity;
+				if($entity instanceof Boat){
+					$entity->goStraight($packet->x,$packet->y,$packet->z);
+				}else{
+					$entity->setRotation($this->yaw,$this->pitch);
+				}
+			}
+		}
+
+
 		return true;
 	}
 
@@ -2420,7 +2435,19 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				}
 				break;
 			case InteractPacket::ACTION_RIGHT_CLICK:
+				if($this->server->rideableEntity){
+					if($target instanceof Rideable){
+						$this->isLinked = true;
+						$this->setLink($target);
+						$this->linkedEntity = $target;
+					}
+				}
+				break;
 			case InteractPacket::ACTION_LEAVE_VEHICLE:
+				$this->isLinked = false;
+				$this->setUnLink($target);
+				unset($this->linkedEntity);
+				break;
 			case InteractPacket::ACTION_MOUSEOVER:
 				break; //TODO: handle these
 			default:
@@ -2767,6 +2794,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 				$this->setSprinting(false);
 				$this->setSneaking(false);
+				$this->setGliding(false);
+				$this->isLinked = false;
+				$this->linkedEntity = null;
 
 				$this->extinguish();
 				$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 400);
@@ -2829,8 +2859,23 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				}
 				return true;
 			case PlayerActionPacket::ACTION_START_GLIDE:
+				$ev = new PlayerToggleGlideEvent($this, true);
+				$this->server->getPluginManager()->callEvent($ev);
+				if($ev->isCancelled()){
+					$this->sendData($this);
+				}else{
+					$this->setGliding(true);
+				}
+				break ;
 			case PlayerActionPacket::ACTION_STOP_GLIDE:
-				break; //TODO
+				$ev = new PlayerToggleGlideEvent($this, false);
+				$this->server->getPluginManager()->callEvent($ev);
+				if($ev->isCancelled()){
+					$this->sendData($this);
+				}else{
+					$this->setGliding(false);
+				}
+				break ;
 			case PlayerActionPacket::ACTION_CONTINUE_BREAK:
 				$block = $this->level->getBlock($pos);
 				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, $block->getId() | ($block->getDamage() << 8) | ($packet->face << 16));
@@ -3208,7 +3253,17 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	}
 
 	public function handlePlayerInput(PlayerInputPacket $packet) : bool{
-		return false; //TODO
+		if($this->isLinked){
+			if($this->linkedEntity instanceof Rideable){
+				if($packet->motionX == 0 and $packet->motionY == 1){
+					$this->moveForward++;
+					$this->linkedEntity->goStraight($this);
+				}elseif($packet->motionX == 0 and $packet->motionY == -1){
+					$this->linkedEntity->goBack($this);
+				}
+			}
+		}
+		return true;
 	}
 
 	public function handleSetPlayerGameType(SetPlayerGameTypePacket $packet) : bool{

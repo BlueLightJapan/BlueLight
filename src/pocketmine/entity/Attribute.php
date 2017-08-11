@@ -111,7 +111,7 @@ class Attribute{
 		return null;
 	}
 
-	private function __construct(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true){
+	public function __construct(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true){
 		$this->id = $id;
 		$this->name = $name;
 		$this->minValue = $minValue;

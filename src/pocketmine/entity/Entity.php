@@ -69,6 +69,7 @@ use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
 use pocketmine\network\mcpe\protocol\SetEntityDataPacket;
+use pocketmine\network\mcpe\protocol\SetEntityLinkPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
@@ -143,7 +144,7 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_BOUNDING_BOX_WIDTH = 54; //float
 	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
 	const DATA_FUSE_LENGTH = 56; //int
-	const DATA_RIDER_SEAT_POSITION = 57; //vector3f
+	const DATA_RIDER_SEAT_POSITION = 57, DATA_RIDE_POSITION = 57; //vector3f
 	const DATA_RIDER_ROTATION_LOCKED = 58; //byte
 	const DATA_RIDER_MAX_ROTATION = 59; //float
 	const DATA_RIDER_MIN_ROTATION = 60; //float
@@ -584,6 +585,59 @@ abstract class Entity extends Location implements Metadatable{
 	public function setImmobile($value = true){
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IMMOBILE, $value);
 	}
+
+	public function isGliding(){
+		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING);
+	}
+
+	public function setGliding($value = true){
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING, (bool) $value);
+	}
+	/**
+	 * @param Entity  $entity
+	 */
+	public function setUnlink(Entity $entity){
+
+		$entity->ridingEntity = null;
+		$pk = new SetEntityLinkPacket();
+		$pk->from = $entity->getId();
+		$pk->to = $this->getId();
+		$pk->type = 3;
+		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+		if($this instanceof Player){
+			$pk = new SetEntityLinkPacket();
+			$pk->from = $entity->getId();
+			$pk->to = 0;
+			$pk->type = 3;
+			$this->dataPacket($pk);
+		}
+		return true;
+	}
+
+	/**
+	 * @param Entity  $entity
+	 */
+	public function setLink(Entity $entity){
+		if($entity instanceof Rideable){
+			$this->setDataProperty(Entity::DATA_RIDE_POSITION, Entity::DATA_TYPE_VECTOR3F, $entity->getRidePosition(), true);
+		}
+
+		$entity->ridingEntity = $this;
+		$pk = new SetEntityLinkPacket();
+		$pk->from = $entity->getId();
+		$pk->to = $this->getId();
+		$pk->type = 2;
+		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
+
+		if($this instanceof Player){
+			$pk = new SetEntityLinkPacket();
+			$pk->from = $entity->getId();
+			$pk->to = 0;
+			$pk->type = 2;
+			$this->dataPacket($pk);
+		}
+	}
+
 
 	/**
 	 * Returns whether the entity is able to climb blocks such as ladders or vines.

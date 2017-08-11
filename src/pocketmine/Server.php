@@ -279,8 +279,10 @@ class Server{
 	public $lightningTime = 200;
 	public $lightningFire = false;
 	public $limitedCreative = true;
-    public $entityAIEnabled = false;
-    /*
+	public $entityAIEnabled = false;
+	public $rideableEntity = true;
+
+	/*
 	 * @return string
 	 */
 	public function getName() : string{
@@ -1488,7 +1490,8 @@ class Server{
 				"LightningTime" => 6000,
 				"LightningFire" => false,
 				"LimitedCreative" => true,
-                "EntityAIEnabled" => true,
+				"EntityAIEnabled" => false,
+				"RideableEntity" => true,
 			]);
 
 			$this->cleanEntity = $this->getProperty("CleanEntity", false);
@@ -1502,7 +1505,9 @@ class Server{
 			$this->lightningTime = $this->getProperty("LightningTime", 200);
 			$this->lightningFire = $this->getProperty("LightningFire", false);
 			$this->limitedCreative = $this->getProperty("LimitedCreative", true);
-            $this->entityAIEnabled = $this->getProperty("EntityAIAnabled", true);
+			$this->entityAIEnabled = $this->getProperty("EntityAIAnabled", false);
+			$this->rideableEntity = $this->getProperty("RideableEntity", true);
+
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){
 					mkdir($dataPath . "crashdumps/", 0777);
