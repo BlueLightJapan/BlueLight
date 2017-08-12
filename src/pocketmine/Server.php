@@ -279,7 +279,7 @@ class Server{
 	public $lightningTime = 200;
 	public $lightningFire = false;
 	public $limitedCreative = true;
-	public $entityAIEnabled = false;
+	public $entityAIEnabled = true;
 	public $rideableEntity = true;
 
 	/*
@@ -1177,8 +1177,11 @@ class Server{
 	 *
 	 * @return mixed
 	 */
-	public function getProperty(string $variable, $defaultValue = null){
+	public function getProperty($variable, $defaultValue = null){
 		if(!array_key_exists($variable, $this->propertyCache)){
+			if($this->bluelightconfig->exists($variable)){
+				return $this->getBlueLightProperty($variable,$defaultValue);
+			}
 			$v = getopt("", ["$variable::"]);
 			if(isset($v[$variable])){
 				$this->propertyCache[$variable] = $v[$variable];
@@ -1187,9 +1190,8 @@ class Server{
 			}
 		}
 
-		return $this->propertyCache[$variable] ?? $defaultValue;
+		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
 	}
-
 	/**
 	 * @param string $variable
 	 * @param string $defaultValue
@@ -1490,7 +1492,7 @@ class Server{
 				"LightningTime" => 6000,
 				"LightningFire" => false,
 				"LimitedCreative" => true,
-				"EntityAIEnabled" => false,
+				"EntityAIEnabled" => true,
 				"RideableEntity" => true,
 			]);
 
@@ -1505,7 +1507,7 @@ class Server{
 			$this->lightningTime = $this->getProperty("LightningTime", 200);
 			$this->lightningFire = $this->getProperty("LightningFire", false);
 			$this->limitedCreative = $this->getProperty("LimitedCreative", true);
-			$this->entityAIEnabled = $this->getProperty("EntityAIAnabled", false);
+			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", true);
 			$this->rideableEntity = $this->getProperty("RideableEntity", true);
 
 			if($this->crashdump){
