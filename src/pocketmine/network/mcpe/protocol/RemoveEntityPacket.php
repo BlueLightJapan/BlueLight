@@ -38,7 +38,7 @@ class RemoveEntityPacket extends DataPacket{
 	}
 
 	public function encodePayload(){
-		if(isset($this->eid)) $this->entityRuntimeId = $this->eid;
+		if(isset($this->eid)) $this->entityUniqueId = $this->eid;
 		$this->putEntityUniqueId($this->entityUniqueId);
 	}
 
