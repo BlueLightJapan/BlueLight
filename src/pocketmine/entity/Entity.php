@@ -587,11 +587,11 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	public function isGliding(){
-		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING);
+		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_GLIDING);
 	}
 
 	public function setGliding($value = true){
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_FALL_FLYING, (bool) $value);
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_GLIDING, (bool) $value);
 	}
 	/**
 	 * @param Entity  $entity
