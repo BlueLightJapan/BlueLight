@@ -49,7 +49,6 @@ class MobEquipmentPacket extends DataPacket{
 		if(isset($this->eid)) $this->entityRuntimeId = $this->eid;
 		if(isset($this->slot)) $this->inventorySlot = $this->slot;
 		if(isset($this->selectedSlot)) $this->hotbarSlot = $this->selectedSlot;
-
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putSlot($this->item);
 		$this->putByte($this->inventorySlot);

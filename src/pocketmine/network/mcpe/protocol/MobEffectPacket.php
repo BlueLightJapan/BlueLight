@@ -52,6 +52,7 @@ class MobEffectPacket extends DataPacket{
 	}
 
 	public function encodePayload(){
+		if(isset($this->eid)) $this->entityRuntimeId = $this->eid;
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putByte($this->eventId);
 		$this->putVarInt($this->effectId);
