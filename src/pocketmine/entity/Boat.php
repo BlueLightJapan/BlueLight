@@ -103,15 +103,15 @@ class Boat extends Vehicle{
 		}
 		$this->move($this->motionX, $this->motionY, $this->motionZ);
 		$this->updateMovement();
-		if($this->linkedEntity == null or $this->linkedType = 0){
-			if($this->age > 1500){
-				$this->close();
-				$hasUpdate = true;
-				//$this->scheduleUpdate();
-				$this->age = 0;
-			}
-			$this->age++;
-		}else $this->age = 0;
+		//if($this->linkedEntity == null or $this->linkedType = 0){
+		//	if($this->age > 1500){
+		//		$this->close();
+		//		$hasUpdate = true;
+		//		//$this->scheduleUpdate();
+		//		$this->age = 0;
+		//	}
+		//	$this->age++;
+		//}else $this->age = 0;
 		$this->timings->stopTiming();
 		return $hasUpdate or !$this->onGround or abs($this->motionX) > 0.00001 or abs($this->motionY) > 0.00001 or abs($this->motionZ) > 0.00001;
 	}
