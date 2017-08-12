@@ -1192,6 +1192,19 @@ class Server{
 
 		return $this->propertyCache[$variable] === null ? $defaultValue : $this->propertyCache[$variable];
 	}
+
+	/**
+	 * @param string $variable
+	 * @param mixed  $defaultValue
+	 *
+	 * @return mixed
+	 */
+	private function getBlueLightProperty($variable,$defaultValue = true){
+		$v =  $this->bluelightconfig->get($variable);
+		return $v == null ? false : true;
+	}
+
+
 	/**
 	 * @param string $variable
 	 * @param string $defaultValue
