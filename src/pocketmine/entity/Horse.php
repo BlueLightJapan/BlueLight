@@ -75,29 +75,23 @@ class Horse extends Living implements Rideable{
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-
+		$button = $player->getServer()->getLanguage()->translateString("entity.horse.button");
 		@$flags |= 1 << Entity::DATA_FLAG_SADDLED;
 		@$flags |= 1 << Entity::DATA_FLAG_CAN_SHOW_NAMETAG;
 		@$flags |= 1 << Entity::DATA_FLAG_ALWAYS_SHOW_NAMETAG;
-
 		$pk->metadata = [
-
-		Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
-		Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],
-		Entity::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],
-		Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
-		Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
-		Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
-		];
-
+			Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
+			Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],
+			Entity::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],
+			Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
+			Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
+			Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
+			Entity::DATA_INTERACTIVE_TAG => [Entity::DATA_TYPE_STRING, $button],
+		];echo $button;
 		$player->dataPacket($pk);
-
 		$this->sendAttribute($player);
-
 		parent::spawnTo($player);
-
-		$this->setArmor(419);
-
+		//$this->setArmor(419);
 	}
 
 	public function getSaveId(){

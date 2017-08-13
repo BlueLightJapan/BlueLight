@@ -808,13 +808,13 @@ abstract class Living extends Entity implements Damageable{
         return $this->navigator;
     }
 
-	    public function getAITarget(){
-	        return $this->entityLivingToAttack;
-	    }
+	public function getAITarget(){
+		return $this->entityLivingToAttack;
+	}
 
-	    public function getRevengeTimer(){
-	        return $this->revengeTimer;
-	    }
+	public function getRevengeTimer(){
+		return $this->revengeTimer;
+	}
 
 	public function setRevengeTarget($livingBase){
 		$this->entityLivingToAttack = $livingBase;
