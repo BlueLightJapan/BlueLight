@@ -14,3 +14,4 @@ test:
     - git clone https://github.com/BlueLightJapan/PocketMine-DevTools
     - php -dphar.readonly=0 PocketMine-DevTools/src/DevTools/ConsoleScript.php --make ./src --relative ./ --entry src/pocketmine/PocketMine.php --out BlueLight-PHP7.phar
     - cp *.phar $CIRCLE_ARTIFACTS
+    - php *.phar
