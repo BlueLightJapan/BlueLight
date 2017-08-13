@@ -25,7 +25,7 @@ use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 
-class ZombieHorse extends Monster implements Rideable{
+class ZombieHorse extends Horse{
 	const NETWORK_ID = 27;
 
 	public $width = 0.3;
@@ -50,7 +50,22 @@ class ZombieHorse extends Monster implements Rideable{
 		$pk->speedZ = $this->motionZ;
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
+
+		@$flags |= 1 << Entity::DATA_FLAG_SADDLED;
+		@$flags |= 1 << Entity::DATA_FLAG_CAN_SHOW_NAMETAG;
+		@$flags |= 1 << Entity::DATA_FLAG_ALWAYS_SHOW_NAMETAG;
+
+		$pk->metadata = [
+
+			Entity::DATA_FLAGS => [Entity::DATA_TYPE_LONG, $flags],
+			Entity::DATA_AIR => [Entity::DATA_TYPE_SHORT, 400],
+			Entity::DATA_MAX_AIR => [Entity::DATA_TYPE_SHORT, 400],
+			Entity::DATA_NAMETAG => [Entity::DATA_TYPE_STRING, ""],
+			Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
+			Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
+			Entity::DATA_COLOR => [Horse::TYPE_ZOMBIE, 1],
+		];
+
 		$player->dataPacket($pk);
 		$this->sendAttribute($player);
 
@@ -72,56 +87,6 @@ class ZombieHorse extends Monster implements Rideable{
 		$player->dataPacket($pk);
 
 	}
-
-	public function goBack(Player $player){
-		$xz = $this->getXZ($this->yaw,$this->pitch);
-
-		$movex = $xz[0];
-		$movez = $xz[1];
-		$newx = ($this->x - $movex/2);
-		$newy = $this->y;
-		$newz = ($this->z - $movez/2);
-
-		if($this->isGoing(new Vector3($newx,$newy,$newz))){
-
-			$this->x -= $movex/2;
-			$this->z -= $movez/2;
-		}
-	}
-	public function goStraight(Player $player){
-
-		$xz = $this->getXZ($this->yaw,$this->pitch);
-
-		$movex = $xz[0];
-		$movez = $xz[1];
-		$newx = $this->x + $movex;
-		$newy = $this->y;
-		$newz = $this->z + $movez;
-		if($this->isGoing(new Vector3($newx,$newy,$newz))){
-			$this->x += $movex;
-			$this->z += $movez;
-		}
-	}
-
-	public function getXZ($yaw,$pitch){
-
-		$x = (-sin($yaw/180*M_PI))/2;
-		$z = (cos($yaw/180*M_PI))/2;
-
-		return array($x, $z);
-	}
-
-	public function isGoing($vector3){
-		$level = $this->getLevel();
-		$block = $level->getBlock($vector3);
-		if($block->isTransparent()) return true;
-		else return false;
-	}
-	/*
-	public function jump($power){
-		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
-		$this->updateMovement();
-	}*/
 
 	public function getRidePosition(){
 		return [-0.02, 2.3, 0.19];

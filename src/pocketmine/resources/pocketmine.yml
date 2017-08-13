@@ -184,7 +184,7 @@ timings:
 console:
  #Choose whether to enable server stats reporting on the console title.
  #NOTE: The title ticker will be disabled regardless if console colours are not enabled.
- title-tick: true
+ title-tick: false
 
 aliases:
  #Examples:

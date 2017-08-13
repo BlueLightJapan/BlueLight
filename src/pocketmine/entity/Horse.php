@@ -45,13 +45,13 @@ class Horse extends Living implements Rideable{
 	const TYPE_GRAY = 9;
 	const TYPE_SILVER = 10;
 	const TYPE_BLACK = 12;
-	const TYPE_BLACKANDWHITE = 14;
-	const TYPE_WHITEANDBLACK = 15;
+	const TYPE_BLACK_AND_WHITE = 14;
+	const TYPE_WHITE_AND_BLACK = 15;
 
-	const TYPE_WEAR_LEATHER = 18;
-	const TYPE_WEAR_IRON = 19;
-	const TYPE_WEAR_GOLD = 20;
-	const TYPE_WEAR_DIAMOND = 21;
+	const TYPE_WEARING_LEATHER = 18;
+	const TYPE_WEARING_IRON = 19;
+	const TYPE_WEARING_GOLD = 20;
+	const TYPE_WEARING_DIAMOND = 21;
 
 	public $width = 0.6;
 	public $length = 1.8;
@@ -96,7 +96,7 @@ class Horse extends Living implements Rideable{
 
 		parent::spawnTo($player);
 
-		$this->setChestPlate(419);
+		$this->setArmor(419);
 
 	}
 
@@ -109,7 +109,7 @@ class Horse extends Living implements Rideable{
 		return [ItemItem::get(ItemItem::LEATHER, 0, mt_rand(0, 2))];
 	}
 
-	public function setChestPlate($id = 419){
+	public function setArmor($id){
 		$pk = new MobArmorEquipmentPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->slots = [
@@ -185,11 +185,11 @@ class Horse extends Living implements Rideable{
 		if($block->isTransparent()) return true;
 		else return false;
 	}
-	/*
-	public function jump($power){
+
+	public function jumpWithPlayer($power){
 		$this->move(0, $this->maxjump * ($power * 0.0001), 0);
 		$this->updateMovement();
-	}*/
+	}
 
 	public function getRidePosition(){
 		return [-0.02, 2.3, 0.19];

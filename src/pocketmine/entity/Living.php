@@ -57,13 +57,13 @@ abstract class Living extends Entity implements Damageable{
 
 	protected $invisible = false;
 
-	protected $navigator;
+	public $navigator;
 	public $tasks;
 	public $targetTasks;
-	protected $lookHelper;
-	protected $moveHelper;
-	protected $jumpHelper;
-	protected $isJumping = false;
+	public $lookHelper;
+	public $moveHelper;
+	public $jumpHelper;
+	public $isJumping = false;
 	public $jumpMovementFactor = 0.02;
 	private $jumpTicks = 0;
 	public $moveForward = 0.0;
@@ -800,7 +800,7 @@ abstract class Living extends Entity implements Damageable{
         $this->setMoveForward($speedIn);
     }
 
-    protected function getNewNavigator($worldIn){
+    public function getNewNavigator($worldIn){
         return new PathNavigateGround($this, $worldIn);
     }
 

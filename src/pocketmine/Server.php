@@ -101,7 +101,6 @@ use pocketmine\scheduler\FileWriteTask;
 use pocketmine\scheduler\SendUsageTask;
 use pocketmine\scheduler\ServerScheduler;
 use pocketmine\tile\Tile;
-use pocketmine\updater\AutoUpdater;
 use pocketmine\utils\Binary;
 use pocketmine\utils\Config;
 use pocketmine\utils\MainLogger;
@@ -145,9 +144,6 @@ class Server{
 	private $pluginManager = null;
 
 	private $profilingTickRate = 20;
-
-	/** @var AutoUpdater */
-	private $updater = null;
 
 	/** @var ServerScheduler */
 	private $scheduler = null;
@@ -618,13 +614,6 @@ class Server{
 	 */
 	public function getLevelMetadata(){
 		return $this->levelMetadata;
-	}
-
-	/**
-	 * @return AutoUpdater
-	 */
-	public function getUpdater(){
-		return $this->updater;
 	}
 
 	/**
@@ -1517,7 +1506,7 @@ class Server{
 			$this->weatherEnabled = $this->getProperty("weatherEnabled", true);
 			$this->weatherRandomDurationMin = $this->getBlueLightConfigInt("weatherRandomDurationMin", 6000);
 			$this->weatherRandomDurationMax = $this->getBlueLightConfigInt("weatherRandomDurationMax", 12000);
-			$this->lightningTime = $this->getProperty("LightningTime", 200);
+			$this->lightningTime = $this->getBlueLightConfigInt("LightningTime", 200);
 			$this->lightningFire = $this->getProperty("LightningFire", false);
 			$this->limitedCreative = $this->getProperty("LimitedCreative", true);
 			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", true);
@@ -1706,8 +1695,6 @@ class Server{
 			$this->network->registerInterface(new RakLibInterface($this));
 
 			$this->pluginManager->loadPlugins($this->pluginPath);
-
-			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "update.pmmp.io"));
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 

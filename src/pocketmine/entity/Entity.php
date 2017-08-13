@@ -77,7 +77,6 @@ use pocketmine\Server;
 abstract class Entity extends Location implements Metadatable{
 
 	const NETWORK_ID = -1;
-
 	const DATA_TYPE_BYTE = 0;
 	const DATA_TYPE_SHORT = 1;
 	const DATA_TYPE_INT = 2;
