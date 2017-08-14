@@ -127,7 +127,7 @@ class Ladder extends Transparent{
 
 		return false;
 	}
-
+	/*
 	public function onUpdate($type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$sides = [
@@ -144,6 +144,7 @@ class Ladder extends Transparent{
 
 		return false;
 	}
+	*/
 
 	public function getToolType(){
 		return Tool::TYPE_AXE;
