@@ -11,5 +11,6 @@ test:
     - tar -xf PHP7.tar.gz
     - wget -O plugins/master.zip https://github.com/pmmp/PocketMine-DevTools/archive/master.zip
     - unzip plugins/master.zip
+    - cp -r plugins/master/PocketMine-DevTools-master/ plugins/
     - bin/php7/bin/php ci.php
     - cp -R plugins/DevTools/* $CIRCLE_ARTIFACTS
