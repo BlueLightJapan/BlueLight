@@ -7,6 +7,7 @@ while(system("lsof -i:".$port) != null){
 }
 echo "port is ".$port.PHP_EOL;
 system("echo \"server-port=".$port."\" > server.properties");
+system("echo \"DevTools=on\" > bluelight.properties");
 $server = proc_open(PHP_BINARY . " src/pocketmine/PocketMine.php --no-wizard --disable-readline", [
 	0 => ["pipe", "r"],
 	1 => ["pipe", "w"],
