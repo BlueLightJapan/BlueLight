@@ -1811,8 +1811,8 @@ class Level implements ChunkManager, Metadatable{
 					$ev->setCancelled();
 				}
 			}
-
-			if($player->isAdventure(true) and !$ev->isCancelled() and !$target->onActivate($item, $player)){
+			$onActivate = $target->onActivate($item, $player);
+			if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
 				$canPlace = false;
 				$tag = $item->getNamedTagEntry("CanPlaceOn");
 				if($tag instanceof ListTag){
@@ -1833,7 +1833,7 @@ class Level implements ChunkManager, Metadatable{
 			$this->server->getPluginManager()->callEvent($ev);
 			if(!$ev->isCancelled()){
 				$target->onUpdate(self::BLOCK_UPDATE_TOUCH);
-				if(!$player->isSneaking() and $target->onActivate($item, $player) === true){
+				if(!$player->isSneaking() and $onActivate){
 					return true;
 				}
 
