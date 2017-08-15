@@ -1812,7 +1812,7 @@ class Level implements ChunkManager, Metadatable{
 				}
 			}
 
-			if($player->isAdventure(true) and !$ev->isCancelled()){
+			if($player->isAdventure(true) and !$ev->isCancelled() and !$target->onActivate($item, $player)){
 				$canPlace = false;
 				$tag = $item->getNamedTagEntry("CanPlaceOn");
 				if($tag instanceof ListTag){
