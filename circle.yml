@@ -9,6 +9,7 @@ test:
     - mkdir artifacts
     - wget -O PHP7.tar.gz https://dl.bintray.com/pocketmine/PocketMine/PHP_7.0.6_x86-64_Linux.tar.gz --no-check-certificate
     - tar -xf PHP7.tar.gz
-    - wget -O plugins/Devtools.phar https://github.com/pmmp/PocketMine-DevTools/releases/download/v1.12.1/DevTools_v1.12.1.phar
+    - wget -O plugins/master.zip https://github.com/pmmp/PocketMine-DevTools/archive/master.zip
+    - unzip plugins/master.zip
     - bin/php7/bin/php ci.php
     - cp -R plugins/DevTools/* $CIRCLE_ARTIFACTS
