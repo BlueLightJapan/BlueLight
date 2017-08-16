@@ -64,14 +64,14 @@ class NoteBlock extends Solid{
 		switch($below->getId()){
 			case Block::WOOD:
 			case Block::WOOD2:
-			case Block::WOODEN_PLANK:
-			case Block::WOODEN_SLABS:
-			case Block::DOUBLE_WOOD_SLABS:
-			case Block::OAK_WOODEN_STAIRS:
-			case Block::SPRUCE_WOODEN_STAIRS:
-			case Block::BIRCH_WOODEN_STAIRS:
-			case Block::JUNGLE_WOODEN_STAIRS:
-			case Block::ACACIA_WOODEN_STAIRS:
+			case Block::WOODEN_PLANKS:
+			//case Block::WOODEN_SLABS:
+			//case Block::DOUBLE_WOOD_SLABS:
+			case Block::OAK_STAIRS:
+			case Block::SPRUCE_STAIRS:
+			case Block::BIRCH_STAIRS:
+			case Block::JUNGLE_STAIRS:
+			case Block::ACACIA_STAIRS:
 			case Block::DARK_OAK_WOODEN_STAIRS:
 			case Block::FENCE:
 			case Block::FENCE_GATE:
