@@ -258,7 +258,11 @@ class Furnace extends Spawnable implements InventoryHolder, Container, Nameable{
 			}
 			$this->namedtag->BurnTime->setValue(0);
 			$this->namedtag->CookTime->setValue(0);
-			$this->namedtag->BurnTicks->setValue(0);
+			if(isset($this->namedtag->BurnTicks)){
+				$this->namedtag->BurnTicks->setValue(0);
+			}else{
+				$this->namedtag->BurnTicks = new ShortTag("BurnTicks", 0);
+			}
 		}
 
 		foreach($this->getInventory()->getViewers() as $player){
