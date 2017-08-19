@@ -37,6 +37,7 @@ use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
 use pocketmine\entity\Projectile;
 use pocketmine\entity\Rideable;
+use pocketmine\entity\Minecart;
 use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -3252,8 +3253,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		if($this->isLinked){
 			if($this->linkedEntity instanceof Rideable){
 				if($packet->motionX == 0 and $packet->motionY == 1){
-					$this->moveForward++;
-					$this->linkedEntity->goStraight($this);
+				    if($this->linkedEntity instanceof Minecart){
+				    	$this->moveForward++;
+				    }else{
+				    	$this->linkedEntity->goStraight($this);
+				    }
 				}elseif($packet->motionX == 0 and $packet->motionY == -1){
 					$this->linkedEntity->goBack($this);
 				}

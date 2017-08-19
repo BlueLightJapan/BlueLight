@@ -165,21 +165,21 @@ class Minecart extends Vehicle{
 		$d0 = 0.0078125;
 
 		$damage = $block->getDamage();
-		if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
+		//if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
 		switch ($damage){
-			case Rail::SLOPED_ASCENDING_EAST:
+			case Rail::ASCENDING_EAST:
 				$this->motionX -= 0.0078125;
 				$this->y++;
 				break;
-			case Rail::SLOPED_ASCENDING_WEST:
+			case Rail::ASCENDING_WEST:
 				$this->motionX += 0.0078125;
 				$this->y++;
 				break;
-			case Rail::SLOPED_ASCENDING_NORTH:
+			case Rail::ASCENDING_NORTH:
 				$this->motionZ += 0.0078125;
 				$this->y++;
 				break;
-			case Rail::SLOPED_ASCENDING_SOUTH:
+			case Rail::ASCENDING_SOUTH:
 				$this->motionZ -= 0.0078125;
 				$this->y++;
 		}
@@ -341,7 +341,7 @@ class Minecart extends Vehicle{
 		if ($block instanceof Rail){
 
 			$damage = $block->getDamage();
-			if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
+			//if ($block->getId() == Block::POWERED_RAIL && $block->isPowered()) $damage -= 8;
 			$aint = $this->matrix[$damage];
 			$d0 = 0.0;
 			$d1 = $i + 0.5 + $aint[0][0] * 0.5;
