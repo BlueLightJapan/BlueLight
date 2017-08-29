@@ -67,7 +67,7 @@ class Pig extends Animal implements Rideable{
 		$entry[] = new Attribute($this->getId(), "minecraft:health", 0, 40, 40);
 		$pk = new UpdateAttributesPacket();
 		$pk->entries = $entry;
-		$pk->entityId = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$player->dataPacket($pk);
 	}
 	public function goBack(Player $player){
