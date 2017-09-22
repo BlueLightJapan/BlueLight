@@ -254,11 +254,11 @@ class PluginManager{
 								break;
 							}
 
-							if($this->server->oldApiPluginLoad){
-								$this->server->getLogger()->warning("Load $name of old API plugin");
-							}else{
+							if($compatible === false){
 
-								if($compatible === false){
+								if($this->server->oldApiPluginLoad){
+									$this->server->getLogger()->warning("Load $name of old API plugin");
+								}else{
 									$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
 										$name,
 										$this->server->getLanguage()->translateString("%pocketmine.plugin.incompatibleAPI", [implode(", ", $description->getCompatibleApis())])
