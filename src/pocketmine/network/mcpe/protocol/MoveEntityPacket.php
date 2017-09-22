@@ -58,6 +58,7 @@ class MoveEntityPacket extends DataPacket{
 	}
 
 	protected function encodePayload(){
+		if(isset($this->x)) $this->position = new Vector3($this->x, $this->y, $this->z);
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putVector3Obj($this->position);
 		$this->putByteRotation($this->pitch);

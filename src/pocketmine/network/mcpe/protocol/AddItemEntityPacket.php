@@ -55,6 +55,7 @@ class AddItemEntityPacket extends DataPacket{
 	}
 
 	protected function encodePayload(){
+		if(isset($this->x)) $this->position = new Vector3($this->x, $this->y, $this->z);
 		$this->putEntityUniqueId($this->entityUniqueId ?? $this->entityRuntimeId);
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putSlot($this->item);
