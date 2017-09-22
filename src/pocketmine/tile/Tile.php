@@ -46,12 +46,6 @@ abstract class Tile extends Position{
 	const SIGN = "Sign";
 	const SKULL = "Skull";
 	const BED = "Bed";
-	const DISPENSER = "Dispenser";
-	const DROPPER = "Dropper";
-	const CAULDRON = "Cauldron";
-	const HOPPER = "Hopper";
-	const BEACON = "Beacon";
-	const ENDER_CHEST = "EnderChest";
 
 	public static $tileCount = 1;
 
@@ -82,9 +76,6 @@ abstract class Tile extends Position{
 		self::registerTile(ItemFrame::class);
 		self::registerTile(Sign::class);
 		self::registerTile(Skull::class);
-		self::registerTile(Hopper::class);
-		self::registerTile(Beacon::class);
-		self::registerTile(EnderChest::class);
 	}
 
 	/**
@@ -187,6 +178,10 @@ abstract class Tile extends Position{
 
 	final public function scheduleUpdate(){
 		$this->level->updateTiles[$this->id] = $this;
+	}
+
+	public function isClosed() : bool{
+		return $this->closed;
 	}
 
 	public function __destruct(){

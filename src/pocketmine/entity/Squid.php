@@ -49,12 +49,12 @@ class Squid extends WaterAnimal{
 		parent::initEntity();
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Squid";
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
+	public function attack(EntityDamageEvent $source){
+		parent::attack($source);
 		if($source->isCancelled()){
 			return;
 		}
@@ -78,7 +78,7 @@ class Squid extends WaterAnimal{
 	}
 
 
-	public function onUpdate($currentTick){
+	public function onUpdate(int $currentTick) : bool{
 		if($this->closed !== false){
 			return false;
 		}
@@ -150,9 +150,9 @@ class Squid extends WaterAnimal{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Squid::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

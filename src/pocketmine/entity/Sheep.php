@@ -56,7 +56,7 @@ class Sheep extends Animal{
 	private $sheepTimer;
 	private $entityAIEatGrass;
 
-	public function getName(){
+	public function getName() : string{
 		return "Sheep";
 	}
 
@@ -106,9 +106,9 @@ class Sheep extends Animal{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -170,7 +170,7 @@ class Sheep extends Animal{
 		parent::onRightClick($player);
 	}
 
-	public function onUpdate($currentTick) {
+	public function onUpdate(int $currentTick) : bool {
 		parent::onUpdate($currentTick);
 		return true;
 	}

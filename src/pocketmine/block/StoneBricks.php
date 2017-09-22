@@ -34,36 +34,34 @@ class StoneBricks extends Solid{
 
 	protected $id = self::STONE_BRICKS;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 1.5;
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::NORMAL => "Stone Bricks",
 			self::MOSSY => "Mossy Stone Bricks",
 			self::CRACKED => "Cracked Stone Bricks",
-			self::CHISELED => "Chiseled Stone Bricks",
+			self::CHISELED => "Chiseled Stone Bricks"
 		];
 		return $names[$this->meta & 0x03];
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array{
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
-			return [
-				[Item::STONE_BRICKS, $this->meta & 0x03, 1],
-			];
-		}else{
-			return [];
+			return parent::getDrops($item);
 		}
+
+		return [];
 	}
 
 }

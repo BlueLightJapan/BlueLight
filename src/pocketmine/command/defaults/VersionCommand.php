@@ -31,7 +31,7 @@ use pocketmine\utils\TextFormat;
 
 class VersionCommand extends VanillaCommand{
 
-	public function __construct($name){
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.version.description",
@@ -86,11 +86,11 @@ class VersionCommand extends VanillaCommand{
 		$desc = $plugin->getDescription();
 		$sender->sendMessage(TextFormat::DARK_GREEN . $desc->getName() . TextFormat::WHITE . " version " . TextFormat::DARK_GREEN . $desc->getVersion());
 
-		if($desc->getDescription() != null){
+		if($desc->getDescription() !== ""){
 			$sender->sendMessage($desc->getDescription());
 		}
 
-		if($desc->getWebsite() != null){
+		if($desc->getWebsite() !== ""){
 			$sender->sendMessage("Website: " . $desc->getWebsite());
 		}
 

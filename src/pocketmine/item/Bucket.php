@@ -25,30 +25,41 @@ namespace pocketmine\item;
 
 use pocketmine\block\Air;
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\block\Liquid;
+use pocketmine\event\player\PlayerBucketEmptyEvent;
 use pocketmine\event\player\PlayerBucketFillEvent;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Bucket extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::BUCKET, $meta, $count, "Bucket");
+	public function __construct(int $meta = 0){
+		parent::__construct(self::BUCKET, $meta, "Bucket");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int{
 		return 1;
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
-		$targetBlock = Block::get($this->meta);
+	public function getFuelTime() : int{
+		if($this->meta === Block::LAVA or $this->meta === Block::FLOWING_LAVA){
+			return 20000;
+		}
 
-		if($targetBlock instanceof Air){
+		return 0;
+	}
+
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos) : bool{
+		$resultBlock = BlockFactory::get($this->meta);
+
+		if($resultBlock instanceof Air){
 			if($target instanceof Liquid and $target->getDamage() === 0){
-				$result = clone $this;
-				$result->setDamage($target->getId());
-				$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $result));
+				$resultItem = clone $this;
+				$resultItem->setDamage($target->getId());
+				$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $resultItem));
 				if(!$ev->isCancelled()){
-					$player->getLevel()->setBlock($target, new Air(), true, true);
+					$player->getLevel()->setBlock($target, BlockFactory::get(Block::AIR), true, true);
 					if($player->isSurvival()){
 						$player->getInventory()->setItemInHand($ev->getItem());
 					}
@@ -57,12 +68,12 @@ class Bucket extends Item{
 					$player->getInventory()->sendContents($player);
 				}
 			}
-		}elseif($targetBlock instanceof Liquid){
-			$result = clone $this;
-			$result->setDamage(0);
-			$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $result));
+		}elseif($resultBlock instanceof Liquid){
+			$resultItem = clone $this;
+			$resultItem->setDamage(0);
+			$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketEmptyEvent($player, $block, $face, $this, $resultItem));
 			if(!$ev->isCancelled()){
-				$player->getLevel()->setBlock($block, $targetBlock, true, true);
+				$player->getLevel()->setBlock($block, $resultBlock, true, true);
 				if($player->isSurvival()){
 					$player->getInventory()->setItemInHand($ev->getItem());
 				}

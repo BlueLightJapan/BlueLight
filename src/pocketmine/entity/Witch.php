@@ -34,7 +34,7 @@ class Witch extends Monster{
 	public $maxhealth = 26;
 	public $witchDrops = [ItemItem::GLOWSTONE_DUST, ItemItem::SUGAR, ItemItem::REDSTONE_DUST, ItemItem::SPIDER_EYE, ItemItem::GLASS_BOTTLE, ItemItem::GUNPOWDER, ItemItem::STICK, ItemItem::STICK];
 
-	public function getName(){
+	public function getName() : string{
 		return "Witch";
 	}
 
@@ -42,9 +42,9 @@ class Witch extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

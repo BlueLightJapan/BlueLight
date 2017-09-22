@@ -37,7 +37,7 @@ class EnderChestInventory extends ContainerInventory{
 
 	public function __construct(Human $owner, $contents = null){
 		$this->owner = $owner;
-		parent::__construct(new FakeBlockMenu($this, $owner), InventoryType::get(InventoryType::ENDER_CHEST));
+		parent::__construct(new FakeBlockMenu($this, $owner));
 
 		if($contents !== null){
 			if($contents instanceof ListTag){
@@ -95,5 +95,13 @@ class EnderChestInventory extends ContainerInventory{
 
 		parent::onClose($who);
 	}
-
+	public function getName() : string{
+		return "Ender Chest";
+	}
+	public function getDefaultSize() : int{
+		return 27;
+	}
+	public function getNetworkType() : int{
+		return WindowTypes::CONTAINER;
+	}
 } 

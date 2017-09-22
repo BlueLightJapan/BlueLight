@@ -36,24 +36,24 @@ class Cake extends Transparent implements FoodSource{
 
 	protected $id = self::CAKE_BLOCK;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 0.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Cake Block";
 	}
 
 	protected function recalculateBoundingBox(){
 
-		$f = (1 + $this->getDamage() * 2) / 16;
+		$f = $this->getDamage() * 0.125; //1 slice width
 
 		return new AxisAlignedBB(
-			$this->x + $f,
+			$this->x + 0.0625 + $f,
 			$this->y,
 			$this->z + 0.0625,
 			$this->x + 1 - 0.0625,
@@ -62,10 +62,10 @@ class Cake extends Transparent implements FoodSource{
 		);
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
 		$down = $this->getSide(Vector3::SIDE_DOWN);
 		if($down->getId() !== self::AIR){
-			$this->getLevel()->setBlock($block, $this, true, true);
+			$this->getLevel()->setBlock($blockReplace, $this, true, true);
 
 			return true;
 		}
@@ -73,10 +73,10 @@ class Cake extends Transparent implements FoodSource{
 		return false;
 	}
 
-	public function onUpdate($type){
+	public function onUpdate(int $type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			if($this->getSide(Vector3::SIDE_DOWN)->getId() === self::AIR){ //Replace with common break method
-				$this->getLevel()->setBlock($this, new Air(), true);
+				$this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR), true);
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
@@ -85,15 +85,22 @@ class Cake extends Transparent implements FoodSource{
 		return false;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array{
 		return [];
 	}
 
-	public function onActivate(Item $item, Player $player = null){
-		if($player instanceof Player and $player->getHealth() < $player->getMaxHealth()){
-			$ev = new EntityEatBlockEvent($player, $this);
+	public function onActivate(Item $item, Player $player = null) : bool{
+		//TODO: refactor this into generic food handling
+		if($player instanceof Player and $player->getFood() < $player->getMaxFood()){
+			$player->getServer()->getPluginManager()->callEvent($ev = new EntityEatBlockEvent($player, $this));
 
 			if(!$ev->isCancelled()){
+				$player->addFood($ev->getFoodRestore());
+				$player->addSaturation($ev->getSaturationRestore());
+				foreach($ev->getAdditionalEffects() as $effect){
+					$player->addEffect($effect);
+				}
+
 				$this->getLevel()->setBlock($this, $ev->getResidue());
 				return true;
 			}
@@ -113,8 +120,8 @@ class Cake extends Transparent implements FoodSource{
 	public function getResidue(){
 		$clone = clone $this;
 		$clone->meta++;
-		if($clone->meta >= 0x06){
-			$clone = new Air();
+		if($clone->meta > 0x06){
+			$clone = BlockFactory::get(Block::AIR);
 		}
 		return $clone;
 	}

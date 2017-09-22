@@ -24,7 +24,9 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\{
 	ByteTag, CompoundTag, FloatTag, IntTag, StringTag
 };
@@ -35,15 +37,17 @@ use pocketmine\tile\Tile;
 class ItemFrame extends Flowable{
 	protected $id = Block::ITEM_FRAME_BLOCK;
 
-	public function __construct($meta = 0){
+	protected $itemId = Item::ITEM_FRAME;
+
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Item Frame";
 	}
 
-	public function onActivate(Item $item, Player $player = null){
+	public function onActivate(Item $item, Player $player = null) : bool{
 		$tile = $this->level->getTile($this);
 		if(!($tile instanceof TileItemFrame)){
 			$nbt = new CompoundTag("", [
@@ -66,7 +70,7 @@ class ItemFrame extends Flowable{
 				$item->setCount($item->getCount() - 1);
 				$tile->setItem($frameItem);
 				if($player instanceof Player and $player->isSurvival()){
-					$player->getInventory()->setItemInHand($item->getCount() <= 0 ? Item::get(Item::AIR) : $item);
+					$player->getInventory()->setItemInHand($item->getCount() <= 0 ? ItemFactory::get(Item::AIR) : $item);
 				}
 			}
 		}
@@ -74,7 +78,7 @@ class ItemFrame extends Flowable{
 		return true;
 	}
 
-	public function onBreak(Item $item){
+	public function onBreak(Item $item, Player $player = null) : bool{
 		$tile = $this->level->getTile($this);
 		if($tile instanceof TileItemFrame){
 			//TODO: add events
@@ -82,10 +86,10 @@ class ItemFrame extends Flowable{
 				$this->level->dropItem($tile->getBlock(), $tile->getItem());
 			}
 		}
-		return parent::onBreak($item);
+		return parent::onBreak($item, $player);
 	}
 
-	public function onUpdate($type){
+	public function onUpdate(int $type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$sides = [
 				0 => 4,
@@ -101,26 +105,26 @@ class ItemFrame extends Flowable{
 		return false;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		if($face === 0 or $face === 1){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+		if($face === Vector3::SIDE_DOWN or $face === Vector3::SIDE_UP){
 			return false;
 		}
 
 		$faces = [
-			2 => 3,
-			3 => 2,
-			4 => 1,
-			5 => 0
+			Vector3::SIDE_NORTH => 3,
+			Vector3::SIDE_SOUTH => 2,
+			Vector3::SIDE_WEST => 1,
+			Vector3::SIDE_EAST => 0
 		];
 
 		$this->meta = $faces[$face];
-		$this->level->setBlock($block, $this, true, true);
+		$this->level->setBlock($blockReplace, $this, true, true);
 
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::ITEM_FRAME),
-			new IntTag("x", $block->x),
-			new IntTag("y", $block->y),
-			new IntTag("z", $block->z),
+			new IntTag("x", $blockReplace->x),
+			new IntTag("y", $blockReplace->y),
+			new IntTag("z", $blockReplace->z),
 			new FloatTag("ItemDropChance", 1.0),
 			new ByteTag("ItemRotation", 0)
 		]);
@@ -137,10 +141,7 @@ class ItemFrame extends Flowable{
 
 	}
 
-	public function getDrops(Item $item){
-		return [
-			[Item::ITEM_FRAME, 0, 1]
-		];
+	public function getVariantBitmask() : int{
+		return 0;
 	}
-
 }

@@ -25,14 +25,15 @@ namespace pocketmine\item;
 
 use pocketmine\block\Block;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Painting extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::PAINTING, $meta, $count, "Painting");
+	public function __construct(int $meta = 0){
+		parent::__construct(self::PAINTING, $meta, "Painting");
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos) : bool{
 		if($target->isTransparent() === false and $face > 1 and $block->isSolid() === false){
 			$faces = [
 				2 => 1,

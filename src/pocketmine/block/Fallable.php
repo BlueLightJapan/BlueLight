@@ -35,11 +35,11 @@ use pocketmine\nbt\tag\ListTag;
 
 abstract class Fallable extends Solid{
 
-	public function onUpdate($type){
+	public function onUpdate(int $type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$down = $this->getSide(Vector3::SIDE_DOWN);
 			if($down->getId() === self::AIR or ($down instanceof Liquid)){
-				$this->level->setBlock($this, Block::get(Block::AIR), true, true);
+				$this->level->setBlock($this, BlockFactory::get(Block::AIR), true, true);
 				$fall = Entity::createEntity("FallingSand", $this->getLevel(), new CompoundTag("", [
 					new ListTag("Pos", [
 						new DoubleTag("", $this->x + 0.5),
@@ -56,7 +56,7 @@ abstract class Fallable extends Solid{
 						new FloatTag("", 0)
 					]),
 					new IntTag("TileID", $this->getId()),
-					new ByteTag("Data", $this->getDamage()),
+					new ByteTag("Data", $this->getDamage())
 				]));
 
 				$fall->spawnToAll();

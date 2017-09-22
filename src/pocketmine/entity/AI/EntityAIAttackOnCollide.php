@@ -110,7 +110,7 @@ class EntityAIAttackOnCollide extends EntityAIBase{
 			$this->attackTick = 20;
 
 			$ev = new EntityDamageByEntityEvent($this->attacker, $entitylivingbase, EntityDamageEvent::CAUSE_ENTITY_ATTACK, $this->attacker->getAttributeMap()->getAttribute(Attribute::ATTACK_DAMAGE)->getValue());
-			$entitylivingbase->attack($ev->getFinalDamage(), $ev);
+			$entitylivingbase->attack($ev);
 		}
 	}
 

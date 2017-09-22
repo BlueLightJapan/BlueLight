@@ -26,6 +26,7 @@ namespace pocketmine\block;
 
 use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
@@ -33,14 +34,24 @@ use pocketmine\Player;
 class NetherWartPlant extends Flowable{
 	protected $id = Block::NETHER_WART_PLANT;
 
-	public function __construct($meta = 0){
+	protected $itemId = Item::NETHER_WART;
+
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function getName() : string{
+		return "Nether Wart";
+	}
+
+	public function ticksRandomly() : bool{
+		return true;
+	}
+
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
 		$down = $this->getSide(Vector3::SIDE_DOWN);
 		if($down->getId() === Block::SOUL_SAND){
-			$this->getLevel()->setBlock($block, $this, false, true);
+			$this->getLevel()->setBlock($blockReplace, $this, false, true);
 
 			return true;
 		}
@@ -48,7 +59,7 @@ class NetherWartPlant extends Flowable{
 		return false;
 	}
 
-	public function onUpdate($type){
+	public function onUpdate(int $type){
 		switch($type){
 			case Level::BLOCK_UPDATE_RANDOM:
 				if($this->meta < 3 and mt_rand(0, 10) === 0){ //Still growing
@@ -74,7 +85,9 @@ class NetherWartPlant extends Flowable{
 		return false;
 	}
 
-	public function getDrops(Item $item){
-		return [[Item::NETHER_WART, 0, ($this->meta === 3 ? mt_rand(2, 4) : 1)]];
+	public function getDrops(Item $item) : array{
+		return [
+			ItemFactory::get($this->getItemId(), 0, ($this->getDamage() === 3 ? mt_rand(2, 4) : 1))
+		];
 	}
 }

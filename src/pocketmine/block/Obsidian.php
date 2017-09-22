@@ -30,29 +30,31 @@ class Obsidian extends Solid{
 
 	protected $id = self::OBSIDIAN;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Obsidian";
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getHardness(){
-		return 35;
+	public function getHardness() : float{
+		return 35; //50 in PC
 	}
 
-	public function getDrops(Item $item){
+	public function getBlastResistance() : float{
+		return 6000;
+	}
+
+	public function getDrops(Item $item) : array{
 		if($item->isPickaxe() >= Tool::TIER_DIAMOND){
-			return [
-				[Item::OBSIDIAN, 0, 1],
-			];
-		}else{
-			return [];
+			return parent::getDrops($item);
 		}
+
+		return [];
 	}
 }

@@ -36,12 +36,12 @@ class Lightning extends Monster{
 	public $length = 0.9;
 	public $height = 1.8;
 
-	public function getName(){
+	public function getName() : string{
 		return "Lightning";
 	}
 
-	public function onUpdate($tick){
-		parent::onUpdate($tick);
+	public function onUpdate(int $currentTick) : bool{
+		parent::onUpdate($currentTick);
 		if($this->age > 20){
 			$this->kill();
 			$this->close();
@@ -53,9 +53,9 @@ class Lightning extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -65,9 +65,9 @@ class Lightning extends Monster{
 		$player->dataPacket($pk);
 
 		$pk = new ExplodePacket();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->radius = 10;
 		$pk->records = [];
 		$player->dataPacket($pk);

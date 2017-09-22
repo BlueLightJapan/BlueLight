@@ -78,8 +78,8 @@ namespace pocketmine {
 	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
-	const VERSION = "1.6.2dev";
-	const API_VERSION = "3.0.0-ALPHA7";
+	const VERSION = "1.7dev";
+	const API_VERSION = "3.0.0-ALPHA8";
 	const CODENAME = "BlueLight";
 
 	/*
@@ -94,7 +94,11 @@ namespace pocketmine {
 		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;
 		exit(1);
 	}
-
+	if(version_compare("7.2", PHP_VERSION) < 0){
+		echo "[CRITICAL] You must use PHP < 7.2" . PHP_EOL;
+		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;
+		exit(1);
+	}
 	if(!extension_loaded("pthreads")){
 		echo "[CRITICAL] Unable to find the pthreads extension." . PHP_EOL;
 		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;

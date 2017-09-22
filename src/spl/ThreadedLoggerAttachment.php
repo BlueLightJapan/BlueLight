@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
 */
 
-abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAttachment{
+abstract class ThreadedLoggerAttachment extends \Volatile implements \LoggerAttachment{
 
 	/** @var \ThreadedLoggerAttachment */
 	protected $attachment = null;
@@ -32,6 +32,7 @@ abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAtta
 	}
 
 	/**
+	 * @deprecated
 	 * @param ThreadedLoggerAttachment $attachment
 	 */
 	public function addAttachment(\ThreadedLoggerAttachment $attachment){
@@ -43,6 +44,7 @@ abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAtta
 	}
 
 	/**
+	 * @deprecated
 	 * @param ThreadedLoggerAttachment $attachment
 	 */
 	public function removeAttachment(\ThreadedLoggerAttachment $attachment){
@@ -56,6 +58,9 @@ abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAtta
 		}
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function removeAttachments(){
 		if($this->attachment instanceof \ThreadedLoggerAttachment){
 			$this->attachment->removeAttachments();
@@ -64,6 +69,7 @@ abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAtta
 	}
 
 	/**
+	 * @deprecated
 	 * @return \ThreadedLoggerAttachment[]
 	 */
 	public function getAttachments(){

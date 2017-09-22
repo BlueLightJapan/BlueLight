@@ -23,17 +23,12 @@ declare(strict_types=1);
 
 namespace pocketmine\level\generator;
 
-use pocketmine\block\CoalOre;
-use pocketmine\block\DiamondOre;
-use pocketmine\block\Dirt;
-use pocketmine\block\GoldOre;
-use pocketmine\block\Gravel;
-use pocketmine\block\IronOre;
-use pocketmine\block\LapisOre;
-use pocketmine\block\RedstoneOre;
-use pocketmine\item\Item;
+use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\ChunkManager;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\generator\object\OreType;
 use pocketmine\level\generator\populator\Ore;
 use pocketmine\level\generator\populator\Populator;
 use pocketmine\math\Vector3;
@@ -67,14 +62,14 @@ class Flat extends Generator{
 		if(isset($this->options["decoration"])){
 			$ores = new Ore();
 			$ores->setOreTypes([
-				new object\OreType(new CoalOre(), 20, 16, 0, 128),
-				new object\OreType(new IronOre(), 20, 8, 0, 64),
-				new object\OreType(new RedstoneOre(), 8, 7, 0, 16),
-				new object\OreType(new LapisOre(), 1, 6, 0, 32),
-				new object\OreType(new GoldOre(), 2, 8, 0, 32),
-				new object\OreType(new DiamondOre(), 1, 7, 0, 16),
-				new object\OreType(new Dirt(), 20, 32, 0, 128),
-				new object\OreType(new Gravel(), 10, 16, 0, 128)
+				new OreType(BlockFactory::get(Block::COAL_ORE), 20, 16, 0, 128),
+				new OreType(BlockFactory::get(Block::IRON_ORE), 20, 8, 0, 64),
+				new OreType(BlockFactory::get(Block::REDSTONE_ORE), 8, 7, 0, 16),
+				new OreType(BlockFactory::get(Block::LAPIS_ORE), 1, 6, 0, 32),
+				new OreType(BlockFactory::get(Block::GOLD_ORE), 2, 8, 0, 32),
+				new OreType(BlockFactory::get(Block::DIAMOND_ORE), 1, 7, 0, 16),
+				new OreType(BlockFactory::get(Block::DIRT), 20, 32, 0, 128),
+				new OreType(BlockFactory::get(Block::GRAVEL), 10, 16, 0, 128)
 			]);
 			$this->populators[] = $ores;
 		}
@@ -89,7 +84,7 @@ class Flat extends Generator{
 		preg_match_all('#^(([0-9]*x|)([0-9]{1,3})(|:[0-9]{0,2}))$#m', str_replace(",", "\n", $layers), $matches);
 		$y = 0;
 		foreach($matches[3] as $i => $b){
-			$b = Item::fromString($b . $matches[4][$i]);
+			$b = ItemFactory::fromString($b . $matches[4][$i]);
 			$cnt = $matches[2][$i] === "" ? 1 : (int) $matches[2][$i];
 			for($cY = $y, $y += $cnt; $cY < $y; ++$cY){
 				$result[$cY] = [$b->getId(), $b->getDamage()];

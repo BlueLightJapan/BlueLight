@@ -24,14 +24,15 @@ declare(strict_types=1);
 namespace pocketmine\item;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 
 class Cake extends Item{
-	public function __construct($meta = 0, $count = 1){
-		$this->block = Block::get(Block::CAKE_BLOCK);
-		parent::__construct(self::CAKE, $meta, $count, "Cake");
+	public function __construct(int $meta = 0){
+		$this->block = BlockFactory::get(Block::CAKE_BLOCK);
+		parent::__construct(self::CAKE, $meta, "Cake");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int{
 		return 1;
 	}
 }

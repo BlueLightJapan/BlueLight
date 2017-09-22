@@ -34,7 +34,7 @@ class Guardian extends Monster{
 	public $height = 1.8;
 	public $maxhealth = 30;
 
-	public function getName(){
+	public function getName() : string{
 		return "Guardian";
 	}
 
@@ -42,9 +42,9 @@ class Guardian extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Guardian::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

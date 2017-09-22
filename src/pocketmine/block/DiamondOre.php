@@ -24,35 +24,36 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
 
 class DiamondOre extends Solid{
 
 	protected $id = self::DIAMOND_ORE;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 3;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Diamond Ore";
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array{
 		if($item->isPickaxe() >= Tool::TIER_IRON){
 			return [
-				[Item::DIAMOND, 0, 1],
+				ItemFactory::get(Item::DIAMOND, 0, 1)
 			];
-		}else{
-			return [];
 		}
+
+		return [];
 	}
 }

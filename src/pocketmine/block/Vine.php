@@ -39,31 +39,35 @@ class Vine extends Transparent{
 
 	protected $id = self::VINE;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function isSolid(){
+	public function isSolid() : bool{
 		return false;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Vines";
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 0.2;
 	}
 
-	public function canPassThrough(){
+	public function canPassThrough() : bool{
 		return true;
 	}
 
-	public function hasEntityCollision(){
+	public function hasEntityCollision() : bool{
 		return true;
 	}
 
 	public function canClimb() : bool{
+		return true;
+	}
+
+	public function ticksRandomly() : bool{
 		return true;
 	}
 
@@ -132,18 +136,18 @@ class Vine extends Transparent{
 	}
 
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
 		//TODO: multiple sides
-		if($target->isSolid()){
+		if($blockClicked->isSolid()){
 			$faces = [
 				2 => self::FLAG_SOUTH,
 				3 => self::FLAG_NORTH,
 				4 => self::FLAG_EAST,
-				5 => self::FLAG_WEST,
+				5 => self::FLAG_WEST
 			];
 			if(isset($faces[$face])){
 				$this->meta = $faces[$face];
-				$this->getLevel()->setBlock($block, $this, true, true);
+				$this->getLevel()->setBlock($blockReplace, $this, true, true);
 
 				return true;
 			}
@@ -152,7 +156,7 @@ class Vine extends Transparent{
 		return false;
 	}
 
-	public function onUpdate($type){
+	public function onUpdate(int $type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$sides = [
 				1 => 3,
@@ -169,22 +173,26 @@ class Vine extends Transparent{
 				$this->level->useBreakOn($this);
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
+		}elseif($type === Level::BLOCK_UPDATE_RANDOM){
+			//TODO: vine growth
 		}
 
 		return false;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isShears()){
-			return [
-				[$this->id, 0, 1],
-			];
-		}else{
-			return [];
-		}
+	public function getVariantBitmask() : int{
+		return 0;
 	}
 
-	public function getToolType(){
+	public function getDrops(Item $item) : array{
+		if($item->isShears()){
+			return parent::getDrops($item);
+		}
+
+		return [];
+	}
+
+	public function getToolType() : int{
 		return Tool::TYPE_AXE;
 	}
 }

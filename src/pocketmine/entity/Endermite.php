@@ -30,7 +30,7 @@ class Endermite extends Monster{
 	public $height = 1.8;
 	public $maxhealth = 8;
 
-	public function getName(){
+	public function getName() : string{
 		return "Endermite";
 	}
 	
@@ -38,9 +38,9 @@ class Endermite extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

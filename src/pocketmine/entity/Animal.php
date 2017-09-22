@@ -70,7 +70,7 @@ abstract class Animal extends Creature implements Ageable{
 		parent::updateAITasks();
 	}
 
-	public function entityBaseTick($tickDiff = 1){
+	public function entityBaseTick(int $tickDiff = 1) : bool{
 		parent::entityBaseTick($tickDiff);
 		$i = $this->getGrowingAge();
 

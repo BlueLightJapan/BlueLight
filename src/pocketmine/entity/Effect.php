@@ -65,13 +65,13 @@ class Effect{
 		$config = new Config(\pocketmine\PATH . "src/pocketmine/resources/effects.json", Config::JSON, []);
 
 		foreach($config->getAll() as $name => $data){
-			$color = hexdec($data["color"]);
+			$color = hexdec(substr($data["color"], 3));
 			$r = ($color >> 16) & 0xff;
 			$g = ($color >> 8) & 0xff;
 			$b = $color & 0xff;
 			self::registerEffect($name, new Effect(
 				$data["id"],
-				"%" . $data["name"],
+				"%potion." . $data["name"],
 				$r,
 				$g,
 				$b,
@@ -82,6 +82,10 @@ class Effect{
 		}
 	}
 
+	/**
+	 * @param string $internalName
+	 * @param Effect $effect
+	 */
 	public static function registerEffect(string $internalName, Effect $effect){
 		self::$effects[$effect->getId()] = $effect;
 		self::$effects[$internalName] = $effect;
@@ -92,9 +96,9 @@ class Effect{
 	 *
 	 * @return Effect|null
 	 */
-	public static function getEffect($id){
+	public static function getEffect(int $id){
 		if(isset(self::$effects[$id])){
-			return clone self::$effects[(int) $id];
+			return clone self::$effects[$id];
 		}
 		return null;
 	}
@@ -104,7 +108,7 @@ class Effect{
 	 *
 	 * @return Effect|null
 	 */
-	public static function getEffectByName($name){
+	public static function getEffectByName(string $name){
 		if(isset(self::$effects[$name])){
 			return clone self::$effects[$name];
 		}
@@ -113,23 +117,23 @@ class Effect{
 
 	/** @var int */
 	protected $id;
-
+	/** @var string */
 	protected $name;
-
+	/** @var int */
 	protected $duration;
-
+ 	/** @var int */
 	protected $amplifier = 0;
-
+	/** @var int[] */
 	protected $color;
-
-	protected $show = true;
-
+	/** @var bool */
+	protected $visible = true;
+	/** @var bool */
 	protected $ambient = false;
-
+	/** @var bool */
 	protected $bad;
-
+	/** @var int */
 	protected $defaultDuration = 300 * 20;
-
+	/** @var bool */
 	protected $hasBubbles = true;
 
 	/**
@@ -142,10 +146,10 @@ class Effect{
 	 * @param int    $defaultDuration Duration in ticks the effect will last for by default if applied without a duration.
 	 * @param bool   $hasBubbles      Whether the effect has potion bubbles. Some do not (e.g. Instant Damage has its own particles instead of bubbles)
 	 */
-	public function __construct($id, $name, $r, $g, $b, $isBad = false, int $defaultDuration = 300 * 20, bool $hasBubbles = true){
+	public function __construct(int $id, string $name, int $r, int $g, int $b, bool $isBad = false, int $defaultDuration = 300 * 20, bool $hasBubbles = true){
 		$this->id = $id;
 		$this->name = $name;
-		$this->bad = (bool) $isBad;
+		$this->bad = $isBad;
 		$this->setColor($r, $g, $b);
 		$this->defaultDuration = $defaultDuration;
 		$this->duration = $defaultDuration;
@@ -156,7 +160,7 @@ class Effect{
 	 * Returns the translation key used to translate this effect's name.
 	 * @return string
 	 */
-	public function getName(){
+	public function getName() : string{
 		return $this->name;
 	}
 
@@ -164,7 +168,7 @@ class Effect{
 	 * Returns the effect ID as per Minecraft PE
 	 * @return int
 	 */
-	public function getId(){
+	public function getId() : int{
 		return $this->id;
 	}
 
@@ -186,7 +190,7 @@ class Effect{
 	 * Returns the duration remaining of the effect in ticks.
 	 * @return int
 	 */
-	public function getDuration(){
+	public function getDuration() : int{
 		return $this->duration;
 	}
 
@@ -212,18 +216,19 @@ class Effect{
 	 *
 	 * @return bool
 	 */
-	public function isVisible(){
-		return $this->show;
+	public function isVisible() : bool{
+		return $this->visible;
 	}
 
 	/**
 	 * Changes the visibility of the effect.
+	 *
 	 * @param bool $bool
 	 *
 	 * @return $this
 	 */
-	public function setVisible($bool){
-		$this->show = (bool) $bool;
+	public function setVisible(bool $bool){
+		$this->visible = $bool;
 		return $this;
 	}
 
@@ -238,10 +243,9 @@ class Effect{
 
 	/**
 	 * Returns the amplifier of this effect.
-	 *
 	 * @return int
 	 */
-	public function getAmplifier(){
+	public function getAmplifier() : int{
 		return $this->amplifier;
 	}
 
@@ -259,18 +263,19 @@ class Effect{
 	 * Returns whether the effect is ambient.
 	 * @return bool
 	 */
-	public function isAmbient(){
+	public function isAmbient() : bool{
 		return $this->ambient;
 	}
 
 	/**
 	 * Sets the ambiency of this effect.
+	 *
 	 * @param bool $ambient
 	 *
 	 * @return $this
 	 */
-	public function setAmbient($ambient = true){
-		$this->ambient = (bool) $ambient;
+	public function setAmbient(bool $ambient = true){
+		$this->ambient = $ambient;
 		return $this;
 	}
 
@@ -280,7 +285,7 @@ class Effect{
 	 *
 	 * @return bool
 	 */
-	public function isBad(){
+	public function isBad() : bool{
 		return $this->bad;
 	}
 
@@ -289,7 +294,7 @@ class Effect{
 	 *
 	 * @return bool
 	 */
-	public function canTick(){
+	public function canTick() : bool{
 		switch($this->id){
 			case Effect::POISON:
 				if(($interval = (25 >> $this->amplifier)) > 0){
@@ -332,19 +337,19 @@ class Effect{
 			case Effect::POISON:
 				if($entity->getHealth() > 1){
 					$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
-					$entity->attack($ev->getFinalDamage(), $ev);
+					$entity->attack($ev);
 				}
 				break;
 
 			case Effect::WITHER:
 				$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
-				$entity->attack($ev->getFinalDamage(), $ev);
+				$entity->attack($ev);
 				break;
 
 			case Effect::REGENERATION:
 				if($entity->getHealth() < $entity->getMaxHealth()){
 					$ev = new EntityRegainHealthEvent($entity, 1, EntityRegainHealthEvent::CAUSE_MAGIC);
-					$entity->heal($ev->getAmount(), $ev);
+					$entity->heal($ev);
 				}
 				break;
 
@@ -357,22 +362,22 @@ class Effect{
 				//TODO: add particles (witch spell)
 				if($entity->getHealth() < $entity->getMaxHealth()){
 					$amount = 2 * (2 ** ($this->getEffectLevel() % 32));
-					$entity->heal($amount, new EntityRegainHealthEvent($entity, $amount, EntityRegainHealthEvent::CAUSE_MAGIC));
+					$entity->heal(new EntityRegainHealthEvent($entity, $amount, EntityRegainHealthEvent::CAUSE_MAGIC));
 				}
 				break;
 			case Effect::INSTANT_DAMAGE:
 				//TODO: add particles (witch spell)
 				$amount = 2 * (2 ** ($this->getEffectLevel() % 32));
-				$entity->attack($amount, new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, $amount));
+				$entity->attack(new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, $amount));
 				break;
 		}
 	}
 
 	/**
 	 * Returns an RGB color array of this effect's color.
-	 * @return array
+	 * @return int[]
 	 */
-	public function getColor(){
+	public function getColor() : array{
 		return [$this->color >> 16, ($this->color >> 8) & 0xff, $this->color & 0xff];
 	}
 
@@ -383,7 +388,7 @@ class Effect{
 	 * @param int $g
 	 * @param int $b
 	 */
-	public function setColor($r, $g, $b){
+	public function setColor(int $r, int $g, int $b){
 		$this->color = (($r & 0xff) << 16) + (($g & 0xff) << 8) + ($b & 0xff);
 	}
 
@@ -391,11 +396,10 @@ class Effect{
 	 * Adds this effect to the Entity, performing effect overriding as specified.
 	 *
 	 * @param Entity      $entity
-	 * @param bool        $modify
 	 * @param Effect|null $oldEffect
 	 */
-	public function add(Entity $entity, $modify = false, Effect $oldEffect = null){
-		$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectAddEvent($entity, $this, $modify, $oldEffect));
+	public function add(Entity $entity, Effect $oldEffect = null){
+		$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectAddEvent($entity, $this, $oldEffect));
 		if($ev->isCancelled()){
 			return;
 		}
@@ -406,7 +410,7 @@ class Effect{
 			$pk->amplifier = $this->getAmplifier();
 			$pk->particles = $this->isVisible();
 			$pk->duration = $this->getDuration();
-			if($ev->willModify()){
+			if($oldEffect !== null){
 				$pk->eventId = MobEffectPacket::EVENT_MODIFY;
 			}else{
 				$pk->eventId = MobEffectPacket::EVENT_ADD;
@@ -415,42 +419,27 @@ class Effect{
 			$entity->dataPacket($pk);
 		}
 
+		if($oldEffect !== null){
+			$oldEffect->remove($entity, false);
+		}
+
 		switch($this->id){
 			case Effect::INVISIBILITY:
-				$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+				$entity->setGenericFlag(Entity::DATA_FLAG_INVISIBLE, true);
 				$entity->setNameTagVisible(false);
 				break;
 			case Effect::SPEED:
 				$attr = $entity->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED);
-				if($ev->willModify() and $oldEffect !== null){
-					$speed = $attr->getValue() / (1 + 0.2 * $oldEffect->getEffectLevel());
-				}else{
-					$speed = $attr->getValue();
-				}
-				$speed *= (1 + 0.2 * $this->getEffectLevel());
-				$attr->setValue($speed);
+				$attr->setValue($attr->getValue() * (1 + 0.2 * $this->getEffectLevel()));
 				break;
 			case Effect::SLOWNESS:
 				$attr = $entity->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED);
-				if($ev->willModify() and $oldEffect !== null){
-					$speed = $attr->getValue() / (1 - 0.15 * $oldEffect->getEffectLevel());
-				}else{
-					$speed = $attr->getValue();
-				}
-				$speed *= (1 - 0.15 * $this->getEffectLevel());
-				$attr->setValue($speed, true);
+				$attr->setValue($attr->getValue() * (1 - 0.15 * $this->getEffectLevel()), true);
 				break;
 
 			case Effect::HEALTH_BOOST:
 				$attr = $entity->getAttributeMap()->getAttribute(Attribute::HEALTH);
-				if($ev->willModify() and $oldEffect !== null){
-					$max = $attr->getMaxValue() - (4 * $oldEffect->getEffectLevel());
-				}else{
-					$max = $attr->getMaxValue();
-				}
-
-				$max += (4 * $this->getEffectLevel());
-				$attr->setMaxValue($max);
+				$attr->setMaxValue($attr->getMaxValue() + 4 * $this->getEffectLevel());
 				break;
 			case Effect::ABSORPTION:
 				$new = (4 * $this->getEffectLevel());
@@ -465,13 +454,15 @@ class Effect{
 	 * Removes the effect from the entity, resetting any changed values back to their original defaults.
 	 *
 	 * @param Entity $entity
+	 * @param bool   $send
 	 */
-	public function remove(Entity $entity){
+	public function remove(Entity $entity, bool $send = true){
 		$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectRemoveEvent($entity, $this));
 		if($ev->isCancelled()){
 			return;
 		}
-		if($entity instanceof Player){
+
+		if($send and $entity instanceof Player){
 			$pk = new MobEffectPacket();
 			$pk->entityRuntimeId = $entity->getId();
 			$pk->eventId = MobEffectPacket::EVENT_REMOVE;
@@ -482,7 +473,7 @@ class Effect{
 
 		switch($this->id){
 			case Effect::INVISIBILITY:
-				$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
+				$entity->setGenericFlag(Entity::DATA_FLAG_INVISIBLE, false);
 				$entity->setNameTagVisible(true);
 				break;
 			case Effect::SPEED:

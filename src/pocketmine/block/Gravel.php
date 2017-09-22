@@ -24,38 +24,37 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
 
 class Gravel extends Fallable{
 
 	protected $id = self::GRAVEL;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Gravel";
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 0.6;
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_SHOVEL;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array{
 		if(mt_rand(1, 10) === 1){
 			return [
-				[Item::FLINT, 0, 1],
+				ItemFactory::get(Item::FLINT, 0, 1)
 			];
 		}
 
-		return [
-			[Item::GRAVEL, 0, 1],
-		];
+		return parent::getDrops($item);
 	}
 
 }

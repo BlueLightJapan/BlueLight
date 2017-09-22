@@ -44,7 +44,7 @@ class Cow extends Animal{
 	public $height = 1.8;
 	public $maxhealth = 10;
 
-	public function getName(){
+	public function getName() : string{
 		return "Cow";
 	}
 
@@ -71,9 +71,9 @@ class Cow extends Animal{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Cow::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -118,7 +118,7 @@ class Cow extends Animal{
 		return $drops;
 	}
 
-	public function onUpdate($currentTick) {
+	public function onUpdate(int $currentTick) : bool {
 		parent::onUpdate($currentTick);
 		return true;
 	}

@@ -34,34 +34,36 @@ class Prismarine extends Solid{
 
 	protected $id = self::PRISMARINE;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 1.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::NORMAL => "Prismarine",
 			self::DARK => "Dark Prismarine",
-			self::BRICKS => "Prismarine Bricks",
+			self::BRICKS => "Prismarine Bricks"
 		];
 		return $names[$this->meta & 0x03] ?? "Unknown";
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item){
+	public function getVariantBitmask() : int{
+		return 0x03;
+	}
+
+	public function getDrops(Item $item) : array{
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
-			return [
-				[$this->id, $this->meta & 0x03, 1],
-			];
-		}else{
-			return [];
+			return parent::getDrops($item);
 		}
+
+		return [];
 	}
 }

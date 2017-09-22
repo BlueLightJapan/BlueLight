@@ -27,6 +27,7 @@ use pocketmine\inventory\ChestInventory;
 use pocketmine\inventory\DoubleChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -52,7 +53,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 		}
 
 		for($i = 0; $i < $this->getSize(); ++$i){
-			$this->inventory->setItem($i, $this->getItem($i));
+			$this->inventory->setItem($i, $this->getItem($i), false);
 		}
 	}
 
@@ -66,8 +67,12 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 				$player->removeWindow($this->getRealInventory());
 			}
 
+			if($this->doubleInventory !== null){
+				$this->doubleInventory->invalidate();
+				$this->doubleInventory = null;
+			}
+
 			$this->inventory = null;
-			$this->doubleInventory = null;
 
 			parent::close();
 		}
@@ -113,7 +118,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	public function getItem(int $index) : Item{
 		$i = $this->getSlotIndex($index);
 		if($i < 0){
-			return Item::get(Item::AIR, 0, 0);
+			return ItemFactory::get(Item::AIR, 0, 0);
 		}else{
 			return Item::nbtDeserialize($this->namedtag->Items[$i]);
 		}
@@ -130,7 +135,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 
 		$d = $item->nbtSerialize($index);
 
-		if($item->getId() === Item::AIR or $item->getCount() <= 0){
+		if($item->isNull()){
 			if($i >= 0){
 				unset($this->namedtag->Items[$i]);
 			}
@@ -213,11 +218,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	}
 
 	public function isPaired(){
-		if(!isset($this->namedtag->pairx) or !isset($this->namedtag->pairz)){
-			return false;
-		}
-
-		return true;
+		return isset($this->namedtag->pairx) and isset($this->namedtag->pairz);
 	}
 
 	/**

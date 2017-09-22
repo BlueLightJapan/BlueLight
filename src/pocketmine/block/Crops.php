@@ -32,9 +32,9 @@ use pocketmine\Server;
 
 abstract class Crops extends Flowable{
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		if($block->getSide(Vector3::SIDE_DOWN)->getId() === Block::FARMLAND){
-			$this->getLevel()->setBlock($block, $this, true, true);
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+		if($blockReplace->getSide(Vector3::SIDE_DOWN)->getId() === Block::FARMLAND){
+			$this->getLevel()->setBlock($blockReplace, $this, true, true);
 
 			return true;
 		}
@@ -43,7 +43,7 @@ abstract class Crops extends Flowable{
 	}
 
 
-	public function onActivate(Item $item, Player $player = null){
+	public function onActivate(Item $item, Player $player = null) : bool{
 		if($item->getId() === Item::DYE and $item->getDamage() === 0x0F){ //Bonemeal
 			$block = clone $this;
 			$block->meta += mt_rand(2, 5);
@@ -65,7 +65,11 @@ abstract class Crops extends Flowable{
 		return false;
 	}
 
-	public function onUpdate($type){
+	public function ticksRandomly() : bool{
+		return true;
+	}
+
+	public function onUpdate(int $type){
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			if($this->getSide(Vector3::SIDE_DOWN)->getId() !== Block::FARMLAND){
 				$this->getLevel()->useBreakOn($this);

@@ -51,7 +51,7 @@ class Enderman extends Monster{
 
 	public $isAggressive;
 
-	public function getName(){
+	public function getName() : string{
 		return "Enderman";
 	}
 
@@ -83,9 +83,9 @@ class Enderman extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Enderman::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -233,7 +233,7 @@ class Enderman extends Monster{
 		return $drops;
 	}
 
-	public function getEyeHeight(){
+	public function getEyeHeight() : float{
 		return 2.55;
 	}
 }

@@ -222,7 +222,7 @@ class Session{
 	 * @param int                $flags
 	 */
 	private function addToQueue(EncapsulatedPacket $pk, $flags = RakLib::PRIORITY_NORMAL){
-		$priority = $flags & 0b0000111;
+		$priority = $flags & 0b00000111;
 		if($pk->needACK and $pk->messageIndex !== null){
 			$this->needACK[$pk->identifierACK][$pk->messageIndex] = $pk->messageIndex;
 		}
@@ -280,7 +280,8 @@ class Session{
 		}
 
 		if($packet->getTotalLength() + 4 > $this->mtuSize){
-			$buffers = str_split($packet->buffer, $this->mtuSize - 34);
+			//IP header size (20 bytes) + UDP header size (8 bytes) + RakNet weird (8 bytes) + datagram header size (4 bytes) + max encapsulated packet header size (20 bytes)
+			$buffers = str_split($packet->buffer, $this->mtuSize - 60);
 			$splitID = ++$this->splitID % 65536;
 			foreach($buffers as $count => $buffer){
 				$pk = new EncapsulatedPacket();
@@ -305,7 +306,7 @@ class Session{
 			$this->addToQueue($packet, $flags);
 		}
 	}
-	
+
 	private function handleSplit(EncapsulatedPacket $packet){
 		if($packet->splitCount >= self::MAX_SPLIT_SIZE or $packet->splitIndex >= self::MAX_SPLIT_SIZE or $packet->splitIndex < 0){
 			return;
@@ -387,6 +388,7 @@ class Session{
 			if($this->state === self::STATE_CONNECTED){
 				$this->handleSplit($packet);
 			}
+
 			return;
 		}
 
@@ -532,6 +534,7 @@ class Session{
 	public function close(){
 		$data = "\x60\x00\x08\x00\x00\x00\x00\x00\x00\x00\x15";
 		$this->addEncapsulatedToQueue(EncapsulatedPacket::fromBinary($data)); //CLIENT_DISCONNECT packet 0x15
+		$this->sendQueue();
 		$this->sessionManager = null;
 	}
 }

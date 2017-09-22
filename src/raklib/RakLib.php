@@ -23,15 +23,20 @@ if(version_compare("7.0", PHP_VERSION) > 0){
 	++$errors;
 }
 
-if(!extension_loaded("sockets")){
-	echo "[CRITICAL] Unable to find the Socket extension." . PHP_EOL;
-	++$errors;
+$exts = [
+	"bcmath" => "BC Math",
+	"pthreads" => "pthreads",
+	"sockets" => "Sockets"
+];
+
+foreach($exts as $ext => $name){
+	if(!extension_loaded($ext)){
+		echo "[CRITICAL] Unable to find the $name ($ext) extension." . PHP_EOL;
+		++$errors;
+	}
 }
 
-if(!extension_loaded("pthreads")){
-	echo "[CRITICAL] Unable to find the pthreads extension." . PHP_EOL;
-	++$errors;
-}else{
+if(extension_loaded("pthreads")){
 	$pthreads_version = phpversion("pthreads");
 	if(substr_count($pthreads_version, ".") < 2){
 		$pthreads_version = "0.$pthreads_version";
@@ -46,10 +51,10 @@ if(!extension_loaded("pthreads")){
 if($errors > 0){
 	exit(1); //Exit with error
 }
-unset($errors);
+unset($errors, $exts);
 
 abstract class RakLib{
-	const VERSION = "0.8.0";
+	const VERSION = "0.8.1";
 	const PROTOCOL = 6;
 	const MAGIC = "\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x12\x34\x56\x78";
 
@@ -133,12 +138,19 @@ abstract class RakLib{
 	const PACKET_RAW = 0x08;
 
 	/*
-	 * RAW payload:
+	 * BLOCK_ADDRESS payload:
 	 * byte (address length)
 	 * byte[] (address)
 	 * int (timeout)
 	 */
 	const PACKET_BLOCK_ADDRESS = 0x09;
+
+	/*
+	 * UNBLOCK_ADDRESS payload:
+	 * byte (address length)
+	 * byte[] (address)
+	 */
+	const PACKET_UNBLOCK_ADDRESS = 0x10;
 
 	/*
 	 * No payload

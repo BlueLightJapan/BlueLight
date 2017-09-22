@@ -37,17 +37,15 @@ class Vector3{
 	public $z;
 
 	public function __construct($x = 0, $y = 0, $z = 0){
-
-        if($x instanceof Vector3){
-            $this->x = $x->x;
-            $this->y = $x->y;
-            $this->z = $x->z;
-        }else{
-            $this->x = $x;
-            $this->y = $y;
-            $this->z = $z;
-        }
-
+	        if($x instanceof Vector3){
+			$this->x = $x->x;
+			$this->y = $x->y;
+			$this->z = $x->z;
+	        }else{
+			$this->x = $x;
+			$this->y = $y;
+			$this->z = $z;
+	        }
 	}
 
 	public function getX(){

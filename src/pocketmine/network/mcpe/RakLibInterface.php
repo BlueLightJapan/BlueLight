@@ -54,7 +54,7 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 	private $players = [];
 
 	/** @var string[] */
-	private $identifiers;
+	private $identifiers = [];
 
 	/** @var int[] */
 	private $identifiersACK = [];
@@ -63,12 +63,14 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 	private $interface;
 
 	public function __construct(Server $server){
-
 		$this->server = $server;
-		$this->identifiers = [];
 
-		$this->rakLib = new RakLibServer($this->server->getLogger(), $this->server->getLoader(), $this->server->getPort(), $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp());
+		$this->rakLib = new RakLibServer($this->server->getLogger(), $this->server->getLoader(), $this->server->getPort(), $this->server->getIp() === "" ? "0.0.0.0" : $this->server->getIp(), false);
 		$this->interface = new ServerHandler($this->rakLib, $this);
+	}
+
+	public function start(){
+		$this->rakLib->start();
 	}
 
 	public function setNetwork(Network $network){
@@ -133,6 +135,8 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 
 	public function handleEncapsulated($identifier, EncapsulatedPacket $packet, $flags){
 		if(isset($this->players[$identifier])){
+			//get this now for blocking in case the player was closed before the exception was raised
+			$address = $this->players[$identifier]->getAddress();
 			try{
 				if($packet->buffer !== ""){
 					$pk = $this->getPacket($packet->buffer);
@@ -143,13 +147,17 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 				$logger->debug("Packet " . (isset($pk) ? get_class($pk) : "unknown") . " 0x" . bin2hex($packet->buffer));
 				$logger->logException($e);
 
-				$this->interface->blockAddress($this->players[$identifier]->getAddress(), 5);
+				$this->interface->blockAddress($address, 5);
 			}
 		}
 	}
 
 	public function blockAddress(string $address, int $timeout = 300){
 		$this->interface->blockAddress($address, $timeout);
+	}
+
+	public function unblockAddress(string $address){
+		$this->interface->unblockAddress($address);
 	}
 
 	public function handleRaw($address, $port, $payload){
@@ -175,7 +183,7 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 				ProtocolInfo::MINECRAFT_VERSION_NETWORK,
 				$info->getPlayerCount(),
 				$info->getMaxPlayerCount(),
-				"0",
+				$this->rakLib->getServerId(),
 				$this->server->getName(),
 				Server::getGamemodeName($this->server->getGamemode())
 			]) . ";"
@@ -203,13 +211,10 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 			if($packet instanceof BatchPacket){
 				if($needACK){
 					$pk = new EncapsulatedPacket();
+					$pk->identifierACK = $this->identifiersACK[$identifier]++;
 					$pk->buffer = $packet->buffer;
 					$pk->reliability = $immediate ? PacketReliability::RELIABLE : PacketReliability::RELIABLE_ORDERED;
 					$pk->orderChannel = 0;
-
-					if($needACK === true){
-						$pk->identifierACK = $this->identifiersACK[$identifier]++;
-					}
 				}else{
 					if(!isset($packet->__encapsulatedPacket)){
 						$packet->__encapsulatedPacket = new CachedEncapsulatedPacket;

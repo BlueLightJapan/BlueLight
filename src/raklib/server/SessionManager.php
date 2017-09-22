@@ -47,7 +47,8 @@ use raklib\protocol\UNCONNECTED_PONG;
 use raklib\RakLib;
 
 class SessionManager{
-	protected $packetPool = [];
+	/** @var \SplFixedArray<Packet|null> */
+	protected $packetPool;
 
 	/** @var RakLibServer */
 	protected $server;
@@ -72,14 +73,12 @@ class SessionManager{
 	protected $block = [];
 	protected $ipSec = [];
 
-	public $portChecking = true;
+	public $portChecking = false;
 
 	public function __construct(RakLibServer $server, UDPServerSocket $socket){
 		$this->server = $server;
 		$this->socket = $socket;
 		$this->registerPackets();
-
-		$this->serverId = mt_rand(0, PHP_INT_MAX);
 
 		$this->run();
 	}
@@ -126,7 +125,6 @@ class SessionManager{
 		$this->ipSec = [];
 
 
-
 		if(($this->ticks & 0b1111) === 0){
 			$diff = max(0.005, $time - $this->lastMeasure);
 			$this->streamOption("bandwidth", serialize([
@@ -169,28 +167,34 @@ class SessionManager{
 			}
 
 			if($len > 0){
-				$pid = ord($buffer{0});
+				try{
+					$pid = ord($buffer{0});
 
-				if($pid === UNCONNECTED_PING::$ID){
-					//No need to create a session for just pings
-					$packet = new UNCONNECTED_PING;
-					$packet->buffer = $buffer;
-					$packet->decode();
+					if($pid === UNCONNECTED_PING::$ID){
+						//No need to create a session for just pings
+						$packet = new UNCONNECTED_PING;
+						$packet->buffer = $buffer;
+						$packet->decode();
 
-					$pk = new UNCONNECTED_PONG();
-					$pk->serverID = $this->getID();
-					$pk->pingID = $packet->pingID;
-					$pk->serverName = $this->getName();
-					$this->sendPacket($pk, $source, $port);
-				}elseif($pid === UNCONNECTED_PONG::$ID){
-					//ignored
-				}elseif(($packet = $this->getPacketFromPool($pid)) !== null){
-					$packet->buffer = $buffer;
-					$this->getSession($source, $port)->handlePacket($packet);
-				}else{
-					$this->streamRaw($source, $port, $buffer);
+						$pk = new UNCONNECTED_PONG();
+						$pk->serverID = $this->getID();
+						$pk->pingID = $packet->pingID;
+						$pk->serverName = $this->getName();
+						$this->sendPacket($pk, $source, $port);
+					}elseif($pid === UNCONNECTED_PONG::$ID){
+						//ignored
+					}elseif(($packet = $this->getPacketFromPool($pid)) !== null){
+						$packet->buffer = $buffer;
+						$this->getSession($source, $port)->handlePacket($packet);
+					}else{
+						$this->streamRaw($source, $port, $buffer);
+					}
+				}catch(\Throwable $e){
+					$this->getLogger()->logException($e);
+					$this->blockAddress($source, 5);
 				}
 			}
+
 			return true;
 		}
 
@@ -311,6 +315,10 @@ class SessionManager{
 				$offset += $len;
 				$timeout = Binary::readInt(substr($packet, $offset, 4));
 				$this->blockAddress($address, $timeout);
+			}elseif($id === RakLib::PACKET_UNBLOCK_ADDRESS){
+				$len = ord($packet{$offset++});
+				$address = substr($packet, $offset, $len);
+				$this->unblockAddress($address);
 			}elseif($id === RakLib::PACKET_SHUTDOWN){
 				foreach($this->sessions as $session){
 					$this->removeSession($session);
@@ -344,9 +352,14 @@ class SessionManager{
 		}
 	}
 
+	public function unblockAddress(string $address){
+		unset($this->block[$address]);
+		$this->getLogger()->debug("Unblocked $address");
+	}
+
 	/**
 	 * @param string $ip
-	 * @param int	$port
+	 * @param int    $port
 	 *
 	 * @return Session
 	 */
@@ -382,27 +395,34 @@ class SessionManager{
 	}
 
 	public function getID(){
-		return $this->serverId;
+		return $this->server->getServerId();
 	}
 
+	/**
+	 * @param int    $id
+	 * @param string $class
+	 */
 	private function registerPacket($id, $class){
 		$this->packetPool[$id] = new $class;
 	}
 
 	/**
-	 * @param $id
+	 * @param int $id
 	 *
-	 * @return Packet
+	 * @return Packet|null
 	 */
 	public function getPacketFromPool($id){
-		if(isset($this->packetPool[$id])){
-			return clone $this->packetPool[$id];
+		$pk = $this->packetPool[$id];
+		if($pk !== null){
+			return clone $pk;
 		}
 
 		return null;
 	}
 
 	private function registerPackets(){
+		$this->packetPool = new \SplFixedArray(256);
+
 		//$this->registerPacket(UNCONNECTED_PING::$ID, UNCONNECTED_PING::class);
 		$this->registerPacket(UNCONNECTED_PING_OPEN_CONNECTIONS::$ID, UNCONNECTED_PING_OPEN_CONNECTIONS::class);
 		$this->registerPacket(OPEN_CONNECTION_REQUEST_1::$ID, OPEN_CONNECTION_REQUEST_1::class);

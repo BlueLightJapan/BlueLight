@@ -33,7 +33,7 @@ class Ghast extends Monster{
 	public $height = 6;
 	public $maxhealth = 10;
 
-	public function getName(){
+	public function getName() : string{
 		return "Ghast";
 	}
 
@@ -41,9 +41,9 @@ class Ghast extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

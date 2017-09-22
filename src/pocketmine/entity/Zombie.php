@@ -67,7 +67,7 @@ class Zombie extends Monster{
 		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.23000000417232513);
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Zombie";
 	}
 
@@ -75,9 +75,9 @@ class Zombie extends Monster{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Zombie::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -111,7 +111,7 @@ class Zombie extends Monster{
 		return $drops;
 	}
 
-	public function onUpdate($currentTick) {
+	public function onUpdate(int $currentTick) : bool {
 		parent::onUpdate($currentTick);
 		return true;
 	}

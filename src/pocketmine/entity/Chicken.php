@@ -49,7 +49,7 @@ class Chicken extends Animal{
 	public $timeUntilNextEgg;
 	public $chickenJockey = false;
 
-	public function getName(){
+	public function getName() : string{
 		return "Chicken";
 	}
 
@@ -72,7 +72,7 @@ class Chicken extends Animal{
 		$this->getAttributeMap()->getAttribute(Attribute::MOVEMENT_SPEED)->setValue(0.25);
 	}
 
-	public function onUpdate($currentTick) {
+	public function onUpdate(int $currentTick) : bool {
 		parent::onUpdate($currentTick);
 		$this->field_70888_h = $this->wingRotation;
 		$this->field_70884_g = $this->destPos;
@@ -111,9 +111,9 @@ class Chicken extends Animal{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Chicken::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

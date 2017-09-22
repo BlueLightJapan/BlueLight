@@ -24,13 +24,8 @@ declare(strict_types=1);
 namespace pocketmine\inventory;
 
 use pocketmine\item\Item;
-use pocketmine\Server;
-use pocketmine\utils\UUID;
 
 class FurnaceRecipe implements Recipe{
-
-	/** @var UUID|null */
-	private $id = null;
 
 	/** @var Item */
 	private $output;
@@ -45,24 +40,6 @@ class FurnaceRecipe implements Recipe{
 	public function __construct(Item $result, Item $ingredient){
 		$this->output = clone $result;
 		$this->ingredient = clone $ingredient;
-	}
-
-	/**
-	 * @return UUID|null
-	 */
-	public function getId(){
-		return $this->id;
-	}
-
-	/**
-	 * @param UUID $id
-	 */
-	public function setId(UUID $id){
-		if($this->id !== null){
-			throw new \InvalidStateException("Id is already set");
-		}
-
-		$this->id = $id;
 	}
 
 	/**
@@ -86,7 +63,7 @@ class FurnaceRecipe implements Recipe{
 		return clone $this->output;
 	}
 
-	public function registerToCraftingManager(){
-		Server::getInstance()->getCraftingManager()->registerFurnaceRecipe($this);
+	public function registerToCraftingManager(CraftingManager $manager) {
+		$manager->registerFurnaceRecipe($this);
 	}
 }

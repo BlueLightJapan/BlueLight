@@ -47,9 +47,11 @@ class AsyncPool{
 		$this->server = $server;
 		$this->size = $size;
 
+		$memoryLimit = (int) max(-1, (int) $this->server->getProperty("memory.async-worker-hard-limit", 1024));
+
 		for($i = 0; $i < $this->size; ++$i){
 			$this->workerUsage[$i] = 0;
-			$this->workers[$i] = new AsyncWorker($this->server->getLogger(), $i + 1);
+			$this->workers[$i] = new AsyncWorker($this->server->getLogger(), $i + 1, $memoryLimit);
 			$this->workers[$i]->setClassLoader($this->server->getLoader());
 			$this->workers[$i]->start();
 		}
@@ -61,9 +63,12 @@ class AsyncPool{
 
 	public function increaseSize(int $newSize){
 		if($newSize > $this->size){
+
+			$memoryLimit = (int) max(-1, (int) $this->server->getProperty("memory.async-worker-hard-limit", 1024));
+
 			for($i = $this->size; $i < $newSize; ++$i){
 				$this->workerUsage[$i] = 0;
-				$this->workers[$i] = new AsyncWorker($this->server->getLogger(), $i + 1);
+				$this->workers[$i] = new AsyncWorker($this->server->getLogger(), $i + 1, $memoryLimit);
 				$this->workers[$i]->setClassLoader($this->server->getLoader());
 				$this->workers[$i]->start();
 			}
@@ -87,9 +92,9 @@ class AsyncPool{
 		$this->taskWorkers[$task->getTaskId()] = $worker;
 	}
 
-	public function submitTask(AsyncTask $task){
+	public function submitTask(AsyncTask $task) : int{
 		if(isset($this->tasks[$task->getTaskId()]) or $task->isGarbage()){
-			return;
+			return -1;
 		}
 
 		$selectedWorker = mt_rand(0, $this->size - 1);
@@ -102,6 +107,7 @@ class AsyncPool{
 		}
 
 		$this->submitTaskToWorker($task, $selectedWorker);
+		return $selectedWorker;
 	}
 
 	private function removeTask(AsyncTask $task, bool $force = false){

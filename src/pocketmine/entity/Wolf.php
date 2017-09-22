@@ -67,7 +67,7 @@ class Wolf extends Animal implements Tameable{
 		}
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Wolf";
 	}
 
@@ -75,9 +75,9 @@ class Wolf extends Animal implements Tameable{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Wolf::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

@@ -123,7 +123,7 @@ abstract class Living extends Entity implements Damageable{
 		$this->attributeMap->addAttribute(Attribute::getAttribute(Attribute::ABSORPTION));
 	}
 
-	public function setHealth($amount){
+	public function setHealth(float $amount){
 		$wasAlive = $this->isAlive();
 		parent::setHealth($amount);
 		$this->attributeMap->getAttribute(Attribute::HEALTH)->setValue($this->getHealth(), true);
@@ -135,11 +135,11 @@ abstract class Living extends Entity implements Damageable{
 		}
 	}
 
-	public function getMaxHealth(){
-		return $this->attributeMap->getAttribute(Attribute::HEALTH)->getMaxValue();
+	public function getMaxHealth() : int{
+		return (int) $this->attributeMap->getAttribute(Attribute::HEALTH)->getMaxValue();
 	}
 
-	public function setMaxHealth($amount){
+	public function setMaxHealth(int $amount){
 		$this->attributeMap->getAttribute(Attribute::HEALTH)->setMaxValue($amount);
 	}
 
@@ -180,8 +180,8 @@ abstract class Living extends Entity implements Damageable{
 		//return $this->getLevel()->rayTraceBlocks(Vector3::createVector($this->x, $this->y + $this->height, $this->z), Vector3::createVector($entity->x, $entity->y + $entity->height, $entity->z)) === null;
 	}
 
-	public function heal($amount, EntityRegainHealthEvent $source){
-		parent::heal($amount, $source);
+	public function heal(EntityRegainHealthEvent $source){
+		parent::heal($source);
 		if($source->isCancelled()){
 			return;
 		}
@@ -262,7 +262,7 @@ abstract class Living extends Entity implements Damageable{
 			}
 			$effect->add($this, true, $oldEffect);
 		}else{
-			$effect->add($this, false);
+			$effect->add($this);
 		}
 
 		$this->effects[$effect->getId()] = $effect;
@@ -344,14 +344,14 @@ abstract class Living extends Entity implements Damageable{
 		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getEffectLevel() : 0));
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
-			$this->attack($ev->getFinalDamage(), $ev);
+			$this->attack($ev);
 		}
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
+	public function attack(EntityDamageEvent $source){
 		if($this->attackTime > 0 or $this->noDamageTicks > 0){
 			$lastCause = $this->getLastDamageCause();
-			if($lastCause !== null and $lastCause->getDamage() >= $damage){
+			if($lastCause !== null and $lastCause->getDamage() >= $source->getDamage()){
 				$source->setCancelled();
 			}
 		}
@@ -365,11 +365,13 @@ abstract class Living extends Entity implements Damageable{
 			$source->setCancelled();
 		}
 
+		$source->setDamage(-min($this->getAbsorption(), $source->getFinalDamage()), EntityDamageEvent::MODIFIER_ABSORPTION);
+
 		if($this->hasEffect(Effect::DAMAGE_RESISTANCE)){
-			$source->setDamage(-($source->getDamage(EntityDamageEvent::MODIFIER_BASE) * 0.20 * $this->getEffect(Effect::DAMAGE_RESISTANCE)->getEffectLevel()), EntityDamageEvent::MODIFIER_RESISTANCE);
+			$source->setDamage(-($source->getFinalDamage() * 0.20 * $this->getEffect(Effect::DAMAGE_RESISTANCE)->getEffectLevel()), EntityDamageEvent::MODIFIER_RESISTANCE);
 		}
 
-		parent::attack($damage, $source);
+		parent::attack($source);
 
 		if($source->isCancelled()){
 			return;
@@ -388,24 +390,11 @@ abstract class Living extends Entity implements Damageable{
 
 				$deltaX = $this->x - $e->x;
 				$deltaZ = $this->z - $e->z;
-				$this->knockBack($e, $damage, $deltaX, $deltaZ, $source->getKnockBack());
-				if ($e instanceof Living){
-					$this->setRevengeTarget($e);
-				}
-
-				if ($e instanceof Player){
-					$this->recentlyHit = 100;
-					$this->attackingPlayer = $e;
-				}else if ($e instanceof Wolf){
-
-					//if ($e->isTamed()){
-					//	$this->recentlyHit = 100;
-					//	$this->attackingPlayer = null;
-					//}
-				}
-
+				$this->knockBack($e, $source->getDamage(), $deltaX, $deltaZ, $source->getKnockBack());
 			}
 		}
+
+		$this->setAbsorption(max(0, $this->getAbsorption() + $source->getDamage(EntityDamageEvent::MODIFIER_ABSORPTION)));
 
 		$pk = new EntityEventPacket();
 		$pk->entityRuntimeId = $this->getId();
@@ -414,7 +403,6 @@ abstract class Living extends Entity implements Damageable{
 
 		$this->attackTime = 10; //0.5 seconds cooldown
 	}
-
 	public function knockBack(Entity $attacker, $damage, $x, $z, $base = 0.4){
 		$f = sqrt($x * $x + $z * $z);
 		if($f <= 0){
@@ -454,7 +442,7 @@ abstract class Living extends Entity implements Damageable{
 		}
 	}
 
-	public function entityBaseTick($tickDiff = 1){
+	public function entityBaseTick(int $tickDiff = 1) : bool{
 		Timings::$timerLivingEntityBaseTick->startTiming();
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_BREATHING, !$this->isInsideOfWater());
 		if ($this->jumpTicks > 0){
@@ -483,7 +471,7 @@ abstract class Living extends Entity implements Damageable{
 			if($this->isInsideOfSolid()){
 				$hasUpdate = true;
 				$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_SUFFOCATION, 1);
-				$this->attack($ev->getFinalDamage(), $ev);
+				$this->attack($ev);
 			}
 
 			if(!$this->hasEffect(Effect::WATER_BREATHING) and $this->isInsideOfWater()){
@@ -496,7 +484,7 @@ abstract class Living extends Entity implements Damageable{
 						$airTicks = 0;
 
 						$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_DROWNING, 2);
-						$this->attack($ev->getFinalDamage(), $ev);
+						$this->attack($ev);
 					}
 					$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, $airTicks);
 				}
@@ -508,7 +496,7 @@ abstract class Living extends Entity implements Damageable{
 						$airTicks = 0;
 
 						$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_SUFFOCATION, 2);
-						$this->attack($ev->getFinalDamage(), $ev);
+						$this->attack($ev);
 					}
 					$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, $airTicks);
 				}else{
@@ -724,89 +712,89 @@ abstract class Living extends Entity implements Damageable{
 
 		return null;
 	}
-    public function updateEntityActionState(){
-        $this->targetTasks->onUpdateTasks();
-        $this->tasks->onUpdateTasks();
-        $this->navigator->onUpdateNavigation();
-        $this->updateAITasks();
-        $this->moveHelper->onUpdateMoveHelper();
-        $this->lookHelper->onUpdateLook();
-        $this->jumpHelper->doJump();
-        $this->updateMovement();
-        return true;
-    }
+	public function updateEntityActionState(){
+		$this->targetTasks->onUpdateTasks();
+		$this->tasks->onUpdateTasks();
+		$this->navigator->onUpdateNavigation();
+		$this->updateAITasks();
+		$this->moveHelper->onUpdateMoveHelper();
+		$this->lookHelper->onUpdateLook();
+		$this->jumpHelper->doJump();
+		$this->updateMovement();
+		return true;
+	}
 
-    public function updateAITasks(){
-    }
+	public function updateAITasks(){
+	}
 
-    public function updateAITick(){
-        $this->motionY += 0.03999999910593033;
-    }
-    protected function getJumpUpwardsMotion(){
-        return 0.42;
-    }
+	public function updateAITick(){
+		$this->motionY += 0.03999999910593033;
+	}
+	protected function getJumpUpwardsMotion(){
+		return 0.42;
+	}
 
-    protected function handleJumpLava(){
-        $this->motionY += 0.03999999910593033;
-    }
+	protected function handleJumpLava(){
+		$this->motionY += 0.03999999910593033;
+	}
 
-    protected function doJump(){
-        $this->motionY = $this->getJumpUpwardsMotion();
+	protected function doJump(){
+		$this->motionY = $this->getJumpUpwardsMotion();
 
-        //if (this.isPotionActive(Potion.jump)){
-        //	this.motionY += (double)((float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F);
-        //}
+		//if (this.isPotionActive(Potion.jump)){
+		//	this.motionY += (double)((float)(this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F);
+		//}
 
-        if ($this->isSprinting()){
-            $f = $this->yaw * 0.017453292;
-            $this->motionX -= sin($f) * 0.2;
-            $this->motionZ += cos($f) * 0.2;
-        }
-    }
+		if ($this->isSprinting()){
+			$f = $this->yaw * 0.017453292;
+			$this->motionX -= sin($f) * 0.2;
+			$this->motionZ += cos($f) * 0.2;
+		}
+	}
 
-    public function setJumping($jumping){
-        $this->isJumping = $jumping;
-    }
+	public function setJumping($jumping){
+		$this->isJumping = $jumping;
+	}
 
-    public function getMaxFallHeight() : float{
-        if ($this->getAttackTarget() == null){
-            return 3;
-        }else{
-            $i = $this->getHealth() - $this->getMaxHealth() * 0.33;
-            $i = $i - (3 - 1) * 4;
+	public function getMaxFallHeight() : float{
+		if ($this->getAttackTarget() == null){
+			return 3;
+		}else{
+			$i = $this->getHealth() - $this->getMaxHealth() * 0.33;
+			$i = $i - (3 - 1) * 4;
 
-            if ($i < 0){
-                $i = 0;
-            }
+			if ($i < 0){
+				$i = 0;
+			}
 
-            return $i + 3;
-        }
-    }
+			return $i + 3;
+		}
+	}
 
-    public function getVerticalFaceSpeed(){
-        return 40;
-    }
+	public function getVerticalFaceSpeed(){
+		return 40;
+	}
 
-    public function setMoveForward($forward){
-        $this->moveForward = $forward;
-    }
+	public function setMoveForward($forward){
+		$this->moveForward = $forward;
+	}
 
-    public function getAIMoveSpeed(){
-        return $this->landMovementFactor;
-    }
+	public function getAIMoveSpeed(){
+		return $this->landMovementFactor;
+	}
 
     public function setAIMoveSpeed($speedIn){
         $this->landMovementFactor = $speedIn;
         $this->setMoveForward($speedIn);
     }
 
-    public function getNewNavigator($worldIn){
-        return new PathNavigateGround($this, $worldIn);
-    }
+	public function getNewNavigator($worldIn){
+		return new PathNavigateGround($this, $worldIn);
+	}
 
-    public function getNavigator(){
-        return $this->navigator;
-    }
+	public function getNavigator(){
+		return $this->navigator;
+	}
 
 	public function getAITarget(){
 		return $this->entityLivingToAttack;

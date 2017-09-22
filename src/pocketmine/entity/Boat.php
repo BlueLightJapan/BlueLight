@@ -51,9 +51,9 @@ class Boat extends Vehicle{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = 0;
 		$pk->speedY = 0;
 		$pk->speedZ = 0;
@@ -65,8 +65,8 @@ class Boat extends Vehicle{
 		parent::spawnTo($player);
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
+	public function attack(EntityDamageEvent $source){
+		parent::attack($source);
 
 		if(!$source->isCancelled()){
 			$pk = new EntityEventPacket();
@@ -85,7 +85,7 @@ class Boat extends Vehicle{
 		$this->z = $z;
 	}
 	
-	public function onUpdate($currentTick){
+	public function onUpdate(int $currentTick) : bool{
 		if($this->closed){
 			return false;
 		}

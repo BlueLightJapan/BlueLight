@@ -24,27 +24,33 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
+use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
 
 class Farmland extends Transparent{
 
 	protected $id = self::FARMLAND;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Farmland";
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 0.6;
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_SHOVEL;
+	}
+
+	public function ticksRandomly() : bool{
+		return true;
 	}
 
 	protected function recalculateBoundingBox(){
@@ -58,9 +64,17 @@ class Farmland extends Transparent{
 		);
 	}
 
-	public function getDrops(Item $item){
+	public function onUpdate(int $type){
+		if($type === Level::BLOCK_UPDATE_RANDOM){
+			//TODO: hydration
+		}
+
+		return false;
+	}
+
+	public function getDrops(Item $item) : array{
 		return [
-			[Item::DIRT, 0, 1],
+			ItemFactory::get(Item::DIRT, 0, 1)
 		];
 	}
 }

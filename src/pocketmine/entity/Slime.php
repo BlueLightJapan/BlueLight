@@ -63,7 +63,7 @@ class Slime extends Living{
 		parent::initEntity();
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Slime";
 	}
 
@@ -71,9 +71,9 @@ class Slime extends Living{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = Slime::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
@@ -84,7 +84,7 @@ class Slime extends Living{
 		parent::spawnTo($player);
 	}
 
-	public function onUpdate($currentTick) {
+	public function onUpdate(int $currentTick) : bool {
 		parent::onUpdate($currentTick);
 		return true;
 	}

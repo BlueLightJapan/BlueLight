@@ -28,6 +28,9 @@ use pocketmine\event\Cancellable;
 use pocketmine\item\Item;
 use pocketmine\Player;
 
+/**
+ * Called when a player destroys a block somewhere in the world.
+ */
 class BlockBreakEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;
 
@@ -39,35 +42,59 @@ class BlockBreakEvent extends BlockEvent implements Cancellable{
 
 	/** @var bool */
 	protected $instaBreak = false;
+	/** @var Item[] */
 	protected $blockDrops = [];
 
-	public function __construct(Player $player, Block $block, Item $item, $instaBreak = false){
-		$this->block = $block;
+	public function __construct(Player $player, Block $block, Item $item, bool $instaBreak = false){
+		parent::__construct($block);
 		$this->item = $item;
 		$this->player = $player;
-		$this->instaBreak = (bool) $instaBreak;
-		$drops = $player->isSurvival() ? $block->getDrops($item) : [];
-		foreach($drops as $i){
-			$this->blockDrops[] = Item::get($i[0], $i[1], $i[2]);
+
+		$this->instaBreak = $instaBreak;
+
+		if($player->isSurvival()){
+			$this->setDrops($block->getDrops($item));
 		}
 	}
 
-	public function getPlayer(){
+	/**
+	 * Returns the player who is destroying the block.
+	 * @return Player
+	 */
+	public function getPlayer() : Player{
 		return $this->player;
 	}
 
-	public function getItem(){
+	/**
+	 * Returns the item used to destroy the block.
+	 * @return Item
+	 */
+	public function getItem() : Item{
 		return $this->item;
 	}
 
-	public function getInstaBreak(){
+	/**
+	 * Returns whether the block may be broken in less than the amount of time calculated. This is usually true for
+	 * creative players.
+	 *
+	 * @return bool
+	 */
+	public function getInstaBreak() : bool{
 		return $this->instaBreak;
 	}
 
 	/**
+	 * @param bool $instaBreak
+	 */
+	public function setInstaBreak(bool $instaBreak){
+		$this->instaBreak = $instaBreak;
+	}
+
+
+	/**
 	 * @return Item[]
 	 */
-	public function getDrops(){
+	public function getDrops() : array{
 		return $this->blockDrops;
 	}
 
@@ -75,13 +102,15 @@ class BlockBreakEvent extends BlockEvent implements Cancellable{
 	 * @param Item[] $drops
 	 */
 	public function setDrops(array $drops){
-		$this->blockDrops = $drops;
+		$this->setDropsVariadic(...$drops);
 	}
 
 	/**
-	 * @param bool $instaBreak
+	 * Variadic hack for easy array member type enforcement.
+	 *
+	 * @param Item[] ...$drops
 	 */
-	public function setInstaBreak($instaBreak){
-		$this->instaBreak = (bool) $instaBreak;
+	public function setDropsVariadic(Item ...$drops){
+		$this->blockDrops = $drops;
 	}
 }

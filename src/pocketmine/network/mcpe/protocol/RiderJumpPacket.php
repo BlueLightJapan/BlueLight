@@ -32,14 +32,15 @@ use pocketmine\network\mcpe\NetworkSession;
 class RiderJumpPacket extends DataPacket{
 	const NETWORK_ID = ProtocolInfo::RIDER_JUMP_PACKET;
 
-	public $power;
+	/** @var int */
+	public $unknown;
 
-	public function decodePayload(){
-		$this->power = $this->getVarInt();
+	protected function decodePayload(){
+		$this->unknown = $this->getVarInt();
 	}
 
-	public function encodePayload(){
-		$this->putVarInt($this->power);
+	protected function encodePayload(){
+		$this->putVarInt($this->unknown);
 	}
 
 	public function handle(NetworkSession $session) : bool{

@@ -23,11 +23,12 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
-use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\event\TranslationContainer;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\level\particle\AngryVillagerParticle;
 use pocketmine\level\particle\BlockForceFieldParticle;
 use pocketmine\level\particle\BubbleParticle;
@@ -63,7 +64,7 @@ use pocketmine\utils\TextFormat;
 
 class ParticleCommand extends VanillaCommand{
 
-	public function __construct($name){
+	public function __construct(string $name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.particle.description",
@@ -125,7 +126,6 @@ class ParticleCommand extends VanillaCommand{
 
 	/**
 	 * @param string   $name
-	 *
 	 * @param Vector3  $pos
 	 * @param float    $xd
 	 * @param float    $yd
@@ -134,7 +134,7 @@ class ParticleCommand extends VanillaCommand{
 	 *
 	 * @return Particle|null
 	 */
-	private function getParticle($name, Vector3 $pos, $xd, $yd, $zd, $data){
+	private function getParticle(string $name, Vector3 $pos, float $xd, float $yd, float $zd, int $data = null){
 		switch($name){
 			case "explode":
 				return new ExplodeParticle($pos);
@@ -173,17 +173,17 @@ class ParticleCommand extends VanillaCommand{
 			case "reddust":
 				return new RedstoneParticle($pos, $data ?? 1);
 			case "snowballpoof":
-				return new ItemBreakParticle($pos, Item::get(Item::SNOWBALL));
+				return new ItemBreakParticle($pos, ItemFactory::get(Item::SNOWBALL));
 			case "slime":
-				return new ItemBreakParticle($pos, Item::get(Item::SLIMEBALL));
+				return new ItemBreakParticle($pos, ItemFactory::get(Item::SLIMEBALL));
 			case "itembreak":
 				if($data !== null and $data !== 0){
-					return new ItemBreakParticle($pos, Item::get($data));
+					return new ItemBreakParticle($pos, ItemFactory::get($data));
 				}
 				break;
 			case "terrain":
 				if($data !== null and $data !== 0){
-					return new TerrainParticle($pos, Block::get($data));
+					return new TerrainParticle($pos, BlockFactory::get($data));
 				}
 				break;
 			case "heart":
@@ -206,12 +206,12 @@ class ParticleCommand extends VanillaCommand{
 		if(strpos($name, "iconcrack_") === 0){
 			$d = explode("_", $name);
 			if(count($d) === 3){
-				return new ItemBreakParticle($pos, Item::get((int) $d[1], (int) $d[2]));
+				return new ItemBreakParticle($pos, ItemFactory::get((int) $d[1], (int) $d[2]));
 			}
 		}elseif(strpos($name, "blockcrack_") === 0){
 			$d = explode("_", $name);
 			if(count($d) === 2){
-				return new TerrainParticle($pos, Block::get($d[1] & 0xff, $d[1] >> 12));
+				return new TerrainParticle($pos, BlockFactory::get($d[1] & 0xff, $d[1] >> 12));
 			}
 		}elseif(strpos($name, "blockdust_") === 0){
 			$d = explode("_", $name);

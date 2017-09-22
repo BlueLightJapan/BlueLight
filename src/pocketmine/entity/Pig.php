@@ -36,7 +36,7 @@ class Pig extends Animal implements Rideable{
 	public $maxhealth = 10;
 	public $maxjump = 3;
 
-	public function getName(){
+	public function getName() : string{
 		return "Pig";
 	}
 	
@@ -44,9 +44,9 @@ class Pig extends Animal implements Rideable{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;

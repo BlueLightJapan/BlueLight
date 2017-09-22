@@ -47,8 +47,8 @@ class Painting extends Hanging{
 		}
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
+	public function attack(EntityDamageEvent $source){
+		parent::attack($source);
 		if($source->isCancelled()) return false;
 		$this->level->addParticle(new DestroyBlockParticle($this->add(0.5), Block::get(Block::LADDER)));
 
@@ -58,9 +58,9 @@ class Painting extends Hanging{
 	public function spawnTo(Player $player){
 		$pk = new AddPaintingPacket();
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->direction = $this->getDirection();
 		$pk->title = $this->motive;
 		$player->dataPacket($pk);

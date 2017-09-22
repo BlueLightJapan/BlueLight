@@ -55,7 +55,7 @@ class Minecart extends Vehicle{
 	public $prevRotationYaw;
 	public $prevRotationPitch;
 
-	public function getName(){
+	public function getName() : string{
 		return "Minecart";
 	}
 
@@ -67,9 +67,9 @@ class Minecart extends Vehicle{
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->type = self::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+	
+		$pk->position = $this->asVector3();
+
 		$pk->speedX = 0;
 		$pk->speedY = 0;
 		$pk->speedZ = 0;
@@ -81,7 +81,7 @@ class Minecart extends Vehicle{
 		parent::spawnTo($player);
 	}
 
-	public function onUpdate($currentTick){
+	public function onUpdate(int $currentTick) : bool{
 		if($this->closed){
 			return false;
 		}
@@ -486,8 +486,8 @@ class Minecart extends Vehicle{
 		}
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
+	public function attack(EntityDamageEvent $source){
+		parent::attack($source);
 		if($source->isCancelled()) return false;
 
 		$flag = $source instanceof EntityDamageByEntityEvent && $source->getDamager() instanceof Player && $source->getDamager()->isCreative();

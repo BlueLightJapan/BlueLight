@@ -24,6 +24,7 @@ declare(strict_types=1);
 /**
  * Task scheduling related classes
  */
+
 namespace pocketmine\scheduler;
 
 use pocketmine\plugin\Plugin;
@@ -75,16 +76,16 @@ class ServerScheduler{
 	 *
 	 * @param AsyncTask $task
 	 *
-	 * @return void
+	 * @return int
 	 */
-	public function scheduleAsyncTask(AsyncTask $task){
+	public function scheduleAsyncTask(AsyncTask $task) : int{
 		if($task->getTaskId() !== null){
 			throw new \UnexpectedValueException("Attempt to schedule the same AsyncTask instance twice");
 		}
 		$id = $this->nextId();
 		$task->setTaskId($id);
 		$task->progressUpdates = new \Threaded;
-		$this->asyncPool->submitTask($task);
+		return $this->asyncPool->submitTask($task);
 	}
 
 	/**
@@ -292,6 +293,7 @@ class ServerScheduler{
 			}
 			Server::getInstance()->getLogger()->warning("A plugin attempted to register a deprecated CallbackTask ($taskName)");
 		}
+
 		if($delay <= 0){
 			$delay = -1;
 		}

@@ -27,6 +27,7 @@ use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\level\sound\DoorSound;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Trapdoor extends Transparent{
@@ -40,15 +41,15 @@ class Trapdoor extends Transparent{
 
 	protected $id = self::TRAPDOOR;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Wooden Trapdoor";
 	}
 
-	public function getHardness(){
+	public function getHardness() : float{
 		return 3;
 	}
 
@@ -123,7 +124,7 @@ class Trapdoor extends Transparent{
 		return $bb;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
 		$directions = [
 			0 => 1,
 			1 => 3,
@@ -133,27 +134,29 @@ class Trapdoor extends Transparent{
 		if($player !== null){
 			$this->meta = $directions[$player->getDirection() & 0x03];
 		}
-		if(($fy > 0.5 and $face !== self::SIDE_UP) or $face === self::SIDE_DOWN){
+		if(($facePos->y > 0.5 and $face !== self::SIDE_UP) or $face === self::SIDE_DOWN){
 			$this->meta |= self::MASK_UPPER; //top half of block
 		}
-		$this->getLevel()->setBlock($block, $this, true, true);
+		$this->getLevel()->setBlock($blockReplace, $this, true, true);
 		return true;
 	}
 
-	public function getDrops(Item $item){
-		return [
-			[$this->id, 0, 1],
-		];
+	public function getVariantBitmask() : int{
+		return 0;
 	}
 
-	public function onActivate(Item $item, Player $player = null){
+	public function onActivate(Item $item, Player $player = null) : bool{
 		$this->meta ^= self::MASK_OPENED;
 		$this->getLevel()->setBlock($this, $this, true);
 		$this->level->addSound(new DoorSound($this));
 		return true;
 	}
 
-	public function getToolType(){
+	public function getToolType() : int{
 		return Tool::TYPE_AXE;
+	}
+
+	public function getFuelTime() : int{
+		return 300;
 	}
 }
