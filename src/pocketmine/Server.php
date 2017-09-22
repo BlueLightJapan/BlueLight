@@ -280,7 +280,7 @@ class Server{
 	public $limitedCreative = true;
 	public $entityAIEnabled = true;
 	public $rideableEntity = true;
-
+	public $oldApiPluginLoad = true;
 	/**
 	 * @return string
 	 */
@@ -1496,6 +1496,8 @@ class Server{
 				"LimitedCreative" => true,
 				"EntityAIEnabled" => true,
 				"RideableEntity" => true,
+				"OldAPIPluginLoad" => true,
+
 			]);
 
 			$this->cleanEntity = $this->getProperty("CleanEntity", false);
@@ -1511,6 +1513,7 @@ class Server{
 			$this->limitedCreative = $this->getProperty("LimitedCreative", true);
 			$this->entityAIEnabled = $this->getProperty("EntityAIEnabled", true);
 			$this->rideableEntity = $this->getProperty("RideableEntity", true);
+			$this->oldApiPluginLoad = $this->getProperty("OldAPIPluginLoad", true);
 
 			if($this->crashdump){
 				if(!file_exists($dataPath . "crashdumps/")){

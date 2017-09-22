@@ -253,13 +253,18 @@ class PluginManager{
 								$compatible = true;
 								break;
 							}
-							
-							if($compatible === false){
-								$this->server->getLogger()->warning($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
-									$name,
-									$this->server->getLanguage()->translateString("%pocketmine.plugin.incompatibleAPI", [implode(", ", $description->getCompatibleApis())])
-								]));
-								//continue;
+
+							if($this->server->oldApiPluginLoad){
+								$this->server->getLogger()->warning("Load $name of old API plugin");
+							}else{
+
+								if($compatible === false){
+									$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
+										$name,
+										$this->server->getLanguage()->translateString("%pocketmine.plugin.incompatibleAPI", [implode(", ", $description->getCompatibleApis())])
+									]));
+									continue;
+								}
 							}
 
 							if(count($pluginMcpeProtocols = $description->getCompatibleMcpeProtocols()) > 0){
