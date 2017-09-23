@@ -87,7 +87,7 @@ class Horse extends Living implements Rideable{
 			Entity::DATA_LEAD_HOLDER_EID => [Entity::DATA_TYPE_LONG, -1],
 			Entity::DATA_SCALE => [Entity::DATA_TYPE_FLOAT, 1],
 			Entity::DATA_INTERACTIVE_TAG => [Entity::DATA_TYPE_STRING, $button],
-		];echo $button;
+		];
 		$player->dataPacket($pk);
 		$this->sendAttribute($player);
 		parent::spawnTo($player);

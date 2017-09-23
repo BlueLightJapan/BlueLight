@@ -653,15 +653,12 @@ abstract class Entity extends Location implements Metadatable{
 
 		$entity->ridingEntity = null;
 		$pk = new SetEntityLinkPacket();
-		$pk->from = $entity->getId();
-		$pk->to = $this->getId();
-		$pk->type = 3;
+		$pk->link = [$entity->getId(), $this->getId(), 3, 0];
+
 		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
 		if($this instanceof Player){
 			$pk = new SetEntityLinkPacket();
-			$pk->from = $entity->getId();
-			$pk->to = 0;
-			$pk->type = 3;
+			$pk->link = [$entity->getId(), 0, 3, 0];
 			$this->dataPacket($pk);
 		}
 		return true;
@@ -677,16 +674,13 @@ abstract class Entity extends Location implements Metadatable{
 
 		$entity->ridingEntity = $this;
 		$pk = new SetEntityLinkPacket();
-		$pk->from = $entity->getId();
-		$pk->to = $this->getId();
-		$pk->type = 2;
+		$pk->link = [$entity->getId(), $this->getId(), 2, 0];
+
 		$this->server->broadcastPacket($this->level->getPlayers(), $pk);
 
 		if($this instanceof Player){
 			$pk = new SetEntityLinkPacket();
-			$pk->from = $entity->getId();
-			$pk->to = 0;
-			$pk->type = 2;
+			$pk->link = [$entity->getId(), 0, 2, 0];
 			$this->dataPacket($pk);
 		}
 	}

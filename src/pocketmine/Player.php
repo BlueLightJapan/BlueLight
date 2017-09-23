@@ -2213,7 +2213,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			if($this->server->rideableEntity){
 				$entity = $this->linkedEntity;
 				if($entity instanceof Boat){
-					$entity->goStraight($packet->x,$packet->y,$packet->z);
+					$entity->goStraight($packet->position->x,$packet->position->y,$packet->position->z);
 				}else{
 					$entity->setRotation($this->yaw,$this->pitch);
 				}
@@ -2427,7 +2427,14 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 				switch($type){
 					case InventoryTransactionPacket::USE_ITEM_ON_ENTITY_ACTION_INTERACT:
-						break; //TODO
+						if($this->server->rideableEntity){
+							if($target instanceof Rideable){
+								$this->isLinked = true;
+								$this->setLink($target);
+								$this->linkedEntity = $target;
+							}
+						}
+						break;
 					case InventoryTransactionPacket::USE_ITEM_ON_ENTITY_ACTION_ATTACK:
 						$cancelled = false;
 						if($target instanceof Player and $this->server->getConfigBoolean("pvp", true) === false){
@@ -2600,18 +2607,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 		switch($packet->action){
 			case InteractPacket::ACTION_MOUSEOVER:
-				if($this->server->rideableEntity){
-					if($target instanceof Rideable){
-						$this->isLinked = true;
-						$this->setLink($target);
-						$this->linkedEntity = $target;
-					}
-				}
 				break;
 			case InteractPacket::ACTION_LEAVE_VEHICLE:
-				$this->isLinked = false;
-				$this->setUnLink($target);
-				unset($this->linkedEntity);
+				//$this->isLinked = false;
+				//$this->setUnLink($target);
+				//$this->linkedEntity = null;
 				break;
 			default:
 				$this->server->getLogger()->debug("Unhandled/unknown interaction type " . $packet->action . "received from " . $this->getName());
@@ -3109,11 +3109,12 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public function handlePlayerInput(PlayerInputPacket $packet) : bool{
 		if($this->isLinked){
 			if($this->linkedEntity instanceof Rideable){
-				if($packet->motionX == 0 and $packet->motionY == 1){
+				if($packet->motionX == 0 and $packet->motionY == 1){echo 3;
 					if($this->linkedEntity instanceof Minecart){
 						$this->moveForward++;
-					}else{
-						$this->linkedEntity->goStraight($this);
+					}else{echo 4;
+						$this->linkedEntity->goStraight($this);var_dump($packet);
+
 					}
 				}elseif($packet->motionX == 0 and $packet->motionY == -1){
 					$this->linkedEntity->goBack($this);

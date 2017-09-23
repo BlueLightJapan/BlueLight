@@ -91,7 +91,6 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 		if(!$ev->isCancelled() and !$packet->handle($this)){
 			$this->server->getLogger()->debug("Unhandled " . $packet->getName() . " received from " . $this->player->getName() . ": 0x" . bin2hex($packet->buffer));
 		}
-
 		$timings->stopTiming();
 	}
 
@@ -128,7 +127,7 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 	}
 
 	public function handleInventoryTransaction(InventoryTransactionPacket $packet) : bool{
-		return $this->player->handleInventoryTransaction($packet); //TODO
+		return $this->player->handleInventoryTransaction($packet);
 	}
 
 	public function handleMobEquipment(MobEquipmentPacket $packet) : bool{
