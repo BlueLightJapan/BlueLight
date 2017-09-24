@@ -260,7 +260,7 @@ abstract class Living extends Entity implements Damageable{
 			){
 				return;
 			}
-			$effect->add($this, true, $oldEffect);
+			$effect->add($this, $oldEffect);
 		}else{
 			$effect->add($this);
 		}
