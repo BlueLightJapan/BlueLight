@@ -93,6 +93,7 @@ abstract class Animal extends Creature implements Ageable{
 		if ($this->inLove > 0){
 			--$this->inLove;
 		}
+		return true;
 	}
 
 	protected function onGrowingAdult(){
