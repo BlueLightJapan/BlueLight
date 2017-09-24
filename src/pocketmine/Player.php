@@ -2609,9 +2609,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			case InteractPacket::ACTION_MOUSEOVER:
 				break;
 			case InteractPacket::ACTION_LEAVE_VEHICLE:
-				//$this->isLinked = false;
-				//$this->setUnLink($target);
-				//$this->linkedEntity = null;
+				$this->isLinked = false;
+				$this->setUnLink($target);
+				$this->linkedEntity = null;
 				break;
 			default:
 				$this->server->getLogger()->debug("Unhandled/unknown interaction type " . $packet->action . "received from " . $this->getName());
