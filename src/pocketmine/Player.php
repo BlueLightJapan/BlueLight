@@ -3109,11 +3109,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public function handlePlayerInput(PlayerInputPacket $packet) : bool{
 		if($this->isLinked){
 			if($this->linkedEntity instanceof Rideable){
-				if($packet->motionX == 0 and $packet->motionY == 1){echo 3;
+				if($packet->motionX == 0 and $packet->motionY == 1){
 					if($this->linkedEntity instanceof Minecart){
 						$this->moveForward++;
-					}else{echo 4;
-						$this->linkedEntity->goStraight($this);var_dump($packet);
+					}else{
+						$this->linkedEntity->goStraight($this);
 
 					}
 				}elseif($packet->motionX == 0 and $packet->motionY == -1){
