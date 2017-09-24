@@ -88,7 +88,7 @@ abstract class Projectile extends Entity{
 			$ev = new EntityDamageByChildEntityEvent($this->getOwningEntity(), $this, $entity, EntityDamageEvent::CAUSE_PROJECTILE, $damage);
 		}
 
-		$entity->attack($ev->getFinalDamage(), $ev);
+		$entity->attack($ev);
 
 		$this->hadCollision = true;
 
