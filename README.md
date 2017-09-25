@@ -52,7 +52,7 @@ HP : http://bluelight.cf<br>
 ## サーバーの負荷を調べることができます！
 http://blog.haniokasai.com/2017/04/minecraft-pcbukkitpepocketminenukkittim.html
  
-##Pharを楽して作ったり、crashdumpやvardumpが解析できます！
+## Phar形式に簡単に圧縮できたり、crashdumpやvardumpの解析できます！
 http://pmt.haniokasai.com/
 
 
