@@ -43,7 +43,7 @@ class ShapelessRecipe implements CraftingRecipe{
 	/**
 	 * @return UUID|null
 	 */
-	public function getId() : ?UUID{
+	public function getId() : UUID{
 		return $this->id;
 	}
 
