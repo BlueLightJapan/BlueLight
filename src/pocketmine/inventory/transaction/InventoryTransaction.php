@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 /*
  *
@@ -40,7 +40,7 @@ class InventoryTransaction{
 	private $creationTime;
 	protected $hasExecuted = false;
 	/** @var Player */
-	protected $source = null;
+	protected $source;
 
 	/** @var Inventory[] */
 	protected $inventories = [];
@@ -52,7 +52,7 @@ class InventoryTransaction{
 	 * @param Player            $source
 	 * @param InventoryAction[] $actions
 	 */
-	public function __construct(Player $source = null, array $actions = []){
+	public function __construct(Player $source, array $actions = []){
 		$this->creationTime = microtime(true);
 		$this->source = $source;
 		foreach($actions as $action){
@@ -88,7 +88,7 @@ class InventoryTransaction{
 	/**
 	 * @param InventoryAction $action
 	 */
-	public function addAction(InventoryAction $action){
+	public function addAction(InventoryAction $action) : void{
 		if(!isset($this->actions[$hash = spl_object_hash($action)])){
 			$this->actions[spl_object_hash($action)] = $action;
 			$action->onAddToTransaction($this);
@@ -103,7 +103,7 @@ class InventoryTransaction{
 	 *
 	 * @param Inventory $inventory
 	 */
-	public function addInventory(Inventory $inventory){
+	public function addInventory(Inventory $inventory) : void{
 		if(!isset($this->inventories[$hash = spl_object_hash($inventory)])){
 			$this->inventories[$hash] = $inventory;
 		}
@@ -219,8 +219,6 @@ class InventoryTransaction{
 			}
 
 			$this->addAction(new SlotChangeAction($originalAction->getInventory(), $originalAction->getSlot(), $originalAction->getSourceItem(), $lastTargetItem));
-
-			MainLogger::getLogger()->debug("Successfully compacted " . count($originalList) . " actions for " . $this->source->getName());
 		}
 
 		return true;
@@ -237,10 +235,15 @@ class InventoryTransaction{
 		return $this->matchItems($needItems, $haveItems) and count($this->actions) > 0 and count($haveItems) === 0 and count($needItems) === 0;
 	}
 
-	protected function handleFailed(){
+	protected function handleFailed() : void{
 		foreach($this->actions as $action){
 			$action->onExecuteFail($this->source);
 		}
+	}
+
+	protected function callExecuteEvent() : bool{
+		Server::getInstance()->getPluginManager()->callEvent($ev = new InventoryTransactionEvent($this));
+		return !$ev->isCancelled();
 	}
 
 	/**
@@ -251,8 +254,7 @@ class InventoryTransaction{
 			return false;
 		}
 
-		Server::getInstance()->getPluginManager()->callEvent($ev = new InventoryTransactionEvent($this));
-		if($ev->isCancelled()){
+		if(!$this->callExecuteEvent()){
 			$this->handleFailed();
 			return true;
 		}
