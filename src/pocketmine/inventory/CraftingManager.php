@@ -196,7 +196,7 @@ class CraftingManager{
 	/**
 	 * @param ShapedRecipe $recipe
 	 */
-	public function registerShapedRecipe(ShapedRecipe $recipe) : void{
+	public function registerShapedRecipe(ShapedRecipe $recipe){
 		$this->shapedRecipes[json_encode($recipe->getResult())][json_encode($recipe->getIngredientMap())] = $recipe;
 		$this->craftingDataCache = null;
 	}
@@ -204,7 +204,7 @@ class CraftingManager{
 	/**
 	 * @param ShapelessRecipe $recipe
 	 */
-	public function registerShapelessRecipe(ShapelessRecipe $recipe) : void{
+	public function registerShapelessRecipe(ShapelessRecipe $recipe){
 		$ingredients = $recipe->getIngredientList();
 		usort($ingredients, [$this, "sort"]);
 		$this->shapelessRecipes[json_encode($recipe->getResult())][json_encode($ingredients)] = $recipe;
@@ -214,7 +214,7 @@ class CraftingManager{
 	/**
 	 * @param FurnaceRecipe $recipe
 	 */
-	public function registerFurnaceRecipe(FurnaceRecipe $recipe) : void{
+	public function registerFurnaceRecipe(FurnaceRecipe $recipe){
 		$input = $recipe->getInput();
 		$this->furnaceRecipes[$input->getId() . ":" . ($input->hasAnyDamageValue() ? "?" : $input->getDamage())] = $recipe;
 		$this->craftingDataCache = null;
