@@ -31,7 +31,7 @@ interface CraftingRecipe extends Recipe{
 	/**
 	 * @return UUID|null
 	 */
-	public function getId() : UUID;
+	public function getId() : ?UUID;
 
 	/**
 	 * @param UUID $id
@@ -49,4 +49,15 @@ interface CraftingRecipe extends Recipe{
 	 * @return Item[]
 	 */
 	public function getAllResults() : array;
+
+	/**
+	 * Returns whether the specified list of crafting grid inputs and outputs matches this recipe. Outputs DO NOT
+	 * include the primary result item.
+	 *
+	 * @param Item[][] $input 2D array of items taken from the crafting grid
+	 * @param Item[][] $output 2D array of items put back into the crafting grid (secondary results)
+	 *
+	 * @return bool
+	 */
+	public function matchItems(array $input, array $output) : bool;
 }
