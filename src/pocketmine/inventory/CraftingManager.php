@@ -244,7 +244,7 @@ class CraftingManager{
 	 *
 	 * @return CraftingRecipe|null
 	 */
-	public function matchRecipe(array $inputMap, Item $primaryOutput, array $extraOutputMap) : ?CraftingRecipe{
+	public function matchRecipe(array $inputMap, Item $primaryOutput, array $extraOutputMap) : CraftingRecipe{
 		//TODO: try to match special recipes before anything else (first they need to be implemented!)
 
 		$outputHash = json_encode($primaryOutput);
