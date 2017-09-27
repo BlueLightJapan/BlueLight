@@ -296,7 +296,7 @@ class CraftingManager{
 	/**
 	 * @param Recipe $recipe
 	 */
-	public function registerRecipe(Recipe $recipe) : void{
+	public function registerRecipe(Recipe $recipe){
 		if($recipe instanceof CraftingRecipe){
 			$result = $recipe->getResult();
 			$recipe->setId($uuid = UUID::fromData((string) ++self::$RECIPE_COUNT, (string) $result->getId(), (string) $result->getDamage(), (string) $result->getCount(), $result->getCompoundTag()));
