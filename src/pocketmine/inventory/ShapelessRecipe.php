@@ -132,7 +132,7 @@ class ShapelessRecipe implements CraftingRecipe{
 		return $count;
 	}
 
-	public function registerToCraftingManager(CraftingManager $manager) : void{
+	public function registerToCraftingManager(CraftingManager $manager){
 		$manager->registerShapelessRecipe($this);
 	}
 
