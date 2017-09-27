@@ -1756,8 +1756,8 @@ class Level implements ChunkManager, Metadatable{
 			if($this->checkSpawnProtection($player, $blockClicked)){
 				$ev->setCancelled(); //set it to cancelled so plugins can bypass this
 			}
-
-			if($player->isAdventure(true) and !$ev->isCancelled()){
+			$onActivate = $blockClicked->onActivate($item, $player);
+			if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
 				$canPlace = false;
 				$tag = $item->getNamedTagEntry("CanPlaceOn");
 				if($tag instanceof ListTag){
