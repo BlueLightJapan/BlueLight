@@ -45,7 +45,7 @@ class MakeServerCommand extends VanillaCommand{
 		
 		$files = [];
 		$server = $sender->getServer();
-		$pharPath = Server::getInstance()->getPluginPath() . DIRECTORY_SEPARATOR . "BDevtools" . DIRECTORY_SEPARATOR . $server->getName() . "_" . $server->getPocketMineVersion() . ".phar";
+		$pharPath = Server::getInstance()->getPluginPath() . "BDevtools" . DIRECTORY_SEPARATOR . $server->getName() . "_" . $server->getPocketMineVersion() . ".phar";
 		if(file_exists($pharPath)){
 			$sender->sendMessage("Phar file already exists, overwriting...");
 			@unlink($pharPath);
@@ -83,7 +83,7 @@ class MakeServerCommand extends VanillaCommand{
 			}
 		}
 		if(!isset($args[0]) or (isset($args[0]) and $args[0] != "nogz")){
-			$phar->compressFiles(\Phar::GZ);
+			//$phar->compressFiles(\Phar::GZ);
 		}
 		$phar->stopBuffering();
 
