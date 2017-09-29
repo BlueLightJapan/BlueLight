@@ -67,7 +67,7 @@ class MakeServerCommand extends VanillaCommand{
 		$filePath = rtrim(str_replace("\\", "/", $filePath), "/") . "/";
 		foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($filePath . "src")) as $file){
 			$path = ltrim(str_replace(["\\", $filePath], ["/", ""], $file->getPathname()), "/");
-		if($path{0} === "." or strpos($path, "/.") !== false or (substr($path, 0, 4) !== "src/" and substr($path, 0, 7) !== "vendor/") or $file->isFile() === false){
+			if($path{0} === "." or strpos($path, "/.") !== false or (substr($path, 0, 4) !== "src/" and substr($path, 0, 7) !== "vendor/") or $file->isFile() === false){
 				continue;
 			}
 			$files[$path] = $file->getPathname();
