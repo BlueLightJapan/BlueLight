@@ -82,8 +82,8 @@ class MakeServerCommand extends VanillaCommand{
 				$finfo->compress(\Phar::GZ);
 			}
 		}
-		if(!isset($args[0]) or (isset($args[0]) and $args[0] != "nogz")){
-			//$phar->compressFiles(\Phar::GZ);
+		if(isset($args[0]) and $args[0] == "gz"){
+			$phar->compressFiles(\Phar::GZ);
 		}
 		$phar->stopBuffering();
 
