@@ -1,6 +1,6 @@
 ![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-# BlueLight for 1.2.0
+# BlueLight for 1.2.1 (OLD_API_VERSION) TESTING VERSION
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ### Build Status(Stable) [![Build Status](http://jenkins.haniokasai.com/job/BlueLight-PMMP/badge/icon)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/)<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/">![Build Status](https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/)</a>
@@ -37,6 +37,8 @@ BlueLightはMinecraft: Pocket Editionサーバーソフトウェアです<br>
 大半のコードは **PocketMine Team** によって書かれています<br>
 一部のコードはGenisysから引用しており、 **iTXTech** によって書かれています<br>
 他のソフトからコードを引用する場合、ファイル内に明記します<br>
+このビルドは古いAPIバージョンのプラグインを動作させることが可能です。<br>
+「注意」このビルドは正常に動作しない可能性があります。このビルドを使用して発生したトラブルには一切の責任を負いません。<br>
 <br>
 サポート :</br>
 Src https://twitter.com/kametan0730</br>
