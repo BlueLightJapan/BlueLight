@@ -18,74 +18,76 @@
  * 
 */
  
-namespace pocketmine\updater{
-	
-	echo "\x1b]0;BlueLight-Updater\x07";
+namespace pocketmine\updater;
 
-	echo getLogo() . PHP_EOL;
-	echo "\x1b[mLoading branches..." . PHP_EOL;
-	
-	$branches = json_decode(getURL("https://api.github.com/repos/BlueLightJapan/BlueLight/branches"), true);
-	
-	echo "\x1b[mBranch Name: ";
-	
-	$array = [];
-	$count = count($branches);
-	
-	foreach($branches as $b){
-		$count--;
-		$array[] = $b["name"];
-		if($count == 0){
-			echo "\x1b[38;5;83m".$b["name"] . PHP_EOL;
+class Updater{
+
+	const VERSION = 1.0;
+
+	public function startUpdate(){
+		echo "\x1b]0;BlueLight-Updater v ". self::VERSION . " \x07";
+
+		echo $this->getLogo() . PHP_EOL;
+		echo "\x1b[mLoading branches..." . PHP_EOL;
+
+		$branches = json_decode($this->getURL("https://api.github.com/repos/BlueLightJapan/BlueLight/branches"), true);
+
+		$branchNames = [];
+		foreach($branches as $b){
+			$branchNames[] = $b["name"];
+		}
+		$count = count($branches);
+		echo "\x1b[mBranch Name: ". implode("|",$branchNames) . PHP_EOL;
+
+		do{
+			echo "\x1b[mSelect Branch: \x1b[38;5;87m";
+			$branch = trim(fgets(STDIN));
+			if($tmp = !in_array($branch, $branchNames)){
+				echo "\x1b[38;5;124mThe branch is not found." . PHP_EOL;
+			}
+		}while($tmp);
+
+		if(!file_exists("temp")){
+			mkdir("temp");
+		}
+
+		echo "\x1b[mDownload BlueLight-".$branch." now..." . PHP_EOL;
+
+		$data = @file_get_contents("https://github.com/BlueLightJapan/BlueLight/archive/".$branch.".zip");
+		if($data){
+			$result = file_put_contents("temp/BlueLight.zip",$data);
+			echo "\x1b[38;5;83mDownload Success!" . PHP_EOL;
 		}else{
-			echo "\x1b[38;5;83m".$b["name"].", ";
+			echo "\x1b[38;5;124mDownload Failed." . PHP_EOL;
+			$this->dirrm("temp");
+			exit(1);
 		}
-	}
-	
-	do{
-		echo "\x1b[mSelect Branch: \x1b[38;5;87m";
-		$branch = trim(fgets(STDIN));
-		if($tmp = !in_array($branch, $array)){
-			echo "\x1b[38;5;124mThe branch is not found." . PHP_EOL;
+
+		echo "\x1b[mExtract Zip File..." . PHP_EOL;
+		$zip = $this->extractZip("temp/BlueLight.zip");
+
+		if($zip){
+			echo "\x1b[38;5;83mUnZip Success!" . PHP_EOL;
+		}else{
+			echo "\x1b[38;5;124mUnZip Failed" . PHP_EOL;
+			$this->dirrm("temp");
+			exit(1);
 		}
-	}while($tmp);
-	
-	if(!file_exists("temp")) mkdir("temp");
-	
-	echo "\x1b[mDownload BlueLight-".$branch." now..." . PHP_EOL;
-	
-	$data = @file_get_contents("https://github.com/BlueLightJapan/BlueLight/archive/".$branch.".zip");
-	if($data){
-		$result = file_put_contents("temp/BlueLight.zip",$data);
-		echo "\x1b[38;5;83mDownload Success!" . PHP_EOL;
-	}else{
-		echo "\x1b[38;5;124mDownload Failed." . PHP_EOL;
-		dirrm("temp");
+
+		if(file_exists("PocketMine-MP.phar")){
+			unlink("PocketMine-MP.phar");
+		}
+		if(file_exists("src")){
+			$this->dirrm("src");
+		}
+
+		$this->dircopy("temp/BlueLight-".$branch."/src","src");
+		$this->dirrm("temp");
+		echo "\x1b[38;5;83mCompleted BlueLight Update!\x1b[m" . PHP_EOL;
+
 		exit(1);
 	}
-	
-	echo "\x1b[mExtract Zip File..." . PHP_EOL;
-	$zip = extractZip("temp/BlueLight.zip");
-
-	if($zip){
-		echo "\x1b[38;5;83mUnZip Success!" . PHP_EOL;
-	}else{
-		echo "\x1b[38;5;124mUnZip Failed" . PHP_EOL;
-		dirrm("temp");
-		exit(1);
-	}
-	
-	if(file_exists("PocketMine-MP.phar")) unlink("PocketMine-MP.phar");
-	if(file_exists("src")) dirrm("src");
-	
-	dircopy("temp/BlueLight-".$branch."/src","src");
-	dirrm("temp");
-	echo "\x1b[38;5;83mCompleted BlueLight Update!\x1b[m" . PHP_EOL;
-	
-	exit(1);
-
-
-	function getLogo(){
+	private function getLogo(){
 		$logo = "\x1b[38;5;87m				 ____  _            _      _       _     _
 				|  _ \| |          | |    (_)     | |   | |
 				| |_) | |_   _  ___| |     _  __ _| |__ | |_
@@ -98,7 +100,7 @@ namespace pocketmine\updater{
 		return $logo;
 	}
 	
-	function getURL($url, $timeout = 10){
+	private function getURL($url, $timeout = 10){
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36"));
 		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
@@ -117,7 +119,7 @@ namespace pocketmine\updater{
 		return $result;
 	}
 	
-	function extractZip($path){
+	private function extractZip($path){
 		$zip = new \ZipArchive();
 		$res = $zip->open($path);
 		if ($res == true){
@@ -129,7 +131,7 @@ namespace pocketmine\updater{
 		}
 	}
 	
-	function dirrm($dir) {
+	private function dirrm($dir) {
 		if($handle = opendir($dir)) {
 			while (false !== ($item = readdir($handle))) {
 				if ($item != "." && $item != "..") {
@@ -145,7 +147,7 @@ namespace pocketmine\updater{
 		}
 	}
 
-	function dircopy($dir_name, $new_dir){
+	private function dircopy($dir_name, $new_dir){
 		if (!is_dir($new_dir)) {
 			mkdir($new_dir, 0777, true);
 		}
@@ -167,5 +169,5 @@ namespace pocketmine\updater{
 		}
 	}
 }
-	 
-	 
+$updater = new Updater();
+$updater->startUpdate();

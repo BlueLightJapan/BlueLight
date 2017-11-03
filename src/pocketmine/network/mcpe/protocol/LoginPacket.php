@@ -52,6 +52,17 @@ class LoginPacket extends DataPacket{
 	/** @var string */
 	public $skin = "";
 
+	public $deviceModel;
+	public $deviceOS;
+	public $ui = -1;
+	public $xuid = "";
+
+	public $languageCode = "unknown";
+	public $clientVersion = "unknown";
+	public $skinGeometryName = "";
+	public $skinGeometryData = "";
+	public $capeData = "";
+
 	/** @var array (the "chain" index contains one or more JWTs) */
 	public $chainData = [];
 	/** @var string */
@@ -83,6 +94,9 @@ class LoginPacket extends DataPacket{
 				if(isset($webtoken["extraData"]["identity"])){
 					$this->clientUUID = $webtoken["extraData"]["identity"];
 				}
+				if(isset($webtoken["extraData"]["XUID"])){
+					$this->xuid = $webtoken["extraData"]["XUID"];
+				}
 				if(isset($webtoken["identityPublicKey"])){
 					$this->identityPublicKey = $webtoken["identityPublicKey"];
 				}
@@ -98,6 +112,30 @@ class LoginPacket extends DataPacket{
 
 		if(isset($this->clientData["SkinData"])){
 			$this->skin = base64_decode($this->clientData["SkinData"]);
+		} 
+		if(isset($this->clientData["DeviceModel"])){
+			$this->deviceModel = $this->clientData["DeviceModel"];
+		}
+		if(isset($this->playerData["DeviceOS"])) {
+			$this->deviceOS = $this->playerData["DeviceOS"];
+		}
+		if(isset($this->playerData["SkinGeometryName"])){
+			$this->skinGeometryName = $this->playerData["SkinGeometryName"];    
+		}
+		if(isset($this->playerData["SkinGeometry"])){
+			$this->skinGeometryData = base64_decode($this->playerData["SkinGeometry"]);  
+		}
+		if(isset($this->playerData["UIProfile"])){
+			$this->ui = $this->playerData["UIProfile"];
+		}
+		if(isset($this->playerData["LanguageCode"])){
+			$this->languageCode = $this->playerData["LanguageCode"];
+		}
+		if(isset($this->playerData["GameVersion"])){
+			$this->clientVersion = $this->playerData["GameVersion"];
+		}
+		if(isset($this->playerData["CapeData"])){
+			$this->capeData = base64_decode($this->playerData["CapeData"]);
 		}
 	}
 
