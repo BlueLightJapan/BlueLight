@@ -57,8 +57,8 @@ class LoginPacket extends DataPacket{
 	public $ui = -1;
 	public $xuid = "";
 
-	public $languageCode = "unknown";
-	public $clientVersion = "unknown";
+	public $languageCode = "";
+	public $clientVersion = "";
 	public $skinGeometryName = "";
 	public $skinGeometryData = "";
 	public $capeData = "";
@@ -116,26 +116,26 @@ class LoginPacket extends DataPacket{
 		if(isset($this->clientData["DeviceModel"])){
 			$this->deviceModel = $this->clientData["DeviceModel"];
 		}
-		if(isset($this->playerData["DeviceOS"])) {
-			$this->deviceOS = $this->playerData["DeviceOS"];
+		if(isset($this->clientData["DeviceOS"])) {
+			$this->deviceOS = $this->clientData["DeviceOS"];
 		}
-		if(isset($this->playerData["SkinGeometryName"])){
-			$this->skinGeometryName = $this->playerData["SkinGeometryName"];    
+		if(isset($this->clientData["SkinGeometryName"])){
+			$this->skinGeometryName = $this->clientData["SkinGeometryName"];    
 		}
-		if(isset($this->playerData["SkinGeometry"])){
-			$this->skinGeometryData = base64_decode($this->playerData["SkinGeometry"]);  
+		if(isset($this->clientData["SkinGeometry"])){
+			$this->skinGeometryData = base64_decode($this->clientData["SkinGeometry"]);  
 		}
-		if(isset($this->playerData["UIProfile"])){
-			$this->ui = $this->playerData["UIProfile"];
+		if(isset($this->clientData["UIProfile"])){
+			$this->ui = $this->clientData["UIProfile"];
 		}
-		if(isset($this->playerData["LanguageCode"])){
-			$this->languageCode = $this->playerData["LanguageCode"];
+		if(isset($this->clientData["LanguageCode"])){
+			$this->languageCode = $this->clientData["LanguageCode"];
 		}
-		if(isset($this->playerData["GameVersion"])){
-			$this->clientVersion = $this->playerData["GameVersion"];
+		if(isset($this->clientData["GameVersion"])){
+			$this->clientVersion = $this->clientData["GameVersion"];
 		}
-		if(isset($this->playerData["CapeData"])){
-			$this->capeData = base64_decode($this->playerData["CapeData"]);
+		if(isset($this->clientData["CapeData"])){
+			$this->capeData = base64_decode($this->clientData["CapeData"]);
 		}
 	}
 
