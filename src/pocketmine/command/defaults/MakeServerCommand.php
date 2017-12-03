@@ -51,14 +51,6 @@ class MakeServerCommand extends VanillaCommand{
 			\Phar::unlinkArchive($pharPath);
 		}
 		$phar = new \Phar($pharPath,0);
-		$phar->setMetadata([
-			"name" => $server->getName(),
-			"version" => $server->getPocketMineVersion(),
-			"api" => $server->getApiVersion(),
-			"minecraft" => $server->getVersion(),
-			"protocol" => ProtocolInfo::CURRENT_PROTOCOL,
-			"creationDate" => time()
-		]);
 		$phar->setStub('<?php define("pocketmine\\\\PATH", "phar://". __FILE__ ."/"); require_once("phar://". __FILE__ ."/src/pocketmine/PocketMine.php");  __HALT_COMPILER();');
 		$phar->setSignatureAlgorithm(\Phar::SHA1);
 		$phar->startBuffering();
