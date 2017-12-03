@@ -42,14 +42,15 @@ class MakeServerCommand extends VanillaCommand{
 		if(!$this->testPermission($sender)){
 			return false;
 		}
-
+		
+		$files = [];
 		$server = $sender->getServer();
-		$pharPath = Server::getInstance()->getPluginPath() . DIRECTORY_SEPARATOR . "BDevtools" . DIRECTORY_SEPARATOR . $server->getName() . "_" . $server->getPocketMineVersion() . ".phar";
+		$pharPath = Server::getInstance()->getPluginPath() . "BDevtools" . DIRECTORY_SEPARATOR . $server->getName() . "_" . $server->getPocketMineVersion() . ".phar";
 		if(file_exists($pharPath)){
 			$sender->sendMessage("Phar file already exists, overwriting...");
-			@unlink($pharPath);
+			\Phar::unlinkArchive($pharPath);
 		}
-		$phar = new \Phar($pharPath);
+		$phar = new \Phar($pharPath,0);
 		$phar->setMetadata([
 			"name" => $server->getName(),
 			"version" => $server->getPocketMineVersion(),
@@ -65,20 +66,23 @@ class MakeServerCommand extends VanillaCommand{
 		$filePath = substr(\pocketmine\PATH, 0, 7) === "phar://" ? \pocketmine\PATH : realpath(\pocketmine\PATH) . "/";
 		$filePath = rtrim(str_replace("\\", "/", $filePath), "/") . "/";
 		foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($filePath . "src")) as $file){
-			$path = ltrim(str_replace(["\\", $filePath], ["/", ""], $file), "/");
-			if($path{0} === "." or strpos($path, "/.") !== false or (substr($path, 0, 4) !== "src/" and substr($path, 0, 7) !== "vendor/")){
+			$path = ltrim(str_replace(["\\", $filePath], ["/", ""], $file->getPathname()), "/");
+			if($path{0} === "." or strpos($path, "/.") !== false or (substr($path, 0, 4) !== "src/" and substr($path, 0, 7) !== "vendor/") or $file->isFile() === false){
 				continue;
 			}
-			$phar->addFile($file, $path);
+			$files[$path] = $file->getPathname();
 			$sender->sendMessage("[BDevtools] Adding $path");
 		}
+		$sender->sendMessage("[BDevtools] compress…");
+		$phar->buildFromIterator(new \ArrayIterator($files));
+		
 		foreach($phar as $file => $finfo){
 			/** @var \PharFileInfo $finfo */
 			if($finfo->getSize() > (1024 * 512)){
 				$finfo->compress(\Phar::GZ);
 			}
 		}
-		if(!isset($args[0]) or (isset($args[0]) and $args[0] != "nogz")){
+		if(isset($args[0]) and $args[0] == "gz"){
 			$phar->compressFiles(\Phar::GZ);
 		}
 		$phar->stopBuffering();
