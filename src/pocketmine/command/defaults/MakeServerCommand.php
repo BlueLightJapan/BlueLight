@@ -48,7 +48,7 @@ class MakeServerCommand extends VanillaCommand{
 		$pharPath = Server::getInstance()->getPluginPath() . "BDevtools" . DIRECTORY_SEPARATOR . $server->getName() . "_" . $server->getPocketMineVersion() . ".phar";
 		if(file_exists($pharPath)){
 			$sender->sendMessage("Phar file already exists, overwriting...");
-			@unlink($pharPath);
+			\Phar::unlinkArchive($pharPath);
 		}
 		$phar = new \Phar($pharPath,0);
 		$phar->setMetadata([
