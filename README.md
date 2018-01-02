@@ -25,7 +25,7 @@ Download App : GooglePlay https://play.google.com/store/apps/details?id=com.hani
 Download Phar : Jenkins  http://jenkins.haniokasai.com/job/BlueLight-PMMP<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
 Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
-HP : http://bluelight.cf/?lang=en<br>
+HP : https://bluelig.ht/?lang=en<br>
 <br>If you find bugs,you can open issues freely,But DO NOT OPEN ISSUE ABOUT PLUGIN PROBLEM.
 <br>
 If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/issues/40
@@ -48,7 +48,7 @@ Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
 便利な詰め合わせ : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 Lobi : https://web.lobi.co/game/minecraftpe/group/d95ef7462b185454741ad90520e4ba23fe7738c4<br>
-HP : http://bluelight.cf<br>
+HP : https://bluelig.ht<br>
 <br>バグを発見したら、自由にissueを建てることができますが、srcのバグ以外は報告しないでください。
 <br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
