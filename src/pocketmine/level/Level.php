@@ -2742,6 +2742,11 @@ class Level implements ChunkManager, Metadatable{
 		return $this->time;
 	}
 
+	public function isDaytime() : bool{
+		$timeOfDay = abs($this->getTime() % 24000);
+		return (0 < $timeOfDay and $timeOfDay < 13000);
+	}
+
 	/**
 	 * Returns the Level name
 	 *
