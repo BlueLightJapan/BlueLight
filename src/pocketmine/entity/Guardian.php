@@ -75,8 +75,14 @@ class Guardian extends Monster{
 	public function getDrops() : array{
 		$drops = [];
 		$ev = $this->getLastDamageCause();
-		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
-
+		$looting = 0;
+		if($ev instanceof EntityDamageByEntityEvent){
+			if($ev->getDamager() instanceof Player){
+				if(($lootingobj = $ev->getDamager()->getInventory()->getItemInHand()->getEnchantment(Enchantment::LOOTING)) != null){
+					$looting = $lootingobj->getLevel();
+				}
+			}
+		}
 		$prismarine = rand(0, 2) + rand(0, $looting);
 
 		$drops[] = ItemItem::get(ItemItem::PRISMARINE_SHARD, 0, $prismarine);

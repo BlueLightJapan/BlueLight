@@ -61,8 +61,14 @@ class MagmaCube extends Slime{
 		$drops = [];
 		if($this->getSlimeSize() > 1){
 			$ev = $this->getLastDamageCause();
-			$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
-
+			$looting = 0;
+			if($ev instanceof EntityDamageByEntityEvent){
+				if($ev->getDamager() instanceof Player){
+					if(($lootingobj = $ev->getDamager()->getInventory()->getItemInHand()->getEnchantment(Enchantment::LOOTING)) != null){
+						$looting = $lootingobj->getLevel();
+					}
+				}
+			}
 			$creams = rand(0, 3) - 2;
 
 			if ($looting > 0){

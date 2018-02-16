@@ -177,8 +177,14 @@ class Sheep extends Animal{
 
 	public function getDrops() : array{
 		$ev = $this->getLastDamageCause();
-		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
-
+		$looting = 0;
+		if($ev instanceof EntityDamageByEntityEvent){
+			if($ev->getDamager() instanceof Player){
+				if(($lootingobj = $ev->getDamager()->getInventory()->getItemInHand()->getEnchantment(Enchantment::LOOTING)) != null){
+					$looting = $lootingobj->getLevel();
+				}
+			}
+		}
 		$wools = rand(0, 1) + 1 + rand(0, $looting);
 
 		if ($this->isOnFire()){

@@ -225,8 +225,14 @@ class Enderman extends Monster{
 	public function getDrops() : array{
 		$drops = [];
 		$ev = $this->getLastDamageCause();
-		$looting = $ev instanceof EntityDamageByEntityEvent ? $ev->getDamager() instanceof Player ? $ev->getDamager()->getInventory()->getItemInHand()->getEnchantmentLevel(Enchantment::TYPE_WEAPON_LOOTING) : 0 : 0;
-
+		$looting = 0;
+		if($ev instanceof EntityDamageByEntityEvent){
+			if($ev->getDamager() instanceof Player){
+				if(($lootingobj = $ev->getDamager()->getInventory()->getItemInHand()->getEnchantment(Enchantment::LOOTING)) != null){
+					$looting = $lootingobj->getLevel();
+				}
+			}
+		}
 		$pearls = rand(0, 1 + $looting);
 
 		$drops[] = ItemItem::get(ItemItem::ENDER_PEARL, 0, $pearls);
