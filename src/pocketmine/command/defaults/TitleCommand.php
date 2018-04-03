@@ -29,7 +29,7 @@ use pocketmine\event\TranslationContainer;
 
 class TitleCommand extends VanillaCommand{
 
-	public function __construct(string $name){
+	public function __construct($name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.title.description",
@@ -38,7 +38,7 @@ class TitleCommand extends VanillaCommand{
 		$this->setPermission("pocketmine.command.title");
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	public function execute(CommandSender $sender, $commandLabel, array $args){
 		if(!$this->testPermission($sender)){
 			return true;
 		}

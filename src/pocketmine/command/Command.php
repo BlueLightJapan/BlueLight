@@ -37,15 +37,15 @@ abstract class Command{
 	/** @var array */
 	private static $defaultDataTemplate = null;
 
-	/** @var string */
+	/** @var */
 	private $name;
 	/** @var array */
 	protected $commandData = null;
 
-	/** @var string */
+	/** @var */
 	private $nextLabel;
 
-	/** @var string */
+	/** @var */
 	private $label;
 
 	/**
@@ -56,25 +56,25 @@ abstract class Command{
 	/** @var CommandMap */
 	private $commandMap = null;
 
-	/** @var string */
+	/** @var */
 	protected $description = "";
 
-	/** @var string */
+	/** @var */
 	protected $usageMessage;
 
-	/** @var string */
+	/** @var */
 	private $permissionMessage = null;
 
 	/** @var TimingsHandler */
 	public $timings;
 
 	/**
-	 * @param string   $name
-	 * @param string   $description
-	 * @param string   $usageMessage
+	 * @param   $name
+	 * @param   $description
+	 * @param   $usageMessage
 	 * @param string[] $aliases
 	 */
-	public function __construct(string $name, string $description = "", string $usageMessage = null, array $aliases = []){
+	public function __construct($name, $description = "", $usageMessage = null, array $aliases = []){
 		$this->commandData = self::generateDefaultData();
 		$this->name = $name;
 		$this->setLabel($name);
@@ -124,12 +124,12 @@ abstract class Command{
 
 	/**
 	 * @param CommandSender $sender
-	 * @param string        $commandLabel
+	 * @param        $commandLabel
 	 * @param string[]      $args
 	 *
 	 * @return mixed
 	 */
-	abstract public function execute(CommandSender $sender, string $commandLabel, array $args);
+	abstract public function execute(CommandSender $sender, $commandLabel, array $args);
 
 	/**
 	 * @return string
@@ -149,7 +149,7 @@ abstract class Command{
 	/**
 	 * @param string|null $permission
 	 */
-	public function setPermission(string $permission = null){
+	public function setPermission($permission = null){
 		if($permission !== null){
 			$this->commandData["pocketminePermission"] = $permission;
 		}else{
@@ -202,7 +202,7 @@ abstract class Command{
 		return $this->label;
 	}
 
-	public function setLabel(string $name) : bool{
+	public function setLabel($name) : bool{
 		$this->nextLabel = $name;
 		if(!$this->isRegistered()){
 			if($this->timings instanceof TimingsHandler){
@@ -306,23 +306,23 @@ abstract class Command{
 	}
 
 	/**
-	 * @param string $description
+	 * @param $description
 	 */
-	public function setDescription(string $description){
+	public function setDescription($description){
 		$this->commandData["description"] = $description;
 	}
 
 	/**
-	 * @param string $permissionMessage
+	 * @param $permissionMessage
 	 */
-	public function setPermissionMessage(string $permissionMessage){
+	public function setPermissionMessage($permissionMessage){
 		$this->permissionMessage = $permissionMessage;
 	}
 
 	/**
-	 * @param string $usage
+	 * @param $usage
 	 */
-	public function setUsage(string $usage){
+	public function setUsage($usage){
 		$this->usageMessage = $usage;
 	}
 
@@ -338,7 +338,7 @@ abstract class Command{
 
 	/**
 	 * @param CommandSender        $source
-	 * @param TextContainer|string $message
+	 * @param TextContainer|$message
 	 * @param bool                 $sendToSource
 	 */
 	public static function broadcastCommandMessage(CommandSender $source, $message, bool $sendToSource = true){

@@ -627,9 +627,11 @@ abstract class Living extends Entity implements Damageable{
 				if($effect->canTick()){
 					$effect->applyEffect($this);
 				}
-				$effect->setDuration($effect->getDuration() - $tickDiff);
-				if($effect->getDuration() <= 0){
+				$Duration = $effect->getDuration() - $tickDiff;
+				if($Duration <= 0){
 					$this->removeEffect($effect->getId());
+				}else{
+					$effect->setDuration($Duration);
 				}
 			}
 		}

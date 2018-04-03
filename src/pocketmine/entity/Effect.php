@@ -30,6 +30,7 @@ use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 
 class Effect{
@@ -179,8 +180,9 @@ class Effect{
 	 * @return $this
 	 */
 	public function setDuration(int $ticks){
-		if($ticks < 0 or $ticks > INT32_MAX){
-			throw new \InvalidArgumentException("Effect duration must be in range of 0 - " . INT32_MAX);
+		if($ticks < 0 or $ticks > 2147483647){
+			throw new \InvalidArgumentException("Effect duration must be in range of 0 - " . 2147483647);
+			var_dump($ticks);
 		}
 		$this->duration = $ticks;
 		return $this;
@@ -335,7 +337,7 @@ class Effect{
 	public function applyEffect(Entity $entity){
 		switch($this->id){
 			case Effect::POISON:
-				if($entity->getHealth() > 1){
+				if($entity->getHealth() > 2){
 					$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
 					$entity->attack($ev);
 				}
@@ -399,7 +401,8 @@ class Effect{
 	 * @param Effect|null $oldEffect
 	 */
 	public function add(Entity $entity, Effect $oldEffect = null){
-		$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectAddEvent($entity, $this, $oldEffect));
+		//$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectAddEvent($entity, $this, $oldEffect));
+		Server::getInstance()->getPluginManager()->callEvent($ev = new EntityEffectAddEvent($entity, $this, $oldEffect));
 		if($ev->isCancelled()){
 			return;
 		}
@@ -457,7 +460,8 @@ class Effect{
 	 * @param bool   $send
 	 */
 	public function remove(Entity $entity, bool $send = true){
-		$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectRemoveEvent($entity, $this));
+		//$entity->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityEffectRemoveEvent($entity, $this));
+		Server::getInstance()->getPluginManager()->callEvent($ev = new EntityEffectRemoveEvent($entity, $this));
 		if($ev->isCancelled()){
 			return;
 		}

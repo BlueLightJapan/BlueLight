@@ -1756,27 +1756,33 @@ class Level implements ChunkManager, Metadatable{
 			if($this->checkSpawnProtection($player, $blockClicked)){
 				$ev->setCancelled(); //set it to cancelled so plugins can bypass this
 			}
-			$onActivate = $blockClicked->onActivate($item, $player);
-			if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
-				$canPlace = false;
-				$tag = $item->getNamedTagEntry("CanPlaceOn");
-				if($tag instanceof ListTag){
-					foreach($tag as $v){
-						if($v instanceof StringTag){
-							$entry = ItemFactory::fromString($v->getValue());
-							if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $blockClicked->getId()){
-								$canPlace = true;
-								break;
+			
+			$this->server->getPluginManager()->callEvent($ev);
+			if(!$ev->isCancelled()){
+				$onActivate = $blockClicked->onActivate($item, $player);
+				if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
+					
+					$canPlace = false;
+					$tag = $item->getNamedTagEntry("CanPlaceOn");
+					if($tag instanceof ListTag){
+						foreach($tag as $v){
+							if($v instanceof StringTag){
+								$entry = ItemFactory::fromString($v->getValue());
+								if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $blockClicked->getId()){
+									$canPlace = true;
+									
+									break;
+								}
 							}
 						}
 					}
+					//$ev->setCancelled(!$canPlace);
+					if(!$canPlace){
+						return false;
+					}
 				}
 
-				$ev->setCancelled(!$canPlace);
-			}
-
-			$this->server->getPluginManager()->callEvent($ev);
-			if(!$ev->isCancelled()){
+			//if(!$ev->isCancelled()){
 				$blockClicked->onUpdate(self::BLOCK_UPDATE_TOUCH);
 				if(!$player->isSneaking() and $onActivate === true){
 					return true;
