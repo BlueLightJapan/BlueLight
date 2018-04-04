@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,7 +17,6 @@
  *
  *
 */
-
 declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
@@ -27,24 +25,32 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class SimpleEventPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::SIMPLE_EVENT_PACKET;
-
-	const TYPE_ENABLE_COMMANDS = 1;
-	const TYPE_DISABLE_COMMANDS = 2;
-
+class LabTablePacket extends DataPacket{
+	const NETWORK_ID = ProtocolInfo::LAB_TABLE_PACKET;
 	/** @var int */
-	public $eventType;
-
+	public $uselessByte; //0 for client -> server, 1 for server -> client. Seems useless.
+	/** @var int */
+	public $x;
+	/** @var int */
+	public $y;
+	/** @var int */
+	public $z;
+	/** @var int */
+	public $reactionType;
+	
 	protected function decodePayload(){
-		$this->eventType = $this->getLShort();
+		$this->uselessByte = $this->getByte();
+		$this->getSignedBlockPosition($this->x, $this->y, $this->z);
+		$this->reactionType = $this->getByte();
 	}
-
+	
 	protected function encodePayload(){
-		$this->putLShort($this->eventType);
+		$this->putByte($this->uselessByte);
+		$this->putSignedBlockPosition($this->x, $this->y, $this->z);
+		$this->putByte($this->reactionType);
 	}
-
+	
 	public function handle(NetworkSession $session) : bool{
-		return $session->handleSimpleEvent($this);
+		return $session->handleLabTable($this);
 	}
 }

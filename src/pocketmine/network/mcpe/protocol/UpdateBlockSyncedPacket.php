@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,7 +17,6 @@
  *
  *
 */
-
 declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
@@ -27,24 +25,23 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class SimpleEventPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::SIMPLE_EVENT_PACKET;
-
-	const TYPE_ENABLE_COMMANDS = 1;
-	const TYPE_DISABLE_COMMANDS = 2;
-
+class UpdateBlockSyncedPacket extends UpdateBlockPacket{
+	const NETWORK_ID = ProtocolInfo::UPDATE_BLOCK_SYNCED_PACKET;
 	/** @var int */
-	public $eventType;
-
+	protected $uvarint64_1 = 0;
+	/** @var int */
+	protected $uvarint64_2 = 0;
 	protected function decodePayload(){
-		$this->eventType = $this->getLShort();
+		parent::decodePayload();
+		$this->uvarint64_1 = $this->getUnsignedVarLong();
+		$this->uvarint64_2 = $this->getUnsignedVarLong();
 	}
-
 	protected function encodePayload(){
-		$this->putLShort($this->eventType);
+		parent::encodePayload();
+		$this->putUnsignedVarLong($this->uvarint64_1);
+		$this->putUnsignedVarLong($this->uvarint64_2);
 	}
-
 	public function handle(NetworkSession $session) : bool{
-		return $session->handleSimpleEvent($this);
+		return $session->handleUpdateBlockSynced($this);
 	}
 }

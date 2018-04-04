@@ -130,6 +130,13 @@ use pocketmine\network\mcpe\protocol\UpdateEquipPacket;
 use pocketmine\network\mcpe\protocol\UpdateTradePacket;
 use pocketmine\network\mcpe\protocol\WSConnectPacket;
 
+use pocketmine\network\mcpe\protocol\LabTablePacket;
+use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
+use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
+use pocketmine\network\mcpe\protocol\SetScorePacket;
+use pocketmine\network\mcpe\protocol\UpdateBlockSyncedPacket;
+
+
 abstract class NetworkSession{
 
 	abstract public function handleDataPacket(DataPacket $packet);
@@ -553,5 +560,21 @@ abstract class NetworkSession{
 	public function handleSetDefaultGameType(SetDefaultGameTypePacket $packet) : bool{
 		return false;
 	}
+	public function handleRemoveObjective(RemoveObjectivePacket $packet) : bool{
+		return false;
+	}
+	public function handleSetDisplayObjective(SetDisplayObjectivePacket $packet) : bool{
+		return false;
+	}
+	public function handleSetScore(SetScorePacket $packet) : bool{
+		return false;
+	}
+	public function handleLabTable(LabTablePacket $packet) : bool{
+		return false;
+	}
+	public function handleUpdateBlockSynced(UpdateBlockSyncedPacket $packet) : bool{
+		return false;
+	}
+
 
 }

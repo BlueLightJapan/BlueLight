@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,17 +17,30 @@
  *
  *
 */
-
 declare(strict_types=1);
 
-namespace pocketmine\level\particle;
+namespace pocketmine\network\mcpe\protocol;
 
-use pocketmine\block\Block;
-use pocketmine\math\Vector3;
-use pocketmine\block\BlockFactory;
+#include <rules/DataPacket.h>
 
-class TerrainParticle extends GenericParticle{
-	public function __construct(Vector3 $pos, Block $b){
-		parent::__construct($pos, Particle::TYPE_TERRAIN, BlockFactory::toStaticRuntimeId($b->getId(), $b->getDamage()));
+use pocketmine\network\mcpe\NetworkSession;
+
+class RemoveObjectivePacket extends DataPacket{
+
+	const NETWORK_ID = ProtocolInfo::REMOVE_OBJECTIVE_PACKET;
+
+	/** @var string */
+	public $objectiveName;
+
+	protected function decodePayload(){
+		$this->objectiveName = $this->getString();
+	}
+
+	protected function encodePayload(){
+		$this->putString($this->objectiveName);
+	}
+
+	public function handle(NetworkSession $session) : bool{
+		return $session->handleRemoveObjective($this);
 	}
 }

@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,7 +17,6 @@
  *
  *
 */
-
 declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
@@ -27,24 +25,37 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class SimpleEventPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::SIMPLE_EVENT_PACKET;
+class SetDisplayObjectivePacket extends DataPacket{
 
-	const TYPE_ENABLE_COMMANDS = 1;
-	const TYPE_DISABLE_COMMANDS = 2;
-
+	const NETWORK_ID = ProtocolInfo::SET_DISPLAY_OBJECTIVE_PACKET;
+	/** @var string */
+	public $displaySlot;
+	/** @var string */
+	public $objectiveName;
+	/** @var string */
+	public $displayName;
+	/** @var string */
+	public $criteriaName;
 	/** @var int */
-	public $eventType;
+	public $sortOrder;
 
 	protected function decodePayload(){
-		$this->eventType = $this->getLShort();
+		$this->displaySlot = $this->getString();
+		$this->objectiveName = $this->getString();
+		$this->displayName = $this->getString();
+		$this->criteriaName = $this->getString();
+		$this->sortOrder = $this->getVarInt();
 	}
 
 	protected function encodePayload(){
-		$this->putLShort($this->eventType);
+		$this->putString($this->displaySlot);
+		$this->putString($this->objectiveName);
+		$this->putString($this->displayName);
+		$this->putString($this->criteriaName);
+		$this->putVarInt($this->sortOrder);
 	}
 
 	public function handle(NetworkSession $session) : bool{
-		return $session->handleSimpleEvent($this);
+		return $session->handleSetDisplayObjective($this);
 	}
 }

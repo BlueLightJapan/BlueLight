@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,7 +17,6 @@
  *
  *
 */
-
 declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
@@ -27,24 +25,40 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 
-class SimpleEventPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::SIMPLE_EVENT_PACKET;
+use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 
-	const TYPE_ENABLE_COMMANDS = 1;
-	const TYPE_DISABLE_COMMANDS = 2;
+class SetScorePacket extends DataPacket{
+
+	const NETWORK_ID = ProtocolInfo::SET_SCORE_PACKET;
+	const TYPE_MODIFY_SCORE = 0;
+	const TYPE_RESET_SCORE = 1;
 
 	/** @var int */
-	public $eventType;
+	public $type;
+	/** @var ScorePacketEntry[] */
+	public $entries = [];
 
 	protected function decodePayload(){
-		$this->eventType = $this->getLShort();
+		$this->type = $this->getByte();
+		for($i = 0, $i2 = $this->getUnsignedVarInt(); $i < $i2; ++$i){
+			$entry = new ScorePacketEntry();
+			$entry->uuid = $this->getUUID();
+			$entry->objectiveName = $this->getString();
+			$entry->score = $this->getLInt();
+		}
 	}
 
 	protected function encodePayload(){
-		$this->putLShort($this->eventType);
+		$this->putByte($this->type);
+		$this->putUnsignedVarInt(count($this->entries));
+		foreach($this->entries as $entry){
+			$this->putUUID($entry->uuid);
+			$this->putString($entry->objectiveName);
+			$this->putLInt($entry->score);
+		}
 	}
 
 	public function handle(NetworkSession $session) : bool{
-		return $session->handleSimpleEvent($this);
+		return $session->handleSetScore($this);
 	}
 }

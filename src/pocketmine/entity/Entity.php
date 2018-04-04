@@ -115,61 +115,58 @@ abstract class Entity extends Location implements Metadatable{
 	//TODO: add more properties
 
 	const DATA_ENDERMAN_HELD_ITEM_ID = 23; //short
-	const DATA_ENDERMAN_HELD_ITEM_DAMAGE = 24; //short
-	const DATA_ENTITY_AGE = 25; //short
-
-	/* 27 (byte) player-specific flags
-	 * 28 (int) player "index"?
-	 * 29 (block coords) bed position */
-	const DATA_FIREBALL_POWER_X = 30; //float
-	const DATA_FIREBALL_POWER_Y = 31;
-	const DATA_FIREBALL_POWER_Z = 32;
-	/* 33 (unknown)
+	const DATA_ENTITY_AGE = 24; //short
+	/* 26 (byte) player-specific flags
+	 * 27 (int) player "index"?
+	 * 28 (block coords) bed position */
+	const DATA_FIREBALL_POWER_X = 29; //float
+	const DATA_FIREBALL_POWER_Y = 30;
+	const DATA_FIREBALL_POWER_Z = 31;
+	/* 32 (unknown)
+	 * 33 (float) fishing bobber
 	 * 34 (float) fishing bobber
-	 * 35 (float) fishing bobber
-	 * 36 (float) fishing bobber */
-	const DATA_POTION_AUX_VALUE = 37; //short
-	const DATA_LEAD_HOLDER_EID = 38; //long
-	const DATA_SCALE = 39; //float
-	const DATA_INTERACTIVE_TAG = 40; //string (button text)
-	const DATA_NPC_SKIN_ID = 41; //string
-	const DATA_URL_TAG = 42; //string
-	const DATA_MAX_AIR = 43; //short
-	const DATA_MARK_VARIANT = 44; //int
-	/* 45 (byte) container stuff
-	 * 46 (int) container stuff
-	 * 47 (int) container stuff */
-	const DATA_BLOCK_TARGET = 48; //block coords (ender crystal)
-	const DATA_WITHER_INVULNERABLE_TICKS = 49; //int
-	const DATA_WITHER_TARGET_1 = 50; //long
-	const DATA_WITHER_TARGET_2 = 51; //long
-	const DATA_WITHER_TARGET_3 = 52; //long
-	/* 53 (short) */
-	const DATA_BOUNDING_BOX_WIDTH = 54; //float
-	const DATA_BOUNDING_BOX_HEIGHT = 55; //float
-	const DATA_FUSE_LENGTH = 56; //int
-	const DATA_RIDER_SEAT_POSITION = 57, DATA_RIDE_POSITION = 57; //vector3f
-	const DATA_RIDER_ROTATION_LOCKED = 58; //byte
-	const DATA_RIDER_MAX_ROTATION = 59; //float
-	const DATA_RIDER_MIN_ROTATION = 60; //float
-	const DATA_AREA_EFFECT_CLOUD_RADIUS = 61; //float
-	const DATA_AREA_EFFECT_CLOUD_WAITING = 62; //int
-	const DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 63; //int
-	/* 64 (int) shulker-related */
-	const DATA_SHULKER_ATTACH_FACE = 65; //byte
-	/* 66 (short) shulker-related */
-	const DATA_SHULKER_ATTACH_POS = 67; //block coords
-	const DATA_TRADING_PLAYER_EID = 68; //long
-
-	/* 70 (byte) command-block */
-	const DATA_COMMAND_BLOCK_COMMAND = 71; //string
-	const DATA_COMMAND_BLOCK_LAST_OUTPUT = 72; //string
-	const DATA_COMMAND_BLOCK_TRACK_OUTPUT = 73; //byte
-	const DATA_CONTROLLING_RIDER_SEAT_NUMBER = 74; //byte
-	const DATA_STRENGTH = 75; //int
-	const DATA_MAX_STRENGTH = 76; //int
-	/* 77 (int)
-	 * 78 (int) */
+	 * 35 (float) fishing bobber */
+	const DATA_POTION_AUX_VALUE = 36; //short
+	const DATA_LEAD_HOLDER_EID = 37; //long
+	const DATA_SCALE = 38; //float
+	const DATA_INTERACTIVE_TAG = 39; //string (button text)
+	const DATA_NPC_SKIN_ID = 40; //string
+	const DATA_URL_TAG = 41; //string
+	const DATA_MAX_AIR = 42; //short
+	const DATA_MARK_VARIANT = 43; //int
+	/* 44 (byte) container stuff
+	 * 45 (int) container stuff
+	 * 46 (int) container stuff */
+	const DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
+	const DATA_WITHER_INVULNERABLE_TICKS = 48; //int
+	const DATA_WITHER_TARGET_1 = 49; //long
+	const DATA_WITHER_TARGET_2 = 50; //long
+	const DATA_WITHER_TARGET_3 = 51; //long
+	/* 52 (short) */
+	const DATA_BOUNDING_BOX_WIDTH = 53; //float
+	const DATA_BOUNDING_BOX_HEIGHT = 54; //float
+	const DATA_FUSE_LENGTH = 55; //int
+	const DATA_RIDER_SEAT_POSITION = 56; //vector3f
+	const DATA_RIDER_ROTATION_LOCKED = 57; //byte
+	const DATA_RIDER_MAX_ROTATION = 58; //float
+	const DATA_RIDER_MIN_ROTATION = 59; //float
+	const DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
+	const DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
+	const DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
+	/* 63 (int) shulker-related */
+	const DATA_SHULKER_ATTACH_FACE = 64; //byte
+	/* 65 (short) shulker-related */
+	const DATA_SHULKER_ATTACH_POS = 66; //block coords
+	const DATA_TRADING_PLAYER_EID = 67; //long
+	/* 69 (byte) command-block */
+	const DATA_COMMAND_BLOCK_COMMAND = 70; //string
+	const DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
+	const DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
+	const DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
+	const DATA_STRENGTH = 74; //int
+	const DATA_MAX_STRENGTH = 75; //int
+	/* 76 (int)
+	 * 77 (int) */
 
 
 	const DATA_FLAG_ONFIRE = 0;
@@ -194,33 +191,35 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FLAG_CAN_CLIMB = 19;
 	const DATA_FLAG_SWIMMER = 20;
 	const DATA_FLAG_CAN_FLY = 21;
-	const DATA_FLAG_RESTING = 22;
-	const DATA_FLAG_SITTING = 23;
-	const DATA_FLAG_ANGRY = 24;
-	const DATA_FLAG_INTERESTED = 25;
-	const DATA_FLAG_CHARGED = 26;
-	const DATA_FLAG_TAMED = 27;
-	const DATA_FLAG_LEASHED = 28;
-	const DATA_FLAG_SHEARED = 29;
-	const DATA_FLAG_GLIDING = 30;
-	const DATA_FLAG_ELDER = 31;
-	const DATA_FLAG_MOVING = 32;
-	const DATA_FLAG_BREATHING = 33;
-	const DATA_FLAG_CHESTED = 34;
-	const DATA_FLAG_STACKABLE = 35;
-	const DATA_FLAG_SHOWBASE = 36;
-	const DATA_FLAG_REARING = 37;
-	const DATA_FLAG_VIBRATING = 38;
-	const DATA_FLAG_IDLING = 39;
-	const DATA_FLAG_EVOKER_SPELL = 40;
-	const DATA_FLAG_CHARGE_ATTACK = 41;
-	const DATA_FLAG_WASD_CONTROLLED = 42;
-	const DATA_FLAG_CAN_POWER_JUMP = 43;
-	const DATA_FLAG_LINGER = 44;
-	const DATA_FLAG_HAS_COLLISION = 45;
-	const DATA_FLAG_AFFECTED_BY_GRAVITY = 46;
-	const DATA_FLAG_FIRE_IMMUNE = 47;
-	const DATA_FLAG_DANCING = 48;
+	const DATA_FLAG_WALKER = 22;
+	const DATA_FLAG_RESTING = 23;
+	const DATA_FLAG_SITTING = 24;
+	const DATA_FLAG_ANGRY = 25;
+	const DATA_FLAG_INTERESTED = 26;
+	const DATA_FLAG_CHARGED = 27;
+	const DATA_FLAG_TAMED = 28;
+	const DATA_FLAG_LEASHED = 29;
+	const DATA_FLAG_SHEARED = 30;
+	const DATA_FLAG_GLIDING = 31;
+	const DATA_FLAG_ELDER = 32;
+	const DATA_FLAG_MOVING = 33;
+	const DATA_FLAG_BREATHING = 34;
+	const DATA_FLAG_CHESTED = 35;
+	const DATA_FLAG_STACKABLE = 36;
+	const DATA_FLAG_SHOWBASE = 37;
+	const DATA_FLAG_REARING = 38;
+	const DATA_FLAG_VIBRATING = 39;
+	const DATA_FLAG_IDLING = 40;
+	const DATA_FLAG_EVOKER_SPELL = 41;
+	const DATA_FLAG_CHARGE_ATTACK = 42;
+	const DATA_FLAG_WASD_CONTROLLED = 43;
+	const DATA_FLAG_CAN_POWER_JUMP = 44;
+	const DATA_FLAG_LINGER = 45;
+	const DATA_FLAG_HAS_COLLISION = 46;
+	const DATA_FLAG_AFFECTED_BY_GRAVITY = 47;
+	const DATA_FLAG_FIRE_IMMUNE = 48;
+	const DATA_FLAG_DANCING = 49;
+	const DATA_FLAG_ENCHANTED = 50;
 
 	public static $entityCount = 1;
 	/** @var Entity[] */

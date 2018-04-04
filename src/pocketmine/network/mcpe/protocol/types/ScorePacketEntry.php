@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,17 +17,17 @@
  *
  *
 */
-
 declare(strict_types=1);
 
-namespace pocketmine\level\particle;
+namespace pocketmine\network\mcpe\protocol\types;
 
-use pocketmine\block\Block;
-use pocketmine\math\Vector3;
-use pocketmine\block\BlockFactory;
+use pocketmine\utils\UUID;
 
-class TerrainParticle extends GenericParticle{
-	public function __construct(Vector3 $pos, Block $b){
-		parent::__construct($pos, Particle::TYPE_TERRAIN, BlockFactory::toStaticRuntimeId($b->getId(), $b->getDamage()));
-	}
+class ScorePacketEntry{
+	/** @var UUID */
+	public $uuid;
+	/** @var string */
+	public $objectiveName;
+	/** @var int */
+	public $score;
 }
