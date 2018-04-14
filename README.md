@@ -1,7 +1,5 @@
 ﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-
-# He may maintains BlueLight https://github.com/wakame0731/BlueLight
 # BlueLight for 1.2.10
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
