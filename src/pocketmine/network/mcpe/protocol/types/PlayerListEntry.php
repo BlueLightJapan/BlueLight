@@ -46,17 +46,6 @@ class PlayerListEntry{
 		$entry->uuid = $uuid;
 		return $entry;
 	}
-	/*public static function createAdditionEntry(UUID $uuid, int $entityUniqueId, string $username, string $thirdPartyName, int $platform, Skin $skin, string $xboxUserId = "") : PlayerListEntry{
-		$entry = new PlayerListEntry();
-		$entry->uuid = $uuid;
-		$entry->entityUniqueId = $entityUniqueId;
-		$entry->username = $username;
-		$entry->thirdPartyName = $thirdPartyName;
-		$entry->platform = $platform;
-		$entry->skin = $skin;
-		$entry->xboxUserId = $xboxUserId;
-		return $entry;
-	}*/
 public static function createAdditionEntry(
 		UUID $uuid,
 		int $entityUniqueId,
