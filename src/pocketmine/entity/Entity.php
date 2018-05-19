@@ -134,11 +134,9 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_URL_TAG = 41; //string
 	const DATA_MAX_AIR = 42; //short
 	const DATA_MARK_VARIANT = 43; //int
-	
 	const DATA_CONTAINER_TYPE = 44; //byte (ContainerComponent)
 	const DATA_CONTAINER_BASE_SIZE = 45; //int (ContainerComponent)
 	const DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 46; //int (used for llamas, inventory size is baseSize + thisProp * strength)
-	
 	const DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
 	const DATA_WITHER_INVULNERABLE_TICKS = 48; //int
 	const DATA_WITHER_TARGET_1 = 49; //long
