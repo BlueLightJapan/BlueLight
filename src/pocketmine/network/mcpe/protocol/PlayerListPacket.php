@@ -1,23 +1,24 @@
 <?php
 
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ *               _ _
+ *         /\   | | |
+ *        /  \  | | |_ __ _ _   _
+ *       / /\ \ | | __/ _` | | | |
+ *      / ____ \| | || (_| | |_| |
+ *     /_/    \_|_|\__\__,_|\__, |
+ *                           __/ |
+ *                          |___/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author TuranicTeam
+ * @link https://github.com/TuranicTeam/Altay
  *
- *
-*/
+ */
 
 declare(strict_types=1);
 
@@ -26,14 +27,15 @@ namespace pocketmine\network\mcpe\protocol;
 #include <rules/DataPacket.h>
 
 
+use pocketmine\entity\Skin;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\PlayerListEntry;
 
 class PlayerListPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::PLAYER_LIST_PACKET;
+	public const NETWORK_ID = ProtocolInfo::PLAYER_LIST_PACKET;
 
-	const TYPE_ADD = 0;
-	const TYPE_REMOVE = 1;
+	public const TYPE_ADD = 0;
+	public const TYPE_REMOVE = 1;
 
 	/** @var PlayerListEntry[] */
 	public $entries = [];
@@ -55,12 +57,24 @@ class PlayerListPacket extends DataPacket{
 				$entry->uuid = $this->getUUID();
 				$entry->entityUniqueId = $this->getEntityUniqueId();
 				$entry->username = $this->getString();
-				$entry->skinId = $this->getString();
-				$entry->skinData = $this->getString();
-				$entry->capeData = $this->getString();
-				$entry->geometryModel = $this->getString();
-				$entry->geometryData = $this->getString();
+				$entry->thirdPartyName = $this->getString();
+				$entry->platform = $this->getVarInt();
+
+				$skinId = $this->getString();
+				$skinData = $this->getString();
+				$capeData = $this->getString();
+				$geometryName = $this->getString();
+				$geometryData = $this->getString();
+
+				$entry->skin = new Skin(
+					$skinId,
+					$skinData,
+					$capeData,
+					$geometryName,
+					$geometryData
+				);
 				$entry->xboxUserId = $this->getString();
+				$this->getString(); //unknown
 			}else{
 				$entry->uuid = $this->getUUID();
 			}
@@ -77,12 +91,15 @@ class PlayerListPacket extends DataPacket{
 				$this->putUUID($entry->uuid);
 				$this->putEntityUniqueId($entry->entityUniqueId);
 				$this->putString($entry->username);
-				$this->putString($entry->skinId);
-				$this->putString($entry->skinData);
-				$this->putString($entry->capeData);
-				$this->putString($entry->geometryModel);
-				$this->putString($entry->geometryData);
+				$this->putString($entry->thirdPartyName);
+				$this->putVarInt($entry->platform);
+				$this->putString($entry->skin->getSkinId());
+				$this->putString($entry->skin->getSkinData());
+				$this->putString($entry->skin->getCapeData());
+				$this->putString($entry->skin->getGeometryName());
+				$this->putString($entry->skin->getGeometryData());
 				$this->putString($entry->xboxUserId);
+				$this->putString("");
 			}else{
 				$this->putUUID($entry->uuid);
 			}

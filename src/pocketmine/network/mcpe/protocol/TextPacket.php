@@ -1,23 +1,24 @@
 <?php
 
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ *               _ _
+ *         /\   | | |
+ *        /  \  | | |_ __ _ _   _
+ *       / /\ \ | | __/ _` | | | |
+ *      / ____ \| | || (_| | |_| |
+ *     /_/    \_|_|\__\__,_|\__, |
+ *                           __/ |
+ *                          |___/
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author TuranicTeam
+ * @link https://github.com/TuranicTeam/Altay
  *
- *
-*/
+ */
 
 declare(strict_types=1);
 
@@ -29,30 +30,36 @@ namespace pocketmine\network\mcpe\protocol;
 use pocketmine\network\mcpe\NetworkSession;
 
 class TextPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::TEXT_PACKET;
+	public const NETWORK_ID = ProtocolInfo::TEXT_PACKET;
 
-	const TYPE_RAW = 0;
-	const TYPE_CHAT = 1;
-	const TYPE_TRANSLATION = 2;
-	const TYPE_POPUP = 3;
-	const TYPE_JUKEBOX_POPUP = 4;
-	const TYPE_TIP = 5;
-	const TYPE_SYSTEM = 6;
-	const TYPE_WHISPER = 7;
-	const TYPE_ANNOUNCEMENT = 8;
+	public const TYPE_RAW = 0;
+	public const TYPE_CHAT = 1;
+	public const TYPE_TRANSLATION = 2;
+	public const TYPE_POPUP = 3;
+	public const TYPE_JUKEBOX_POPUP = 4;
+	public const TYPE_TIP = 5;
+	public const TYPE_SYSTEM = 6;
+	public const TYPE_WHISPER = 7;
+	public const TYPE_ANNOUNCEMENT = 8;
 
 	/** @var int */
 	public $type;
 	/** @var bool */
 	public $needsTranslation = false;
 	/** @var string */
-	public $source;
+	public $sourceName;
+	/** @var string */
+	public $sourceThirdPartyName = "";
+	/** @var int */
+	public $sourcePlatform = 0;
 	/** @var string */
 	public $message;
 	/** @var string[] */
 	public $parameters = [];
 	/** @var string */
 	public $xboxUserId = "";
+	/** @var string */
+	public $platformChatId = "";
 
 	protected function decodePayload(){
 		$this->type = $this->getByte();
@@ -62,7 +69,9 @@ class TextPacket extends DataPacket{
 			case self::TYPE_WHISPER:
 			/** @noinspection PhpMissingBreakStatementInspection */
 			case self::TYPE_ANNOUNCEMENT:
-				$this->source = $this->getString();
+				$this->sourceName = $this->getString();
+				$this->sourceThirdPartyName = $this->getString();
+				$this->sourcePlatform = $this->getVarInt();
 			case self::TYPE_RAW:
 			case self::TYPE_TIP:
 			case self::TYPE_SYSTEM:
@@ -81,6 +90,7 @@ class TextPacket extends DataPacket{
 		}
 
 		$this->xboxUserId = $this->getString();
+		$this->platformChatId = $this->getString();
 	}
 
 	protected function encodePayload(){
@@ -91,7 +101,9 @@ class TextPacket extends DataPacket{
 			case self::TYPE_WHISPER:
 			/** @noinspection PhpMissingBreakStatementInspection */
 			case self::TYPE_ANNOUNCEMENT:
-				$this->putString($this->source);
+				$this->putString($this->sourceName);
+				$this->putString($this->sourceThirdPartyName);
+				$this->putVarInt($this->sourcePlatform);
 			case self::TYPE_RAW:
 			case self::TYPE_TIP:
 			case self::TYPE_SYSTEM:
@@ -110,6 +122,7 @@ class TextPacket extends DataPacket{
 		}
 
 		$this->putString($this->xboxUserId);
+		$this->putString($this->platformChatId);
 	}
 
 	public function handle(NetworkSession $session) : bool{
