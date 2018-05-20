@@ -32,39 +32,33 @@ class AvailableCommandsPacket extends DataPacket{
 
 
 	/**
-	 * This flag is set on all types EXCEPT the TEMPLATE type. Not completely sure what this is for, but it is required
+	 * This flag is set on all types EXCEPT the POSTFIX type. Not completely sure what this is for, but it is required
 	 * for the argtype to work correctly. VALID seems as good a name as any.
 	 */
 	const ARG_FLAG_VALID = 0x100000;
-
 	/**
 	 * Basic parameter types. These must be combined with the ARG_FLAG_VALID constant.
 	 * ARG_FLAG_VALID | (type const)
 	 */
-	const ARG_TYPE_INT      = 0x01;
-	const ARG_TYPE_FLOAT    = 0x02;
-	const ARG_TYPE_VALUE    = 0x03;
-	const ARG_TYPE_TARGET   = 0x04;
-
-	const ARG_TYPE_STRING   = 0x0d;
-	const ARG_TYPE_POSITION = 0x0e;
-
-	const ARG_TYPE_RAWTEXT  = 0x11;
-
-	const ARG_TYPE_TEXT     = 0x13;
-
-	const ARG_TYPE_JSON     = 0x16;
-
-	const ARG_TYPE_COMMAND  = 0x1d;
-
+	const ARG_TYPE_INT             = 0x01;
+	const ARG_TYPE_FLOAT           = 0x02;
+	const ARG_TYPE_VALUE           = 0x03;
+	const ARG_TYPE_WILDCARD_INT    = 0x04;
+	const ARG_TYPE_TARGET          = 0x05;
+	const ARG_TYPE_WILDCARD_TARGET = 0x06;
+	const ARG_TYPE_STRING   = 0x0f;
+	const ARG_TYPE_POSITION = 0x10;
+	const ARG_TYPE_MESSAGE  = 0x13;
+	const ARG_TYPE_RAWTEXT  = 0x15;
+	const ARG_TYPE_JSON     = 0x18;
+	const ARG_TYPE_COMMAND  = 0x1f;
 	/**
 	 * Enums are a little different: they are composed as follows:
 	 * ARG_FLAG_ENUM | ARG_FLAG_VALID | (enum index)
 	 */
 	const ARG_FLAG_ENUM = 0x200000;
-
 	/**
-	 * This is used for for /xp <level: int>L.
+	 * This is used for /xp <level: int>L. It can only be applied to integer parameters.
 	 */
 	const ARG_FLAG_POSTFIX = 0x1000000;
 
@@ -188,9 +182,9 @@ class AvailableCommandsPacket extends DataPacket{
 					return "string";
 				case self::ARG_TYPE_POSITION:
 					return "xyz";
+				case self::ARG_TYPE_MESSAGE:
+					return "message";
 				case self::ARG_TYPE_RAWTEXT:
-					return "rawtext";
-				case self::ARG_TYPE_TEXT:
 					return "text";
 				case self::ARG_TYPE_JSON:
 					return "json";
