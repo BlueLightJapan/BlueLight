@@ -115,16 +115,16 @@ abstract class Entity extends Location implements Metadatable{
 	//TODO: add more properties
 
 	const DATA_ENDERMAN_HELD_ITEM_ID = 23; //short
-	const DATA_ENDERMAN_HELD_ITEM_DAMAGE = 24; //short
-	const DATA_ENTITY_AGE = 25; //short
+	 const DATA_ENTITY_AGE = 24; //short
 
-	/* 27 (byte) player-specific flags
-	 * 28 (int) player "index"?
-	 * 29 (block coords) bed position */
-	const DATA_FIREBALL_POWER_X = 30; //float
-	const DATA_FIREBALL_POWER_Y = 31;
-	const DATA_FIREBALL_POWER_Z = 32;
-	/* 33 (unknown)
+	/* 26 (byte) player-specific flags
+	 * 27 (int) player "index"?
+	 * 28 (block coords) bed position */
+	 const DATA_FIREBALL_POWER_X = 29; //float
+	 const DATA_FIREBALL_POWER_Y = 30;
+	 const DATA_FIREBALL_POWER_Z = 31;
+	/* 32 (unknown)
+	 * 33 (float) fishing bobber
 	 * 34 (float) fishing bobber
 	 * 35 (float) fishing bobber
 	 * 36 (float) fishing bobber */

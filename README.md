@@ -1,6 +1,6 @@
 ﻿![BlueLight](https://github.com/BlueLightJapan/BlueLight/blob/master/logo.jpg)</br>
 
-# BlueLight for 1.2.10
+# BlueLight for 1.4.1
 ## Select Language: [English](#ENG) [日本語](#JPN)
 
 ## if you want a updated version go to https://github.com/BlueLightDutch/BlueLight

@@ -26,37 +26,23 @@ namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
-
 use pocketmine\network\mcpe\NetworkSession;
 
-class PlayerInputPacket extends DataPacket{
-	public const NETWORK_ID = ProtocolInfo::PLAYER_INPUT_PACKET;
+class RemoveObjectivePacket extends DataPacket{
+	public const NETWORK_ID = ProtocolInfo::REMOVE_OBJECTIVE_PACKET;
 
-	/** @var float */
-	public $motionX;
-	/** @var float */
-	public $motionY;
-	/** @var bool */
-	public $jumping;
-	/** @var bool */
-	public $sneaking;
+	/** @var string */
+	public $objectiveName;
 
 	protected function decodePayload(){
-		$this->motionX = $this->getLFloat();
-		$this->motionY = $this->getLFloat();
-		$this->jumping = $this->getBool();
-		$this->sneaking = $this->getBool();
+		$this->objectiveName = $this->getString();
 	}
 
 	protected function encodePayload(){
-		$this->putLFloat($this->motionX);
-		$this->putLFloat($this->motionY);
-		$this->putBool($this->jumping);
-		$this->putBool($this->sneaking);
+		$this->putString($this->objectiveName);
 	}
 
 	public function handle(NetworkSession $session) : bool{
-		return $session->handlePlayerInput($this);
+		return $session->handleRemoveObjective($this);
 	}
-
 }

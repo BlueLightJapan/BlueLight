@@ -26,37 +26,37 @@ namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
-
 use pocketmine\network\mcpe\NetworkSession;
 
-class PlayerInputPacket extends DataPacket{
-	public const NETWORK_ID = ProtocolInfo::PLAYER_INPUT_PACKET;
+class LabTablePacket extends DataPacket{
+	public const NETWORK_ID = ProtocolInfo::LAB_TABLE_PACKET;
 
-	/** @var float */
-	public $motionX;
-	/** @var float */
-	public $motionY;
-	/** @var bool */
-	public $jumping;
-	/** @var bool */
-	public $sneaking;
+	/** @var int */
+	public $uselessByte; //0 for client -> server, 1 for server -> client. Seems useless.
+
+	/** @var int */
+	public $x;
+	/** @var int */
+	public $y;
+	/** @var int */
+	public $z;
+
+	/** @var int */
+	public $reactionType;
 
 	protected function decodePayload(){
-		$this->motionX = $this->getLFloat();
-		$this->motionY = $this->getLFloat();
-		$this->jumping = $this->getBool();
-		$this->sneaking = $this->getBool();
+		$this->uselessByte = $this->getByte();
+		$this->getSignedBlockPosition($this->x, $this->y, $this->z);
+		$this->reactionType = $this->getByte();
 	}
 
 	protected function encodePayload(){
-		$this->putLFloat($this->motionX);
-		$this->putLFloat($this->motionY);
-		$this->putBool($this->jumping);
-		$this->putBool($this->sneaking);
+		$this->putByte($this->uselessByte);
+		$this->putSignedBlockPosition($this->x, $this->y, $this->z);
+		$this->putByte($this->reactionType);
 	}
 
 	public function handle(NetworkSession $session) : bool{
-		return $session->handlePlayerInput($this);
+		return $session->handleLabTable($this);
 	}
-
 }

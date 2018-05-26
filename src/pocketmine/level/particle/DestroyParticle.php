@@ -22,27 +22,26 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol;
+namespace pocketmine\level\particle;
 
-#include <rules/DataPacket.h>
+use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 
-use pocketmine\network\mcpe\NetworkSession;
+class DestroyParticle extends Particle{
+    /** @var int */
+    protected $data;
 
-class WSConnectPacket extends DataPacket{
-	public const NETWORK_ID = ProtocolInfo::W_S_CONNECT_PACKET;
+    public function __construct(Vector3 $pos, int $data){
+        parent::__construct($pos->x, $pos->y, $pos->z);
+        $this->data = $data;
+    }
 
-	/** @var string */
-	public $serverUri;
+    public function encode(){
+        $pk = new LevelEventPacket;
+        $pk->evid = LevelEventPacket::EVENT_PARTICLE_DESTROY;
+        $pk->position = $this->asVector3();
+        $pk->data = $this->data;
 
-	protected function decodePayload(){
-		$this->serverUri = $this->getString();
-	}
-
-	protected function encodePayload(){
-		$this->putString($this->serverUri);
-	}
-
-	public function handle(NetworkSession $session) : bool{
-		return $session->handleWSConnect($this);
-	}
+        return $pk;
+    }
 }
