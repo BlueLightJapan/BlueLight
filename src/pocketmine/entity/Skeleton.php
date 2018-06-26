@@ -106,7 +106,6 @@ class Skeleton extends Monster implements ProjectileSource{
 		$pk->inventorySlot = $pk->hotbarSlot = 0;
 		$pk->windowId = 0;
 		$player->dataPacket($pk);
-		
 	}
 
 	public function setAttackTarget($entitylivingbaseIn){
