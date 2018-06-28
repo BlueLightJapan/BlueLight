@@ -199,7 +199,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	 * @return bool
 	 */
 	public static function isValidSkin(string $skin) : bool{
-		return strlen($skin) === 64 * 64 * 4 or strlen($skin) === 64 * 32 * 4;
+		return strlen($skin) === 64 * 64 * 4 or strlen($skin) === 64 * 32 * 4 or strlen($skin) === 128 * 128 * 4;
 	}
 
 	/** @var SourceInterface */
@@ -688,7 +688,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$this->server->getPluginManager()->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this);
 		}
 
-		$this->sendCommandData();
+		if($this->spawned){
+			$this->sendCommandData();
+		}
 	}
 
 	/**
@@ -2799,7 +2801,12 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				break ;
 			case PlayerActionPacket::ACTION_CONTINUE_BREAK:
 				$block = $this->level->getBlock($pos);
-				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, $block->getId() | ($block->getDamage() << 8) | ($packet->face << 16));
+				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage()) | ($packet->face << 24));
+				break;
+			case PlayerActionPacket::ACTION_START_SWIMMING:
+				break; //TODO
+			case PlayerActionPacket::ACTION_STOP_SWIMMING:
+				//TODO: handle this when it doesn't spam every damn tick (yet another spam bug!!)
 				break;
 			default:
 				$this->server->getLogger()->debug("Unhandled/unknown player action type " . $packet->action . " from " . $this->getName());
@@ -3400,6 +3407,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$pk = new TextPacket();
 		if(!$this->server->isLanguageForced()){
 			$pk->type = TextPacket::TYPE_TRANSLATION;
+			$pk->needsTranslation = true;
 			$pk->message = $this->server->getLanguage()->translateString($message, $parameters, "pocketmine.");
 			foreach($parameters as $i => $p){
 				$parameters[$i] = $this->server->getLanguage()->translateString($p, $parameters, "pocketmine.");
@@ -3441,7 +3449,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public function sendWhisper(string $sender, string $message){
 		$pk = new TextPacket();
 		$pk->type = TextPacket::TYPE_WHISPER;
-		$pk->source = $sender;
+		$pk->sourceName = $sender;
 		$pk->message = $message;
 		$this->dataPacket($pk);
 	}

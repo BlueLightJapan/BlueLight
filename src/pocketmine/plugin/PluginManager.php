@@ -19,8 +19,6 @@
  *
 */
 
-declare(strict_types=1);
-
 namespace pocketmine\plugin;
 
 use pocketmine\command\defaults\TimingsCommand;
@@ -32,10 +30,10 @@ use pocketmine\event\HandlerList;
 use pocketmine\event\Listener;
 use pocketmine\event\Timings;
 use pocketmine\event\TimingsHandler;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\permission\Permissible;
 use pocketmine\permission\Permission;
 use pocketmine\Server;
+use pocketmine\utils\PluginException;
 
 /**
  * Manages all the plugins, Permissions and Permissibles
@@ -107,7 +105,7 @@ class PluginManager{
 	 *
 	 * @return null|Plugin
 	 */
-	public function getPlugin(string $name){
+	public function getPlugin($name){
 		if(isset($this->plugins[$name])){
 			return $this->plugins[$name];
 		}
@@ -118,9 +116,9 @@ class PluginManager{
 	/**
 	 * @param string $loaderName A PluginLoader class name
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
-	public function registerInterface(string $loaderName) : bool{
+	public function registerInterface($loaderName){
 		if(is_subclass_of($loaderName, PluginLoader::class)){
 			$loader = new $loaderName($this->server);
 		}else{
@@ -135,7 +133,7 @@ class PluginManager{
 	/**
 	 * @return Plugin[]
 	 */
-	public function getPlugins() : array{
+	public function getPlugins(){
 		return $this->plugins;
 	}
 
@@ -143,35 +141,23 @@ class PluginManager{
 	 * @param string         $path
 	 * @param PluginLoader[] $loaders
 	 *
-	 * @return Plugin|null
+	 * @return Plugin
 	 */
-	public function loadPlugin(string $path, array $loaders = null){
-		foreach($loaders ?? $this->fileAssociations as $loader){
+	public function loadPlugin($path, $loaders = null){
+		foreach(($loaders === null ? $this->fileAssociations : $loaders) as $loader){
 			if(preg_match($loader->getPluginFilters(), basename($path)) > 0){
 				$description = $loader->getPluginDescription($path);
 				if($description instanceof PluginDescription){
-					try{
-						$description->checkRequiredExtensions();
-					}catch(PluginException $ex){
-						$this->server->getLogger()->error($ex->getMessage());
-						return null;
-					}
+					if(($plugin = $loader->loadPlugin($path)) instanceof Plugin){
+						$this->plugins[$plugin->getDescription()->getName()] = $plugin;
 
-					try{
-						if(($plugin = $loader->loadPlugin($path)) instanceof Plugin){
-							$this->plugins[$plugin->getDescription()->getName()] = $plugin;
+						$pluginCommands = $this->parseYamlCommands($plugin);
 
-							$pluginCommands = $this->parseYamlCommands($plugin);
-
-							if(count($pluginCommands) > 0){
-								$this->commandMap->registerAll($plugin->getDescription()->getName(), $pluginCommands);
-							}
-
-							return $plugin;
+						if(count($pluginCommands) > 0){
+							$this->commandMap->registerAll($plugin->getDescription()->getName(), $pluginCommands);
 						}
-					}catch(\Throwable $e){
-						$this->server->getLogger()->logException($e);
-						return null;
+
+						return $plugin;
 					}
 				}
 			}
@@ -186,7 +172,7 @@ class PluginManager{
 	 *
 	 * @return Plugin[]
 	 */
-	public function loadPlugins(string $directory, array $newLoaders = null){
+	public function loadPlugins($directory, $newLoaders = null){
 
 		if(is_dir($directory)){
 			$plugins = [];
@@ -225,63 +211,11 @@ class PluginManager{
 								continue;
 							}
 
-							$compatible = false;
-							//Check multiple dependencies
-							foreach($description->getCompatibleApis() as $version){
-								//Format: majorVersion.minorVersion.patch (3.0.0)
-								//    or: majorVersion.minorVersion.patch-devBuild (3.0.0-alpha1)
-								if($version !== $this->server->getApiVersion()){
-									$pluginApi = array_pad(explode("-", $version), 2, ""); //0 = version, 1 = suffix (optional)
-									$serverApi = array_pad(explode("-", $this->server->getApiVersion()), 2, "");
-
-									if(strtoupper($pluginApi[1]) !== strtoupper($serverApi[1])){ //Different release phase (alpha vs. beta) or phase build (alpha.1 vs alpha.2)
-										continue;
-									}
-
-									$pluginNumbers = array_map("intval", array_pad(explode(".", $pluginApi[0]), 3, "0")); //plugins might specify API like "3.0" or "3"
-									$serverNumbers = array_map("intval", explode(".", $serverApi[0]));
-
-									if($pluginNumbers[0] !== $serverNumbers[0]){ //Completely different API version
-										continue;
-									}
-
-									if($pluginNumbers[1] > $serverNumbers[1]){ //If the plugin requires new API features, being backwards compatible
-										continue;
-									}
-								}
-
-								$compatible = true;
-								break;
-							}
-
-							if($compatible === false){
-
-								if($this->server->oldApiPluginLoad){
-									$this->server->getLogger()->warning("Load $name of old API plugin");
-								}else{
-									$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
-										$name,
-										$this->server->getLanguage()->translateString("%pocketmine.plugin.incompatibleAPI", [implode(", ", $description->getCompatibleApis())])
-									]));
-									continue;
-								}
-							}
-
-							if(count($pluginMcpeProtocols = $description->getCompatibleMcpeProtocols()) > 0){
-								$serverMcpeProtocols = [ProtocolInfo::CURRENT_PROTOCOL];
-								if(count(array_intersect($pluginMcpeProtocols, $serverMcpeProtocols)) === 0){
-									$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
-										$name,
-										$this->server->getLanguage()->translateString("%pocketmine.plugin.incompatibleProtocol", [implode(", ", $pluginMcpeProtocols)])
-									]));
-									continue;
-								}
-							}
 
 							$plugins[$name] = $file;
 
-							$softDependencies[$name] = $description->getSoftDepend();
-							$dependencies[$name] = $description->getDepend();
+							$softDependencies[$name] = (array) $description->getSoftDepend();
+							$dependencies[$name] = (array) $description->getDepend();
 
 							foreach($description->getLoadBefore() as $before){
 								if(isset($softDependencies[$before])){
@@ -307,12 +241,8 @@ class PluginManager{
 							if(isset($loadedPlugins[$dependency]) or $this->getPlugin($dependency) instanceof Plugin){
 								unset($dependencies[$name][$key]);
 							}elseif(!isset($plugins[$dependency])){
-								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [
-									$name,
-									$this->server->getLanguage()->translateString("%pocketmine.plugin.unknownDependency", [$dependency])
-								]));
-								unset($plugins[$name]);
-								continue 2;
+								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.unknownDependency"]));
+								break;
 							}
 						}
 
@@ -383,7 +313,7 @@ class PluginManager{
 	 *
 	 * @return null|Permission
 	 */
-	public function getPermission(string $name){
+	public function getPermission($name){
 		if(isset($this->permissions[$name])){
 			return $this->permissions[$name];
 		}
@@ -396,7 +326,7 @@ class PluginManager{
 	 *
 	 * @return bool
 	 */
-	public function addPermission(Permission $permission) : bool{
+	public function addPermission(Permission $permission){
 		if(!isset($this->permissions[$permission->getName()])){
 			$this->permissions[$permission->getName()] = $permission;
 			$this->calculatePermissionDefault($permission);
@@ -419,11 +349,11 @@ class PluginManager{
 	}
 
 	/**
-	 * @param bool $op
+	 * @param boolean $op
 	 *
 	 * @return Permission[]
 	 */
-	public function getDefaultPermissions(bool $op) : array{
+	public function getDefaultPermissions($op){
 		if($op === true){
 			return $this->defaultPermsOp;
 		}else{
@@ -460,9 +390,9 @@ class PluginManager{
 	}
 
 	/**
-	 * @param bool $op
+	 * @param boolean $op
 	 */
-	private function dirtyPermissibles(bool $op){
+	private function dirtyPermissibles($op){
 		foreach($this->getDefaultPermSubscriptions($op) as $p){
 			$p->recalculatePermissions();
 		}
@@ -472,7 +402,7 @@ class PluginManager{
 	 * @param string      $permission
 	 * @param Permissible $permissible
 	 */
-	public function subscribeToPermission(string $permission, Permissible $permissible){
+	public function subscribeToPermission($permission, Permissible $permissible){
 		if(!isset($this->permSubs[$permission])){
 			$this->permSubs[$permission] = [];
 		}
@@ -483,7 +413,7 @@ class PluginManager{
 	 * @param string      $permission
 	 * @param Permissible $permissible
 	 */
-	public function unsubscribeFromPermission(string $permission, Permissible $permissible){
+	public function unsubscribeFromPermission($permission, Permissible $permissible){
 		if(isset($this->permSubs[$permission])){
 			unset($this->permSubs[$permission][spl_object_hash($permissible)]);
 			if(count($this->permSubs[$permission]) === 0){
@@ -495,9 +425,9 @@ class PluginManager{
 	/**
 	 * @param string $permission
 	 *
-	 * @return array|Permissible[]
+	 * @return Permissible[]
 	 */
-	public function getPermissionSubscriptions(string $permission) : array{
+	public function getPermissionSubscriptions($permission){
 		if(isset($this->permSubs[$permission])){
 			return $this->permSubs[$permission];
 			$subs = [];
@@ -518,10 +448,10 @@ class PluginManager{
 	}
 
 	/**
-	 * @param bool        $op
+	 * @param boolean     $op
 	 * @param Permissible $permissible
 	 */
-	public function subscribeToDefaultPerms(bool $op, Permissible $permissible){
+	public function subscribeToDefaultPerms($op, Permissible $permissible){
 		if($op === true){
 			$this->defSubsOp[spl_object_hash($permissible)] = $permissible;
 		}else{
@@ -530,10 +460,10 @@ class PluginManager{
 	}
 
 	/**
-	 * @param bool        $op
+	 * @param boolean     $op
 	 * @param Permissible $permissible
 	 */
-	public function unsubscribeFromDefaultPerms(bool $op, Permissible $permissible){
+	public function unsubscribeFromDefaultPerms($op, Permissible $permissible){
 		if($op === true){
 			unset($this->defSubsOp[spl_object_hash($permissible)]);
 		}else{
@@ -542,11 +472,11 @@ class PluginManager{
 	}
 
 	/**
-	 * @param bool $op
+	 * @param boolean $op
 	 *
 	 * @return Permissible[]
 	 */
-	public function getDefaultPermSubscriptions(bool $op) : array{
+	public function getDefaultPermSubscriptions($op){
 		$subs = [];
 
 		if($op === true){
@@ -579,7 +509,7 @@ class PluginManager{
 	/**
 	 * @return Permission[]
 	 */
-	public function getPermissions() : array{
+	public function getPermissions(){
 		return $this->permissions;
 	}
 
@@ -588,7 +518,7 @@ class PluginManager{
 	 *
 	 * @return bool
 	 */
-	public function isPluginEnabled(Plugin $plugin) : bool{
+	public function isPluginEnabled(Plugin $plugin){
 		if($plugin instanceof Plugin and isset($this->plugins[$plugin->getDescription()->getName()])){
 			return $plugin->isEnabled();
 		}else{
@@ -618,7 +548,7 @@ class PluginManager{
 	 *
 	 * @return PluginCommand[]
 	 */
-	protected function parseYamlCommands(Plugin $plugin) : array{
+	protected function parseYamlCommands(Plugin $plugin){
 		$pluginCmds = [];
 
 		foreach($plugin->getDescription()->getCommands() as $key => $data){
@@ -650,13 +580,7 @@ class PluginManager{
 				}
 
 				if(isset($data["permission"])){
-					if(is_bool($data["permission"])){
-						$newCmd->setPermission($data["permission"] ? "true" : "false");
-					}elseif(is_string($data["permission"])){
-						$newCmd->setPermission($data["permission"]);
-					}else{
-						throw new \InvalidArgumentException("Permission must be a string or boolean, " . gettype($data["permission"] . " given"));
-					}
+					$newCmd->setPermission($data["permission"]);
 				}
 
 				if(isset($data["permission-message"])){
@@ -790,7 +714,7 @@ class PluginManager{
 	 *
 	 * @throws PluginException
 	 */
-	public function registerEvent(string $event, Listener $listener, int $priority, EventExecutor $executor, Plugin $plugin, bool $ignoreCancelled = false){
+	public function registerEvent($event, Listener $listener, $priority, EventExecutor $executor, Plugin $plugin, $ignoreCancelled = false){
 		if(!is_subclass_of($event, Event::class)){
 			throw new PluginException($event . " is not an Event");
 		}
@@ -798,15 +722,8 @@ class PluginManager{
 		if($class->isAbstract()){
 			throw new PluginException($event . " is an abstract Event");
 		}
-
-		if(!$class->hasProperty("handlerList") or ($property = $class->getProperty("handlerList"))->getDeclaringClass()->getName() !== $event){
-			throw new PluginException($event . " does not have a valid handler list");
-		}
-		if(!$property->isStatic()){
-			throw new PluginException($event . " handlerList property is not static");
-		}
-		if(!$property->isPublic()){
-			throw new PluginException($event . " handlerList property is not public");
+		if($class->getProperty("handlerList")->getDeclaringClass()->getName() !== $event){
+			throw new PluginException($event . " does not have a handler list");
 		}
 
 		if(!$plugin->isEnabled()){
@@ -823,7 +740,7 @@ class PluginManager{
 	 *
 	 * @return HandlerList
 	 */
-	private function getEventListeners(string $event) : HandlerList{
+	private function getEventListeners($event){
 		if($event::$handlerList === null){
 			$event::$handlerList = new HandlerList();
 		}
@@ -834,15 +751,15 @@ class PluginManager{
 	/**
 	 * @return bool
 	 */
-	public function useTimings() : bool{
+	public function useTimings(){
 		return self::$useTimings;
 	}
 
 	/**
 	 * @param bool $use
 	 */
-	public function setUseTimings(bool $use){
-		self::$useTimings = $use;
+	public function setUseTimings($use){
+		self::$useTimings = (bool) $use;
 	}
 
 }

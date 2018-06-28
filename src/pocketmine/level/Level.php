@@ -864,14 +864,14 @@ class Level implements ChunkManager, Metadatable{
 				$pk->z = $b->z;
 
 				if($b instanceof Block){
-					$pk->blockId = $b->getId();
-					$pk->blockData = $b->getDamage();
+					$blockId = $b->getId();
+					$blockData = $b->getDamage();
 				}else{
 					$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
-					$pk->blockId = $fullBlock >> 4;
-					$pk->blockData = $fullBlock & 0xf;
+					$blockId = $fullBlock >> 4;
+					$blockData = $fullBlock & 0xf;
 				}
-
+				$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($blockId, $blockData);
 				$pk->flags = $first ? $flags : UpdateBlockPacket::FLAG_NONE;
 
 				$packets[] = $pk;
@@ -888,14 +888,14 @@ class Level implements ChunkManager, Metadatable{
 				$pk->z = $b->z;
 
 				if($b instanceof Block){
-					$pk->blockId = $b->getId();
-					$pk->blockData = $b->getDamage();
+					$blockId = $b->getId();
+					$blockData = $b->getDamage();
 				}else{
 					$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
-					$pk->blockId = $fullBlock >> 4;
-					$pk->blockData = $fullBlock & 0xf;
+					$blockId = $fullBlock >> 4;
+					$blockData = $fullBlock & 0xf;
 				}
-
+				$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($blockId, $blockData);
 				$pk->flags = $flags;
 
 				$packets[] = $pk;
@@ -1756,27 +1756,33 @@ class Level implements ChunkManager, Metadatable{
 			if($this->checkSpawnProtection($player, $blockClicked)){
 				$ev->setCancelled(); //set it to cancelled so plugins can bypass this
 			}
-			$onActivate = $blockClicked->onActivate($item, $player);
-			if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
-				$canPlace = false;
-				$tag = $item->getNamedTagEntry("CanPlaceOn");
-				if($tag instanceof ListTag){
-					foreach($tag as $v){
-						if($v instanceof StringTag){
-							$entry = ItemFactory::fromString($v->getValue());
-							if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $blockClicked->getId()){
-								$canPlace = true;
-								break;
+			
+			$this->server->getPluginManager()->callEvent($ev);
+			if(!$ev->isCancelled()){
+				$onActivate = $blockClicked->onActivate($item, $player);
+				if($player->isAdventure(true) and !$ev->isCancelled() and !$onActivate){
+					
+					$canPlace = false;
+					$tag = $item->getNamedTagEntry("CanPlaceOn");
+					if($tag instanceof ListTag){
+						foreach($tag as $v){
+							if($v instanceof StringTag){
+								$entry = ItemFactory::fromString($v->getValue());
+								if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $blockClicked->getId()){
+									$canPlace = true;
+									
+									break;
+								}
 							}
 						}
 					}
+					//$ev->setCancelled(!$canPlace);
+					if(!$canPlace){
+						return false;
+					}
 				}
 
-				$ev->setCancelled(!$canPlace);
-			}
-
-			$this->server->getPluginManager()->callEvent($ev);
-			if(!$ev->isCancelled()){
+			//if(!$ev->isCancelled()){
 				$blockClicked->onUpdate(self::BLOCK_UPDATE_TOUCH);
 				if(!$player->isSneaking() and $onActivate === true){
 					return true;
@@ -1848,7 +1854,7 @@ class Level implements ChunkManager, Metadatable{
 		}
 
 		if($playSound){
-			$this->broadcastLevelSoundEvent($hand, LevelSoundEventPacket::SOUND_PLACE, 1, $hand->getId());
+			$this->broadcastLevelSoundEvent($hand, LevelSoundEventPacket::SOUND_PLACE, 1, BlockFactory::toStaticRuntimeId($hand->getId(), $hand->getDamage()));
 		}
 
 		$item->setCount($item->getCount() - 1);

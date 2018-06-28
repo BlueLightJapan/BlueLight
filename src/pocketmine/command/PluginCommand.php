@@ -35,7 +35,7 @@ class PluginCommand extends Command implements PluginIdentifiableCommand{
 	private $executor;
 
 	/**
-	 * @param string $name
+	 * @param $name
 	 * @param Plugin $owner
 	 */
 	public function __construct($name, Plugin $owner){
@@ -45,7 +45,7 @@ class PluginCommand extends Command implements PluginIdentifiableCommand{
 		$this->usageMessage = "";
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	public function execute(CommandSender $sender, $commandLabel, array $args){
 
 		if(!$this->owningPlugin->isEnabled()){
 			return false;

@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -18,15 +17,14 @@
  *
  *
 */
-
 declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types;
 
+use pocketmine\entity\Skin;
 use pocketmine\utils\UUID;
 
 class PlayerListEntry{
-
 	/** @var UUID */
 	public $uuid;
 	/** @var int */
@@ -34,31 +32,28 @@ class PlayerListEntry{
 	/** @var string */
 	public $username;
 	/** @var string */
-	public $skinId;
+	public $thirdPartyName = "";
+	/** @var int */
+	public $platform = 0;
 	/** @var string */
-	public $skinData;
-	/** @var string */
-	public $capeData; //TODO
-	/** @var string */
-	public $geometryModel; //TODO
-	/** @var string */
-	public $geometryData; //TODO
+	public $platformChatId = "";
+	/** @var Skin */
+	public $skin;
 	/** @var string */
 	public $xboxUserId; //TODO
-
 	public static function createRemovalEntry(UUID $uuid) : PlayerListEntry{
 		$entry = new PlayerListEntry();
 		$entry->uuid = $uuid;
-
 		return $entry;
 	}
-
-	public static function createAdditionEntry(
+public static function createAdditionEntry(
 		UUID $uuid,
 		int $entityUniqueId,
 		string $username,
 		string $skinId,
 		string $skinData,
+		string $thirdPartyName,
+		int $platform,
 		string $capeData = "",
 		string $geometryModel = "",
 		string $geometryData = "",
@@ -74,7 +69,8 @@ class PlayerListEntry{
 		$entry->geometryModel = $geometryModel;
 		$entry->geometryData = $geometryData;
 		$entry->xboxUserId = $xboxUserId;
-
+		$entry->thirdPartyName = $thirdPartyName;
+		$entry->platform = $platform;
 		return $entry;
 	}
 

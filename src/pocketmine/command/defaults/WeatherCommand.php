@@ -39,7 +39,7 @@ class WeatherCommand extends VanillaCommand{
 		$this->setPermission("pocketmine.command.weather");
 	}
 
-	public function execute(CommandSender $sender, string $currentAlias, array $args){
+	public function execute(CommandSender $sender, $currentAlias, array $args){
 		if(!$this->testPermission($sender)){
 			return true;
 		}

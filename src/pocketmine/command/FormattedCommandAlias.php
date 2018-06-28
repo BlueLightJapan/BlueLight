@@ -31,15 +31,15 @@ class FormattedCommandAlias extends Command{
 	private $formatStrings = [];
 
 	/**
-	 * @param string   $alias
+	 * @param   $alias
 	 * @param string[] $formatStrings
 	 */
-	public function __construct(string $alias, array $formatStrings){
+	public function __construct($alias, array $formatStrings){
 		parent::__construct($alias);
 		$this->formatStrings = $formatStrings;
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	public function execute(CommandSender $sender, $commandLabel, array $args){
 
 		$commands = [];
 		$result = false;
@@ -67,12 +67,12 @@ class FormattedCommandAlias extends Command{
 	}
 
 	/**
-	 * @param string $formatString
+	 * @param $formatString
 	 * @param array  $args
 	 *
 	 * @return string
 	 */
-	private function buildCommand(string $formatString, array $args) : string{
+	private function buildCommand($formatString, array $args) : string{
 		$index = strpos($formatString, '$');
 		while($index !== false){
 			$start = $index;

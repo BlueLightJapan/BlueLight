@@ -33,7 +33,7 @@ use pocketmine\utils\TextFormat;
 
 class TimeCommand extends VanillaCommand{
 
-	public function __construct(string $name){
+	public function __construct($name){
 		parent::__construct(
 			$name,
 			"%pocketmine.command.time.description",
@@ -42,7 +42,7 @@ class TimeCommand extends VanillaCommand{
 		$this->setPermission("pocketmine.command.time.add;pocketmine.command.time.set;pocketmine.command.time.start;pocketmine.command.time.stop");
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	public function execute(CommandSender $sender, $commandLabel, array $args){
 		if(count($args) < 1){
 			throw new InvalidCommandSyntaxException();
 		}

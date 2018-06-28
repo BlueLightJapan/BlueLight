@@ -22,7 +22,7 @@
 declare(strict_types=1);
 
 namespace pocketmine\event\entity;
-
+use pocketmine\Server;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;

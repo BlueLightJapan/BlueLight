@@ -38,6 +38,7 @@ class PlayStatusPacket extends DataPacket{
 	const LOGIN_FAILED_INVALID_TENANT = 4;
 	const LOGIN_FAILED_VANILLA_EDU = 5;
 	const LOGIN_FAILED_EDU_VANILLA = 6;
+	const LOGIN_FAILED_SERVER_FULL = 7;
 
 	/** @var int */
 	public $status;

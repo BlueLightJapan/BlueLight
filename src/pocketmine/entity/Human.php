@@ -46,9 +46,9 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	const DATA_PLAYER_FLAG_SLEEP = 1;
 	const DATA_PLAYER_FLAG_DEAD = 2; //TODO: CHECK
 
-	const DATA_PLAYER_FLAGS = 27;
+	const DATA_PLAYER_FLAGS = 26;
 
-	const DATA_PLAYER_BED_POSITION = 29;
+	const DATA_PLAYER_BED_POSITION = 28;
 
 	/** @var PlayerInventory */
 	protected $inventory;
@@ -517,7 +517,10 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$pk->item = $this->getInventory()->getItemInHand();
 			$pk->metadata = $this->dataProperties;
 			$player->dataPacket($pk);
-
+			
+			//TODO: Hack for MCPE 1.2.13: DATA_NAMETAG is useless in AddPlayerPacket, so it has to be sent separately
+			$this->sendData($player, [self::DATA_NAMETAG => [self::DATA_TYPE_STRING, $this->getNameTag()]]);
+			
 			$this->inventory->sendArmorContents($player);
 
 			if(!($this instanceof Player)){

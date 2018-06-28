@@ -66,9 +66,8 @@ class PigZombie extends Monster{
 		$pk = new MobEquipmentPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->item = new ItemItem(283);
-		$pk->slot = 0;
-		$pk->selectedSlot = 0;
-
+		$pk->inventorySlot = $pk->hotbarSlot = 0;
+		$pk->windowId = 0;
 		$player->dataPacket($pk);
 	}
 
