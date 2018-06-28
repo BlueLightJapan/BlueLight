@@ -254,10 +254,10 @@ class BlockFactory{
 			self::registerBlock(new DoublePlant());
 
 			//TODO: DAYLIGHT_DETECTOR_INVERTED
-			//TODO: RED_SANDSTONE
-			//TODO: RED_SANDSTONE_STAIRS
+			self::registerBlock(new RedSandstone());
+-			self::registerBlock(new RedSandstoneStairs());
 			//TODO: DOUBLE_STONE_SLAB2
-			//TODO: STONE_SLAB2
+			self::registerBlock(new RedSandstoneSlab());
 			self::registerBlock(new FenceGate(Block::SPRUCE_FENCE_GATE, 0, "Spruce Fence Gate"));
 			self::registerBlock(new FenceGate(Block::BIRCH_FENCE_GATE, 0, "Birch Fence Gate"));
 			self::registerBlock(new FenceGate(Block::JUNGLE_FENCE_GATE, 0, "Jungle Fence Gate"));
@@ -274,9 +274,9 @@ class BlockFactory{
 			self::registerBlock(new GrassPath());
 			self::registerBlock(new ItemFrame());
 			//TODO: CHORUS_FLOWER
-			//TODO: PURPUR_BLOCK
+			self::registerBlock(new Purpur());
 
-			//TODO: PURPUR_STAIRS
+			self::registerBlock(new PurpurStairs());
 
 			//TODO: END_BRICKS
 			//TODO: FROSTED_ICE
