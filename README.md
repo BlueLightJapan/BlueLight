@@ -5,9 +5,9 @@
 
 ## if you want a updated version go to https://github.com/BlueLightDutch/BlueLight
 
-### Build Status(Stable) [![Build Status](http://jenkins.haniokasai.com/job/BlueLight-PMMP/badge/icon)](http://jenkins.haniokasai.com/job/BlueLight-PMMP/)<a href="https://circleci.com/gh/BlueLightJapan/BlueLight/">![Build Status](https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/)</a>
+### Build Status(Stable) <a href="https://circleci.com/gh/BlueLightJapan/BlueLight/">![Build Status](https://circleci.com/gh/circleci/mongofinil.svg?&style=shield&circle-token=d2743a622dc0d1a48ea56ff0e38b047d25278a6b/)</a>
    
-### Build Status(Plugin-OldAPI) [![Build Status](http://jenkins.haniokasai.com/job/BlueLight-oldAPI-PMMP_12/badge/icon)](http://jenkins.haniokasai.com/job/BlueLight-oldAPI-PMMP_12/)
+
  
  [![Gitter](https://badges.gitter.im/bluelight-pm/bluelight-pm.svg)](https://gitter.im/bluelight-pm/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=pr-badge)
  
@@ -23,11 +23,8 @@ Src https://twitter.com/kametan0730<br>
 PHP7Binary https://twitter.com/haniokasai<br>
 APP https://twitter.com/haniokasai<br>
 <br>
-Download App : GooglePlay https://play.google.com/store/apps/details?id=com.haniokasai.app.pmmp_srv</br>
-Download Phar : Jenkins  http://jenkins.haniokasai.com/job/BlueLight-PMMP<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/ <br>
 Download Package : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
-HP : https://bluelig.ht/?lang=en<br>
 <br>If you find bugs,you can open issues freely,But DO NOT OPEN ISSUE ABOUT PLUGIN PROBLEM.
 <br>
 If you want to join us,please read https://github.com/BlueLightJapan/BlueLight/issues/40
@@ -45,12 +42,9 @@ Src https://twitter.com/kametan0730</br>
 PHP7のbin https://twitter.com/haniokasai<br>
 アプリ https://twitter.com/haniokasai<br>
 <br>
-アプリをダウンロード : GooglePlay https://play.google.com/store/apps/details?id=com.haniokasai.app.pmmp_srv</br>
-Pharをダウンロード : Jenkins http://jenkins.haniokasai.com/job/BlueLight-PMMP/<br>
 Circle-Ci (Login require) https://circleci.com/gh/BlueLightJapan/BlueLight/<br>
 便利な詰め合わせ : https://github.com/BlueLightJapan/BinaryPackforWindows<br>
 Lobi : https://web.lobi.co/game/minecraftpe/group/d95ef7462b185454741ad90520e4ba23fe7738c4<br>
-HP : https://bluelig.ht<br>
 <br>バグを発見したら、自由にissueを建てることができますが、srcのバグ以外は報告しないでください。
 <br>
 チームに参加したい方は、これをお読みください。https://github.com/BlueLightJapan/BlueLight/issues/40
